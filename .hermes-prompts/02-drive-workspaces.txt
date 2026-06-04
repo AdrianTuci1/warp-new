@@ -1,0 +1,82 @@
+GITHUB_TOKEN will be auto-passed via env_passthrough.
+
+Repo: AdrianTuci1/warp-new
+Base branch: master
+
+[bash]
+git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
+cd /tmp/repo
+git checkout master
+git checkout -b hermes/drive-workspaces
+[/bash]
+
+---
+
+OBJECTIVE: Remove the Warp Drive and cloud Workspaces modules from the Warp Rust project.
+
+TASKS:
+
+1. DELETE these directories and all their contents:
+   - `app/src/drive/` (entire directory - drive panel, export, import, folders, sharing, index, workflows, etc.)
+   - `app/src/workspaces/` (entire directory - team_tester, update_manager, user_profiles, user_workspaces, workspace.rs, team.rs)
+
+2. EDIT `app/src/lib.rs`:
+   REMOVE these module declarations:
+   - `pub mod drive;` (line 33)
+   - `pub mod workspaces;` (line 98)
+
+   REMOVE these imports:
+   - `use crate::drive::export::ExportManager;`
+   - `use crate::drive::CloudObjectTypeAndId;`
+   - `use crate::workspaces::team_tester::TeamTesterStatus;`
+   - `use crate::workspaces::update_manager::TeamUpdateManager;`
+   - `use crate::workspaces::user_profiles::UserProfiles;`
+   - `use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};`
+
+   REMOVE these singleton model registrations (find and remove the blocks):
+   - `UserWorkspaces` registration
+   - `TeamTesterStatus` registration
+   - `TeamUpdateManager` registration
+   - `ExportManager` registration
+   - `CloudViewModel` (if not already removed)
+   - `AIDocumentModel` (if references cloud objects)
+   
+   REMOVE these init calls:
+   - `drive::index::init(ctx);`
+   - `drive::sharing::dialog::init(ctx);`
+   
+   REMOVE any references to `UserProfiles`, `UserWorkspacesEvent`, `UserWorkspaces::as_ref` in lib.rs
+   
+   REMOVE the `notebooks` variable block that filters `cloud_objects` for `CloudNotebook` (lines ~1674-1681)
+   SIMPLIFY the `NotebookManager` singleton to not use notebooks from cloud_objects:
+   ```rust
+   ctx.add_singleton_model(|_ctx| NotebookManager::new(vec![], ctx));
+   ```
+
+3. EDIT `app/Cargo.toml`:
+   Remove or comment out dependencies specific to drive and workspaces.
+
+4. EDIT `app/src/notebooks/mod.rs`:
+   - Remove all imports from `crate::drive::`, `crate::workspaces::`, `crate::workspace::` (but keep workspace layout imports)
+   - Remove `CloudNotebook` imports
+
+5. EDIT `app/src/workflows/mod.rs`:
+   - Remove `WorkflowSource::Team`, `WorkflowSource::PersonalCloud` variants
+   - Remove imports from `crate::workspaces::`
+
+6. Clean up any files in `app/src/` that import from `drive::` or `workspaces::`:
+   - Search recursively for `use crate::drive::` and `use crate::workspaces::` and remove those imports or the referencing code
+   - Key files to check: `app/src/cloud_object/mod.rs` (if still exists), `app/src/cloud_object/model/`, `app/src/notebooks/`, `app/src/workflows/`, `app/src/ai/`
+
+IMPORTANT NOTES:
+- Do NOT delete `app/src/workspace/` (singular, the layout/view system)
+- Only delete `app/src/drive/` and `app/src/workspaces/` (plural, team management)
+- The project should compile after this (or come close)
+- If a file references a deleted module, remove the reference or stub it out
+
+After done:
+```
+git add -A
+git commit -m "hermes/drive-workspaces: remove drive and workspaces modules"
+git push origin hermes/drive-workspaces
+```

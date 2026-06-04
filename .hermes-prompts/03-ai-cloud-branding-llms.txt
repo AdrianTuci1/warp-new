@@ -1,0 +1,95 @@
+GITHUB_TOKEN will be auto-passed via env_passthrough.
+
+Repo: AdrianTuci1/warp-new
+Base branch: master
+
+[bash]
+git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
+cd /tmp/repo
+git checkout master
+git checkout -b hermes/ai-cloud-branding-llms
+[/bash]
+
+---
+
+OBJECTIVE: Clean up AI cloud agent code, rename "Warp" to "Octomus" in UI, remove predefined LLMs.
+
+TASKS:
+
+1. CLEAN UP AI CLOUD AGENT CODE:
+
+   DELETE these files/directories:
+   - `app/src/ai/cloud_environments/` (entire directory - Modal/OzCloud environment management)
+   - `app/src/ai/agent_sdk/` (entire directory - cloud agent SDK)
+   - `app/src/ai/cloud_agent_config/` (entire directory - cloud agent configuration)
+   - `app/src/ai/connected_self_hosted_workers.rs` (and `_tests.rs`)
+   - `app/src/ai/cloud_agent_settings.rs`
+   - `app/src/ai/artifact_download.rs` (and `_tests.rs`)
+
+   EDIT `app/src/ai/mod.rs`:
+   - Remove these module declarations:
+     - `pub mod agent_sdk;` (line 45)
+     - `pub mod cloud_agent_config;` (line 46)
+     - `pub mod cloud_agent_settings;` (line 47)
+     - `pub mod cloud_environments;` (line 48)
+     - `pub mod connected_self_hosted_workers;` (line 49)
+   - Remove imports from these modules
+
+2. CLEAN UP LLMs:
+   EDIT `app/src/ai/llms.rs`:
+   - Remove all predefined model configurations (everything except a minimal empty or default state)
+   - Remove `LLMPreferences` struct or simplify it to be empty/optional
+   - The idea: no models preconfigured at first launch - user adds their own provider/key
+   
+   EDIT `app/src/ai/llms_tests.rs`:
+   - Remove or update tests that reference deleted model configurations
+
+3. RENAME "Warp" TO "Octomus" IN UI STRINGS:
+   Search for user-facing "Warp" strings in `app/src/` and rename:
+   - Look in these specific files/directories:
+     - `app/src/root_view.rs` - window title, app name references
+     - `app/src/workspace/view/` - UI strings, labels
+     - `app/src/terminal/view/` - terminal header, UI
+     - `app/src/settings/` - settings labels
+     - `app/src/app_menus.rs` - menu bar items
+     - `app/src/command_palette.rs` - command labels
+     - `app/src/appearance.rs` - display names
+     - `app/src/features.rs` - feature flag names
+   
+   What to replace:
+   - UI-visible "Warp" → "Octomus" (in strings, labels, titles, menu items)
+   - Do NOT replace "Warp" in:
+     - Code identifiers (struct names, enum variants, function names)
+     - File paths or module names
+     - Internal constant names
+     - Log messages
+     - Comments (unless explaining the product name)
+     - Cargo.toml package names
+   
+   Examples of what to change:
+   - `"Warp"` as app title → `"Octomus"`
+   - Window title strings
+   - "Warp AI" → "Octomus AI"  
+   - Menu items like "About Warp" → "About Octomus"
+   - "Warp Drive" → "Local Storage" (or "Octomus Drive")
+   
+   Be careful AND conservative: only change display strings, not internal names.
+
+4. CLEAN UP AI MODULE:
+   EDIT `app/src/ai/mod.rs`:
+   - Remove `cloud_agent_settings` and `connected_self_hosted_workers` module declarations
+   - Keep all local AI modules (agent, blocklist, mcp, skills, facts, conversations, etc.)
+   - Remove `artifact_download` module declaration
+
+5. EDIT Settings if possible to add a placeholder for "Remote Provider":
+   - Look at `app/src/settings/` structure
+   - The Remote Provider section should be a placeholder/generic section
+   - If it's too complex to add in the Rust code, just create a note or TODO comment
+   - Focus on the other tasks first
+
+After done:
+```
+git add -A
+git commit -m "hermes/ai-cloud-branding-llms: clean up AI cloud agents, rename Warp->Octomus, clean up LLMs"
+git push origin hermes/ai-cloud-branding-llms
+```
