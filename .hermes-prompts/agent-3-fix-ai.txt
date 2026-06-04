@@ -17,8 +17,11 @@ Remove these module declarations:
 - `pub mod agent_sdk;`
 - `pub mod cloud_agent_config;`
 - `pub mod cloud_agent_settings;`
-- `pub mod cloud_environments;`
-- `pub mod connected_self_hosted_workers;`
+|- `pub mod cloud_environments;`
+|- `pub mod connected_self_hosted_workers;`
+
+Also EDIT app/src/ai/agent_management/mod.rs:
+Remove `mod cloud_setup_guide_view;` (the file is deleted by agent-1).
 
 Remove these from init() if present:
 - Any calls referencing these deleted modules

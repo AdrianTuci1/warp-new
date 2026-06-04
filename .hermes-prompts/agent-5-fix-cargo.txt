@@ -57,6 +57,19 @@ Simplify CloudWorkflow to work without cloud sync.
 
 For each file found, remove the import line. If the imported type is used in the file, remove the usage too or stub it.
 
+5. DELETE these files (they depend on deleted cloud modules):
+- `app/src/settings/cloud_preferences.rs` — entirely cloud-dependent
+- `app/src/settings/cloud_preferences_syncer.rs` — cloud sync only
+
+6. EDIT app/src/settings/mod.rs:
+Remove the `pub mod cloud_preferences;` and `pub mod cloud_preferences_syncer;` declarations.
+
+7. EDIT app/src/settings/ai.rs:
+Remove any references to cloud AI features, server API, cloud environments. If the file is mostly cloud-dependent, remove the cloud parts and keep only local AI settings.
+
+8. EDIT app/src/voice/mod.rs and app/src/voice/transcriber.rs:
+Remove ServerVoiceTranscriber and all imports from `crate::server::*`. If the transcriber was only server-based, replace with a local-only stub or comment out the file.
+
 Focus on making the Cargo.toml correct and removing broken imports. Do NOT edit lib.rs, ai/mod.rs, llms.rs, or UI branding files — those are handled by other agents.
 
 After done:

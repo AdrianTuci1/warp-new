@@ -13,6 +13,8 @@ git checkout -b octomus/agent-1-delete
 TASK: Delete these directories and files. ONLY deletions — do NOT edit any remaining files.
 
 Delete ALL contents of these directories (rm -rf):
+
+--- Directories ---
 - app/src/auth/
 - app/src/pricing/
 - app/src/billing/
@@ -20,16 +22,23 @@ Delete ALL contents of these directories (rm -rf):
 - app/src/cloud_object/ (everything: model, breadcrumbs, grab_edit_access_modal, toast_message)
 - app/src/drive/ (everything: panel, export, import, folders, sharing, index, workflows)
 - app/src/workspaces/ (everything: team_tester, update_manager, user_profiles, user_workspaces, workspace.rs, team.rs, gql_convert)
+- app/src/crash_reporting/ (everything: mod.rs, mac.rs, linux.rs, sentry_minidump.rs)
+- app/src/remote_server/ (everything: auth_context, auth_provider, codebase_index, diff_state, handoff, server_model, ssh_transport, unix)
+- app/src/autoupdate/ (everything: changelog, channel_versions, mac, linux, windows, mod.rs)
 - app/src/ai/cloud_environments/
 - app/src/ai/agent_sdk/
-- app/src/ai/cloud_agent_config/
+- app/src/ai/cloud_agent_config/ (everything: agent_config, api_key, artifact, common, config_file, driver, environment, federate, harness_support, mcp, oauth_flow, output, profiles, provider, retry, schedule, secret, telemetry, text_layout)
+
+--- Individual files ---
 - app/src/ai/connected_self_hosted_workers.rs
 - app/src/ai/connected_self_hosted_workers_tests.rs
 - app/src/ai/cloud_agent_settings.rs
 - app/src/ai/artifact_download.rs
 - app/src/ai/artifact_download_tests.rs
-
-After deleting everything:
+- app/src/ai/agent_management/cloud_setup_guide_view.rs (DELETE JUST THIS FILE, keep the rest of agent_management/)
+- app/src/changelog_model.rs
+- app/src/reward_view.rs
+- app/src/referral_theme_status.rs
 ```
 git add -A
 git commit -m "octomus: delete cloud auth/server/drive/workspaces/cloud-ai dirs"

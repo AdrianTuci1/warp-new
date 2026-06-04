@@ -22,6 +22,12 @@ OPEN app/src/lib.rs and make these changes:
 - `mod cloud_object;`
 - `pub mod drive;`
 - `pub mod workspaces;`
+- `mod crash_reporting;` (the #[cfg(feature = "crash_reporting")] line) — REMOVE the entire block
+- `mod remote_server;` (the #[allow(dead_code)] mod remote_server;)
+- `mod autoupdate;`
+- `mod changelog_model;`
+- `mod reward_view;`
+- `mod referral_theme_status;`
 
 2. REMOVE all imports from these modules (search for each and delete the line):
 - `use auth::auth_manager::AuthManager;`
@@ -51,7 +57,11 @@ OPEN app/src/lib.rs and make these changes:
 - `use crate::notebooks::CloudNotebook;`
 - `use crate::referral_theme_status::ReferralThemeStatus;` (and the `use referral_theme_status::ReferralThemeStatus;` if present)
 - `use crate::changelog_model::ChangelogModel;`
+- `use crate::reward_view::*` (any imports)
 - `use crate::antivirus::AntivirusInfo;` (keep AntivirusInfo if it doesn't reference deleted modules)
+- `use crate::autoupdate::*` (any imports like AutoupdateState, RelaunchModel)
+- `use crate::crash_reporting::*` (any imports)
+- `use crate::remote_server::*` (any imports like manager, codebase_index_model, etc.)
 
 3. REMOVE from initialize_app() function:
 - The entire `let auth_state = Arc::new(AuthState::initialize(ctx, api_key));` block
