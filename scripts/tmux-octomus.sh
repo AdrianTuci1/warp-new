@@ -1,6 +1,18 @@
 #!/bin/bash
 set -euo pipefail
 
+if [ $# -lt 1 ]; then
+  echo "Usage: $0 <GITHUB_TOKEN>"
+  echo ""
+  echo "Generate a fine-grained PAT at:"
+  echo "  https://github.com/settings/tokens?type=beta"
+  echo "Repository: AdrianTuci1/warp-new"
+  echo "Permission: Contents → Read & Write"
+  exit 1
+fi
+
+export GITHUB_TOKEN="$1"
+
 SESSION="octomus"
 PROMPTS_DIR="$(cd "$(dirname "$0")/.." && pwd)/.hermes-prompts"
 LOGS_DIR="$(cd "$(dirname "$0")/.." && pwd)/.hermes-logs"
