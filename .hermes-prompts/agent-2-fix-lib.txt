@@ -1,0 +1,109 @@
+GITHUB_TOKEN auto-pasat via env_passthrough.
+
+Repo: AdrianTuci1/warp-new
+Branch: octomus/agent-2-lib
+
+[bash]
+git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
+cd /tmp/repo
+git checkout master
+git checkout -b octomus/agent-2-lib
+[/bash]
+
+TASK: Edit ONLY app/src/lib.rs. Remove all references to deleted cloud modules. Do NOT touch any other file.
+
+OPEN app/src/lib.rs and make these changes:
+
+1. REMOVE these module declarations:
+- `mod auth;`
+- `mod billing;`
+- `mod pricing;`
+- `mod server;`
+- `mod cloud_object;`
+- `pub mod drive;`
+- `pub mod workspaces;`
+
+2. REMOVE all imports from these modules (search for each and delete the line):
+- `use auth::auth_manager::AuthManager;`
+- `use auth::auth_state::{AuthState, AuthStateProvider};`
+- `use server::network_log_pane_manager::NetworkLogPaneManager;`
+- `use server::network_logging::NetworkLogModel;`
+- `use server::telemetry::context_provider::AppTelemetryContextProvider;`
+- `use server::voice_transcriber::ServerVoiceTranscriber;`
+- `use server::server_api::ServerApiProvider;`
+- `use server::cloud_objects::listener::Listener;`
+- `use server::cloud_objects::update_manager::UpdateManager;`
+- `use server::experiments::ServerExperiments;`
+- `use server::iap::IapManager;`
+- `use server::sync_queue::{QueueItem, SyncQueue};`
+- `pub use crate::server::telemetry::{AgentModeEntrypoint, AgentModeEntrypointSelectionType, TelemetryEvent};`
+- `use crate::server::telemetry::{AppStartupInfo, CloseTarget, PaletteSource, TelemetryCollector};`
+- `use crate::cloud_object::model::actions::{ObjectAction, ObjectActions};`
+- `use crate::cloud_object::model::persistence::CloudModel;`
+- `use crate::cloud_object::model::view::CloudViewModel;`
+- `use crate::drive::export::ExportManager;`
+- `use crate::drive::CloudObjectTypeAndId;`
+- `use crate::workspaces::team_tester::TeamTesterStatus;`
+- `use crate::workspaces::update_manager::TeamUpdateManager;`
+- `use crate::workspaces::user_profiles::UserProfiles;`
+- `use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};`
+- `use crate::settings::cloud_preferences_syncer::initialize_cloud_preferences_syncer;`
+- `use crate::notebooks::CloudNotebook;`
+- `use crate::referral_theme_status::ReferralThemeStatus;` (and the `use referral_theme_status::ReferralThemeStatus;` if present)
+- `use crate::changelog_model::ChangelogModel;`
+- `use crate::antivirus::AntivirusInfo;` (keep AntivirusInfo if it doesn't reference deleted modules)
+
+3. REMOVE from initialize_app() function:
+- The entire `let auth_state = Arc::new(AuthState::initialize(ctx, api_key));` block
+- The ENTIRE `iap_state` variable block
+- The ENTIRE `server_api_provider` singleton registration (ctx.add_singleton_model for ServerApiProvider)
+- The `let server_api = ...` and `let ai_client = ...` lines
+- `AuthStateProvider` singleton
+- `AppTelemetryContextProvider` singleton
+- `AuthManager` singleton
+- `ServerExperiments` singleton
+- `AIRequestUsageModel` singleton
+- The ENTIRE `UserWorkspaces` singleton registration block
+- `ApiKeyManager` singleton registration
+- The sqlite_data destructuring must be SIMPLIFIED to remove cloud_object fields
+- `ChangelogModel` singleton
+- `NetworkLogModel` singleton (the one that's registered before ServerApiProvider)
+- `TelemetryCollector` singleton block
+- The ENTIRE `CloudModel` singleton block with all its sync queue setup
+- `SyncQueue` singleton block
+- `ObjectActions` singleton
+- `TeamTesterStatus` singleton
+- `TeamUpdateManager` singleton
+- `UpdateManager` singleton
+- `initialize_cloud_preferences_syncer` call
+- `CloudViewModel` singleton
+- `AIDocumentModel` singleton
+- `Listener` singleton
+- `IapManager` singleton
+- `ExportManager` singleton
+- `ReferralThemeStatus` in GlobalResourceHandles (remove from the struct)
+- Remove `notebooks` variable that filters cloud_objects, then replace NotebookManager singleton with `NotebookManager::new(vec![], ctx)`
+
+4. REMOVE these init() calls:
+- `auth::init(ctx);`
+- `drive::index::init(ctx);`
+- `drive::sharing::dialog::init(ctx);`
+- `billing::shared_objects_creation_denied_modal::init(ctx);`
+KEEP: `ai::init(ctx);`, `workspace::init(ctx);`, terminal, editor, pane_group, themes, etc.
+
+5. REMOVE the entire `user_is_logged_in` if/else block. Keep the else branch content (LoggedOutStartup).
+
+6. REMOVE `crate::server::telemetry::*` references, `send_telemetry_from_app_ctx!` and `send_telemetry_from_ctx`
+
+7. SIMPLIFY the sqlite_data destructuring to remove cloud_objects, cached_workspaces, current_workspace_uid, command_history, user_profiles, time_of_next_force_object_refresh, object_actions, ai_queries, experiments, multi_agent_conversations, persisted_projects, persisted_project_rules, persisted_ignored_suggestions, persisted_mcp_server_installations, mcp_servers_to_restore
+
+Keep only what's still needed: `app_state`, `workspace_language_servers`, `codebase_indices` (persisted_workspaces).
+
+8. Use `#[cfg_attr(test, expect(unused))]` or `let _ =` for any remaining variables that become unused.
+
+After done:
+```
+git add -A
+git commit -m "octomus: clean up lib.rs - remove cloud module references"
+git push origin octomus/agent-2-lib
+```

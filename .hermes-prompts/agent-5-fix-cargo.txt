@@ -1,0 +1,67 @@
+GITHUB_TOKEN auto-pasat via env_passthrough.
+
+Repo: AdrianTuci1/warp-new
+Branch: octomus/agent-5-cargo
+
+[bash]
+git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
+cd /tmp/repo
+git checkout master
+git checkout -b octomus/agent-5-cargo
+[/bash]
+
+TASK: Edit Cargo.toml, notebooks/, workflows/, and other non-lib.rs modules.
+
+1. EDIT app/Cargo.toml:
+Remove or comment out these dependencies (check if they're used elsewhere first):
+- cloud_object_client
+- cloud_object_models
+- cloud_objects
+- warp_server_auth
+- warp_server_client
+- cloud_object_persistence
+- warp_graphql (if only referenced from deleted modules)
+- oauth2 (if only used by auth)
+
+Look for feature flags that reference deleted modules and remove them:
+- Any feature flag like "cloud_object_*", "drive_*", "billing_*", "server_*"
+- Look at the `[features]` section and remove anything referencing deleted code
+
+2. EDIT app/src/notebooks/ files:
+Remove all imports from:
+- `crate::cloud_object::`
+- `crate::cloud_object::*`
+- `crate::drive::`
+- `crate::server::`
+- `crate::workspaces::`
+- `crate::workspace::` (only if it references cloud types)
+
+Remove `CloudNotebook` type usage. If NotebookManager holds cloud notebooks, simplify it to hold an empty vec.
+
+3. EDIT app/src/workflows/ files:
+Remove all imports from deleted modules:
+- `crate::cloud_object::`
+- `crate::server::`
+- `crate::drive::`
+- `crate::workspaces::`
+
+Remove `WorkflowSource::Team`, `WorkflowSource::PersonalCloud` variants if they exist.
+Simplify CloudWorkflow to work without cloud sync.
+
+4. Scan other files that might import from deleted modules:
+- Check app/src/cloud_object/ (already deleted, but check imports IN other files)
+- Check app/src/ai/ files for imports from `crate::server::` or `crate::workspaces::`
+- Check app/src/env_vars/
+- Check app/src/mcp/
+- Check app/src/settings/
+
+For each file found, remove the import line. If the imported type is used in the file, remove the usage too or stub it.
+
+Focus on making the Cargo.toml correct and removing broken imports. Do NOT edit lib.rs, ai/mod.rs, llms.rs, or UI branding files — those are handled by other agents.
+
+After done:
+```
+git add -A
+git commit -m "octomus: clean up Cargo.toml, notebooks, workflows, other modules"
+git push origin octomus/agent-5-cargo
+```

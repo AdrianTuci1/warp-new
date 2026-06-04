@@ -1,0 +1,71 @@
+GITHUB_TOKEN auto-pasat via env_passthrough.
+
+Repo: AdrianTuci1/warp-new
+Branch: octomus/agent-4-branding
+
+[bash]
+git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
+cd /tmp/repo
+git checkout master
+git checkout -b octomus/agent-4-branding
+[/bash]
+
+TASK: Replace "Warp" with "Octomus" in user-facing UI strings only. Do NOT touch:
+- Rust identifiers (struct names like AppState, enum variants, function names)
+- File paths or module names (mod auth, use crate::server::, etc.)
+- Internal constant names
+- Log/debug messages (log::info!, log::error!, safe_*! macros)
+- Cargo.toml package names
+- Comments (unless they describe the product name to the user)
+- Any "Warp" inside compiler directives like #[cfg(...)] or derive macros
+- Any "warp_" prefix (these are crate names: warpui, warp_core, etc.)
+
+Search ALL .rs files under app/src/ for occurrences of "Warp" in string literals.
+
+FILES TO CHECK (scan each for "Warp" or "warp" in string literals):
+- app/src/app_menus.rs — menu items like "About Warp", "Warp Help"
+- app/src/root_view.rs — window title "Warp"
+- app/src/appearance.rs — display names
+- app/src/command_palette.rs — command labels
+- app/src/settings/ — settings labels, section names
+- app/src/workspace/view/ — UI strings, tabs, buttons
+- app/src/terminal/view/ — terminal header, UI strings
+- app/src/pane_group/ — labels
+- app/src/themes/ — theme names
+- app/src/channel.rs — channel display names (but only display strings, not internal)
+- app/src/features.rs — feature flag descriptions
+- app/src/search_bar.rs — placeholder text
+- app/src/resource_center/ — labels
+- app/src/tips/ — tip text
+- app/src/banner/ — banner messages
+- app/src/launch_configs/ — launcher names
+- app/src/notebooks/ — notebook labels
+- app/src/workflows/ — workflow names
+- app/src/onboarding/ — onboarding text
+- app/src/ai/onboarding.rs — AI onboarding text
+
+SPECIFIC REPLACEMENTS (these are user-visible):
+- "Warp" (as standalone product name in UI) → "Octomus"
+- "Warp AI" → "Octomus AI"
+- "Warp Drive" → "Local Storage"
+- "About Warp" → "About Octomus"
+- "Warp Help" → "Octomus Help"
+- Window title "Warp" → "Octomus"
+- "Get Warp" → "Get Octomus"
+
+DO NOT change:
+- warpui::, warp_core::, warp_* crate paths
+- struct names, enum names, function names
+- File paths like app/src/warp_managed_paths_watcher.rs
+- Constants like WARP_MANAGED_PATHS
+- Feature flag names like WARP_AGENT_MODE
+- Environment variable names like WARP_API_KEY
+
+Be conservative: only change literal strings that are visible to the user in the UI.
+
+After done:
+```
+git add -A
+git commit -m "octomus: rename Warp to Octomus in UI strings"
+git push origin octomus/agent-4-branding
+```

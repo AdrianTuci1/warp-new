@@ -1,0 +1,59 @@
+GITHUB_TOKEN auto-pasat via env_passthrough.
+
+Repo: AdrianTuci1/warp-new
+Branch: octomus/agent-3-ai
+
+[bash]
+git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
+cd /tmp/repo
+git checkout master
+git checkout -b octomus/agent-3-ai
+[/bash]
+
+TASK: Edit ONLY app/src/ai/ files. Do NOT touch other files.
+
+1. EDIT app/src/ai/mod.rs:
+Remove these module declarations:
+- `pub mod agent_sdk;`
+- `pub mod cloud_agent_config;`
+- `pub mod cloud_agent_settings;`
+- `pub mod cloud_environments;`
+- `pub mod connected_self_hosted_workers;`
+
+Remove these from init() if present:
+- Any calls referencing these deleted modules
+
+2. EDIT app/src/ai/llms.rs:
+Remove ALL predefined model configurations. The LLMPreferences should start EMPTY - no preconfigured models. User adds their own provider and API key.
+
+Replace the ENTIRE content with a minimal stub:
+```rust
+// LLM preferences - starts empty, user configures their own provider/key.
+use warpui::AppContext;
+use warpui::SingletonEntity;
+
+#[derive(Clone, Debug, Default)]
+pub struct LLMPreferences;
+
+impl LLMPreferences {
+    pub fn new() -> Self {
+        Self
+    }
+}
+
+// Keep the register function if it exists, but make it a no-op
+```
+
+If LLMPreferences is more complex and used elsewhere, just empty the model list/presets but keep the struct so other code still compiles.
+
+3. EDIT app/src/ai/llms_tests.rs:
+Remove or comment out tests that reference deleted model configurations.
+
+4. Check if any other files in app/src/ai/ import from the deleted modules (cloud_environments, agent_sdk, etc.). If so, remove those imports.
+
+After done:
+```
+git add -A
+git commit -m "octomus: clean up ai module - remove cloud agent code, empty llms.rs"
+git push origin octomus/agent-3-ai
+```

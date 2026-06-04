@@ -1,0 +1,37 @@
+GITHUB_TOKEN auto-pasat via env_passthrough.
+
+Repo: AdrianTuci1/warp-new
+Branch: octomus/agent-1-delete
+
+[bash]
+git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
+cd /tmp/repo
+git checkout master
+git checkout -b octomus/agent-1-delete
+[/bash]
+
+TASK: Delete these directories and files. ONLY deletions — do NOT edit any remaining files.
+
+Delete ALL contents of these directories (rm -rf):
+- app/src/auth/
+- app/src/pricing/
+- app/src/billing/
+- app/src/server/ (everything: graphql, cloud_objects, telemetry, server_api, sync_queue, experiments, iap, voice_transcriber, network_logging, block.rs, ids.rs, mod.rs, EVERYTHING)
+- app/src/cloud_object/ (everything: model, breadcrumbs, grab_edit_access_modal, toast_message)
+- app/src/drive/ (everything: panel, export, import, folders, sharing, index, workflows)
+- app/src/workspaces/ (everything: team_tester, update_manager, user_profiles, user_workspaces, workspace.rs, team.rs, gql_convert)
+- app/src/ai/cloud_environments/
+- app/src/ai/agent_sdk/
+- app/src/ai/cloud_agent_config/
+- app/src/ai/connected_self_hosted_workers.rs
+- app/src/ai/connected_self_hosted_workers_tests.rs
+- app/src/ai/cloud_agent_settings.rs
+- app/src/ai/artifact_download.rs
+- app/src/ai/artifact_download_tests.rs
+
+After deleting everything:
+```
+git add -A
+git commit -m "octomus: delete cloud auth/server/drive/workspaces/cloud-ai dirs"
+git push origin octomus/agent-1-delete
+```
