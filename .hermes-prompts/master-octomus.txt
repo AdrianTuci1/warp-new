@@ -1,0 +1,225 @@
+GITHUB_TOKEN auto-pasat via env_passthrough.
+Repo: AdrianTuci1/warp-new
+
+Ești orchestratorul Octomus. Lucrezi pe un singur sandbox Modal (16vCPU/32GB).
+Clonează repo-ul, creează 5 worktree-uri, și rulează 5 faze de lucru.
+Fiecare fază face commit+push pe branch-ul ei.
+La final, mergi toate branch-urile și încearcă `cargo check`.
+
+=== SETUP ===
+[bash]
+git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
+cd /tmp/repo
+# Create 5 worktrees
+git worktree add /tmp/wt-1 -b octomus/agent-1-delete master
+git worktree add /tmp/wt-2 -b octomus/agent-2-lib master
+git worktree add /tmp/wt-3 -b octomus/agent-3-ai master
+git worktree add /tmp/wt-4 -b octomus/agent-4-branding master
+git worktree add /tmp/wt-5 -b octomus/agent-5-cargo master
+[/bash]
+
+După setup, raportează "✅ Setup complet — încep fazele" și treci la PHASE 1.
+
+=== PHASE 1 — DELETE CLOUD DIRS (worktree /tmp/wt-1, branch octomus/agent-1-delete) ===
+[bash]
+cd /tmp/wt-1
+# Delete directories
+rm -rf app/src/auth/
+rm -rf app/src/pricing/
+rm -rf app/src/billing/
+rm -rf app/src/server/
+rm -rf app/src/cloud_object/
+rm -rf app/src/drive/
+rm -rf app/src/workspaces/
+rm -rf app/src/crash_reporting/
+rm -rf app/src/remote_server/
+rm -rf app/src/autoupdate/
+rm -rf app/src/ai/cloud_environments/
+rm -rf app/src/ai/agent_sdk/
+rm -rf app/src/ai/cloud_agent_config/
+# Delete individual files
+rm -f app/src/ai/connected_self_hosted_workers.rs
+rm -f app/src/ai/connected_self_hosted_workers_tests.rs
+rm -f app/src/ai/cloud_agent_settings.rs
+rm -f app/src/ai/artifact_download.rs
+rm -f app/src/ai/artifact_download_tests.rs
+rm -f app/src/ai/agent_management/cloud_setup_guide_view.rs
+rm -f app/src/changelog_model.rs
+rm -f app/src/reward_view.rs
+rm -f app/src/referral_theme_status.rs
+git add -A
+git commit -m "octomus: delete cloud auth/server/drive/workspaces/cloud-ai dirs"
+git push origin octomus/agent-1-delete
+[/bash]
+Raportează "✅ PHASE 1 done — octomus/agent-1-delete pushed"
+
+=== PHASE 2 — FIX lib.rs (worktree /tmp/wt-2, branch octomus/agent-2-lib) ===
+Editează DOAR /tmp/wt-2/app/src/lib.rs.
+
+1. Șterge aceste module declarations:
+- `mod auth;`
+- `mod billing;`
+- `mod pricing;`
+- `mod server;`
+- `mod cloud_object;`
+- `pub mod drive;`
+- `pub mod workspaces;`
+- `#[cfg(feature = "crash_reporting")] mod crash_reporting;` (tot blocul)
+- `#[allow(dead_code)] mod remote_server;`
+- `mod autoupdate;`
+- `mod changelog_model;`
+- `mod reward_view;`
+- `mod referral_theme_status;`
+
+2. Șterge TOATE import-urile din modulele șterse. Caută fiecare linie care conține:
+auth::, billing::, pricing::, server::, cloud_object::, drive::, workspaces::, crash_reporting::, remote_server::, autoupdate::, changelog_model::, reward_view::, referral_theme_status::, cloud_preferences_syncer::
+Și șterge-le.
+
+3. În initialize_app(), șterge:
+- Toate singleton-ele: AuthState, IapState, ServerApiProvider, AuthStateProvider, AppTelemetryContextProvider, AuthManager, ServerExperiments, AIRequestUsageModel, UserWorkspaces, ApiKeyManager, ChangelogModel, NetworkLogModel, TelemetryCollector, CloudModel, SyncQueue, ObjectActions, TeamTesterStatus, TeamUpdateManager, UpdateManager, CloudViewModel, AIDocumentModel, Listener, IapManager, ExportManager
+- Apelul `initialize_cloud_preferences_syncer`
+- Blocul `let notebooks = cloud_objects.iter().filter_map(...)` — înlocuiește cu `NotebookManager::new(vec![], ctx)`
+- `server_api` și `ai_client` lines
+- `ReferralThemeStatus` din GlobalResourceHandles
+
+4. Șterge aceste init() calls:
+- `auth::init(ctx);`
+- `drive::index::init(ctx);`
+- `drive::sharing::dialog::init(ctx);`
+- `billing::shared_objects_creation_denied_modal::init(ctx);`
+PĂSTREAZĂ: `ai::init(ctx);`, `workspace::init(ctx);`, terminal, editor, pane_group, themes.
+
+5. Șterge blocul `if user_is_logged_in { ... } else { LoggedOutStartup ... }` și păstrează DOAR conținutul din ramura else (LoggedOutStartup).
+
+6. Șterge `send_telemetry_from_app_ctx!`, `send_telemetry_from_ctx`, și orice referință la `crate::server::telemetry`.
+
+7. Simplifică destructuring-ul sqlite_data — păstrează doar: `app_state`, `workspace_language_servers`, `codebase_indices`.
+
+8. Folosește `#[cfg_attr(test, expect(unused))]` sau `let _ =` pentru variabile care devin unused.
+
+După toate editările:
+[bash]
+cd /tmp/wt-2
+git add -A
+git commit -m "octomus: clean up lib.rs - remove cloud module references"
+git push origin octomus/agent-2-lib
+[/bash]
+Raportează "✅ PHASE 2 done — octomus/agent-2-lib pushed"
+
+=== PHASE 3 — FIX AI MODULE (worktree /tmp/wt-3, branch octomus/agent-3-ai) ===
+Editează DOAR fișiere din /tmp/wt-3/app/src/ai/.
+
+3a. /tmp/wt-3/app/src/ai/mod.rs — șterge aceste module declarations:
+- `pub mod agent_sdk;`
+- `pub mod cloud_agent_config;`
+- `pub mod cloud_agent_settings;`
+- `pub mod cloud_environments;`
+- `pub mod connected_self_hosted_workers;`
+Șterge din init() orice apel către modulele șterse.
+
+3b. /tmp/wt-3/app/src/ai/agent_management/mod.rs — șterge `mod cloud_setup_guide_view;`
+
+3c. /tmp/wt-3/app/src/ai/llms.rs — golește toate modelele predefinite. Structura LLMPreferences trebuie să rămână goală (user-ul își adaugă propriul provider). PĂSTREAZĂ struct-ul și register function, doar golește conținutul.
+
+3d. /tmp/wt-3/app/src/ai/llms_tests.rs — șterge sau comentează testele care referă modele șterse.
+
+3e. Verifică orice alt fișier din app/src/ai/ pentru import-uri din modulele șterse și șterge-le.
+
+[bash]
+cd /tmp/wt-3
+git add -A
+git commit -m "octomus: clean up ai module - remove cloud agent code, empty llms.rs"
+git push origin octomus/agent-3-ai
+[/bash]
+Raportează "✅ PHASE 3 done — octomus/agent-3-ai pushed"
+
+=== PHASE 4 — BRANDING (worktree /tmp/wt-4, branch octomus/agent-4-branding) ===
+Înlocuiește "Warp" cu "Octomus" DOAR în string-uri user-visible din app/src/.
+NU schimba: identificatori Rust, nume de crate (warpui, warp_core), path-uri, feature flags, env vars.
+
+Folosește sed pentru înlocuiri în masă, DAR fii conservator:
+[bash]
+cd /tmp/wt-4
+# Înlocuiri sigure (doar în string literals)
+find app/src -name '*.rs' -exec sed -i '' 's/"Warp AI"/"Octomus AI"/g' {} +
+find app/src -name '*.rs' -exec sed -i '' 's/"Warp Drive"/"Local Storage"/g' {} +
+find app/src -name '*.rs' -exec sed -i '' 's/"About Warp"/"About Octomus"/g' {} +
+find app/src -name '*.rs' -exec sed -i '' 's/"Warp Help"/"Octomus Help"/g' {} +
+find app/src -name '*.rs' -exec sed -i '' 's/"Get Warp"/"Get Octomus"/g' {} +
+[/bash]
+
+APOI, citește manual fișierele cheie (app_menus.rs, root_view.rs, command_palette.rs, settings/, onboarding, search_bar.rs, tips/, banner/, resource_center/) și înlocuiește "Warp" rămas în string-uri UI cu "Octomus". NU atinge warp_*, WARP_*, warpui, warp_core, feature flags, env vars.
+
+[bash]
+cd /tmp/wt-4
+git add -A
+git commit -m "octomus: rename Warp to Octomus in UI strings"
+git push origin octomus/agent-4-branding
+[/bash]
+Raportează "✅ PHASE 4 done — octomus/agent-4-branding pushed"
+
+=== PHASE 5 — CARGO + SETTINGS + VOICE (worktree /tmp/wt-5, branch octomus/agent-5-cargo) ===
+
+5a. /tmp/wt-5/app/Cargo.toml — șterge dependențele:
+cloud_object_client, cloud_object_models, cloud_objects, warp_server_auth, warp_server_client, cloud_object_persistence, warp_graphql (dacă e doar în module șterse), oauth2 (dacă e doar în auth).
+Șterge feature flags care referă module șterse.
+
+5b. /tmp/wt-5/app/src/settings/cloud_preferences.rs — ȘTERGE fișierul
+/tmp/wt-5/app/src/settings/cloud_preferences_syncer.rs — ȘTERGE fișierul
+/tmp/wt-5/app/src/settings/mod.rs — șterge `pub mod cloud_preferences;` și `pub mod cloud_preferences_syncer;`
+/tmp/wt-5/app/src/settings/ai.rs — simplifică, șterge referințe la cloud AI
+
+5c. /tmp/wt-5/app/src/voice/mod.rs și transcriber.rs — șterge ServerVoiceTranscriber și import-urile din crate::server
+
+5d. /tmp/wt-5/app/src/notebooks/ — șterge import-urile din cloud_object, drive, server, workspaces. Șterge tipul CloudNotebook. Simplifică NotebookManager.
+
+5e. /tmp/wt-5/app/src/workflows/ — șterge import-urile din module șterse. Șterge variantele WorkflowSource::Team, WorkflowSource::PersonalCloud.
+
+5f. Scanează alte fișiere (env_vars/, mcp/, settings/ rămase) pentru import-uri din module șterse și curăță-le.
+
+[bash]
+cd /tmp/wt-5
+git add -A
+git commit -m "octomus: clean up Cargo.toml, notebooks, workflows, settings, voice"
+git push origin octomus/agent-5-cargo
+[/bash]
+Raportează "✅ PHASE 5 done — octomus/agent-5-cargo pushed"
+
+=== FINAL: MERGE + CARGO CHECK ===
+[bash]
+cd /tmp/repo
+git fetch origin
+git checkout master
+git checkout -b octomus/merged
+# Merge in order
+git merge origin/octomus/agent-1-delete --no-edit || (git diff --name-only --diff-filter=U | xargs -I{} git checkout --theirs {} && git add . && git commit -m "merge agent-1")
+git merge origin/octomus/agent-2-lib --no-edit || (git diff --name-only --diff-filter=U | xargs -I{} git checkout --theirs {} && git add . && git commit -m "merge agent-2")
+git merge origin/octomus/agent-3-ai --no-edit || (git diff --name-only --diff-filter=U | xargs -I{} git checkout --theirs {} && git add . && git commit -m "merge agent-3")
+git merge origin/octomus/agent-4-branding --no-edit || (git diff --name-only --diff-filter=U | xargs -I{} git checkout --theirs {} && git add . && git commit -m "merge agent-4")
+git merge origin/octomus/agent-5-cargo --no-edit || (git diff --name-only --diff-filter=U | xargs -I{} git checkout --theirs {} && git add . && git commit -m "merge agent-5")
+[/bash]
+
+Apoi rulează:
+[bash]
+cd /tmp/repo
+cargo check 2>&1 | head -100
+[/bash]
+
+Dacă sunt erori de compilare, FIXEAZĂ-LE. Citește fișierele cu erori, editează, și reîncearcă cargo check.
+Repetă până când cargo check trece (max 10 iterații).
+
+La final:
+[bash]
+cd /tmp/repo
+git add -A
+git commit -m "octomus: merge all agents + fix compilation"
+git push origin octomus/merged
+[/bash]
+
+Raportează "🎉 OCTOMUS READY — octomus/merged pushed, cargo check trece!"
+
+=== COMUNICARE CU USER-UL ===
+- După fiecare fază, raportează scurt: "✅ PHASE X done (N files changed)"
+- Dacă o fază durează mult, spune la ce fișier lucrezi
+- User-ul poate oricând să spună "skip X", "stop", "show status", etc.
+- Dacă user-ul dă steer, execută imediat și confirmă
