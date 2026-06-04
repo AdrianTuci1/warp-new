@@ -1,17 +1,19 @@
 #!/bin/bash
 set -euo pipefail
 
-if [ $# -lt 1 ]; then
-  echo "Usage: $0 <GITHUB_TOKEN>"
-  echo ""
-  echo "Generate a fine-grained PAT at:"
-  echo "  https://github.com/settings/tokens?type=beta"
-  echo "Repository: AdrianTuci1/warp-new"
-  echo "Permission: Contents → Read & Write"
-  exit 1
+# Auto-generate token via gh CLI (classic PAT with repo scope)
+if [ $# -ge 1 ]; then
+  export GITHUB_TOKEN="$1"
+  echo "🔑 Using provided token"
+else
+  export GITHUB_TOKEN=$(gh auth token 2>/dev/null)
+  if [ -z "$GITHUB_TOKEN" ]; then
+    echo "❌ Nu am putut obține token-ul. Rulează 'gh auth login' mai întâi."
+    echo "   Sau: $0 <GITHUB_TOKEN>"
+    exit 1
+  fi
+  echo "🔑 Using gh auth token (scope: repo)"
 fi
-
-export GITHUB_TOKEN="$1"
 
 SESSION="octomus"
 PROMPTS_DIR="$(cd "$(dirname "$0")/.." && pwd)/.hermes-prompts"
@@ -101,7 +103,7 @@ echo "  🐙 Octomus — 1 sandbox Modal, 5 faze"
 echo "  ═════════════════════════════════════"
 echo ""
 echo "  📡 1 sandbox Modal: 16vCPU / 32GB RAM"
-echo "  🔑 GITHUB_TOKEN auto-pasat"
+echo "  🔑 Token: auto-din gh auth token (repo scope)"
 echo "  ⏱️  Lifetime: 4 ore (14400s)"
 echo ""
 echo "  ┌─────────────────────────────────────┐"
