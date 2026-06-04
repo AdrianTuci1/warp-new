@@ -160,8 +160,9 @@ git push origin octomus/agent-3-ai
 [/bash]
 Raportează "✅ PHASE 3 done"
 
-=== PHASE 4 — BRANDING (worktree /tmp/wt-4) ===
-Înlocuiește "Warp" → "Octomus" DOAR în string-uri UI.
+=== PHASE 4 — BRANDING + BINARY RENAME (worktree /tmp/wt-4) ===
+
+4a. UI STRINGS: Înlocuiește "Warp" → "Octomus" DOAR în string-uri UI.
 NU atinge: crate names (warpui, warp_core), identificatori Rust, path-uri, feature flags.
 
 [bash]
@@ -177,10 +178,50 @@ Apoi citește manual fișierele cheie (app_menus.rs, root_view.rs, command_palet
 settings/ rămase, onboarding, search_bar.rs, tips/ rămase, banner/ rămase)
 și înlocuiește "Warp" rămas în string-uri UI cu "Octomus".
 
+4b. BINARY RENAME — app/Cargo.toml:
+- `name = "warp"` → `name = "octomus"`
+- `default-run = "warp-oss"` → `default-run = "octomus-oss"`
+- `[[bin]] name = "warp-oss"` → `name = "octomus-oss"`
+- `[[bin]] name = "warp"` → `name = "octomus"`
+- `[lib] name = "warp"` → `name = "octomus"`
+- `bin/oss.rs` și `bin/local.rs` rămân ca path, nu le redenumi
+
+4c. RENAME crate — crates/warp_cli/Cargo.toml:
+- `name = "warp_cli"` → `name = "octomus_cli"`
+
+4d. BUNDLE SCRIPT — script/macos/bundle:
+Caută și înlocuiește TOATE referințele la binary/app names:
+- `WARP_BIN="warp"` → `WARP_BIN="octomus"`
+- `WARP_BIN="dev"` → rămâne (nu e prefixat warp)
+- `WARP_BIN="preview"` → rămâne
+- `WARP_BIN="stable"` → rămâne
+- `WARP_BIN="warp-oss"` → `WARP_BIN="octomus-oss"`
+- `WARP_APP_NAME="Warp"` → `WARP_APP_NAME="Octomus"`
+- `WARP_APP_NAME="WarpDev"` → `WARP_APP_NAME="OctomusDev"`
+- `WARP_APP_NAME="WarpLocal"` → `WARP_APP_NAME="OctomusLocal"`
+- `WARP_APP_NAME="WarpPreview"` → `WARP_APP_NAME="OctomusPreview"`
+- `WARP_APP_NAME="WarpOss"` → `WARP_APP_NAME="OctomusOss"`
+- `BUNDLE_ID="dev.warp.Warp-..."` → `BUNDLE_ID="dev.octomus.Octomus-..."` etc.
+- `WARP_SCHEME_NAME="warp"` → `WARP_SCHEME_NAME="octomus"`
+- `WARP_SCHEME_NAME="warplocal"` → `WARP_SCHEME_NAME="octomuslocal"`
+- `WARP_SCHEME_NAME="warpdev"` → `WARP_SCHEME_NAME="octomusdev"`
+- `WARP_SCHEME_NAME="warppreview"` → `WARP_SCHEME_NAME="octomuspreview"`
+- `WARP_SCHEME_NAME="warposs"` → `WARP_SCHEME_NAME="octomusoss"`
+- DMG name: orice conține `Warp` → `Octomus`
+- CLI wrapper: `bin/oz` e deja ok, dar `bin/warp-oss` → `bin/octomus-oss`
+- NU schimba: `WARP_NOTARIZATION_PASSWORD`, `WARP_DEVELOPER_ID_CERT_PASSWORD`,
+  `WARP_CODESIGN_KEYCHAIN_PASSWORD`, `WARP_PLIST_PATH` (env vars interne)
+
+4e. LINUX PACKAGING — actualizează referințele:
+- `resources/linux/debian/cli/control.template` — warp → octomus
+- `resources/linux/debian/app/` — Warp → Octomus
+- `resources/linux/arch/cli/PKGBUILD.template` — warp → octomus
+- `resources/linux/rpm/cli/warp.spec.template` — warp.spec → octomus.spec, Warp → Octomus
+
 [bash]
 cd /tmp/wt-4
 git add -A
-git commit -m "octomus: rename Warp to Octomus in UI strings"
+git commit -m "octomus: rename Warp to Octomus — UI strings, binary, bundle, packages"
 git push origin octomus/agent-4-branding
 [/bash]
 Raportează "✅ PHASE 4 done"
@@ -191,6 +232,7 @@ Raportează "✅ PHASE 4 done"
 cloud_object_client, cloud_object_models, cloud_objects, warp_server_auth,
 warp_server_client, cloud_object_persistence, warp_graphql, oauth2
 Șterge feature flags care referă module șterse.
+Schimbă `warp_cli.workspace = true` → `octomus_cli.workspace = true` (crate-ul a fost redenumit in PHASE 4).
 
 5b. /tmp/wt-5/app/src/settings/mod.rs — șterge module declarations:
 pub mod cloud_preferences; pub mod cloud_preferences_syncer; pub mod changelog;
@@ -200,7 +242,10 @@ pub mod cloud_preferences; pub mod cloud_preferences_syncer; pub mod changelog;
 5d. /tmp/wt-5/app/src/voice/mod.rs + transcriber.rs — șterge ServerVoiceTranscriber,
 șterge import-urile din crate::server. Pune un stub dacă transcriber-ul e doar server-based.
 
-5e. /tmp/wt-5/app/src/settings_view/mod.rs (dacă există) — șterge module declarations
+5e. WORKSPACE ROOT — /tmp/wt-5/Cargo.toml (workspace root):
+Schimbă `"crates/warp_cli"` → `"crates/octomus_cli"` în lista de workspace members.
+
+5f. /tmp/wt-5/app/src/settings_view/mod.rs (dacă există) — șterge module declarations
 pentru fișierele șterse în phase 1.
 
 [bash]
