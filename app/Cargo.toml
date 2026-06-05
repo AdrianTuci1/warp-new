@@ -140,7 +140,6 @@ log.workspace = true
 log-panics = { version = "2.1.0", features = ["with-backtrace"] }
 lsp.workspace = true
 warp_logging.workspace = true
-sentry = { workspace = true, optional = true }
 lz4_flex = "0.11"
 markdown_parser.workspace = true
 memchr.workspace = true
@@ -169,7 +168,6 @@ regex-automata = "0.4.6"
 regex.workspace = true
 reqwest.workspace = true
 rust-embed.workspace = true
-sentry-log = { workspace = true, optional = true }
 inventory = "0.3"
 schemars = "1"
 serde.workspace = true
@@ -466,8 +464,6 @@ completions_v2 = [
     "warp_completer/v2",
     "dep:command-signatures-v2",
 ]
-    "dep:sentry",
-    "dep:sentry-log",
     "dep:minidumper",
     "dep:crash-handler",
 ]
@@ -751,7 +747,6 @@ local_fs = [
     "repo_metadata/local_fs",
     "warp_core/local_fs",
 ]
-log_expensive_frames_in_sentry = []
 markdown_tables = []
 markdown_mermaid = []
 mcp_server = []
