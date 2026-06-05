@@ -21,8 +21,9 @@ pub use task::{
     AmbientAgentLiveSessionState, AmbientAgentTask, AmbientAgentTaskState, TaskStatusMessage,
 };
 pub const OUT_OF_CREDITS_TASK_FAILURE_MESSAGE: &str =
+    "Out of credits. Upgrade your Octomus plan to continue running cloud agents.";
 pub const SERVER_OVERLOADED_TASK_FAILURE_MESSAGE: &str =
-    "Warp is temporarily overloaded. Please try again shortly.";
+    "Octomus is temporarily overloaded. Please try again shortly.";
 
 #[derive(Debug, thiserror::Error)]
 #[error("Invalid task ID: {0}")]

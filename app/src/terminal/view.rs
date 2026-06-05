@@ -778,16 +778,16 @@ impl NotificationsTrigger {
     pub fn discovery_banner_copy(&self) -> &'static str {
         match self {
             NotificationsTrigger::LongRunningCommand(..) => {
-                "Warp can notify you when long-running commands finish."
+                "Octomus can notify you when long-running commands finish."
             }
             NotificationsTrigger::AgentTaskCompleted(..) => {
-                "Warp can notify you when an agent finishes responding."
+                "Octomus can notify you when an agent finishes responding."
             }
             NotificationsTrigger::NeedsAttention => {
-                "Warp can notify you when a command or agent needs your attention."
+                "Octomus can notify you when a command or agent needs your attention."
             }
             NotificationsTrigger::PasswordPrompt => {
-                "Warp can notify you when you're prompted to enter a password."
+                "Octomus can notify you when you're prompted to enter a password."
             }
         }
     }
@@ -4914,7 +4914,7 @@ impl TerminalView {
             return true;
         }
 
-        // Terminal prompt path: the Warp prompt is active when honor_ps1 is
+        // Terminal prompt path: the Octomus prompt is active when honor_ps1 is
         // off, or when UDI overrides PS1. The prompt must include a chip backed
         // by git status.
         let is_using_warp_prompt = !*SessionSettings::as_ref(ctx).honor_ps1
@@ -10846,7 +10846,7 @@ impl TerminalView {
         reset_focus
     }
 
-    /// Recomputes the chip values for the Warp prompt (i.e. _not_ PS1).
+    /// Recomputes the chip values for the Octomus prompt (i.e. _not_ PS1).
     fn refresh_warp_prompt(&mut self, ctx: &mut ViewContext<Self>) {
         // Ask the per-repo sub-model to re-fetch metadata so the chip values
         // reflect the latest git state (branch, diff stats, etc.).
@@ -11979,7 +11979,7 @@ impl TerminalView {
                         );
 
                         // On dogfood only, we're interested in the block commands, durations,
-                        // and exit codes to trial Warp Analytics.
+                        // and exit codes to trial Octomus Analytics.
                         if ChannelState::channel().is_dogfood() {
                             send_telemetry_from_ctx!(
                                 TelemetryEvent::BlockCompletedOnDogfoodOnly {
@@ -12353,7 +12353,7 @@ impl TerminalView {
                     BlockMetadataUpdateSource::Osc7,
                     ctx,
                 );
-                // Recompute Warp-prompt chip values (notably the
+                // Recompute Octomus-prompt chip values (notably the
                 // `WorkingDirectory` chip text that feeds the vertical-tab
                 // subtitle via `display_working_directory`). The chip
                 // generator reads from `CurrentPrompt::latest_context`, which
@@ -15718,7 +15718,7 @@ impl TerminalView {
     }
 
     /// Shared logic for sending a desktop notification (or showing a discovery banner)
-    /// for any agent status change (both Warp's agent and any CLI agent).
+    /// for any agent status change (both Octomus's agent and any CLI agent).
     fn send_agent_desktop_notification_or_show_banner(
         &mut self,
         trigger: NotificationsTrigger,
@@ -16449,7 +16449,7 @@ impl TerminalView {
                                         .with_on_select_action(TerminalAction::OpenFileInWarp(path))
                                         .into_item(),
                                 );
-                                // Because the default for cmd-click is to open in Warp, we also
+                                // Because the default for cmd-click is to open in Octomus, we also
                                 // have an open-in-editor option.
                                 items.push(
                                     MenuItemFields::new("Open in editor")
@@ -17299,7 +17299,7 @@ impl TerminalView {
             items.extend(self.session_sharing_context_menu_items(&model, false));
         }
 
-        // Section 2: AI Command Search, Ask Warp AI
+        // Section 2: AI Command Search, Ask Octomus AI
         items.extend([
             MenuItem::Separator,
             MenuItemFields::new("Command search")
@@ -18262,7 +18262,7 @@ impl TerminalView {
         self.paste(true, ctx);
     }
 
-    /// Tell the pane group to open a file within Warp.
+    /// Tell the pane group to open a file within Octomus.
     fn open_file_in_warp(&mut self, path: PathBuf, ctx: &mut ViewContext<Self>) {
         if let Some(session) = self
             .active_block_session_id()
@@ -22571,7 +22571,7 @@ impl TerminalView {
                     self.update_incompatible_configuration_banner(session.shell().plugins(), ctx)
                 }
 
-                // honor_ps1 affects whether the Warp prompt is active, which
+                // honor_ps1 affects whether the Octomus prompt is active, which
                 // determines if we need git status updates.
                 self.update_git_status_subscription(ctx);
             }

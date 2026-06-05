@@ -84,9 +84,9 @@ fn regex_right() {
     #[rustfmt::skip]
     let blockgrid = mock_blockgrid("\
         testing66\r\n\
-        Warp\n\
+        Octomus\n\
         123\r\n\
-        Warp\r\n\
+        Octomus\r\n\
         123\
     ");
 
@@ -109,9 +109,9 @@ fn regex_left() {
     #[rustfmt::skip]
     let blockgrid = mock_blockgrid("\
         testing66\r\n\
-        Warp\n\
+        Octomus\n\
         123\r\n\
-        Warp\r\n\
+        Octomus\r\n\
         123\
     ");
 
@@ -133,7 +133,7 @@ fn regex_left() {
 fn nested_regex() {
     #[rustfmt::skip]
     let blockgrid = mock_blockgrid("\
-        Wa -> Warp -> rp\r\n\
+        Wa -> Octomus -> rp\r\n\
         rp\
     ");
 
