@@ -2992,12 +2992,7 @@ pub fn render_failed_output(props: FailedOutputProps, app: &AppContext) -> Box<d
             if let Some(message) = user_display_message {
                 format!("{ERROR_APOLOGY_TEXT}\n\n{message}")
             } else {
-                    .next_refresh_time()
-                    .format("%B %d")
-                    .to_string();
-
-                format!(
-                )
+                format!("{ERROR_APOLOGY_TEXT}\n\nYou've reached your credit limit.")
             }
         }
         RenderableAIError::ServerOverloaded => {

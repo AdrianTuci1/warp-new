@@ -92,10 +92,6 @@ impl PromptAlertView {
         let privacy_settings = PrivacySettings::handle(ctx);
         let api_key_manager = ApiKeyManager::handle(ctx);
 
-            me.state = Self::determine_state(ctx);
-            ctx.notify();
-        });
-
         ctx.subscribe_to_model(&user_workspaces, |me, _, _, ctx| {
             me.state = Self::determine_state(ctx);
             ctx.notify();
@@ -145,21 +141,6 @@ impl PromptAlertView {
 
         let auth_state = AuthStateProvider::as_ref(app).get();
 
-        // Next, if the user is anonymous, we check if they have reached a certain percentage of requests used.
-        if auth_state
-            .is_anonymous_user_feature_gated()
-            .unwrap_or_default()
-        {
-
-            if percentage_used >= ANONYMOUS_USER_REQUEST_LIMIT_SOFT_GATE_PERCENTAGE {
-                if has_requests_remaining {
-                    return PromptAlertState::AnonymousUserRequestLimitSoftGate;
-                } else {
-                    return PromptAlertState::AnonymousUserRequestLimitHardGate;
-                }
-            }
-        }
-
         // Next, make sure the user isn't delinquent in their plan.
         let workspace = UserWorkspaces::as_ref(app).current_workspace();
         if workspace.is_some_and(|w| w.billing_metadata.is_delinquent_due_to_payment_issue()) {
@@ -167,8 +148,7 @@ impl PromptAlertView {
         }
 
         // If there is ever any ai remaining, no alert
-            return PromptAlertState::NoAlert;
-        }
+        return PromptAlertState::NoAlert;
 
         // Check if overages are available.
         if let Some(workspace) = workspace {
@@ -425,23 +405,7 @@ impl View for PromptAlertView {
             .zip(current_team)
             .is_some_and(|(email, team)| team.has_admin_permissions(&email));
 
-            .is_some_and(|policy| policy.enabled);
-
-            && has_admin_permissions
-            && matches!(
-                state,
-                PromptAlertState::RequestLimitReached
-                    | PromptAlertState::OveragesToggleableButNotEnabled
-                    | PromptAlertState::MonthlyOveragesSpendLimitReached
-            );
-
-            text_fragments.push(FormattedTextFragment::plain_text("  "));
-            text_fragments.push(FormattedTextFragment::hyperlink_action(
-                WorkspaceAction::ShowSettingsPage(SettingsSection::BillingAndUsage),
-            ));
-        } else {
-            self.action_hyperlink(&state, &mut text_fragments, app);
-        }
+        self.action_hyperlink(&state, &mut text_fragments, app);
 
         let formatted_text_element = FormattedTextElement::new(
             FormattedText::new([FormattedTextLine::Line(text_fragments)]),

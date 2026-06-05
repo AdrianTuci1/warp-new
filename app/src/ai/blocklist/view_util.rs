@@ -139,15 +139,6 @@ pub fn get_ai_block_overflow_menu_element_position_id(view_id: EntityId) -> Stri
     format!("aiblock:{view_id}.overflow_menu_position")
 }
 
-/// otherwise displays with one decimal place.
-    // If the first part of the decimal is 0, we just display the whole number.
-        if whole == 1 {
-        } else {
-        }
-    } else {
-    }
-}
-
 /// Renders a secondary button with an MCP/skill provider icon and a text label.
 pub(crate) fn render_provider_icon_button<F>(
     button_label: &str,

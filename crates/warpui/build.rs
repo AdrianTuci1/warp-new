@@ -4,6 +4,7 @@
 #![allow(clippy::disallowed_types)]
 
 use std::env;
+use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
 
@@ -23,6 +24,12 @@ fn main() {
 
     if env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("macos") {
         bindgen_shader_types();
+        if env::var("SKIP_WARPUI_METAL_BUILD").is_ok() {
+            let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+            fs::create_dir_all(&out_path).unwrap();
+            fs::write(out_path.join("shaders.metallib"), b"").unwrap();
+            return;
+        }
         compile_metal_shaders();
         compile_objc_lib();
     }

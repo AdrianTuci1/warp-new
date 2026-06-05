@@ -2668,7 +2668,6 @@ impl BlocklistAIController {
                                     );
                                 },
                             );
-                            });
                         }
 
                         let mut renderable_error: RenderableAIError = e.as_ref().into();
@@ -2850,7 +2849,6 @@ impl BlocklistAIController {
                     stream_id,
                     conversation_id,
                 });
-                });
 
                 self.maybe_refresh_ai_overages(ctx);
             }
@@ -2915,16 +2913,6 @@ impl BlocklistAIController {
         ctx: &mut ModelContext<Self>,
     ) {
         let history_model = BlocklistAIHistoryModel::handle(ctx);
-        history_model.update(ctx, |history_model, ctx| {
-            // persisting the conversation.
-                conversation_id,
-                }),
-                finished_event.token_usage,
-                finished_event.conversation_usage_metadata.take(),
-                did_request_contain_user_query,
-                ctx,
-            );
-        });
 
         let history_model = BlocklistAIHistoryModel::handle(ctx);
         match finished_event.reason {

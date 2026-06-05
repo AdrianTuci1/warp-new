@@ -134,7 +134,6 @@ impl AIConversationMetadata {
             .metadata_last_updated_ts
             .utc()
             .naive_utc();
-        );
         let server_conversation_token = Some(
             server_conversation_metadata
                 .server_conversation_token
@@ -1564,36 +1563,6 @@ impl BlocklistAIHistoryModel {
             }
         }
         Ok(())
-    }
-
-        &mut self,
-        conversation_id: AIConversationId,
-        token_usage: Vec<TokenUsage>,
-        usage_metadata: Option<ConversationUsageMetadata>,
-        was_user_initiated_request: bool,
-        ctx: &mut ModelContext<Self>,
-    ) {
-        // Track whether this update changes any state derived by
-        // `BlocklistAIHistoryEvent::ConversationUsageMetadataUpdated`
-        // event only when there's actual data to react to.
-        if let Some(conversation) = self.conversations_by_id.get_mut(&conversation_id) {
-                token_usage,
-                usage_metadata,
-                was_user_initiated_request,
-                ctx,
-            ) {
-                log::warn!(
-                );
-            }
-            if emits_usage_event {
-                ctx.emit(BlocklistAIHistoryEvent::ConversationUsageMetadataUpdated {
-                    conversation_id,
-                });
-            }
-        } else {
-            log::warn!(
-            );
-        }
     }
 
     pub fn mark_response_stream_completed_successfully(

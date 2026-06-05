@@ -905,16 +905,6 @@ fn link_menu_item(title: &'static str, link: Cow<'static, str>) -> MenuItem {
     ))
 }
 
-    MenuItem::Custom(CustomMenuItem::new(
-        move |ctx| {
-            // Route through the root-view action so workspace windows can open the
-            // guided AI flow, while non-workspace windows still fall back to the
-        },
-        no_updates,
-        None,
-    ))
-}
-
 fn make_new_help_menu() -> Menu {
     Menu::new(
         "Help",

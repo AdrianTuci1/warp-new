@@ -1824,8 +1824,6 @@ impl AgentManagementView {
             metadata_parts.push(format!("Run time: {run_time}"));
         }
 
-        }
-
         Text::new(metadata_parts.join(" • "), font_family, font_size)
             .with_color(theme.nonactive_ui_text_color().into())
             .finish()

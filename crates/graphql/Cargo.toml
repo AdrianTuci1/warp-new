@@ -1,4 +1,5 @@
 [package]
+name = "warp_graphql"
 authors = ["Warp Team <dev@warp.dev>"]
 edition = "2021"
 version = "0.1.0"
@@ -21,6 +22,7 @@ reqwest.workspace = true
 serde.workspace = true
 thiserror.workspace = true
 warp_core.workspace = true
+warp_graphql_schema.workspace = true
 websocket = {path = "../websocket"}
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]

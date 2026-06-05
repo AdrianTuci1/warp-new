@@ -26,7 +26,6 @@ use crate::ai::blocklist::{
 use crate::ai::document::ai_document_model::{AIDocumentModel, AIDocumentModelEvent};
 use crate::ai::mcp::templatable_manager::{FigmaMcpStatus, TemplatableMCPServerManagerEvent};
 use crate::ai::mcp::TemplatableMCPServerManager;
-};
 use crate::search::slash_command_menu::static_commands::commands;
 use crate::settings::AISettings;
 use crate::terminal::input::buffer_model::{InputBufferModel, InputBufferUpdateEvent};
@@ -218,10 +217,6 @@ impl AgentMessageBar {
             );
         }
 
-                ctx.notify();
-            }
-        });
-
         Self {
             agent_view_controller,
             ephemeral_message_model,
@@ -345,15 +340,7 @@ impl View for AgentMessageBar {
             return Empty::new().finish();
         };
 
-        let right_element = if cfg!(target_family = "wasm") {
-            None
-        {
-            } else {
-                None
-            }
-        } else {
-            None
-        };
+        let right_element = None;
 
         // Append a Figma MCP chip to the message if applicable.
         match self.figma_button_status(app) {

@@ -31,6 +31,7 @@ pub fn has_reasoning_variants(llm: &LLMInfo, all_models: &[&LLMInfo]) -> bool {
         .any(|other| other.has_reasoning_level())
 }
 
+fn with_cost_and_profile_info<A: Action + Clone>(
     item: MenuItemFields<A>,
     llm: &LLMInfo,
     profile_default_model: Option<&LLMId>,
@@ -39,17 +40,6 @@ pub fn has_reasoning_variants(llm: &LLMInfo, all_models: &[&LLMInfo]) -> bool {
 
     if Some(&llm.id) == profile_default_model {
         label.push_str("Profile default");
-    }
-
-        Some(mult) if mult != 1. => {
-                .trim_end_matches('0')
-                .trim_end_matches('.')
-                .to_string();
-            if label.is_empty() {
-            } else {
-            }
-        }
-        _ => {}
     }
 
     if label.is_empty() {
@@ -163,6 +153,7 @@ fn make_item_fields<A: Action + Clone>(
         }
     }
 
+    item
 }
 
 pub fn available_model_menu_items<A: Action + Clone>(

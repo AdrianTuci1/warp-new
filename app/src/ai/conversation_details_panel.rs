@@ -450,10 +450,6 @@ impl ConversationDetailsData {
                     .then(|| task.status_message.as_ref().map(|m| m.message.clone()))
                     .flatten()
             });
-            // Fall back to the entry's denormalized total when the task record isn't
-            // currently loaded, so the panel stays consistent with the card metadata
-            // (which always reads `entry.display.request_usage`).
-                .or(entry.display.request_usage);
             let skill_spec = task
                 .and_then(|task| task.agent_config_snapshot.as_ref())
                 .and_then(|config| config.skill_spec.as_ref())
@@ -1987,12 +1983,6 @@ impl View for ConversationDetailsPanel {
                     );
                 }
             }
-        }
-
-            content.add_child(
-                    .with_margin_bottom(FIELD_SPACING)
-                    .finish(),
-            );
         }
 
         if let Some(duration) = self.data.run_time {

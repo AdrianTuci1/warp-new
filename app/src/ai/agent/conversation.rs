@@ -34,6 +34,7 @@ use super::task_store::TaskStore;
 use super::{
     AIAgentAction, AIAgentActionId, AIAgentContext, AIAgentExchange, AIAgentExchangeId,
     AIAgentInput, AIAgentOutput, AIAgentOutputStatus, AIAgentTodo, AIAgentTodoId,
+    FinishedAIAgentOutput, MessageId, OutputModelInfo, RenderableAIError, RequestCost,
     ServerOutputId, Shared, SuggestedLoggingId, Suggestions,
 };
 use crate::ai::agent::api::convert_conversation::{
@@ -218,6 +219,7 @@ pub struct AIConversation {
     has_opened_code_review: bool,
 
     /// Usage metadata for this conversation, including summarization status, context window usage,
+    /// credits spent, token usage, and tool usage.
     conversation_usage_metadata: ConversationUsageMetadata,
 
     /// The server-generated unique "token" for this conversation.
@@ -273,6 +275,7 @@ pub struct AIConversation {
     /// A set of suggestion logging IDs that have been dismissed for this conversation.
     dismissed_suggestion_ids: HashSet<SuggestedLoggingId>,
 
+    total_request_cost: RequestCost,
     total_token_usage_by_model: HashMap<String, TokenUsage>,
 
     /// Fallback title used when no task description or initial query exists.
@@ -361,6 +364,7 @@ impl AIConversation {
             reverted_action_ids: Default::default(),
             existing_suggestions: None,
             dismissed_suggestion_ids: Default::default(),
+            total_request_cost: RequestCost::new(0.),
             total_token_usage_by_model: Default::default(),
             fallback_display_title: None,
             artifacts: Vec::new(),
@@ -598,6 +602,7 @@ impl AIConversation {
             hidden_exchanges: Default::default(),
             reverted_action_ids,
             dismissed_suggestion_ids: Default::default(),
+            total_request_cost: RequestCost::new(0.),
             total_token_usage_by_model: Default::default(),
             optimistic_cli_subagent_subtask_id: None,
             fallback_display_title: None,
@@ -668,15 +673,30 @@ impl AIConversation {
         self.conversation_usage_metadata.context_window_usage
     }
 
+    /// Total credits spent in the conversation, including both LLM inference
+    /// and platform credits.
+    pub fn credits_spent(&self) -> f32 {
+        let total = self.conversation_usage_metadata.credits_spent
+            + self.conversation_usage_metadata.platform_credits_spent;
         (total * 10.0).round() / 10.0
     }
 
+    pub fn inference_credits_spent(&self) -> f32 {
+        self.conversation_usage_metadata.credits_spent
     }
 
+    pub fn platform_credits_spent(&self) -> f32 {
+        self.conversation_usage_metadata.platform_credits_spent
     }
 
+    /// Test-only helper that sets the conversation's credit total directly.
+    /// Used by unit tests that exercise downstream credit-aware logic
+    /// (e.g. the orchestration credit rollup) without having to wire up a
     /// full `StreamFinished` event.
     #[cfg(test)]
+    pub(crate) fn set_credits_spent_for_test(&mut self, credits: f32) {
+        self.conversation_usage_metadata.credits_spent = credits;
+        self.conversation_usage_metadata.platform_credits_spent = 0.0;
     }
 
     /// Test-only helper that simulates the root-task upgrade performed by the
@@ -704,8 +724,12 @@ impl AIConversation {
         self.task_store.set_root_task(server_root);
     }
 
+    // Credits spent over the last block, where the block comprises
     // all agent outputs since the most recent user input.
+    pub fn credits_spent_for_last_block(&self) -> Option<f32> {
         self.conversation_usage_metadata
+            .credits_spent_for_last_block
+            .map(|credits| (credits * 10.0).round() / 10.0)
     }
 
     /// Time to first token for the last completed set of agent responses
@@ -1673,6 +1697,7 @@ impl AIConversation {
                 coding_model_id: coding_model_id.clone(),
                 cli_agent_model_id: cli_agent_model_id.clone(),
                 computer_use_model_id: computer_use_model_id.clone(),
+                request_cost: None,
                 // This will be None for non-shared sessions
                 response_initiator: shared_session_response_initiator.clone(),
             };
@@ -1841,7 +1866,9 @@ impl AIConversation {
         Ok(())
     }
 
+    pub fn update_cost_and_usage_for_request(
         &mut self,
+        request_cost: Option<RequestCost>,
         token_usage: Vec<TokenUsage>,
         usage_metadata: Option<stream_finished::ConversationUsageMetadata>,
         was_user_initiated_request: bool,
@@ -1857,26 +1884,39 @@ impl AIConversation {
                     output: 0,
                     input_cache_read: 0,
                     input_cache_write: 0,
+                    cost_in_cents: 0.0,
                 });
 
             entry.total_input += usage.total_input;
             entry.output += usage.output;
             entry.input_cache_read += usage.input_cache_read;
             entry.input_cache_write += usage.input_cache_write;
+            entry.cost_in_cents += usage.cost_in_cents;
         }
 
+        if let Some(request_cost) = request_cost {
+            let credits_spent_for_last_block = self
                 .conversation_usage_metadata
+                .credits_spent_for_last_block
                 .get_or_insert(0.0);
 
             // If this exchange begins with a user input (implying it is initiating a new response),
+            // reset credits spent to only include credits for this new response.
             if was_user_initiated_request {
+                *credits_spent_for_last_block = 0.;
             }
 
+            // Accumulate response credit usage.
+            *credits_spent_for_last_block += request_cost.value() as f32;
+            self.total_request_cost += request_cost;
         }
 
         if let Some(usage_metadata) = usage_metadata {
             self.conversation_usage_metadata.context_window_usage =
                 usage_metadata.context_window_usage;
+            self.conversation_usage_metadata.credits_spent = usage_metadata.credits_spent;
+            self.conversation_usage_metadata.platform_credits_spent =
+                usage_metadata.platform_credits_spent;
             let llm_preferences = LLMPreferences::as_ref(ctx);
             self.conversation_usage_metadata.token_usage =
                 footer_model_token_usage(&usage_metadata, llm_preferences);
@@ -2262,6 +2302,7 @@ impl AIConversation {
                         "output": usage.output,
                         "input_cache_read": usage.input_cache_read,
                         "input_cache_write": usage.input_cache_write,
+                        "cost_in_cents": usage.cost_in_cents
                     })
                 })
                 .collect();
@@ -3304,6 +3345,8 @@ impl AIConversation {
     }
 
     #[allow(dead_code)]
+    pub fn total_request_cost(&self) -> RequestCost {
+        self.total_request_cost
     }
 
     #[allow(dead_code)]
@@ -4023,6 +4066,7 @@ pub struct ServerAIConversationMetadata {
     /// The harness that produced this conversation.
     pub harness: AIAgentHarness,
 
+    /// Usage metadata including token counts, credits spent, etc.
     pub usage: ConversationUsageMetadata,
 
     /// Server metadata (revision, timestamps, creator info, etc.).
@@ -4078,6 +4122,7 @@ impl AIAgentExchange {
                         suggestions: None,
                         telemetry_events: vec![],
                         model_info: None,
+                        request_cost: None,
                     }));
                 }
                 Ok(())

@@ -2823,96 +2823,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cloud_object_client"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-channel",
- "async-trait",
- "chrono",
- "cloud_object_models",
- "cloud_objects",
- "mockall",
- "serde",
- "serde_json",
- "uuid",
- "warp_core",
- "warp_graphql",
-]
-
-[[package]]
-name = "cloud_object_models"
-version = "0.1.0"
-dependencies = [
- "ai",
- "anyhow",
- "cfg-if",
- "chrono",
- "cloud_object_persistence",
- "cloud_objects",
- "diesel",
- "handlebars",
- "lazy_static",
- "log",
- "persistence",
- "regex",
- "schemars",
- "serde",
- "serde_json",
- "serde_regex",
- "session-sharing-protocol",
- "settings",
- "settings_value",
- "uuid",
- "warp-workflows",
- "warp_cli",
- "warp_core",
- "warp_graphql",
- "warp_util",
-]
-
-[[package]]
-name = "cloud_object_persistence"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "bincode",
- "chrono",
- "cloud_objects",
- "diesel",
- "lazy_static",
- "log",
- "persistence",
- "serde",
- "session-sharing-protocol",
- "warp_core",
- "warp_graphql",
-]
-
-[[package]]
-name = "cloud_objects"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
- "cynic",
- "derivative",
- "itertools 0.14.0",
- "lasso",
- "pathfinder_geometry",
- "schemars",
- "serde",
- "session-sharing-protocol",
- "settings_value",
- "thiserror 2.0.17",
- "uuid",
- "warp_core",
- "warp_graphql",
- "warp_server_auth",
- "warpui_core",
-]
-
-[[package]]
 name = "cmac"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -11467,7 +11377,6 @@ dependencies = [
  "schemars_derive",
  "serde",
  "serde_json",
- "uuid",
 ]
 
 [[package]]
@@ -14431,10 +14340,6 @@ dependencies = [
  "channel_versions",
  "chrono",
  "clap",
- "cloud_object_client",
- "cloud_object_models",
- "cloud_object_persistence",
- "cloud_objects",
  "cocoa 0.26.0",
  "comfy-table",
  "command",
@@ -14534,7 +14439,6 @@ dependencies = [
  "notify-debouncer-full",
  "num-traits",
  "num_cpus",
- "oauth2",
  "objc",
  "objc2 0.6.3",
  "objc2-app-kit 0.3.2",
@@ -14571,8 +14475,6 @@ dependencies = [
  "rustls",
  "schemars",
  "security-framework-sys",
- "sentry",
- "sentry-log",
  "serde",
  "serde-bytes-repr",
  "serde-wasm-bindgen",
@@ -14642,7 +14544,6 @@ dependencies = [
  "warp_core",
  "warp_editor",
  "warp_files",
- "warp_graphql",
  "warp_isolation_platform",
  "warp_js",
  "warp_logging",
@@ -14650,8 +14551,6 @@ dependencies = [
  "warp_multi_agent_api",
  "warp_ripgrep",
  "warp_search_core",
- "warp_server_auth",
- "warp_server_client",
  "warp_terminal",
  "warp_util",
  "warp_web_event_bus",
@@ -15097,66 +14996,6 @@ dependencies = [
  "strum_macros",
  "tantivy",
  "warp_core",
- "warpui_core",
-]
-
-[[package]]
-name = "warp_server_auth"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
- "cynic",
- "lasso",
- "log",
- "parking_lot",
- "serde",
- "serde_json",
- "thiserror 2.0.17",
- "uuid",
- "warp_core",
- "warp_graphql",
- "warp_managed_secrets",
- "warpui_core",
- "warpui_extras",
-]
-
-[[package]]
-name = "warp_server_client"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-channel",
- "async-trait",
- "bincode",
- "chrono",
- "cloud_object_client",
- "cloud_object_models",
- "cloud_objects",
- "cynic",
- "derivative",
- "diesel",
- "firebase",
- "futures",
- "http 1.4.0",
- "http_client",
- "instant",
- "itertools 0.14.0",
- "lasso",
- "log",
- "mockall",
- "oauth2",
- "pathfinder_geometry",
- "schemars",
- "serde",
- "session-sharing-protocol",
- "settings_value",
- "thiserror 2.0.17",
- "url",
- "uuid",
- "warp_core",
- "warp_graphql",
- "warp_server_auth",
  "warpui_core",
 ]
 

@@ -53,9 +53,6 @@ pub async fn generate_multi_agent_output(
         redaction::redact_inputs(&mut params.input);
     }
 
-        params.api_keys,
-    );
-
     let request = api::Request {
         task_context: Some(api::request::TaskContext {
             tasks: params.tasks,
@@ -146,17 +143,6 @@ pub async fn generate_multi_agent_output(
     }
 }
 
-    api_keys: Option<api::request::settings::ApiKeys>,
-) -> Option<api::request::settings::ApiKeys> {
-    match api_keys {
-        Some(mut api_keys) => {
-            Some(api_keys)
-        }
-            ..Default::default()
-        }),
-        None => None,
-    }
-}
 fn get_supported_tools(params: &RequestParams) -> Vec<api::ToolType> {
     let mut supported_tools = vec![
         api::ToolType::Grep,
