@@ -226,8 +226,6 @@ pub struct ConversationDetailsData {
     executor: Option<PrincipalInfo>,
     /// When the conversation was created.
     created_at: Option<DateTime<Local>>,
-    /// Total credits spent on the conversation/task.
-    credits: Option<f32>,
     /// Total duration of the conversation.
     run_time: Option<Duration>,
     /// Artifacts created during the conversation (plans, PRs, branches).
@@ -347,7 +345,6 @@ impl ConversationDetailsData {
             creator,
             executor: None,
             created_at,
-            credits: Some(conversation.credits_spent()),
             run_time,
             artifacts: conversation.artifacts().to_vec(),
             open_action: None,
@@ -376,7 +373,6 @@ impl ConversationDetailsData {
             .as_ref()
             .and_then(|config| config.environment_id.clone());
 
-        let credits = task.credits_used();
 
         let skill_spec = task
             .agent_config_snapshot
@@ -406,7 +402,6 @@ impl ConversationDetailsData {
             title: task.title.clone(),
             created_at: Some(task.created_at.with_timezone(&Local)),
             artifacts: task.artifacts.clone(),
-            credits,
             run_time: task.run_time(),
             open_action,
             creator: task
@@ -458,8 +453,6 @@ impl ConversationDetailsData {
             // Fall back to the entry's denormalized total when the task record isn't
             // currently loaded, so the panel stays consistent with the card metadata
             // (which always reads `entry.display.request_usage`).
-            let credits = task
-                .and_then(AmbientAgentTask::credits_used)
                 .or(entry.display.request_usage);
             let skill_spec = task
                 .and_then(|task| task.agent_config_snapshot.as_ref())
@@ -483,7 +476,6 @@ impl ConversationDetailsData {
                 creator,
                 executor,
                 created_at,
-                credits,
                 run_time: task.and_then(AmbientAgentTask::run_time),
                 artifacts: entry.display.artifacts.clone(),
                 open_action,
@@ -510,7 +502,6 @@ impl ConversationDetailsData {
             creator,
             executor: None,
             created_at,
-            credits: entry.display.request_usage,
             run_time: None,
             artifacts: entry.display.artifacts.clone(),
             open_action,
@@ -541,7 +532,6 @@ impl ConversationDetailsData {
             creator: None,
             executor: None,
             created_at: None,
-            credits: None,
             run_time: None,
             artifacts: vec![],
             open_action: None,
@@ -563,7 +553,6 @@ impl ConversationDetailsData {
         creator_name: Option<String>,
         created_at: DateTime<Local>,
         directory: Option<String>,
-        credits_used: Option<f32>,
         conversation_id: Option<String>,
         artifacts: Vec<Artifact>,
         open_action: Option<WorkspaceAction>,
@@ -583,7 +572,6 @@ impl ConversationDetailsData {
             creator: creator_name.map(|name| PrincipalInfo::new(name, None)),
             executor: None,
             created_at: Some(created_at),
-            credits: credits_used,
             run_time: None,
             open_action,
             artifacts,
@@ -2001,10 +1989,7 @@ impl View for ConversationDetailsPanel {
             }
         }
 
-        if let Some(credits) = self.data.credits {
-            let formatted = format!("{credits:.1}");
             content.add_child(
-                Container::new(self.render_simple_field("Credits used", &formatted, appearance))
                     .with_margin_bottom(FIELD_SPACING)
                     .finish(),
             );

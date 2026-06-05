@@ -53,9 +53,7 @@ pub async fn generate_multi_agent_output(
         redaction::redact_inputs(&mut params.input);
     }
 
-    let api_keys = api_keys_with_warp_credit_fallback_setting(
         params.api_keys,
-        params.allow_use_of_warp_credits,
     );
 
     let request = api::Request {
@@ -148,17 +146,12 @@ pub async fn generate_multi_agent_output(
     }
 }
 
-fn api_keys_with_warp_credit_fallback_setting(
     api_keys: Option<api::request::settings::ApiKeys>,
-    allow_use_of_warp_credits: bool,
 ) -> Option<api::request::settings::ApiKeys> {
     match api_keys {
         Some(mut api_keys) => {
-            api_keys.allow_use_of_warp_credits = allow_use_of_warp_credits;
             Some(api_keys)
         }
-        None if allow_use_of_warp_credits => Some(api::request::settings::ApiKeys {
-            allow_use_of_warp_credits: true,
             ..Default::default()
         }),
         None => None,

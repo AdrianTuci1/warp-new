@@ -259,7 +259,6 @@ static DEFAULT_TIPS: LazyLock<Vec<AgentTip>> = LazyLock::new(|| {
             kind: AgentTipKind::SlashCommands,
         },
         AgentTip {
-            description: "`/usage` to show your current AI credits usage.".to_string(),
             link: None,
             binding_name: None,
             action: None,

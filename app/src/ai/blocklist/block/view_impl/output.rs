@@ -97,7 +97,6 @@ use crate::ai::blocklist::inline_action::web_search::WebSearchView;
 use crate::ai::blocklist::keyboard_navigable_buttons::KeyboardNavigableButtons;
 use crate::ai::blocklist::secret_redaction::SecretRedactionState;
 use crate::ai::blocklist::usage::rollup::compute_orchestration_rollup;
-use crate::ai::blocklist::view_util::format_credits;
 use crate::ai::blocklist::{AIBlockResponseRating, BlocklistAIActionModel, SuggestionChipView};
 use crate::ai::paths::shell_native_absolute_path;
 use crate::ai::skills::{
@@ -1116,7 +1115,6 @@ pub(super) fn render(props: Props, app: &AppContext) -> Box<dyn Element> {
                             output_items.add_child(
                                 render_informational_footer(
                                     app,
-                                    "Sorry you had a bad experience with this interaction. We've refunded you 1 credit. We appreciate your feedback!"
                                         .to_string(),
                                 )
                                 .with_agent_output_item_spacing(app)
@@ -1128,7 +1126,6 @@ pub(super) fn render(props: Props, app: &AppContext) -> Box<dyn Element> {
                                 render_informational_footer(
                                     app,
                                     format!(
-                                        "Sorry you had a bad experience with this interaction. We've refunded you {request_refunded_count} credits. We appreciate your feedback!"
                                     ),
                                 )
                                 .with_agent_output_item_spacing(app)
@@ -3275,26 +3272,17 @@ fn render_usage_button(props: Props, app: &AppContext) -> Box<dyn Element> {
         return Empty::new().finish();
     };
 
-    // Optional orchestration credit rollup. When the conversation has at
-    // least one locally-loaded descendant with credits spent, the pill's
     // headline number and "has any usage" suppression check both switch
     // over to the orchestration total (PRODUCT invariants 11, 11b). The
     // `(+N)` last-block annotation below stays bound to the
-    // orchestrator's own credits. The rollup helper returns `None` for
     // conversations with no descendants, so callers that aren't
-    // orchestrators pay only the cost of one descendant-index probe.
     let rollup =
         compute_orchestration_rollup(conversation.id(), BlocklistAIHistoryModel::as_ref(app));
 
     // If this conversation has no usage metadata (e.g. a forked conversation from
     // mid-way through a prior conversation where the server did not send
     // ConversationUsageMetadata), avoid rendering the usage button entirely.
-    let headline_credits = rollup
         .as_ref()
-        .map(|r| r.total_credits)
-        .unwrap_or_else(|| conversation.credits_spent());
-    let has_any_usage = headline_credits > 0.0
-        || conversation.credits_spent_for_last_block().is_some()
         || !conversation.token_usage().is_empty()
         || conversation.tool_usage_metadata().total_tool_calls() > 0;
     if !has_any_usage {
@@ -3310,26 +3298,11 @@ fn render_usage_button(props: Props, app: &AppContext) -> Box<dyn Element> {
         Icon::ChevronRight
     };
 
-    let total_credits_spent = headline_credits;
-    let mut credit_usage_text = format_credits(total_credits_spent);
-    if let Some(credits_spent_for_last_block) = conversation.credits_spent_for_last_block() {
-        // Only show the credits spent for the last block if it is different from the total credits spent
-        // and we spent a non-zero amount of credits for the last block.
-        // Avoid showing the credits spent for the last block if the request failed, as we refund user
-        // credits in that case (so no credits were in fact spent).
-        if credits_spent_for_last_block > 0.0
-            && total_credits_spent != credits_spent_for_last_block
             && props.model.status(app).error().is_none()
         {
             // If the first part of the decimal is 0, we just display the whole number.
-            if credits_spent_for_last_block.fract() < 0.1 {
-                credit_usage_text = format!(
-                    "{credit_usage_text} (+{})",
-                    credits_spent_for_last_block.trunc() as i32
                 );
             } else {
-                credit_usage_text =
-                    format!("{credit_usage_text} (+{credits_spent_for_last_block:.1})");
             }
         }
     }
@@ -3341,7 +3314,6 @@ fn render_usage_button(props: Props, app: &AppContext) -> Box<dyn Element> {
         .with_child(
             Container::new(
                 Text::new_inline(
-                    credit_usage_text,
                     appearance.ui_font_family(),
                     appearance.monospace_font_size(),
                 )
@@ -3397,7 +3369,6 @@ fn render_usage_button(props: Props, app: &AppContext) -> Box<dyn Element> {
                 // Show tooltip on hover or while clicked
                 let mut stack = Stack::new().with_child(content.finish());
                 let tooltip = ui_builder
-                    .tool_tip("Show credit usage details".to_string())
                     .build()
                     .finish();
                 stack.add_positioned_overlay_child(
