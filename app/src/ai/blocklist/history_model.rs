@@ -31,7 +31,6 @@ use crate::ai::agent::task::helper::{MessageExt, ToolCallExt};
 use crate::ai::agent::task::TaskId;
 use crate::ai::agent::{
     AIAgentActionId, AIAgentExchange, AIAgentExchangeId, AIAgentInput, AIAgentOutputStatus,
-    CancellationReason, FinishedAIAgentOutput, MessageId, RenderableAIError, RequestCost,
     Suggestions,
 };
 use crate::ai::artifacts::Artifact;
@@ -74,7 +73,6 @@ pub struct AIConversationMetadata {
 
     pub initial_working_directory: Option<String>,
 
-    pub credits_spent: Option<f32>,
 
     pub server_conversation_token: Option<ServerConversationToken>,
 
@@ -114,7 +112,6 @@ impl From<&AIConversation> for AIConversationMetadata {
             initial_query,
             last_modified_at,
             initial_working_directory: conversation.initial_working_directory(),
-            credits_spent: Some(conversation.credits_spent()),
             server_conversation_token,
             has_local_data: true,
             has_cloud_data,
@@ -137,9 +134,6 @@ impl AIConversationMetadata {
             .metadata_last_updated_ts
             .utc()
             .naive_utc();
-        let credits_spent = Some(
-            server_conversation_metadata.usage.credits_spent
-                + server_conversation_metadata.usage.platform_credits_spent,
         );
         let server_conversation_token = Some(
             server_conversation_metadata
@@ -157,7 +151,6 @@ impl AIConversationMetadata {
             initial_query: String::new(),
             last_modified_at,
             initial_working_directory,
-            credits_spent,
             server_conversation_token,
             has_local_data: false,
             has_cloud_data: true, // Server metadata implies cloud data exists
@@ -1573,10 +1566,8 @@ impl BlocklistAIHistoryModel {
         Ok(())
     }
 
-    pub fn update_conversation_cost_and_usage_for_request(
         &mut self,
         conversation_id: AIConversationId,
-        request_cost: Option<RequestCost>,
         token_usage: Vec<TokenUsage>,
         usage_metadata: Option<ConversationUsageMetadata>,
         was_user_initiated_request: bool,
@@ -1584,19 +1575,14 @@ impl BlocklistAIHistoryModel {
     ) {
         // Track whether this update changes any state derived by
         // `BlocklistAIHistoryEvent::ConversationUsageMetadataUpdated`
-        // subscribers (e.g. the orchestration credit rollup). We emit the
         // event only when there's actual data to react to.
-        let emits_usage_event = request_cost.is_some() || usage_metadata.is_some();
         if let Some(conversation) = self.conversations_by_id.get_mut(&conversation_id) {
-            if let Err(e) = conversation.update_cost_and_usage_for_request(
-                request_cost,
                 token_usage,
                 usage_metadata,
                 was_user_initiated_request,
                 ctx,
             ) {
                 log::warn!(
-                    "Failed to update request cost for conversation {conversation_id}: {e:#}"
                 );
             }
             if emits_usage_event {
@@ -1606,7 +1592,6 @@ impl BlocklistAIHistoryModel {
             }
         } else {
             log::warn!(
-                "Failed to update request cost because conversation {conversation_id} was not found"
             );
         }
     }
@@ -2713,9 +2698,7 @@ pub enum BlocklistAIHistoryEvent {
 
     /// Emitted when a conversation's `conversation_usage_metadata` is updated
     /// (for example after a `StreamFinished` event). Subscribers that derive
-    /// data from cross-conversation usage — e.g. the orchestration credit
     /// rollup in the agent-mode footer — can listen for this to re-render
-    /// when a descendant's credits change.
     ConversationUsageMetadataUpdated {
         conversation_id: AIConversationId,
     },
@@ -2804,7 +2787,6 @@ impl BlocklistAIHistoryEvent {
             BlocklistAIHistoryEvent::OrchestrationConfigUpdated { .. } => None,
             // ConversationUsageMetadataUpdated is conversation-scoped and
             // has no terminal_view_id. Cross-pane consumers (e.g. the
-            // orchestrator footer reading descendant credits) can't be
             // disambiguated by a single owner pane.
             BlocklistAIHistoryEvent::ConversationUsageMetadataUpdated { .. } => None,
             // Conversation-scoped; subscribers resolve the owning view via conversation_id.

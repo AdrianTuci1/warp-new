@@ -79,7 +79,6 @@ use crate::ai::blocklist::secret_redaction::{redact_secrets_in_element, SecretRe
 use crate::ai::blocklist::view_util::error_color;
 use crate::ai::blocklist::{BlocklistAIActionModel, ShellCommandExecutor, TextLocation};
 use crate::ai::loading::shimmering_warp_loading_text;
-use crate::ai::AIRequestUsageModel;
 use crate::code::editor::view::CodeEditorView;
 use crate::code::editor_management::CodeSource;
 use crate::notebooks::editor::{markdown_table_appearance, rich_text_styles};
@@ -2993,14 +2992,11 @@ pub fn render_failed_output(props: FailedOutputProps, app: &AppContext) -> Box<d
             if let Some(message) = user_display_message {
                 format!("{ERROR_APOLOGY_TEXT}\n\n{message}")
             } else {
-                let ai_request_usage_model = AIRequestUsageModel::as_ref(app);
-                let formatted_next_refresh_time = ai_request_usage_model
                     .next_refresh_time()
                     .format("%B %d")
                     .to_string();
 
                 format!(
-                    "{ERROR_APOLOGY_TEXT}\n\nYou've reached your credit limit. Your credit limit resets on {formatted_next_refresh_time}.",
                 )
             }
         }

@@ -382,11 +382,9 @@ fn conversation_request_usage(
 ) -> Option<f32> {
     history_model
         .conversation(&metadata.nav_data.id)
-        .map(|conversation| conversation.credits_spent())
         .or_else(|| {
             history_model
                 .get_conversation_metadata(&metadata.nav_data.id)
-                .and_then(|metadata| metadata.credits_spent)
         })
 }
 
@@ -509,7 +507,6 @@ pub(super) fn entry_for_task(
                     uid: Some(executor.uid.clone()),
                     principal_type: PrincipalType::parse(&executor.creator_type),
                 }),
-            request_usage: task.credits_used(),
             run_time: task_run_time(task),
             session_status: Some(task_session_status(task)),
             source: task.source.clone(),

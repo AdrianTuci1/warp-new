@@ -3,7 +3,6 @@
 //! The topology is stored as a parent → children index on
 //! [`BlocklistAIHistoryModel`]. These helpers are factored out of the
 //! orchestration pill bar so other surfaces (e.g. the agent-mode usage
-//! footer's credit rollup) can walk the same tree without duplicating the
 //! traversal.
 
 use crate::ai::agent::conversation::{AIConversation, AIConversationId, ConversationStatus};

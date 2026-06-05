@@ -8,7 +8,6 @@ use warpui::elements::{
 use warpui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
 
 use crate::ai::blocklist::error_color;
-use crate::ai::AIRequestUsageModel;
 use crate::auth::AuthStateProvider;
 use crate::network::NetworkStatus;
 use crate::server::ids::ServerId;
@@ -28,9 +27,7 @@ const NO_CONNECTION_PRIMARY_TEXT: &str = "No internet connection";
 const ANONYMOUS_USER_REQUEST_LIMIT_SOFT_GATE_PRIMARY_TEXT: &str = "";
 const ANONYMOUS_USER_REQUEST_LIMIT_HARD_GATE_PRIMARY_TEXT: &str = "At Limit -";
 const DELINQUENT_DUE_TO_PAYMENT_ISSUE_PRIMARY_TEXT: &str = "Restricted due to payment issue";
-const OUT_OF_REQUESTS_PRIMARY_TEXT: &str = "Out of credits";
 
-const ANONYMOUS_USER_REQUEST_LIMIT_ACTION_TEXT: &str = "Sign up for more AI credits";
 const DELINQUENT_DUE_TO_PAYMENT_ISSUE_ACTION_TEXT: &str = "Manage billing";
 const OVERAGES_TOGGLEABLE_BUT_NOT_ENABLED_ACTION_TEXT: &str = "Enable premium overages";
 const MONTHLY_OVERAGES_SPEND_LIMIT_REACHED_ACTION_TEXT: &str = "Increase monthly spend limit";
@@ -90,13 +87,11 @@ pub struct PromptAlertView {
 
 impl PromptAlertView {
     pub fn new(ctx: &mut ViewContext<Self>) -> Self {
-        let request_usage_model = AIRequestUsageModel::handle(ctx);
         let user_workspaces = UserWorkspaces::handle(ctx);
         let network_status = NetworkStatus::handle(ctx);
         let privacy_settings = PrivacySettings::handle(ctx);
         let api_key_manager = ApiKeyManager::handle(ctx);
 
-        ctx.subscribe_to_model(&request_usage_model, |me, _, _, ctx| {
             me.state = Self::determine_state(ctx);
             ctx.notify();
         });
@@ -148,8 +143,6 @@ impl PromptAlertView {
             }
         }
 
-        let request_usage_model = AIRequestUsageModel::as_ref(app);
-        let has_requests_remaining = request_usage_model.has_requests_remaining();
         let auth_state = AuthStateProvider::as_ref(app).get();
 
         // Next, if the user is anonymous, we check if they have reached a certain percentage of requests used.
@@ -157,7 +150,6 @@ impl PromptAlertView {
             .is_anonymous_user_feature_gated()
             .unwrap_or_default()
         {
-            let percentage_used = request_usage_model.request_percentage_used();
 
             if percentage_used >= ANONYMOUS_USER_REQUEST_LIMIT_SOFT_GATE_PERCENTAGE {
                 if has_requests_remaining {
@@ -175,7 +167,6 @@ impl PromptAlertView {
         }
 
         // If there is ever any ai remaining, no alert
-        if request_usage_model.has_any_ai_remaining(app) {
             return PromptAlertState::NoAlert;
         }
 
@@ -434,11 +425,8 @@ impl View for PromptAlertView {
             .zip(current_team)
             .is_some_and(|(email, team)| team.has_admin_permissions(&email));
 
-        let can_purchase_addon_credits = current_team
-            .and_then(|team| team.billing_metadata.tier.purchase_add_on_credits_policy)
             .is_some_and(|policy| policy.enabled);
 
-        let suggest_buy_credits = can_purchase_addon_credits
             && has_admin_permissions
             && matches!(
                 state,
@@ -447,10 +435,8 @@ impl View for PromptAlertView {
                     | PromptAlertState::MonthlyOveragesSpendLimitReached
             );
 
-        if suggest_buy_credits {
             text_fragments.push(FormattedTextFragment::plain_text("  "));
             text_fragments.push(FormattedTextFragment::hyperlink_action(
-                "Add credits",
                 WorkspaceAction::ShowSettingsPage(SettingsSection::BillingAndUsage),
             ));
         } else {
