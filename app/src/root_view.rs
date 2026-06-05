@@ -55,11 +55,6 @@ use crate::auth::web_handoff::{WebHandoffEvent, WebHandoffView};
 use crate::auth::{AuthStateProvider, LoginFailureReason};
 use crate::autoupdate::{AutoupdateState, AutoupdateStateEvent, RequestType, UpdateReady};
 use crate::changelog_model::ChangelogRequestType;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::{GenericStringObjectFormat, JsonObjectType, ObjectType};
-use crate::drive::export::ExportManager;
-use crate::drive::items::WarpDriveItemId;
-use crate::drive::{CloudObjectTypeAndId, OpenWarpDriveObjectArgs, OpenWarpDriveObjectSettings};
 use crate::experiments::{BlockOnboarding, Experiment};
 use crate::features::FeatureFlag;
 use crate::interval_timer::IntervalTimer;
@@ -69,12 +64,6 @@ use crate::notebooks::manager::NotebookSource;
 use crate::pane_group::{NewTerminalOptions, PanesLayout};
 use crate::persistence::ModelEvent;
 use crate::pricing::{PricingInfoModel, PricingInfoModelEvent};
-use crate::server::cloud_objects::update_manager::UpdateManager;
-use crate::server::experiments::is_free_user_no_ai_experiment_active;
-use crate::server::ids::SyncId;
-use crate::server::server_api::auth::UserAuthenticationError;
-use crate::server::server_api::{ServerApi, ServerApiProvider, ServerTime};
-use crate::server::telemetry::{LaunchConfigUiLocation, TelemetryEvent};
 use crate::settings::cloud_preferences_syncer::{
     CloudPreferencesSyncer, CloudPreferencesSyncerEvent,
 };
@@ -97,9 +86,6 @@ use crate::workspace::hoa_onboarding::mark_hoa_onboarding_completed;
 use crate::workspace::tab_settings::TabSettings;
 use crate::workspace::view::OnboardingTutorial;
 use crate::workspace::{PaneViewLocator, Workspace, WorkspaceAction, WorkspaceRegistry};
-use crate::workspaces::team_tester::TeamTesterStatus;
-use crate::workspaces::update_manager::TeamUpdateManager;
-use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
 use crate::{
     report_if_error, send_telemetry_from_app_ctx, send_telemetry_from_ctx, ChannelState,
     GlobalResourceHandles, GlobalResourceHandlesProvider, UpdateQuakeModeEventArg,
@@ -206,7 +192,6 @@ pub struct OpenLaunchConfigArg {
 
     /// Tries to open the launch config into the active window, if any.
     ///
-    /// Currently, this is only supported by single-window launch configs
     /// and will open the window tabs into the existing window when true.
     pub open_in_active_window: bool,
 }
@@ -267,11 +252,8 @@ pub fn init(app: &mut AppContext) {
         let _ = open_new_from_path(arg, ctx);
     });
     app.add_global_action(
-        "root_view:open_new_tab_insert_subshell_command_and_bootstrap_if_supported",
-        open_new_tab_insert_subshell_command_and_bootstrap_if_supported,
     );
     app.add_global_action("root_view:open_launch_config", open_launch_config);
-    app.add_global_action("root_view:send_feedback", send_feedback);
     app.add_global_action(
         "root_view:toggle_quake_mode_window",
         toggle_quake_mode_window,
@@ -557,20 +539,16 @@ fn open_launch_config(arg: &OpenLaunchConfigArg, ctx: &mut AppContext) {
 
     send_telemetry_from_app_ctx!(
         TelemetryEvent::OpenLaunchConfig {
-            ui_location: crate::server::telemetry::LaunchConfigUiLocation::Uri,
             open_in_active_window: arg.open_in_active_window,
         },
         ctx
     );
 }
 
-fn send_feedback(_: &(), ctx: &mut AppContext) {
     if let Some(workspace) = active_workspace(ctx) {
         workspace.update(ctx, |workspace, ctx| {
-            workspace.handle_action(&WorkspaceAction::SendFeedback, ctx);
         });
     } else {
-        ctx.open_url(&crate::util::links::feedback_form_url());
     }
 }
 
@@ -683,7 +661,6 @@ fn open_from_restored(arg: &OpenFromRestoredArg, ctx: &mut AppContext) {
                 // If this window is a quake window, hide it by default.
                 if window.quake_mode {
                     // If this is Windows, skip restoring the quake window. Creating a hidden window
-                    // is not supported on Windows. We can't have the quake window visible on
                     // startup or else it will get mistaken for a normal window.
                     if cfg!(windows) {
                         continue;
@@ -1049,7 +1026,6 @@ fn open_warp_drive_object(arg: &OpenWarpDriveObjectArgs, ctx: &mut AppContext) {
             arg.settings.clone(),
             ctx,
         ),
-        _ => log::info!("Open object type {:?} not yet supported", arg.object_type),
     }
 }
 
@@ -1128,7 +1104,6 @@ fn open_new_with_shell(shell: &Option<AvailableShell>, ctx: &mut AppContext) {
 /// 2. Set the terminal input buffer to a command that should open a subshell
 /// 3. Set a flag that we should automatically bootstrap that subshell if its we can bootstrap its
 /// [`ShellType`].
-fn open_new_tab_insert_subshell_command_and_bootstrap_if_supported(
     arg: &SubshellCommandArg,
     ctx: &mut AppContext,
 ) {
@@ -1154,7 +1129,6 @@ fn open_new_tab_insert_subshell_command_and_bootstrap_if_supported(
     };
 
     root_view_handle.update(ctx, |root_view, ctx| {
-        root_view.insert_subshell_command_and_bootstrap_if_supported(arg, ctx);
     });
 }
 
@@ -2599,7 +2573,6 @@ impl RootView {
                 }
                 _ => {
                     log::info!(
-                        "Object type {:?} not support yet for opening via link",
                         arg.object_type
                     )
                 }
@@ -2754,10 +2727,8 @@ impl RootView {
         true
     }
 
-    /// Insert a command that should create a subshell. If we support bootstrapping AKA
     /// "warpifying" its [`ShellType`], set a flag to automatically bootstrap it when the command's
     /// block receives the [`AfterBlockStarted`] event.
-    pub fn insert_subshell_command_and_bootstrap_if_supported(
         &mut self,
         arg: &SubshellCommandArg,
         ctx: &mut ViewContext<Self>,
@@ -2765,7 +2736,6 @@ impl RootView {
         let window_id = ctx.window_id();
         if let AuthOnboardingState::Terminal(handle) = &self.auth_onboarding_state {
             handle.update(ctx, |workspace, ctx| {
-                workspace.insert_subshell_command_and_bootstrap_if_supported(
                     &arg.command,
                     arg.shell_type,
                     ctx,
@@ -3090,7 +3060,6 @@ impl RootView {
         ctx: &mut ViewContext<Self>,
     ) {
         match event {
-            WebHandoffEvent::Unsupported => {
                 log::warn!("Web auth handoff is unavailable");
                 if let AuthOnboardingState::WebImport(target) = &self.auth_onboarding_state {
                     self.auth_onboarding_state = match target {
@@ -3556,7 +3525,6 @@ impl AuthOnboardingState {
             }
             #[cfg(target_family = "wasm")]
             AuthOnboardingState::WebImport(_) => {
-                // TODO(ben): Eventually, we could support logout here by logging out of the JS
                 // Firebase client.
             }
             AuthOnboardingState::NeedsSsoLink(needs_sso_link_mode) => match needs_sso_link_mode {

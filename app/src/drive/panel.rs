@@ -19,21 +19,14 @@ use super::items::WarpDriveItemId;
 use super::{CloudObjectTypeAndId, DriveObjectType};
 use crate::ai::document::ai_document_model::AIDocumentId;
 use crate::ai::facts::CloudAIFactModel;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::model::view::CloudViewModel;
-use crate::cloud_object::{
     CloudObjectEventEntrypoint, GenericStringObjectFormat, JsonObjectType, Owner, Space,
 };
 use crate::env_vars::manager::EnvVarCollectionSource;
 use crate::env_vars::CloudEnvVarCollection;
 use crate::notebooks::manager::NotebookSource;
 use crate::notebooks::CloudNotebook;
-use crate::server::cloud_objects::update_manager::{InitiatedBy, UpdateManager};
-use crate::server::ids::{ClientId, ServerId, SyncId};
-use crate::server::telemetry::SharingDialogSource;
 use crate::workflows::manager::WorkflowOpenSource;
 use crate::workflows::{CloudWorkflow, WorkflowViewMode};
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 pub const MIN_SIDEBAR_WIDTH: f32 = 250.;
 pub const MAX_SIDEBAR_WIDTH_RATIO: f32 = 0.75;

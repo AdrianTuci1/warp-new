@@ -13,8 +13,6 @@ use super::settings_page::{
 };
 use super::SettingsSection;
 use crate::auth::{AuthManager, AuthStateProvider};
-use crate::workspaces::user_workspaces::UserWorkspaces;
-use crate::workspaces::workspace::Workspace;
 
 pub struct BillingAndUsageDispatchView {
     page: PageType<Self>,

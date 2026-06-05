@@ -12,9 +12,7 @@ use warpui::{AppContext, Element, ViewHandle};
 use super::index::DriveIndexAction;
 use super::DriveObjectType;
 use crate::appearance::Appearance;
-use crate::cloud_object::Space;
 use crate::editor::EditorView;
-use crate::server::ids::SyncId;
 use crate::ui_components::blended_colors;
 
 const DIALOG_PADDING: f32 = 24.;

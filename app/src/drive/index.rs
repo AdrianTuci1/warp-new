@@ -57,26 +57,18 @@ use crate::auth::auth_manager::{AuthManager, LoginGatedFeature};
 use crate::auth::auth_state::AuthState;
 use crate::auth::auth_view_modal::AuthViewVariant;
 use crate::auth::AuthStateProvider;
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
-use crate::cloud_object::model::view::{CloudViewModel, CloudViewModelEvent, UpdateTimestamp};
-use crate::cloud_object::{
     CloudObject, CloudObjectEventEntrypoint, CloudObjectLocation, CloudObjectSyncStatus,
     GenericCloudObject, GenericStringObjectFormat, JsonObjectType, NumInFlightRequests, ObjectType,
     Space,
 };
-use crate::drive::panel::DrivePanelAction;
 use crate::editor::{EditorView, Event as EditorEvent, SingleLineEditorOptions};
 use crate::env_vars::CloudEnvVarCollection;
 use crate::features::FeatureFlag;
 use crate::menu::{Event, Menu, MenuItem, MenuItemFields};
 use crate::network::NetworkStatus;
 use crate::notebooks::CloudNotebookModel;
-use crate::server::cloud_objects::update_manager::{
     FetchSingleObjectOption, InitiatedBy, UpdateManager,
 };
-use crate::server::ids::{ClientId, ObjectUid, ServerId, SyncId};
-use crate::server::sync_queue::SyncQueue;
-use crate::server::telemetry::{
     AnonymousUserSignupEntrypoint, SharingDialogSource, TelemetryEvent,
 };
 use crate::settings::app_installation_detection::{
@@ -92,9 +84,6 @@ use crate::util::color::coloru_with_opacity;
 use crate::view_components::{Dropdown, DropdownItem};
 use crate::workflows::{CloudWorkflow, WorkflowViewMode};
 use crate::workspace::active_terminal_in_window;
-use crate::workspaces::update_manager::TeamUpdateManager;
-use crate::workspaces::user_workspaces::UserWorkspaces;
-use crate::workspaces::workspace::WorkspaceUid;
 use crate::{report_if_error, send_telemetry_from_ctx, ObjectActions};
 
 const WARP_DRIVE_TITLE: &str = "Warp Drive";
@@ -2518,7 +2507,6 @@ impl DriveIndex {
 
         title_right_side.add_child(
             Container::new(Align::new(search_button).finish())
-                .with_padding_right(crate::drive::panel::styles::SEARCH_BUTTON_PADDING_RIGHT)
                 .finish(),
         );
 

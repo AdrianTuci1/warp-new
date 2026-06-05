@@ -10,18 +10,9 @@ use warpui::{App, ModelHandle, SingletonEntity};
 use super::update_manager::UpdateManager;
 use crate::auth::auth_manager::AuthManager;
 use crate::auth::AuthStateProvider;
-use crate::cloud_object::model::actions::ObjectActions;
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
 use crate::network::NetworkStatus;
 use crate::persistence::ModelEvent;
-use crate::server::server_api::ServerApiProvider;
-use crate::server::sync_queue::SyncQueue;
-use crate::server::telemetry::context_provider::AppTelemetryContextProvider;
 use crate::settings::{PrivacySettings, WarpDrivePrivacySettings};
-use crate::workspaces::team_tester::TeamTesterStatus;
-use crate::workspaces::update_manager::TeamUpdateManager;
-use crate::workspaces::user_profiles::UserProfiles;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 /// The size of the bounded channel that we use to queue persistence/sqlite-related events.
 const CHANNEL_SIZE: usize = 128;

@@ -7,7 +7,6 @@ use super::workspace::{
     WorkspaceSettings,
 };
 use crate::auth::UserUid;
-use crate::server::ids::ServerId;
 
 #[derive(Clone, Copy, Eq, PartialEq, Debug, Serialize, Deserialize)]
 pub enum MembershipRole {

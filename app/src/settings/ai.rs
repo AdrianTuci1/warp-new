@@ -31,7 +31,6 @@ use crate::auth::AuthStateProvider;
 use crate::report_if_error;
 use crate::settings::PrivacySettings;
 use crate::terminal::CLIAgent;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 pub enum FocusedTerminalInfoEvent {
     TerminalInfoUpdated,
@@ -1139,14 +1138,12 @@ define_settings_group!(AISettings, settings: [
     }
 
     // Whether or not the user has enabled fallback to Warp credits for user-provided models.
-    can_use_warp_credits_for_fallback: CanUseWarpCreditsForFallback {
         type: bool,
         default: false,
         supported_platforms: SupportedPlatforms::ALL,
         sync_to_cloud: SyncToCloud::Globally(RespectUserSyncSetting::Yes),
         private: false,
         storage_key: "CanUseWarpCreditsWithByok",
-        toml_path: "cloud_platform.third_party_api_keys.can_use_warp_credits_with_byok",
         description: "Whether Warp credits can be used as a fallback for user-provided models.",
     }
 
@@ -1616,7 +1613,6 @@ impl AISettings {
         }
         !matches!(
             UserWorkspaces::as_ref(app).get_cloud_conversation_storage_enablement_setting(),
-            crate::workspaces::workspace::AdminEnablementSetting::Disable
         )
     }
     pub fn is_ampersand_handoff_enabled(&self, app: &warpui::AppContext) -> bool {

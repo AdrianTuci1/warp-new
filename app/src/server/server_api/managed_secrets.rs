@@ -37,7 +37,6 @@ pub use warp_managed_secrets::client::{ManagedSecretConfigs, ManagedSecretsClien
 use warp_managed_secrets::client::{SecretOwner, TaskIdentityToken};
 
 use super::ServerApi;
-use crate::server::graphql::{get_request_context, get_user_facing_error_message};
 
 #[cfg_attr(not(target_family = "wasm"), async_trait)]
 #[cfg_attr(target_family = "wasm", async_trait(?Send))]

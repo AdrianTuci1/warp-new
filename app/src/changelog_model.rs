@@ -12,7 +12,6 @@ use warpui::{Entity, ModelContext, SingletonEntity};
 use crate::autoupdate::{self};
 use crate::channel::{Channel, ChannelState};
 use crate::features::{FeatureFlag, PREVIEW_FLAGS};
-use crate::server::server_api::ServerApi;
 
 pub struct ChangelogModel {
     pub changelog: ChangelogState,

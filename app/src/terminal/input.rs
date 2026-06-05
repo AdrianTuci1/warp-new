@@ -200,11 +200,6 @@ use crate::ai::AIRequestUsageModel;
 use crate::ai_assistant::execution_context::WarpAiExecutionContext;
 use crate::appearance::{Appearance, AppearanceEvent};
 use crate::channel::{Channel, ChannelState};
-use crate::cloud_object::model::actions::ObjectActionType;
-use crate::cloud_object::model::generic_string_model::StringModel;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::model::view::CloudViewModel;
-use crate::cloud_object::{CloudObject, CloudObjectLookup as _, Space};
 #[cfg(feature = "local_fs")]
 use crate::code::editor_management::CodeSource;
 use crate::code_review::diff_state::DiffMode;
@@ -244,13 +239,7 @@ use crate::search::ai_context_menu::search::is_valid_search_query;
 use crate::search::ai_context_menu::view::AIContextMenuAction;
 use crate::search::slash_command_menu::static_commands::commands::{self, COMMAND_REGISTRY};
 use crate::search::QueryFilter;
-use crate::server::cloud_objects::update_manager::UpdateManager;
-use crate::server::ids::SyncId;
-use crate::server::server_api::ai::AttachmentFileInfo;
 #[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
-use crate::server::server_api::ai::AttachmentInput;
-use crate::server::server_api::ServerApi;
-use crate::server::telemetry::{
     AICommandSearchEntrypoint, AgentModeAutoDetectionFalsePositivePayload,
     AgentModeAutoDetectionSettingOrigin, AnonymousUserSignupEntrypoint, CommandXRayTrigger,
     EnvVarTelemetryMetadata, PaletteSource, SlashCommandAcceptedDetails, SlashMenuSource,
@@ -338,7 +327,6 @@ use crate::workspace::{
     CommandSearchOptions, ForkFromExchange, ForkedConversationDestination, InitContent,
     RestoreConversationLayout, ToastStack, WorkspaceAction,
 };
-use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
 #[allow(unused_imports)]
 use crate::ASSETS;
 #[allow(unused_imports)]
@@ -3886,7 +3874,6 @@ impl Input {
                     .flatten()
             },
             move |_input, touched_repo, ctx| {
-                use crate::cloud_object::CloudObjectLookup as _;
 
                 let Some(touched_repo) = touched_repo else {
                     return;
@@ -4105,7 +4092,6 @@ impl Input {
 
     #[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
     fn maybe_launch_cloud_handoff_request(&mut self, ctx: &mut ViewContext<Self>) -> bool {
-        use crate::cloud_object::CloudObjectLookup as _;
 
         if !FeatureFlag::OzHandoff.is_enabled()
             || !FeatureFlag::HandoffLocalCloud.is_enabled()

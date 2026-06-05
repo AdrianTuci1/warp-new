@@ -47,7 +47,6 @@ use super::view::EditorViewAction;
 use super::{rich_text_styles, NotebookWorkflow};
 use crate::appearance::Appearance;
 use crate::completer::SessionAgnosticContext;
-use crate::drive::workflows::arguments::ArgumentsState;
 use crate::editor::InteractionState;
 use crate::features::FeatureFlag;
 use crate::menu::MenuItemFields;

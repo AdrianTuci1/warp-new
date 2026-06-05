@@ -16,7 +16,6 @@ use crate::auth::auth_state::AuthStateProvider;
 use crate::remote_server::auth_context::server_api_auth_context;
 use crate::remote_server::manager::{RemoteServerManager, RemoteServerManagerEvent};
 use crate::remote_server::ssh_transport::SshTransport;
-use crate::server::server_api::ServerApiProvider;
 use crate::settings::PrivacySettings;
 use crate::terminal::model::session::{IsLegacySSHSession, SessionInfo};
 use crate::terminal::model_events::{ModelEvent, ModelEventDispatcher};

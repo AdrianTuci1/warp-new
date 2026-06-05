@@ -6,11 +6,7 @@ use warpui::{App, SingletonEntity, ViewHandle};
 
 use super::WorkflowModal;
 use crate::auth::AuthStateProvider;
-use crate::cloud_object::model::persistence::CloudModel;
 use crate::editor::PlainTextEditorViewAction as EditorAction;
-use crate::server::server_api::team::MockTeamClient;
-use crate::server::server_api::workspace::MockWorkspaceClient;
-use crate::server::server_api::ServerApiProvider;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
 use crate::test_util::settings::initialize_settings_for_tests;
 use crate::workflows::workflow::{Argument, Workflow};

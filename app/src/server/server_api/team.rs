@@ -59,12 +59,6 @@ use warp_graphql::queries::get_workspaces_metadata_for_user::{
 
 use super::ServerApi;
 use crate::auth::UserUid;
-use crate::cloud_object::CloudObjectEventEntrypoint;
-use crate::server::graphql::{get_request_context, get_user_facing_error_message};
-use crate::server::ids::ServerId;
-use crate::workspaces::team::{DiscoverableTeam, MembershipRole};
-use crate::workspaces::user_workspaces::{CreateTeamResponse, WorkspacesMetadataWithPricing};
-use crate::workspaces::workspace::Workspace;
 
 #[cfg_attr(test, automock)]
 #[cfg_attr(not(target_family = "wasm"), async_trait)]

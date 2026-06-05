@@ -27,8 +27,6 @@ use warpui::telemetry::Event;
 
 use crate::auth::UserUid;
 use crate::features::FeatureFlag;
-use crate::server::telemetry::context::AttachContext;
-use crate::server::telemetry_ext::TelemetryExt;
 use crate::settings::PrivacySettingsSnapshot;
 use crate::ChannelState;
 

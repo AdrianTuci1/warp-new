@@ -12,28 +12,17 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use async_trait::async_trait;
-pub use cloud_object_models::{CloudNotebook, CloudNotebookModel, NotebookId, SerializedNotebook};
 use serde::{Deserialize, Serialize};
 use warpui::AppContext;
 
 use crate::appearance::Appearance;
-use crate::cloud_object::{
     CloudModelType, CloudObjectEventEntrypoint, CloudObjectUpsertParams, CreateCloudObjectResult,
     CreateObjectRequest, GenericServerObject, ObjectType, Owner, Revision, UpdateCloudObjectResult,
 };
-use crate::drive::items::notebook::WarpDriveNotebook;
-use crate::drive::items::WarpDriveItem;
-use crate::drive::CloudObjectTypeAndId;
 use crate::persistence::ModelEvent;
-use crate::server::cloud_objects::update_manager::InitiatedBy;
-use crate::server::ids::{ServerId, SyncId};
-use crate::server::server_api::object::ObjectClient;
-use crate::server::sync_queue::{QueueItem, SerializedModel};
 
 #[cfg_attr(not(target_family = "wasm"), async_trait)]
 #[cfg_attr(target_family = "wasm", async_trait(?Send))]
-impl CloudModelType for CloudNotebookModel {
-    type CloudObjectType = CloudNotebook;
     type IdType = NotebookId;
 
     fn model_type_name(&self) -> &'static str {
@@ -62,17 +51,14 @@ impl CloudModelType for CloudNotebookModel {
 
     fn upsert_event(params: CloudObjectUpsertParams<Self>) -> ModelEvent {
         ModelEvent::UpsertNotebook {
-            notebook: CloudNotebook::from(params),
         }
     }
 
     fn bulk_upsert_event(objects: Vec<CloudObjectUpsertParams<Self>>) -> ModelEvent {
-        ModelEvent::UpsertNotebooks(objects.into_iter().map(CloudNotebook::from).collect())
     }
 
     fn create_object_queue_item(
         &self,
-        notebook: &CloudNotebook,
         entrypoint: CloudObjectEventEntrypoint,
         initiated_by: InitiatedBy,
     ) -> Option<QueueItem> {
@@ -100,7 +86,6 @@ impl CloudModelType for CloudNotebookModel {
     fn update_object_queue_item(
         &self,
         revision_ts: Option<Revision>,
-        notebook: &CloudNotebook,
     ) -> QueueItem {
         QueueItem::UpdateNotebook {
             // Note that this is intentionally a deep clone of the model because we are grabbing
@@ -160,7 +145,6 @@ impl CloudModelType for CloudNotebookModel {
         &self,
         id: SyncId,
         _appearance: &Appearance,
-        notebook: &CloudNotebook,
     ) -> Option<Box<dyn WarpDriveItem>> {
         Some(Box::new(WarpDriveNotebook::new(
             self.cloud_object_type_and_id(id),

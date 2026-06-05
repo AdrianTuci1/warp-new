@@ -29,11 +29,8 @@ use crate::features::FeatureFlag;
 use crate::menu::MenuItemFields;
 use crate::pricing::{PricingInfoModel, PricingInfoModelEvent};
 use crate::send_telemetry_from_ctx;
-use crate::server::ids::ServerId;
-use crate::server::telemetry::{OutOfCreditsBannerAction, TelemetryEvent};
 use crate::settings_view::create_discount_badge;
 use crate::view_components::{Dropdown, DropdownAction};
-use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
 
 #[derive(Default)]
 struct MouseStates {

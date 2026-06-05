@@ -24,8 +24,6 @@ use crate::ai::ambient_agents::{
 use crate::ai::artifacts::{Artifact, ArtifactButtonsRow, ArtifactButtonsRowEvent};
 use crate::ai::blocklist::{format_credits, BlocklistAIHistoryModel};
 use crate::appearance::Appearance;
-use crate::server::ids::SyncId;
-use crate::server::server_api::ServerApiProvider;
 use crate::settings::ai::{AISettings, AISettingsChangedEvent};
 use crate::ui_components::blended_colors;
 use crate::util::time_format::human_readable_precise_duration;

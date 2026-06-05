@@ -18,12 +18,8 @@ use crate::ai::cloud_environments::{
 };
 use crate::auth::user::TEST_USER_UID;
 use crate::auth::UserUid;
-use crate::cloud_object::model::actions::{
     ObjectAction, ObjectActionHistory, ObjectActionSubtype, ObjectActionType, ObjectActions,
 };
-use crate::cloud_object::model::generic_string_model::GenericStringObjectId;
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent, UpdateSource};
-use crate::cloud_object::{
     BulkCreateCloudObjectResult, CloudModelType, CloudObjectEventEntrypoint, CloudObjectGuest,
     CloudObjectLocation, ConflictStatus, CreateCloudObjectResult, CreatedCloudObject,
     GenericCloudObject, GenericStringObjectFormat, JsonObjectType, ObjectDeleteResult,
@@ -32,30 +28,21 @@ use crate::cloud_object::{
     ServerNotebook, ServerObject, ServerObjectGuest, ServerPreference, ServerWorkflow,
     ServerWorkflowEnum, Space, UpdateCloudObjectResult,
 };
-use crate::drive::folders::{CloudFolder, CloudFolderModel, FolderId};
-use crate::drive::sharing::{SharingAccessLevel, Subject, UserKind};
-use crate::drive::CloudObjectTypeAndId;
 use crate::notebooks::{CloudNotebook, CloudNotebookModel, NotebookId};
 use crate::persistence::ModelEvent;
-use crate::server::cloud_objects::listener::ObjectUpdateMessage;
-use crate::server::cloud_objects::test_utils::{
     create_update_manager_struct, initialize_app, mock_server_api, UpdateManagerStruct,
 };
-use crate::server::cloud_objects::update_manager::{
     get_duplicate_object_name, FetchSingleObjectOption, GenericStringObjectInput, InitiatedBy,
     ServerMetadata, ServerPermissions,
 };
-use crate::server::ids::{
     ClientId, HashableId, ObjectUid, ServerId, ServerIdAndType, SyncId, ToServerId,
 };
-use crate::server::sync_queue::SyncQueue;
 use crate::settings::{CloudPreferenceModel, Preference};
 use crate::workflows::workflow::{Argument, ArgumentType, Workflow};
 use crate::workflows::workflow_enum::{
     CloudWorkflowEnum, CloudWorkflowEnumModel, EnumVariants, WorkflowEnum,
 };
 use crate::workflows::{CloudWorkflow, CloudWorkflowModel, WorkflowId};
-use crate::workspaces::user_profiles::{UserProfileWithUID, UserProfiles};
 use crate::ASSETS;
 
 fn create_object<K, M>(
@@ -5802,14 +5789,12 @@ fn test_move_cloud_environment_personal_to_team_success() {
             vec![],
         );
 
-        let mut metadata = crate::cloud_object::CloudObjectMetadata::mock();
         metadata.folder_id = Some(folder_id.into());
 
         let object = CloudAmbientAgentEnvironment::new(
             sync_id,
             CloudAmbientAgentEnvironmentModel::new(environment),
             metadata,
-            crate::cloud_object::CloudObjectPermissions::mock_personal(),
         );
 
         CloudModel::handle(&app).update(&mut app, |cloud_model, _| {

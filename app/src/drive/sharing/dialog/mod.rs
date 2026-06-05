@@ -34,16 +34,10 @@ use super::{
 };
 use crate::ai::blocklist::{BlocklistAIHistoryEvent, BlocklistAIHistoryModel};
 use crate::auth::AuthStateProvider;
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
-use crate::cloud_object::model::view::CloudViewModel;
-use crate::cloud_object::{CloudObject, Owner, ServerGuestSubject};
 use crate::editor::PropagateAndNoOpNavigationKeys;
 use crate::menu::{self, Menu, MenuItem, MenuItemFields};
-use crate::server::cloud_objects::update_manager::{
     ObjectOperation, UpdateManager, UpdateManagerEvent,
 };
-use crate::server::ids::ServerId;
-use crate::server::telemetry::{
     CloudObjectTelemetryMetadata, OpenedSharingDialogEvent, SharingDialogSource,
 };
 use crate::terminal::shared_session::permissions_manager::{
@@ -59,7 +53,6 @@ use crate::word_block_editor::{
     WordBlockStyles,
 };
 use crate::workspace::{ToastStack, WorkspaceAction};
-use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::{send_telemetry_from_ctx, TelemetryEvent};
 
 mod inheritance;

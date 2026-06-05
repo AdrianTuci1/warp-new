@@ -70,16 +70,12 @@ use crate::ai::paths::host_native_absolute_path;
 use crate::auth::auth_manager::{AuthManager, LoginGatedFeature};
 use crate::auth::auth_view_modal::AuthViewVariant;
 use crate::auth::AuthStateProvider;
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
-use crate::cloud_object::GenericStringObjectFormat::Json;
-use crate::cloud_object::{JsonObjectType, ObjectType};
 use crate::editor::{EditorOptions, InteractionState, SingleLineEditorOptions, TextColors};
 use crate::modal::{Modal, ModalEvent, ModalViewState};
 use crate::settings::{
     AIAutoDetectionEnabled, AICommandDenylist, AISettingsChangedEvent,
     AgentModeCodingPermissionsType, AgentModeCommandExecutionDenylist,
     AgentModeCommandExecutionPredicate, AgentModeQuerySuggestionsEnabled, AwsBedrockAutoLogin,
-    AwsBedrockCredentialsEnabled, CanUseWarpCreditsForFallback, CodeSettings,
     CodebaseContextEnabled, FileBasedMcpEnabled, GitOperationsAutogenEnabled,
     IncludeAgentCommandsInHistory, InputSettings, IntelligentAutosuggestionsEnabled, MemoryEnabled,
     NLDInTerminalEnabled, NaturalLanguageAutosuggestionsEnabled, PromptSubmissionMode,
@@ -95,7 +91,6 @@ use crate::view_components::{
     render_warning_box, FilterableDropdown, SubmittableTextInput, SubmittableTextInputEvent,
     WarningBoxConfig,
 };
-use crate::workspaces::user_workspaces::UserWorkspacesEvent;
 
 /// Identifies which subpage of the AI settings the user is viewing.
 /// When `None`, the page shows all widgets (legacy/full view).
@@ -136,7 +131,6 @@ use crate::ai::{AIRequestUsageModel, AIRequestUsageModelEvent};
 use crate::appearance::Appearance;
 use crate::editor::{EditorView, Event as EditorEvent, TextOptions};
 use crate::menu::{MenuItem, MenuItemFields};
-use crate::server::telemetry::{
     AgentModeAutoDetectionSettingOrigin, AutonomySettingToggleSource,
     ToggleCodeSuggestionsSettingSource,
 };
@@ -146,7 +140,6 @@ use crate::ui_components::icons::Icon;
 use crate::util::bindings;
 use crate::view_components::dropdown::DropdownAction;
 use crate::view_components::{Dropdown, DropdownItem};
-use crate::workspaces::workspace::{AdminEnablementSetting, CustomerType};
 use crate::{
     report_error, report_if_error, send_telemetry_from_ctx, TelemetryEvent, UserWorkspaces,
 };
@@ -523,9 +516,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
     ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
         vec![
             ToggleSettingActionPair::new(
-                "Warp credit fallback",
                 builder(SettingsAction::AI(
-                    AISettingsPageAction::ToggleCanUseWarpCreditsForFallback,
                 )),
                 &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
                 flags::WARP_CREDIT_FALLBACK_FLAG,
@@ -2829,7 +2820,6 @@ pub enum AISettingsPageAction {
     ToggleCLIAgentToolbar,
     ToggleUseAgentToolbar,
     ToggleVoiceInput,
-    ToggleCanUseWarpCreditsForFallback,
     HyperlinkClick(HyperlinkUrl),
     ToggleCodebaseContext,
     ToggleShowInputHintText,
@@ -3230,10 +3220,8 @@ impl TypedActionView for AISettingsPageView {
                 }
                 ctx.notify();
             }
-            AISettingsPageAction::ToggleCanUseWarpCreditsForFallback => {
                 AISettings::handle(ctx).update(ctx, |settings, ctx| {
                     report_if_error!(settings
-                        .can_use_warp_credits_for_fallback
                         .toggle_and_save_value(ctx));
                 });
                 ctx.notify();
@@ -4236,12 +4224,10 @@ impl SettingsWidget for UsageWidget {
         .finish();
 
         let request_limit_description = format!(
-            "This is the {} limit of AI credits for your account.",
             ai_request_usage_model.refresh_duration_to_string()
         );
 
         let request_usage_row = self.render_ai_usage_limit_row(
-            "Credits",
             request_limit_description,
             ai_request_usage_model.requests_used(),
             ai_request_usage_model.request_limit(),
@@ -6802,7 +6788,6 @@ impl SettingsWidget for AgentAttributionWidget {
     type View = AISettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "agent attribution commit pull request co-author author credit oz warp"
     }
 
     fn render(
@@ -7161,7 +7146,6 @@ struct ApiKeysWidget {
     anthropic_api_key_editor: ViewHandle<EditorView>,
     google_api_key_editor: ViewHandle<EditorView>,
 
-    can_use_warp_credits_for_fallback: SwitchStateHandle,
     upgrade_highlight_index: HighlightedHyperlink,
 
     custom_inference_info_tooltip: MouseStateHandle,
@@ -7273,7 +7257,6 @@ impl ApiKeysWidget {
             anthropic_api_key_editor,
             google_api_key_editor,
 
-            can_use_warp_credits_for_fallback: Default::default(),
             upgrade_highlight_index: Default::default(),
 
             custom_inference_info_tooltip: Default::default(),
@@ -7355,7 +7338,6 @@ impl ApiKeysWidget {
         let appearance = Appearance::as_ref(app);
         let text_fragments = vec![
             FormattedTextFragment::plain_text(
-                "Use your own API keys from model providers for Warp Agent. You can also add custom endpoints to use third-party models. Custom endpoints must support the OpenAI-compatible Chat Completions API. API keys are stored only on your device, never on Warp's servers. They're used to make requests to your chosen model provider. Using auto models or models from providers you have not provided API keys for will consume Warp credits. ",
             ),
             FormattedTextFragment::hyperlink("Learn more", CUSTOM_INFERENCE_LEARN_MORE_URL),
         ];
@@ -7524,25 +7506,18 @@ impl ApiKeysWidget {
         list.finish()
     }
 
-    fn render_warp_credit_fallback_toggle(
         &self,
         view: &AISettingsPageView,
         app: &AppContext,
     ) -> Box<dyn Element> {
         let ai_settings = AISettings::as_ref(app);
 
-        let toggle = render_ai_setting_toggle::<CanUseWarpCreditsForFallback>(
-            "Warp credit fallback",
-            AISettingsPageAction::ToggleCanUseWarpCreditsForFallback,
-            *ai_settings.can_use_warp_credits_for_fallback,
             ai_settings.is_any_ai_enabled(app),
-            self.can_use_warp_credits_for_fallback.clone(),
             &view.local_only_icon_tooltip_states,
             app,
         );
 
         let description = render_ai_setting_description(
-            "When enabled, agent requests may be routed to one of Warp's provided models in the event of an error. Warp will prioritize using your API keys over your Warp credits.",
             ai_settings.is_any_ai_enabled(app),
             app,
         );
@@ -7661,10 +7636,8 @@ impl SettingsWidget for ApiKeysWidget {
             }
         }
 
-        // Warp credit fallback toggle (shown when BYO or custom inference is enabled)
         if is_byo_enabled || show_custom_inference {
             column.add_child(
-                Container::new(self.render_warp_credit_fallback_toggle(view, app))
                     .with_margin_top(16.)
                     .finish(),
             );
@@ -7960,7 +7933,6 @@ impl AwsBedrockWidget {
         let is_section_enabled = is_any_ai_enabled && is_bedrock_available;
         let is_admin_enforced = matches!(
             user_workspaces.aws_bedrock_host_enablement_setting(),
-            crate::workspaces::workspace::HostEnablementSetting::Enforce
         );
         let is_toggleable =
             is_section_enabled && user_workspaces.is_aws_bedrock_credentials_toggleable();

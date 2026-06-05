@@ -3,7 +3,6 @@ use warp_graphql::queries::get_user::UserOutput as GqlUserOutput;
 use super::user::User;
 use super::UserUid;
 use crate::convert_to_server_experiment;
-use crate::server::experiments::ServerExperiment;
 
 /// Intermediate app model state converted from a user response returned by the auth client.
 pub(crate) struct UserProperties {

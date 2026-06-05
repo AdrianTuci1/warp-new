@@ -27,11 +27,8 @@ use crate::pane_group::TerminalViewResources;
 #[cfg(feature = "local_tty")]
 use crate::persistence::ModelEvent;
 #[cfg(not(target_family = "wasm"))]
-use crate::server::cloud_objects::update_manager::UpdateManager;
 #[cfg(not(target_family = "wasm"))]
-use crate::server::ids::{ServerId, SyncId};
 #[cfg(any(feature = "local_tty", not(target_family = "wasm")))]
-use crate::server::server_api::ServerApiProvider;
 #[cfg(feature = "local_tty")]
 use crate::terminal::local_tty::docker_sandbox::resolve_sbx_path_from_user_shell;
 #[cfg(not(target_family = "wasm"))]
@@ -240,7 +237,6 @@ impl TerminalView {
                 // Look up the environment by hardcoded ID.
                 let environment = spawner
                     .spawn(|_, ctx| {
-                        use crate::cloud_object::CloudObjectLookup as _;
 
                         let server_id = ServerId::try_from("SVhg783GBFQHk1OfdPfFU9").ok()?;
                         let sync_id = SyncId::ServerId(server_id);

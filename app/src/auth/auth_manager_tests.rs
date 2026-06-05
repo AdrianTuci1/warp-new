@@ -8,7 +8,6 @@ use crate::auth::auth_view_modal::AuthRedirectPayload;
 use crate::auth::credentials::{Credentials, RefreshToken};
 use crate::auth::user::{FirebaseAuthTokens, TEST_USER_UID};
 use crate::auth::{AuthStateProvider, UserUid};
-use crate::server::server_api::auth::UserAuthenticationError;
 use crate::ServerApiProvider;
 
 fn initialize_app(app: &mut App) {

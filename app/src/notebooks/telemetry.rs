@@ -3,7 +3,6 @@
 use serde::{Deserialize, Serialize};
 
 use super::editor::BlockInsertionSource;
-use crate::server::ids::ServerId;
 use crate::workflows::WorkflowId;
 
 /// A user action within a notebook. Some actions, like running a command, are not included here

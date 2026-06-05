@@ -18,13 +18,10 @@ use warpui::{
     ViewHandle,
 };
 
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::Revision;
 use crate::editor::{
     EditorOptions, EditorView, Event, PropagateAndNoOpNavigationKeys, SingleLineEditorOptions,
     TextOptions,
 };
-use crate::server::ids::{ClientId, SyncId};
 use crate::ui_components::buttons::icon_button;
 use crate::ui_components::icons::Icon;
 use crate::workflows::workflow_enum::EnumVariants;

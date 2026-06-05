@@ -41,20 +41,15 @@ use super::{editor_text_colors, SettingsSection};
 use crate::ai::ambient_agents::github_auth_url::GithubAuthRedirectTarget;
 use crate::ai::cloud_environments::{self, CloudAmbientAgentEnvironment};
 use crate::appearance::Appearance;
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
-use crate::cloud_object::{
     CloudObjectLocation, CloudObjectLookup as _, GenericStringObjectFormat, JsonObjectType, Owner,
     Space,
 };
-use crate::drive::CloudObjectTypeAndId;
 use crate::editor::{
     EditorView, PropagateAndNoOpNavigationKeys, SingleLineEditorOptions, TextOptions,
 };
 use crate::root_view::CreateEnvironmentArg;
-use crate::server::cloud_objects::update_manager::{
     ObjectOperation, OperationSuccessType, UpdateManager, UpdateManagerEvent,
 };
-use crate::server::ids::{ClientId, ServerId, SyncId};
 use crate::terminal::view::init_environment::mode_selector::{
     EnvironmentSetupMode, EnvironmentSetupModeSelector, EnvironmentSetupModeSelectorEvent,
 };
@@ -68,14 +63,12 @@ use crate::view_components::{
     COPY_FEEDBACK_DURATION,
 };
 use crate::workspace::{ToastStack, WorkspaceAction};
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 mod new_environment_button;
 use new_environment_button::NewEnvironmentButtonView;
 #[cfg(not(target_family = "wasm"))]
 #[allow(unused_imports)] // IntegrationsClient trait is used in fetch_github_repos
 use {
-    crate::server::server_api::{integrations::IntegrationsClient, ServerApiProvider},
     warp_graphql::queries::user_github_info::UserGithubInfoResult,
 };
 

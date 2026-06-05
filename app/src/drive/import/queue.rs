@@ -3,14 +3,9 @@ use std::collections::HashMap;
 use warpui::{Entity, ModelContext, SingletonEntity};
 
 use super::nodes::{self, FileId};
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::{CloudObjectEventEntrypoint, Owner};
-use crate::drive::folders::FolderId;
 use crate::notebooks::CloudNotebookModel;
-use crate::server::cloud_objects::update_manager::{
     InitiatedBy, ObjectOperation, OperationSuccessType, UpdateManager, UpdateManagerEvent,
 };
-use crate::server::ids::{ClientId, SyncId};
 use crate::workflows::workflow::Workflow;
 use crate::workflows::workflow_enum::WorkflowEnum;
 

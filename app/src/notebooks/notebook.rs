@@ -41,19 +41,9 @@ use super::editor::NotebookWorkflow;
 use super::link::{NotebookLinks, SessionSource};
 use super::manager::NotebookManager;
 use super::telemetry::NotebookTelemetryAction;
-use super::{styles, CloudNotebookModel, NotebookId, NotebookLocation};
 use crate::ai::blocklist::secret_redaction::find_secrets_in_text;
 use crate::ai::document::ai_document_model::AIDocumentId;
 use crate::appearance::Appearance;
-use crate::cloud_object::grab_edit_access_modal::{GrabEditAccessModal, GrabEditAccessModalEvent};
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent, UpdateSource};
-use crate::cloud_object::model::view::{Editor, EditorState};
-use crate::cloud_object::{CloudObject, CloudObjectEventEntrypoint, ObjectType, Owner, Space};
-use crate::drive::drive_helpers::has_feature_gated_anonymous_user_reached_notebook_limit;
-use crate::drive::export::ExportManager;
-use crate::drive::items::WarpDriveItemId;
-use crate::drive::sharing::ShareableObject;
-use crate::drive::{CloudObjectTypeAndId, OpenWarpDriveObjectSettings};
 use crate::editor::{
     EditOrigin, EditorView, Event as EditorEvent, InteractionState, PropagateAndNoOpNavigationKeys,
     SingleLineEditorOptions, TextColors, TextOptions,
@@ -63,13 +53,9 @@ use crate::menu::{MenuItem, MenuItemFields};
 use crate::network::{NetworkStatus, NetworkStatusEvent};
 use crate::notebooks::editor::model::NotebooksEditorModel;
 use crate::notebooks::editor::rich_text_styles;
-use crate::notebooks::CloudNotebook;
 use crate::pane_group::focus_state::{PaneFocusHandle, PaneGroupFocusEvent};
 use crate::pane_group::pane::view;
 use crate::pane_group::{BackingView, PaneConfiguration, PaneEvent};
-use crate::server::cloud_objects::update_manager::{FetchSingleObjectOption, UpdateManager};
-use crate::server::ids::{ClientId, ServerId, SyncId};
-use crate::server::telemetry::{
     CloudObjectTelemetryMetadata, NotebookActionEvent, NotebookTelemetryMetadata,
     SharingDialogSource, TelemetryCloudObjectType, TelemetryEvent,
 };
@@ -89,7 +75,6 @@ use crate::util::bindings::{self, CustomAction};
 use crate::view_components::{DismissibleToast, ToastType};
 use crate::workflows::{WorkflowSource, WorkflowType};
 use crate::workspace::ToastStack;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::{cmd_or_ctrl_shift, report_if_error, safe_info, send_telemetry_from_ctx};
 
 mod details_bar;
@@ -696,7 +681,6 @@ impl NotebookView {
     }
 
     /// Reload an updated notebook.
-    fn handle_notebook_updated(&mut self, notebook: &CloudNotebook, ctx: &mut ViewContext<Self>) {
         self.set_title(&notebook.model().title, ctx);
         self.input.update(ctx, |input_editor, ctx| {
             input_editor.system_clear_buffer(ctx);
@@ -827,7 +811,6 @@ impl NotebookView {
                             client_id,
                             notebook.permissions.owner,
                             notebook.metadata.folder_id,
-                            CloudNotebookModel {
                                 title: notebook.model().title.clone(),
                                 data: content.to_string(),
                                 ai_document_id: notebook.model().ai_document_id,
@@ -1163,7 +1146,6 @@ impl NotebookView {
         });
     }
 
-    fn set_content(&mut self, notebook: &CloudNotebook, ctx: &mut ViewContext<Self>) {
         // Initialize the content length so we can get a delta when editing.
         self.last_content_length = notebook.model().data.len();
         self.input.update(ctx, |input, ctx| {
@@ -1298,7 +1280,6 @@ impl NotebookView {
                 copy_client_id,
                 personal_drive,
                 None,
-                CloudNotebookModel {
                     title: title.clone(),
                     data: content,
                     ai_document_id,
@@ -1571,7 +1552,6 @@ impl NotebookView {
         });
     }
 
-    /// Takes a `CloudNotebook` and loads it into the view.
     ///
     /// Namely, we reset the title and body's undo stack and we set the buffer to be
     /// that of the cloud notebook's content.
@@ -1580,7 +1560,6 @@ impl NotebookView {
     /// editing if there is not already an editor.
     pub fn load(
         &mut self,
-        notebook: CloudNotebook,
         settings: &OpenWarpDriveObjectSettings,
         ctx: &mut ViewContext<Self>,
     ) -> SpawnedFutureHandle {
@@ -1755,7 +1734,6 @@ impl NotebookView {
                             client_id,
                             notebook.permissions.owner,
                             notebook.metadata.folder_id,
-                            CloudNotebookModel {
                                 title: title.to_string(),
                                 data: notebook.model().data.to_owned(),
                                 ai_document_id: notebook.model().ai_document_id,

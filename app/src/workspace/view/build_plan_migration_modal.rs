@@ -26,8 +26,6 @@ use crate::pricing::{PricingInfoModel, PricingInfoModelEvent};
 use crate::terminal::general_settings::GeneralSettings;
 use crate::ui_components::blended_colors;
 use crate::view_components::{Dropdown, DropdownEvent, DropdownItem, ToastFlavor};
-use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
-use crate::workspaces::workspace::CustomerType;
 
 const BUTTON_DIAMETER: f32 = 20.;
 const DROPDOWN_WIDTH: f32 = 160.;

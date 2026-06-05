@@ -5,7 +5,6 @@ use chrono::{DateTime, FixedOffset};
 use enclose::enclose;
 use warpui::{Entity, ModelContext, SingletonEntity};
 
-use crate::server::server_api::ServerApiProvider;
 
 /// Maximum number of network log items retained in memory. Matches the
 /// previous file-rotation threshold so the pane surface behaves consistently

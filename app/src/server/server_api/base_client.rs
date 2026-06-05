@@ -7,7 +7,6 @@ use warp_server_client::auth::{AgentIdentity, AuthEvent};
 use warp_server_client::base_client::BaseClient;
 
 use super::ServerApi;
-use crate::server::graphql::default_request_options;
 
 /// Header key for the ambient workload token attached to multi-agent requests.
 pub const AMBIENT_WORKLOAD_TOKEN_HEADER: &str = "X-Warp-Ambient-Workload-Token";

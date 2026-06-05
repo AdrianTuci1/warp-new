@@ -24,7 +24,6 @@ use crate::settings_view::billing_and_usage::billing_cycle_usage_common::{
 };
 use crate::ui_components::blended_colors;
 use crate::ui_components::icons::Icon;
-use crate::workspaces::workspace::{
     AiCreditsUsageAndCostSubjectType, AiCreditsUsageAndCostType, AiCreditsUsageBucket,
     AiCreditsUsageSource, BillingCycleUsageEntry, UsageVisibility, UsageVisibilityGranularity,
     Workspace, WorkspaceMember,

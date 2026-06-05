@@ -14,10 +14,6 @@ use crate::ai::{RequestLimitInfo, RequestUsageInfo};
 use crate::ai_assistant::utils::{AssistantTranscriptPart, TranscriptPartSubType};
 use crate::auth::AuthStateProvider;
 use crate::send_telemetry_from_ctx;
-use crate::server::server_api::ai::AIClient;
-use crate::server::server_api::ServerApi;
-use crate::server::telemetry::{TelemetryEvent, WarpAIRequestResult};
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 /// The key for the corresponding entry in UserDefaults.
 /// Not wiring through Settings for now since this data is only needed by the panel view.
@@ -415,7 +411,6 @@ impl Requests {
 #[cfg(test)]
 impl Requests {
     pub fn new_with_transcript(transcript: Vec<TranscriptPart>) -> Self {
-        use crate::server::server_api::ServerApiProvider;
 
         Self {
             server_api: ServerApiProvider::new_for_test().get(),

@@ -18,21 +18,13 @@ use super::cloud_preferences::{CloudPreferencesSettings, CloudPreferencesSetting
 use super::manager::SettingsEvent;
 use super::PrivacySettings;
 use crate::auth::auth_state::AuthState;
-use crate::cloud_object::model::generic_string_model::GenericStringObjectId;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::{CloudObjectEventEntrypoint, GenericStringObjectFormat, JsonObjectType};
-use crate::drive::CloudObjectTypeAndId;
 use crate::report_if_error;
-use crate::server::cloud_objects::update_manager::{
     GenericStringObjectInput, InitiatedBy, UpdateManager, UpdateManagerEvent,
 };
-use crate::server::ids::{ClientId, SyncId};
-use crate::server::sync_queue::{SyncQueue, SyncQueueEvent};
 use crate::settings::cloud_preferences::{
     CloudPreference, CloudPreferenceModel, Platform, Preference,
 };
 use crate::settings::manager::SettingsManager;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 /// Provides client ids for creating cloud preferences.
 /// We define this as a trait so tests can track what client ids are created and use

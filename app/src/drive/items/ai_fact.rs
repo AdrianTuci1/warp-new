@@ -6,9 +6,6 @@ use warpui::{AppContext, Element};
 use super::{WarpDriveItem, WarpDriveItemId};
 use crate::ai::facts::{AIFact, AIMemory, CloudAIFact};
 use crate::appearance::Appearance;
-use crate::cloud_object::CloudObjectMetadata;
-use crate::drive::index::DriveIndexAction;
-use crate::drive::{CloudObjectTypeAndId, DriveObjectType};
 use crate::themes::theme::Fill;
 
 #[derive(Clone)]

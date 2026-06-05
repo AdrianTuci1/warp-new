@@ -34,13 +34,10 @@ use crate::ai::mcp::{
     TransportType,
 };
 use crate::banner::{Banner, BannerTextContent};
-use crate::cloud_object::{CloudObject, Space};
 use crate::code::editor::view::{CodeEditorRenderOptions, CodeEditorView};
 use crate::persistence::ModelEvent;
 #[cfg(feature = "local_fs")]
 use crate::persistence::{database_file_path_for_scope, establish_ro_connection, PersistenceScope};
-use crate::server::cloud_objects::update_manager::InitiatedBy;
-use crate::server::telemetry::{MCPTemplateCreationSource, TelemetryEvent};
 use crate::settings_view::mcp_servers::destructive_mcp_confirmation_dialog::{
     DestructiveMCPConfirmationDialog, DestructiveMCPConfirmationDialogEvent,
     DestructiveMCPConfirmationDialogVariant,
@@ -254,8 +251,6 @@ impl MCPServersEditPageView {
                     });
                 }
             }
-            Some(ServerCardItemId::GalleryMCP(_uuid)) => {
-                log::warn!("Editing of gallery MCP unimplemented");
             }
             Some(ServerCardItemId::FileBasedMCP(_)) => {
                 log::warn!("Editing of file-based MCP unimplemented");
@@ -296,7 +291,6 @@ impl MCPServersEditPageView {
                         false
                     }
                 }
-                ServerCardItemId::GalleryMCP(_) | ServerCardItemId::FileBasedMCP(_) => false,
             }
         } else {
             false
@@ -392,7 +386,6 @@ impl MCPServersEditPageView {
                 TemplatableMCPServerManager::as_ref(app)
                     .is_server_installation_shared(installation_uuid, app)
             }
-            ServerCardItemId::GalleryMCP(_) | ServerCardItemId::FileBasedMCP(_) => false,
         }
     }
 
@@ -421,7 +414,6 @@ impl MCPServersEditPageView {
 
                 is_authorized_editor || !is_shared
             }
-            Some(ServerCardItemId::GalleryMCP(_)) | Some(ServerCardItemId::FileBasedMCP(_)) => {
                 false
             }
             None => true,
@@ -721,7 +713,6 @@ impl MCPServersEditPageView {
 
         let original_template =
             TemplatableMCPServerManager::as_ref(ctx).get_templatable_mcp_server(template_uuid);
-        let gallery_data = original_template.and_then(|template| template.gallery_data);
 
         TemplatableMCPServerManager::handle(ctx).update(ctx, |templatable_manager, ctx| {
             let templatable_mcp_server = TemplatableMCPServer {
@@ -730,7 +721,6 @@ impl MCPServersEditPageView {
                 description: parsed_result.templatable_mcp_server.description,
                 template: parsed_result.templatable_mcp_server.template,
                 version: parsed_result.templatable_mcp_server.version,
-                gallery_data,
             };
 
             if let Some(old_installation) =
@@ -859,8 +849,6 @@ impl TypedActionView for MCPServersEditPageView {
                         }
                     }
                 }
-                Some(ServerCardItemId::GalleryMCP(_uuid)) => {
-                    log::warn!("Editing of gallery MCP unimplemented");
                 }
                 Some(ServerCardItemId::FileBasedMCP(_)) => {
                     log::warn!("Editing of file-based MCP unimplemented");

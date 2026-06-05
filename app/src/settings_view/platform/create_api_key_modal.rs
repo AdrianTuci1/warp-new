@@ -27,7 +27,6 @@ use crate::modal::{Modal, ModalViewState};
 use crate::util::truncation::truncate_from_end;
 use crate::view_components::dropdown::{DROPDOWN_PADDING, TOP_MENU_BAR_HEIGHT};
 use crate::view_components::{Dropdown as DropdownView, DropdownItem};
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 const OZ_AGENTS_URL: &str = "https://oz.warp.dev/agents?new=true";
 const API_KEY_DOCS_URL: &str =
@@ -281,7 +280,6 @@ impl CreateApiKeyModal {
         ctx.notify();
 
         let auth_client =
-            crate::server::server_api::ServerApiProvider::as_ref(ctx).get_auth_client();
         ctx.spawn(
             async move { auth_client.list_agent_identities().await },
             |me, res, ctx| {
@@ -382,7 +380,6 @@ impl CreateApiKeyModal {
         };
 
         let auth_client =
-            crate::server::server_api::ServerApiProvider::as_ref(ctx).get_auth_client();
         ctx.spawn(
             async move { auth_client.create_api_key(final_name, team_id, agent_uid, expires_at).await },
             |me, res, ctx| {

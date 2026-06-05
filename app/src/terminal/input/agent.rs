@@ -12,7 +12,6 @@ use warpui::{AppContext, SingletonEntity as _};
 
 use super::common::{
     add_command_xray_overlay, add_input_suggestions_overlays, add_voltron_overlay,
-    add_workflow_info_overlay, maybe_add_buy_credits_banner,
     wrap_input_with_terminal_padding_and_focus_handler,
 };
 use super::{Input, InputAction, InputDropTargetData};
@@ -330,9 +329,7 @@ impl Input {
 
         let mut outer_stack = Stack::new().with_constrain_absolute_children();
         outer_stack.add_child(column.finish());
-        maybe_add_buy_credits_banner(
             &mut outer_stack,
-            &self.buy_credits_banner,
             self.is_pane_focused(app),
             self.terminal_view_id,
             self.is_input_at_top(&model, app),
@@ -491,9 +488,7 @@ impl Input {
 
         let mut outer_stack = Stack::new().with_constrain_absolute_children();
         outer_stack.add_child(input);
-        maybe_add_buy_credits_banner(
             &mut outer_stack,
-            &self.buy_credits_banner,
             self.is_pane_focused(app),
             self.terminal_view_id,
             self.is_input_at_top(&model, app),
@@ -687,9 +682,7 @@ impl Input {
             && !ambient_agent_model.is_waiting_for_session();
 
         let model = self.model.lock();
-        maybe_add_buy_credits_banner(
             &mut stack,
-            &self.buy_credits_banner,
             self.focus_handle.as_ref().is_none_or(|h| h.is_focused(app)),
             self.terminal_view_id,
             self.is_input_at_top(&model, app),
