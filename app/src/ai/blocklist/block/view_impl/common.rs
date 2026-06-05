@@ -81,7 +81,6 @@ use crate::ai::blocklist::{BlocklistAIActionModel, ShellCommandExecutor, TextLoc
 use crate::ai::loading::shimmering_warp_loading_text;
 use crate::code::editor::view::CodeEditorView;
 use crate::code::editor_management::CodeSource;
-use crate::notebooks::editor::{markdown_table_appearance, rich_text_styles};
 use crate::search::slash_command_menu::static_commands::commands;
 use crate::settings::{FontSettings, InputSettings};
 use crate::settings_view::SettingsSection;
@@ -96,8 +95,6 @@ use crate::ui_components::buttons::icon_button;
 use crate::ui_components::icons::Icon;
 use crate::util::link_detection::{add_link_detection_mouse_interactions, DetectedLinksState};
 use crate::workspace::WorkspaceAction;
-use crate::workspaces::user_workspaces::UserWorkspaces;
-use crate::workspaces::workspace::CustomerType;
 
 pub const STATUS_ICON_SIZE_DELTA: f32 = 4.;
 pub const STATUS_FOOTER_VERTICAL_PADDING: f32 = 4.;

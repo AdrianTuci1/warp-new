@@ -26,13 +26,11 @@ use crate::ai::ambient_agents::AmbientAgentTaskId;
 use crate::ai::blocklist::controller::RequestInput;
 use crate::ai::blocklist::ResponseStreamId;
 use crate::ai::llms::LLMId;
-use crate::cloud_object::{Owner, Revision, ServerMetadata, ServerPermissions};
 use crate::input_suggestions::HistoryInputSuggestion;
 use crate::persistence::model::{
     AgentConversation, AgentConversationData, AgentConversationRecord, PersistedAutoexecuteMode,
 };
 use crate::persistence::ModelEvent;
-use crate::server::ids::ServerId;
 use crate::terminal::model::session::SessionId;
 use crate::test_util::settings::{
     initialize_history_persistence_for_tests, initialize_settings_for_tests,

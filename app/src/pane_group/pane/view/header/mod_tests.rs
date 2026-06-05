@@ -8,7 +8,6 @@ use warpui::{App, AppContext, Element, Entity, TypedActionView, View, ViewContex
 
 use super::{Event, OpenOverlay};
 use crate::ai::blocklist::BlocklistAIHistoryModel;
-use crate::auth::AuthStateProvider;
 use crate::menu::MenuItemFields;
 use crate::pane_group::focus_state::PaneFocusHandle;
 use crate::pane_group::{BackingView, PaneConfiguration, PaneId, PaneView};

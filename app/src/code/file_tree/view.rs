@@ -1434,7 +1434,6 @@ impl FileTreeView {
         target_item: &FileTreeEntryState,
         ctx: &mut ViewContext<Self>,
     ) {
-        use crate::remote_server::manager::RemoteServerManager;
 
         if !FeatureFlag::SshRemoteServer.is_enabled() {
             return;

@@ -12,7 +12,6 @@ use super::execution_context::WarpAiExecutionContext;
 use super::utils::{markdown_segments_from_text, FormattedTranscriptMessage, TranscriptPart};
 use crate::ai::{RequestLimitInfo, RequestUsageInfo};
 use crate::ai_assistant::utils::{AssistantTranscriptPart, TranscriptPartSubType};
-use crate::auth::AuthStateProvider;
 use crate::send_telemetry_from_ctx;
 
 /// The key for the corresponding entry in UserDefaults.

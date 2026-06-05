@@ -6,7 +6,6 @@ use instant::{Duration, Instant};
 use parking_lot::FairMutex;
 use warpui::r#async::executor::Background;
 
-use crate::auth::auth_state::AuthState;
 use crate::send_telemetry_on_executor;
 use crate::terminal::TerminalModel;
 

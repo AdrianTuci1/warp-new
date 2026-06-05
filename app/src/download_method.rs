@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use warpui::r#async::executor::Background;
 
-use crate::auth::auth_state::AuthState;
 use crate::send_telemetry_on_executor;
 
 /// Determine the Warp download method (if possible) and send a telemetry event reporting that

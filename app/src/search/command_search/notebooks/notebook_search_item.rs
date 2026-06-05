@@ -9,7 +9,6 @@ use warpui::fonts::{Properties, Weight};
 use warpui::{AppContext, Element, SingletonEntity};
 
 use crate::appearance::Appearance;
-use crate::notebooks::CloudNotebookModel;
 use crate::search::command_search::searcher::CommandSearchItemAction;
 use crate::search::item::SearchItem;
 use crate::search::notebooks::fuzzy_match::render_notebook_matched_content_with_highlight;

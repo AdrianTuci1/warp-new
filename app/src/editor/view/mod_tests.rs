@@ -10,7 +10,6 @@ use warpui::windowing::WindowManager;
 use warpui::{AddSingletonModel, App, UpdateModel, UpdateView};
 
 use super::*;
-use crate::auth::AuthStateProvider;
 use crate::editor::soft_wrap::FrameLayouts;
 use crate::editor::tests::sample_text;
 use crate::editor::EditorView;

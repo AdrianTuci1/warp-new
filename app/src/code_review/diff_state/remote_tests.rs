@@ -4,7 +4,6 @@ use remote_server::manager::RemoteServerManagerEvent;
 use warp_util::remote_path::RemotePath;
 
 use super::InternalRemoteDiffState;
-use crate::auth::AuthStateProvider;
 use crate::code_review::diff_size_limits::DiffSize;
 use crate::code_review::diff_state::{
     DiffHunk, DiffLine, DiffLineType, DiffMetadata, DiffMetadataAgainstBase, DiffMode, DiffState,

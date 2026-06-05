@@ -11,13 +11,9 @@ use super::{
 };
 use crate::ai::artifacts::Artifact;
 use crate::ai::llms::LLMPreferences;
-use crate::auth::auth_manager::AuthManager;
-use crate::auth::AuthStateProvider;
 use crate::network::NetworkStatus;
 use crate::persistence::model::AgentConversationData;
-use crate::server::server_api::ServerApiProvider;
 use crate::test_util::settings::initialize_settings_for_tests;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 fn restored_conversation(conversation_data: Option<AgentConversationData>) -> AIConversation {
     AIConversation::new_restored(

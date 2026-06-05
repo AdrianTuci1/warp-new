@@ -24,28 +24,17 @@ use crate::ai::ai_document_view::DEFAULT_PLANNING_DOCUMENT_TITLE;
 use crate::ai::blocklist::{BlocklistAIHistoryEvent, BlocklistAIHistoryModel};
 use crate::ai::execution_profiles::profiles::AIExecutionProfilesModel;
 use crate::appearance::Appearance;
-use crate::auth::auth_state::AuthStateProvider;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::{CloudObject, CloudObjectEventEntrypoint, Owner};
-use crate::drive::folders::CloudFolder;
 use crate::global_resource_handles::GlobalResourceHandlesProvider;
-use crate::notebooks::editor::model::{
     FileLinkResolutionContext, NotebooksEditorModel, RichTextEditorModelEvent,
 };
-use crate::notebooks::editor::rich_text_styles;
-use crate::notebooks::file::MarkdownDisplayMode;
-use crate::notebooks::{CloudNotebookModel, NotebookId};
 use crate::persistence::ModelEvent;
-use crate::server::cloud_objects::update_manager::{
     InitiatedBy, ObjectOperation, OperationSuccessType, UpdateManager, UpdateManagerEvent,
 };
-use crate::server::ids::{ClientId, ServerId, SyncId};
 use crate::settings::FontSettings;
 use crate::terminal::model::session::active_session::ActiveSession;
 use crate::terminal::model::session::Session;
 use crate::terminal::TerminalView;
 use crate::throttle::throttle;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 /// The frequency at which we check for modifications and save the AI document to the server.
 /// Uses the same 2-second period as notebooks for consistency.

@@ -10,20 +10,11 @@ use serde_json::{Map, Value};
 use warp_graphql::queries::get_scheduled_agent_history::ScheduledAgentHistory;
 use warpui::{AppContext, Entity, ModelContext, SingletonEntity};
 
-use crate::cloud_object::model::generic_string_model::StringModel;
-use crate::cloud_object::model::json_model::JsonModel;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::{
     CloudObjectLookup as _, GenericStringObjectFormat, GenericStringObjectUniqueKey,
     JsonObjectType, Owner, Revision,
 };
-use crate::drive::CloudObjectTypeAndId;
-use crate::server::cloud_objects::update_manager::{
     ObjectOperation, OperationSuccessType, UpdateManager, UpdateManagerEvent,
 };
-use crate::server::ids::{ClientId, SyncId};
-use crate::server::server_api::ServerApiProvider;
-use crate::server::sync_queue::QueueItem;
 
 impl StringModel for ScheduledAmbientAgent {
     type CloudObjectType = CloudScheduledAmbientAgent;

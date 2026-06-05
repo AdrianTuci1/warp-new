@@ -8,7 +8,6 @@ use crate::ai::blocklist::block::{
     FinishReason, PendingUserQueryBlock, PendingUserQueryBlockEvent,
 };
 use crate::ai::blocklist::QueuedQueryModel;
-use crate::auth::AuthStateProvider;
 use crate::terminal::view::PendingUserQueryKind;
 use crate::terminal::TerminalView;
 

@@ -5,7 +5,6 @@ use warpui::platform::WindowStyle;
 use warpui::App;
 
 use super::{Find, FindDirection, FindEvent, FindModel};
-use crate::auth::AuthStateProvider;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
 use crate::test_util::settings::initialize_settings_for_tests;
 use crate::vim_registers::VimRegisters;

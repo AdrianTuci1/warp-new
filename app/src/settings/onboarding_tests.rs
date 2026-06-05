@@ -9,7 +9,6 @@ use crate::ai::execution_profiles::{
     AIExecutionProfile, ActionPermission, CloudAIExecutionProfileModel,
 };
 use crate::ai::mcp::TemplatableMCPServerManager;
-use crate::auth::AuthStateProvider;
 use crate::network::NetworkStatus;
 use crate::settings::{apply_onboarding_settings, PrivacySettings};
 use crate::test_util::settings::initialize_settings_for_tests;

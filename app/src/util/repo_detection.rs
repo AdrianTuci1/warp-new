@@ -20,7 +20,6 @@ use warpui::SingletonEntity;
 use warpui::{View, ViewContext};
 
 #[cfg(not(target_family = "wasm"))]
-use crate::remote_server::manager::RemoteServerManager;
 
 /// Describes whether the active session is local or remote.
 pub enum RepoDetectionSessionType {

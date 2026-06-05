@@ -17,9 +17,7 @@ use warpui::text::point::Point;
 use warpui::units::IntoPixels;
 use warpui::{App, SingletonEntity, TypedActionView, UpdateModel, ViewHandle};
 
-use crate::auth::AuthStateProvider;
 use crate::code::editor::view::{CodeEditorRenderOptions, CodeEditorView, CodeEditorViewAction};
-use crate::notebooks::editor::keys::NotebookKeybindings;
 use crate::settings::AppEditorSettings;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
 use crate::test_util::settings::initialize_settings_for_tests;

@@ -35,10 +35,6 @@ use crate::ai::blocklist::history_model::{
     BlocklistAIHistoryEvent, BlocklistAIHistoryModel, ConversationStatusUpdate,
 };
 use crate::ai::conversation_navigation::ConversationNavigationData;
-use crate::auth::AuthStateProvider;
-use crate::cloud_object::{Owner, Revision, ServerMetadata, ServerPermissions};
-use crate::server::ids::ServerId;
-use crate::server::server_api::presigned_upload::HttpStatusError;
 use crate::test_util::ai_agent_tasks::{create_api_task, create_message};
 use crate::workspace::WorkspaceAction;
 

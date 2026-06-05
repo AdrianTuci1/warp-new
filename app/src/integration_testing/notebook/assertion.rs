@@ -7,8 +7,6 @@ use warpui::{async_assert, async_assert_eq, App, ViewHandle};
 use crate::integration_testing::cloud_object::assert_metadata_revision;
 use crate::integration_testing::terminal::util::ExpectedOutput;
 use crate::integration_testing::view_getters::{notebook_view, terminal_view};
-use crate::notebooks::notebook::NotebookView;
-use crate::notebooks::{CloudNotebookModel, NotebookId};
 use crate::pane_group::PaneGroup;
 use crate::settings::{CloudPreferenceModel, Preference};
 

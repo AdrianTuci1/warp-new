@@ -10,9 +10,7 @@ use crate::ai::agent::conversation::{
 };
 use crate::ai::agent::{AIAgentInput, UserQueryMode};
 use crate::ai::ambient_agents::AmbientAgentTaskId;
-use crate::cloud_object::{Revision, ServerMetadata, ServerPermissions};
 use crate::persistence::model::ConversationUsageMetadata;
-use crate::server::ids::ServerId;
 
 fn test_server_metadata(
     server_token: &str,

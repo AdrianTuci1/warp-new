@@ -148,9 +148,6 @@ use crate::ai::get_relevant_files::controller::{
 use crate::ai::skills::SkillOpenOrigin;
 use crate::ai::skills::{SkillManager, SkillTelemetryEvent};
 use crate::ai::{AIRequestUsageModel, AIRequestUsageModelEvent};
-use crate::auth::{AuthStateProvider, UserUid};
-use crate::cloud_object::model::generic_string_model::GenericStringObjectId;
-use crate::cloud_object::model::persistence::CloudModel;
 use crate::code::editor::comment_editor::create_readonly_comment_markdown_editor;
 use crate::code::editor::view::{CodeEditorEvent, CodeEditorRenderOptions, CodeEditorView};
 use crate::code::editor_management::CodeSource;
@@ -162,10 +159,6 @@ use crate::code_review::comments::{
 use crate::code_review::telemetry_event::CodeReviewPaneEntrypoint;
 use crate::code_review::CodeReviewTelemetryEvent;
 use crate::editor::InteractionState;
-use crate::notebooks::editor::model::FileLinkResolutionContext;
-use crate::notebooks::editor::view::{EditorViewEvent, RichTextEditorView};
-use crate::server::ids::SyncId;
-use crate::server::telemetry::{
     AgentModeRewindEntrypoint, AutonomySettingToggleSource, InteractionSource, TelemetryEvent,
 };
 use crate::settings::{
@@ -198,8 +191,6 @@ use crate::view_components::compactible_action_button::CompactibleActionButton;
 use crate::view_components::find::FindEvent;
 use crate::view_components::DismissibleToast;
 use crate::workspace::{ForkAIConversationParams, ForkedConversationDestination, WorkspaceAction};
-use crate::workspaces::user_profiles::{UserProfileWithUID, UserProfiles};
-use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::{
     report_error, report_if_error, send_telemetry_from_ctx, AIAgentTodoList, Appearance, FileEdit,
     LLMPreferences, PrivacySettings, ToastStack,

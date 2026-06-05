@@ -41,12 +41,10 @@ use crate::code::language_server_shutdown_manager::LanguageServerShutdownManager
 use crate::code::lsp_telemetry::LspTelemetryEvent;
 use crate::persistence::ModelEvent;
 #[cfg(feature = "local_fs")]
-use crate::server::server_api::ServerApiProvider;
 use crate::settings::CodeSettings;
 #[cfg(feature = "local_fs")]
 use crate::terminal::local_shell::LocalShellState;
 use crate::terminal::TerminalView;
-use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
 use crate::{report_if_error, send_telemetry_from_ctx, TelemetryEvent};
 #[cfg(feature = "local_fs")]
 use crate::{view_components::DismissibleToast, workspace::ToastStack};

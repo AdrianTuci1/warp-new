@@ -36,7 +36,6 @@ use super::terminal_model::{HistoryEntry, SubshellInitializationInfo};
 #[cfg(feature = "local_tty")]
 use crate::features::FeatureFlag;
 #[cfg(feature = "local_tty")]
-use crate::remote_server::manager::{RemoteServerManager, RemoteServerManagerEvent};
 use crate::terminal::event::{ExecutedExecutorCommandEvent, RemoteServerSetupState};
 use crate::terminal::shell::{Shell, ShellType};
 use crate::terminal::warpify::SubshellSource;

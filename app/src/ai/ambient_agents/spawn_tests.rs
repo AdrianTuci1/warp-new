@@ -10,7 +10,6 @@ use super::{
 };
 use crate::ai::agent::UserQueryMode;
 use crate::ai::ambient_agents::{AmbientAgentTask, AmbientAgentTaskState};
-use crate::server::server_api::ai::{MockAIClient, SpawnAgentResponse, TaskStatusMessage};
 use crate::terminal::shared_session;
 
 fn task_with(
@@ -650,7 +649,6 @@ fn run_id() -> crate::ai::ambient_agents::AmbientAgentTaskId {
 }
 
 fn transient_http_error() -> anyhow::Error {
-    use crate::server::server_api::presigned_upload::HttpStatusError;
     anyhow::Error::new(HttpStatusError {
         status: 429,
         body: "Too Many Requests".to_string(),
@@ -659,7 +657,6 @@ fn transient_http_error() -> anyhow::Error {
 }
 
 fn permanent_http_error() -> anyhow::Error {
-    use crate::server::server_api::presigned_upload::HttpStatusError;
     anyhow::Error::new(HttpStatusError {
         status: 403,
         body: "Forbidden".to_string(),
@@ -671,7 +668,6 @@ fn permanent_http_error() -> anyhow::Error {
 async fn poll_retries_transient_429_errors() {
     use futures::StreamExt;
 
-    use crate::server::retry_strategies::MAX_ATTEMPTS;
 
     let mut mock = MockAIClient::new();
     let call_count = Arc::new(AtomicUsize::new(0));
@@ -814,7 +810,6 @@ async fn poll_fails_on_permanent_http_error() {
 async fn poll_gives_up_after_max_transient_retries() {
     use futures::StreamExt;
 
-    use crate::server::retry_strategies::MAX_ATTEMPTS;
 
     let mut mock = MockAIClient::new();
     let call_count = Arc::new(AtomicUsize::new(0));

@@ -11,7 +11,6 @@ use crate::ai::ambient_agents::{
     AmbientConversationStatus,
 };
 use crate::ai::blocklist::BlocklistAIHistoryModel;
-use crate::auth::AuthStateProvider;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum TombstoneCta {

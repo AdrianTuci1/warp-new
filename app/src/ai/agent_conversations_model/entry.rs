@@ -16,10 +16,8 @@ use crate::ai::ambient_agents::{AgentSource, AmbientAgentTask, AmbientAgentTaskI
 use crate::ai::artifacts::Artifact;
 use crate::ai::blocklist::history_model::{AIConversationMetadata, BlocklistAIHistoryModel};
 use crate::ai::conversation_navigation::ConversationNavigationData;
-use crate::auth::{AuthStateProvider, UserUid};
 use crate::util::time_format::human_readable_precise_duration;
 use crate::workspace::RestoreConversationLayout;
-use crate::workspaces::user_profiles::{UserProfileWithUID, UserProfiles};
 
 const SESSION_EXPIRATION_TIME: chrono::Duration = chrono::Duration::weeks(1);
 

@@ -9,8 +9,6 @@ use warpui::{App, AppContext, Element};
 
 use super::*;
 use crate::appearance::Appearance;
-use crate::auth::auth_manager::AuthManager;
-use crate::auth::AuthStateProvider;
 use crate::search::command_search::history::history_data_source;
 use crate::search::command_search::searcher::CommandSearchMixer;
 use crate::search::data_source::{Query, QueryResult};

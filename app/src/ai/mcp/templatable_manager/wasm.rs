@@ -7,9 +7,6 @@ use super::TemplatableMCPServerManager;
 use crate::ai::mcp::templatable::{CloudTemplatableMCPServer, TemplatableMCPServer};
 use crate::ai::mcp::templatable_installation::{TemplatableMCPServerInstallation, VariableValue};
 use crate::ai::mcp::MCPServerUpdate;
-use crate::cloud_object::Space;
-use crate::server::cloud_objects::update_manager::InitiatedBy;
-use crate::server::ids::ServerId;
 
 impl TemplatableMCPServerManager {
     /// Creates a new [`TemplatableMCPServerManager`] instance.

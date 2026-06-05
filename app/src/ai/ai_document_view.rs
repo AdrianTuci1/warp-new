@@ -29,15 +29,8 @@ use crate::ai::document::ai_document_model::{
 };
 use crate::ai::document::orchestration_config_block::OrchestrationConfigBlockView;
 use crate::appearance::Appearance;
-use crate::drive::items::WarpDriveItemId;
-use crate::drive::sharing::ShareableObject;
-use crate::drive::CloudObjectTypeAndId;
 use crate::editor::InteractionState;
 use crate::menu::{Menu, MenuItem, MenuItemFields};
-use crate::notebooks::editor::model::NotebooksEditorModel;
-use crate::notebooks::editor::rich_text_styles;
-use crate::notebooks::editor::view::{EditorViewEvent, RichTextEditorConfig, RichTextEditorView};
-use crate::notebooks::link::{NotebookLinks, SessionSource};
 use crate::pane_group::focus_state::PaneFocusHandle;
 use crate::pane_group::pane::view;
 use crate::pane_group::pane::view::header::components::{
@@ -46,7 +39,6 @@ use crate::pane_group::pane::view::header::components::{
 };
 use crate::pane_group::pane::view::header::{toolbelt_button_position_id, PaneHeaderAction};
 use crate::pane_group::{BackingView, PaneConfiguration, PaneEvent};
-use crate::server::telemetry::TelemetryEvent;
 use crate::settings::FontSettings;
 use crate::terminal::input::MenuPositioning;
 use crate::terminal::view::TerminalView;
@@ -86,7 +78,6 @@ use warp_util::path::LineAndColumnArg;
 use crate::code::editor_management::CodeSource;
 // Import keybinding constants from code view to ensure consistency
 use crate::code::view::{SAVE_FILE_BINDING_DESCRIPTION, SAVE_FILE_BINDING_NAME};
-use crate::notebooks::file::MarkdownDisplayMode;
 #[cfg(feature = "local_fs")]
 use crate::util::file::external_editor::settings::EditorLayout;
 #[cfg(feature = "local_fs")]
@@ -1010,7 +1001,6 @@ impl AIDocumentView {
     fn export(&self, ctx: &mut ViewContext<Self>) {
         use warpui::platform::SaveFilePickerConfiguration;
 
-        use crate::drive::export::safe_filename;
         let markdown = self.editor.as_ref(ctx).markdown_unescaped(ctx);
 
         // Get the document title from the model

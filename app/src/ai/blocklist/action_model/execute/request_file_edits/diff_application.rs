@@ -21,7 +21,6 @@ use super::telemetry::{
 use crate::ai::agent::{AIIdentifiers, FileEdit};
 use crate::ai::blocklist::SessionContext;
 use crate::ai::paths::host_native_absolute_path;
-use crate::auth::auth_state::AuthState;
 use crate::{safe_debug, safe_warn, send_telemetry_on_executor};
 
 /// Result of reading a file from disk or a remote server.

@@ -34,8 +34,6 @@ use warpui::{
 };
 use websocket::{Message, Sink, Stream, WebsocketMessage as _};
 
-use crate::auth::auth_state::AuthState;
-use crate::auth::{AuthStateProvider, UserUid};
 use crate::editor::{CrdtOperation, ReplicaId};
 use crate::terminal::event_listener::ChannelEventListener;
 use crate::terminal::model::block::BlockId;

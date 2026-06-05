@@ -14,7 +14,6 @@ use super::{
 use crate::ai::ambient_agents::github_auth_notifier::GitHubAuthNotifier;
 use crate::ai::ambient_agents::github_auth_url::{self, AuthSource, GithubAuthRedirectTarget};
 use crate::ai::cloud_environments::GithubRepo;
-use crate::auth::AuthStateProvider;
 use crate::network::NetworkStatus;
 use crate::settings::PrivacySettings;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;

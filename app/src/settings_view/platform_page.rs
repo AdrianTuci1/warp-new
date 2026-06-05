@@ -27,7 +27,6 @@ use super::settings_page::{
 };
 use super::SettingsSection;
 use crate::appearance::Appearance;
-use crate::auth::AuthStateProvider;
 use crate::editor::{
     EditorView, Event as EditorEvent, PropagateAndNoOpNavigationKeys, SingleLineEditorOptions,
     TextOptions,

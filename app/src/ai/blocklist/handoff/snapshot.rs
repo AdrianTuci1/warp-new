@@ -15,9 +15,6 @@ use warpui::{ModelHandle, SingletonEntity, ViewContext};
 
 use crate::ai::agent_sdk::driver::upload_snapshot_for_handoff;
 use crate::ai::blocklist::handoff::touched_repos::{derive_touched_workspace, TouchedWorkspace};
-use crate::remote_server::manager::RemoteServerManager;
-use crate::server::server_api::ai::{AIClient, InitialSnapshotToken};
-use crate::server::server_api::ServerApiProvider;
 use crate::terminal::model::session::SessionId;
 use crate::terminal::view::ambient_agent::{AmbientAgentViewModel, SnapshotUploadStatus};
 use crate::workspace::Workspace;

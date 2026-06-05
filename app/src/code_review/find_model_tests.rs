@@ -11,7 +11,6 @@ use warpui::platform::WindowStyle;
 use warpui::{App, Element as _, ModelHandle, ViewHandle};
 
 use super::*;
-use crate::auth::AuthStateProvider;
 use crate::code::buffer_location::LocalOrRemotePath;
 use crate::code::editor::view::{CodeEditorRenderOptions, CodeEditorView};
 use crate::code::local_code_editor::LocalCodeEditorView;

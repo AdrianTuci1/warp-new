@@ -54,8 +54,6 @@ use crate::code::buffer_location::LocalOrRemotePath;
 use crate::code::view::CodeView;
 use crate::env_vars::view::env_var_collection::EnvVarCollectionView;
 use crate::menu::MenuItem;
-use crate::notebooks::file::FileNotebookView;
-use crate::notebooks::notebook::NotebookView;
 use crate::pane_group::focus_state::PaneFocusHandle;
 use crate::pane_group::pane::get_started_view::GetStartedView;
 use crate::settings::PaneSettings;

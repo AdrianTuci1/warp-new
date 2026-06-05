@@ -11,7 +11,6 @@ use crate::ai::agent::{
 };
 use crate::ai::blocklist::orchestration_event_streamer::OrchestrationEventStreamer;
 use crate::ai::blocklist::BlocklistAIHistoryModel;
-use crate::server::server_api::ServerApiProvider;
 use crate::test_util::settings::initialize_history_persistence_for_tests;
 
 const FIRST_REQUEST_ID: StartAgentRequestId = StartAgentRequestId::from_raw_for_test(0);

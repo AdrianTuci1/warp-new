@@ -12,7 +12,6 @@ use crate::ai::agent::api::{self, generate_multi_agent_output, ConvertToAPITypeE
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::{AIIdentifiers, CancellationReason};
 use crate::network::NetworkStatus;
-use crate::server::server_api::ServerApiProvider;
 use crate::{report_error, send_telemetry_from_ctx};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

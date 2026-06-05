@@ -6,12 +6,9 @@ use settings::manager::SettingsManager;
 use warpui::{App, SingletonEntity};
 
 use super::*;
-use crate::auth::AuthStateProvider;
     Owner, Revision, ServerMetadata, ServerNotebook, ServerPermissions, ServerWorkflow,
 };
 use crate::network::NetworkStatus;
-use crate::notebooks::manager::NotebookManager;
-use crate::notebooks::{CloudNotebookModel, NotebookId};
 use crate::search::data_source::Query;
 use crate::settings::AISettings;
 use crate::system::SystemStats;

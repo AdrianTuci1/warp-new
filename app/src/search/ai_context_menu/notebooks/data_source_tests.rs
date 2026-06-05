@@ -5,9 +5,6 @@ use cloud_object_client::MockObjectClient;
 use settings::manager::SettingsManager;
 use warpui::{App, SingletonEntity};
 
-use crate::auth::AuthStateProvider;
-use crate::notebooks::manager::NotebookManager;
-use crate::notebooks::CloudNotebookModel;
 use crate::search::ai_context_menu::notebooks::data_source::NotebookDataSource;
 use crate::search::data_source::Query;
 use crate::search::mixer::SyncDataSource;

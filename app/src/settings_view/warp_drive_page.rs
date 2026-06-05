@@ -22,7 +22,6 @@ use super::{
     SettingsAction, SettingsSection, ToggleSettingActionPair, ToggleState,
 };
 use crate::appearance::Appearance;
-use crate::auth::AuthStateProvider;
 
 #[derive(Debug, Clone)]
 pub enum WarpDriveSettingsPageAction {

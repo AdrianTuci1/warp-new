@@ -42,7 +42,6 @@ use {
     session_sharing_protocol::sharer::{InitPayload, Lifetime},
 };
 
-use crate::auth::{AuthStateProvider, UserUid};
 use crate::editor::{CrdtOperation, ReplicaId};
 use crate::terminal::model::block::BlockId;
 use crate::terminal::shared_session::network::heartbeat::{Event as HeartbeatEvent, Heartbeat};

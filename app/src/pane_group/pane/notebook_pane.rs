@@ -11,9 +11,6 @@ use super::{
     ShareableLinkError,
 };
 use crate::app_state::{LeafContents, NotebookPaneSnapshot};
-use crate::notebooks::link::{LinkEvent, NotebookLinks};
-use crate::notebooks::manager::{NotebookManager, NotebookSource};
-use crate::notebooks::notebook::{NotebookEvent, NotebookView};
 use crate::workflows::{WorkflowSelectionSource, WorkflowSource, WorkflowType};
 
 pub struct NotebookPane {

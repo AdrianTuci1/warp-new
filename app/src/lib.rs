@@ -78,6 +78,17 @@ mod wasm_nux_dialog;
 mod window_settings;
 mod word_block_editor;
 
+// Stub modules for cloud functionality removed in Octomus
+mod auth;
+mod billing;
+mod cloud_object;
+mod drive;
+mod notebooks;
+mod pricing;
+mod remote_server;
+mod server;
+mod workspaces;
+
 // PLEASE DO NOT ADD MORE PUBLIC MODULES!
 //
 // Any modules which we make public outside of the `warp` crate lose dead code
@@ -247,15 +258,8 @@ use crate::projects::ProjectManagementModel;
 use crate::root_view::{
     quake_mode_window_id, quake_mode_window_is_open, OpenFromRestoredArg, OpenPath,
 };
-use crate::server::cloud_objects::listener::Listener;
-use crate::server::cloud_objects::update_manager::UpdateManager;
-use crate::server::experiments::ServerExperiments;
-use crate::server::iap::IapManager;
-use crate::server::sync_queue::{QueueItem, SyncQueue};
-pub use crate::server::telemetry::{
     AgentModeEntrypoint, AgentModeEntrypointSelectionType, TelemetryEvent,
 };
-use crate::server::telemetry::{AppStartupInfo, CloseTarget, PaletteSource, TelemetryCollector};
 use crate::session_management::{RunningSessionSummary, SessionNavigationData};
 use crate::settings::manager::SettingsManager;
 use crate::settings::{AISettings, AccessibilitySettings, ScrollSettings, SelectionSettings};

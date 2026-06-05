@@ -156,7 +156,6 @@ fn new_command_executor_for_local_tty_session(
 
     use super::IsLegacySSHSession;
     use crate::features::FeatureFlag;
-    use crate::remote_server::manager::RemoteServerManager;
     use crate::settings::DebugSettings;
     use crate::terminal::available_shells::AvailableShells;
     use crate::terminal::model::session::{BootstrapSessionType, ShellLaunchData};

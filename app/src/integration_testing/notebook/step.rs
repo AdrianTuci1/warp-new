@@ -7,7 +7,6 @@ use warpui::windowing::WindowManager;
 use warpui::{async_assert, App, SingletonEntity, ViewHandle, WindowId};
 
 use crate::integration_testing::view_getters::{notebook_view, workspace_view};
-use crate::notebooks::manager::NotebookSource;
 
 fn notebook_editor(
     app: &App,

@@ -13,7 +13,6 @@ use super::{
     initialize_cloud_preferences_syncer, ClientIdProvider, CloudPreferencesSyncer,
     ForceCloudToMatchLocal, SETTINGS_FILE_LAST_SYNCED_HASH_KEY,
 };
-use crate::auth::auth_state::AuthState;
     BulkCreateCloudObjectResult, CreatedCloudObject, GenericStringObjectFormat,
     GenericStringObjectUniqueKey, JsonObjectType, ObjectDeleteResult, ObjectIdType, Owner,
     Revision, RevisionAndLastEditor, ServerMetadata, ServerObject, ServerPermissions,

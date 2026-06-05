@@ -51,8 +51,6 @@ use crate::ai::blocklist::{
     BlocklistAIHistoryEvent, BlocklistAIHistoryModel, InputConfig, SerializedBlockListItem,
 };
 use crate::ai::llms::{LLMPreferences, LLMPreferencesEvent};
-use crate::auth::auth_state::AuthState;
-use crate::auth::AuthStateProvider;
 use crate::banner::BannerState;
 use crate::context_chips::current_prompt::CurrentPrompt;
 use crate::context_chips::prompt_snapshot::PromptSnapshot;

@@ -17,8 +17,6 @@ use crate::ai::ambient_agents::{
     AgentSource, AmbientAgentTask, AmbientAgentTaskId, AmbientAgentTaskState,
 };
 use crate::ai::blocklist::history_model::BlocklistAIHistoryModel;
-use crate::auth::user::TEST_USER_UID;
-use crate::auth::{AuthStateProvider, UserUid};
 use crate::FeatureFlag;
 
 const CONVERSATION_TOKEN: &str = "server-conversation-token";

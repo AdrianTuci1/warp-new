@@ -48,12 +48,7 @@ use crate::ai::cloud_environments::{AmbientAgentEnvironment, CloudAmbientAgentEn
 use crate::ai::harness_availability::HarnessAvailabilityModel;
 use crate::ai::harness_display;
 use crate::appearance::Appearance;
-use crate::auth::UserUid;
-use crate::cloud_object::CloudObjectLookup as _;
-use crate::notebooks::NotebookId;
 use crate::send_telemetry_from_ctx;
-use crate::server::ids::{ServerId, SyncId};
-use crate::server::server_api::ai::AmbientAgentTask;
 #[cfg(not(target_family = "wasm"))]
 use crate::settings::ai::{AISettings, AISettingsChangedEvent};
 use crate::ui_components::avatar::{Avatar, AvatarContent};
@@ -70,7 +65,6 @@ use crate::view_components::copyable_text_field::{
 };
 use crate::view_components::DismissibleToast;
 use crate::workspace::{ForkedConversationDestination, ToastStack, WorkspaceAction};
-use crate::workspaces::user_profiles::{UserProfileWithUID, UserProfiles};
 
 const FIELD_SPACING: f32 = 16.0;
 const HEADER_SPACING: f32 = 12.0;

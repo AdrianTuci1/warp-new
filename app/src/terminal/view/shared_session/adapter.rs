@@ -13,7 +13,6 @@ use warpui::{AppContext, Element, ModelHandle, ViewContext, ViewHandle};
 
 use super::sharer::Sharer;
 use super::viewer::Viewer;
-use crate::auth::UserUid;
 use crate::banner::{Banner, BannerTextContent};
 use crate::terminal::shared_session::participant_avatar_view::ParticipantAvatarView;
 use crate::terminal::shared_session::presence_manager::PresenceManager;

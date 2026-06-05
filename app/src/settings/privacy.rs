@@ -13,8 +13,6 @@ use warpui::{AppContext, Entity, ModelContext, SingletonEntity, UpdateModel};
 
 use super::cloud_preferences_syncer::CloudPreferencesSyncer;
 use crate::ai::blocklist::telemetry_banner::should_collect_ai_ugc_telemetry;
-use crate::auth::auth_state::AuthState;
-use crate::auth::AuthStateProvider;
 use crate::report_error;
 #[cfg(test)]
 use crate::terminal::safe_mode_settings::SafeModeSettings;

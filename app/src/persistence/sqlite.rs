@@ -76,9 +76,6 @@ use crate::app_state::{
     RightPanelSnapshot, SettingsPaneSnapshot, SplitDirection, TabSnapshot, TerminalPaneSnapshot,
     WindowSnapshot, WorkflowPaneSnapshot,
 };
-use crate::auth::auth_manager::PersistedCurrentUserInformation;
-use crate::auth::auth_state::AuthStateProvider;
-use crate::auth::UserUid;
 use crate::code::editor_management::CodeSource;
 use crate::persistence::agent::read_agent_conversations;
 use crate::persistence::block_list::{get_all_restored_blocks, read_ai_queries};

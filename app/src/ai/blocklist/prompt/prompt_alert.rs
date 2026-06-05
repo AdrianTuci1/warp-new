@@ -8,14 +8,11 @@ use warpui::elements::{
 use warpui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
 
 use crate::ai::blocklist::error_color;
-use crate::auth::AuthStateProvider;
 use crate::network::NetworkStatus;
-use crate::server::ids::ServerId;
 use crate::settings::PrivacySettings;
 use crate::settings_view::SettingsSection;
 use crate::ui_components::icons::Icon;
 use crate::workspace::WorkspaceAction;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 const ANONYMOUS_USER_REQUEST_LIMIT_SOFT_GATE_PERCENTAGE: f32 = 0.5;
 

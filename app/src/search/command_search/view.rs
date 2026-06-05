@@ -34,10 +34,6 @@ use super::zero_state::{CommandSearchZeroStateEvent, CommandSearchZeroStateView}
 use crate::ai_assistant::execution_context::WarpAiExecutionContext;
 use crate::ai_assistant::GenerateCommandsFromNaturalLanguageError;
 use crate::appearance::Appearance;
-use crate::auth::auth_manager::AuthManager;
-use crate::auth::auth_state::AuthState;
-use crate::auth::auth_view_modal::AuthViewVariant;
-use crate::auth::{AuthStateProvider, UserUid};
 use crate::completer::SessionContext;
 use crate::search::command_search::searcher::{CommandSearchItemAction, CommandSearchMixer};
 use crate::search::mixer::AddAsyncSourceOptions;

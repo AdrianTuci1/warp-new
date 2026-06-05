@@ -2,7 +2,6 @@ use serde_json::Value;
 use warpui::{App, SingletonEntity};
 
 use super::Prompt;
-use crate::auth::AuthStateProvider;
 use crate::context_chips::prompt::{PromptConfiguration, PromptSelection};
 use crate::context_chips::ContextChipKind;
 use crate::settings::WarpPromptSeparator;

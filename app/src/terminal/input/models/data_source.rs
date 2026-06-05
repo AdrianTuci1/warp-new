@@ -28,7 +28,6 @@ use crate::ai::llms::{
     is_using_api_key_for_provider, should_show_bedrock_icon_for_model, DisableReason, LLMId,
     LLMInfo, LLMPreferences, LLMProvider, LLMSpec,
 };
-use crate::auth::AuthStateProvider;
 use crate::features::FeatureFlag;
 use crate::search::data_source::{Query, QueryFilter, QueryResult};
 use crate::search::mixer::DataSourceRunErrorWrapper;

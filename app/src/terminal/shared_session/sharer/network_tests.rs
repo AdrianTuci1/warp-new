@@ -13,8 +13,6 @@ use warpui::{App, ModelHandle};
 use websocket::{Message, WebsocketMessage as _};
 
 use super::{Network, PtyBytesBatchStatus, Stage};
-use crate::auth::auth_manager::AuthManager;
-use crate::auth::AuthStateProvider;
 use crate::editor::ReplicaId;
 use crate::terminal::shared_session::{SharedSessionScrollbackType, MAX_BYTES_SHAREABLE};
 use crate::terminal::TerminalModel;

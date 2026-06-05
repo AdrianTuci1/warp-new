@@ -17,7 +17,6 @@ use warpui_extras::user_preferences::toml_backed::TomlBackedUserPreferences;
 use super::cloud_preferences::{CloudPreferencesSettings, CloudPreferencesSettingsChangedEvent};
 use super::manager::SettingsEvent;
 use super::PrivacySettings;
-use crate::auth::auth_state::AuthState;
 use crate::report_if_error;
     GenericStringObjectInput, InitiatedBy, UpdateManager, UpdateManagerEvent,
 };

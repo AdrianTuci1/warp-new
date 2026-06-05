@@ -24,7 +24,6 @@ use async_trait::async_trait;
 pub use categories::{CategoriesView, CategoriesViewEvent, WorkflowsViewAction};
 
 use crate::appearance::Appearance;
-use crate::notebooks::{NotebookId, NotebookLocation};
 use crate::persistence::ModelEvent;
 
 pub fn init(app: &mut AppContext) {

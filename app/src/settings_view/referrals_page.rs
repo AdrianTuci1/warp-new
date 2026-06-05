@@ -26,7 +26,6 @@ use super::settings_page::{
 };
 use super::SettingsSection;
 use crate::appearance::Appearance;
-use crate::auth::AuthStateProvider;
 use crate::editor::{EditorView, Event as EditorEvent, SingleLineEditorOptions, TextOptions};
 use crate::ui_components::blended_colors;
 use crate::view_components::ToastFlavor;
