@@ -69,3 +69,10 @@ __pycache__/
 
 # Project notes
 .note/
+
+# Octomus — auxiliary/generated files (not source)
+docs/
+mini_ui/
+script/octomus-stage*
+scripts/tmux-octomus*
+scripts/merge-octomus*
