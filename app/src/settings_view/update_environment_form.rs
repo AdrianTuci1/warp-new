@@ -37,8 +37,6 @@ use crate::editor::{
     EditorOptions, EditorView, PropagateAndNoOpNavigationKeys, SingleLineEditorOptions, TextOptions,
 };
 use crate::root_view::CreateEnvironmentArg;
-use crate::server::ids::SyncId;
-use crate::server::server_api::ServerApiProvider;
 use crate::ui_components::buttons::icon_button;
 use crate::ui_components::icons::Icon;
 use crate::view_components::action_button::{
@@ -48,7 +46,6 @@ use crate::view_components::{
     render_warning_box, SubmittableTextInput, SubmittableTextInputEvent, WarningBoxButtonConfig,
     WarningBoxConfig,
 };
-use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::ChannelState;
 
 const SUBMIT_BUTTON_FOCUSED: &str = "SubmitButtonFocused";

@@ -70,9 +70,6 @@ use crate::ai::paths::host_native_absolute_path;
 use crate::auth::auth_manager::{AuthManager, LoginGatedFeature};
 use crate::auth::auth_view_modal::AuthViewVariant;
 use crate::auth::AuthStateProvider;
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
-use crate::cloud_object::GenericStringObjectFormat::Json;
-use crate::cloud_object::{JsonObjectType, ObjectType};
 use crate::editor::{EditorOptions, InteractionState, SingleLineEditorOptions, TextColors};
 use crate::modal::{Modal, ModalEvent, ModalViewState};
 use crate::settings::{
@@ -95,7 +92,6 @@ use crate::view_components::{
     render_warning_box, FilterableDropdown, SubmittableTextInput, SubmittableTextInputEvent,
     WarningBoxConfig,
 };
-use crate::workspaces::user_workspaces::UserWorkspacesEvent;
 
 /// Identifies which subpage of the AI settings the user is viewing.
 /// When `None`, the page shows all widgets (legacy/full view).
@@ -136,7 +132,6 @@ use crate::ai::{AIRequestUsageModel, AIRequestUsageModelEvent};
 use crate::appearance::Appearance;
 use crate::editor::{EditorView, Event as EditorEvent, TextOptions};
 use crate::menu::{MenuItem, MenuItemFields};
-use crate::server::telemetry::{
     AgentModeAutoDetectionSettingOrigin, AutonomySettingToggleSource,
     ToggleCodeSuggestionsSettingSource,
 };
@@ -146,7 +141,6 @@ use crate::ui_components::icons::Icon;
 use crate::util::bindings;
 use crate::view_components::dropdown::DropdownAction;
 use crate::view_components::{Dropdown, DropdownItem};
-use crate::workspaces::workspace::{AdminEnablementSetting, CustomerType};
 use crate::{
     report_error, report_if_error, send_telemetry_from_ctx, TelemetryEvent, UserWorkspaces,
 };
@@ -7960,7 +7954,6 @@ impl AwsBedrockWidget {
         let is_section_enabled = is_any_ai_enabled && is_bedrock_available;
         let is_admin_enforced = matches!(
             user_workspaces.aws_bedrock_host_enablement_setting(),
-            crate::workspaces::workspace::HostEnablementSetting::Enforce
         );
         let is_toggleable =
             is_section_enabled && user_workspaces.is_aws_bedrock_credentials_toggleable();

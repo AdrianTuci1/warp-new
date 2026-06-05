@@ -16,16 +16,10 @@ use crate::ai::cloud_environments::{
 use crate::auth::AuthStateProvider;
 use crate::network::NetworkStatus;
 use crate::root_view::CreateEnvironmentArg;
-use crate::server::cloud_objects::update_manager::UpdateManager;
-use crate::server::ids::{ClientId, ServerId, SyncId};
-use crate::server::server_api::ServerApiProvider;
-use crate::server::sync_queue::SyncQueue;
 use crate::settings::PrivacySettings;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
 use crate::terminal::view::init_environment::mode_selector::EnvironmentSetupModeSelector;
 use crate::test_util::settings::initialize_settings_for_tests;
-use crate::workspaces::team_tester::TeamTesterStatus;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 fn make_test_environment(
     name: &str,
@@ -658,8 +652,6 @@ fn test_render_list_page_with_environments_shows_list() {
             let object = CloudAmbientAgentEnvironment::new(
                 sync_id,
                 CloudAmbientAgentEnvironmentModel::new(environment),
-                crate::cloud_object::CloudObjectMetadata::mock(),
-                crate::cloud_object::CloudObjectPermissions::mock_personal(),
             );
 
             CloudModel::handle(ctx).update(ctx, |model, ctx| {
@@ -724,19 +716,15 @@ fn test_render_list_page_with_personal_and_team_environments_shows_section_heade
             let personal_object = CloudAmbientAgentEnvironment::new(
                 personal_id,
                 CloudAmbientAgentEnvironmentModel::new(personal_env),
-                crate::cloud_object::CloudObjectMetadata::mock(),
-                crate::cloud_object::CloudObjectPermissions::mock_personal(),
             );
 
             let team_id = SyncId::ClientId(ClientId::new());
-            let mut team_permissions = crate::cloud_object::CloudObjectPermissions::mock_personal();
             team_permissions.owner = Owner::Team {
                 team_uid: ServerId::from(789),
             };
             let team_object = CloudAmbientAgentEnvironment::new(
                 team_id,
                 CloudAmbientAgentEnvironmentModel::new(team_env),
-                crate::cloud_object::CloudObjectMetadata::mock(),
                 team_permissions,
             );
 
@@ -783,8 +771,6 @@ fn test_render_list_page_with_only_personal_environments_shows_personal_header()
             let personal_object = CloudAmbientAgentEnvironment::new(
                 personal_id,
                 CloudAmbientAgentEnvironmentModel::new(personal_env),
-                crate::cloud_object::CloudObjectMetadata::mock(),
-                crate::cloud_object::CloudObjectPermissions::mock_personal(),
             );
 
             CloudModel::handle(ctx).update(ctx, |model, ctx| {
@@ -1286,8 +1272,6 @@ fn test_toolbar_renders_search_editor_view() {
             let object = CloudAmbientAgentEnvironment::new(
                 sync_id,
                 CloudAmbientAgentEnvironmentModel::new(environment),
-                crate::cloud_object::CloudObjectMetadata::mock(),
-                crate::cloud_object::CloudObjectPermissions::mock_personal(),
             );
 
             CloudModel::handle(ctx).update(ctx, |model, ctx| {

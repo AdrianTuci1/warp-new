@@ -31,7 +31,6 @@ use crate::auth::AuthStateProvider;
 use crate::report_if_error;
 use crate::settings::PrivacySettings;
 use crate::terminal::CLIAgent;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 pub enum FocusedTerminalInfoEvent {
     TerminalInfoUpdated,
@@ -1616,7 +1615,6 @@ impl AISettings {
         }
         !matches!(
             UserWorkspaces::as_ref(app).get_cloud_conversation_storage_enablement_setting(),
-            crate::workspaces::workspace::AdminEnablementSetting::Disable
         )
     }
     pub fn is_ampersand_handoff_enabled(&self, app: &warpui::AppContext) -> bool {

@@ -22,8 +22,6 @@ use self::docker::open_docker_container;
 use crate::ai::active_agent_views_model::{ActiveAgentViewsModel, ConversationOrTaskId};
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::ambient_agents::github_auth_notifier::GitHubAuthNotifier;
-use crate::cloud_object::ObjectType;
-use crate::drive::{OpenWarpDriveObjectArgs, OpenWarpDriveObjectSettings};
 use crate::features::FeatureFlag;
 use crate::launch_configs::launch_config::LaunchConfig;
 use crate::linear::{LinearAction, LinearIssueWork};
@@ -31,8 +29,6 @@ use crate::root_view::{
     open_new_window_get_handles, open_new_with_workspace_source, NewWorkspaceSource,
     OpenLaunchConfigArg,
 };
-use crate::server::ids::ServerId;
-use crate::server::telemetry::{LaunchConfigUiLocation, TelemetryEvent};
 use crate::settings_view::{OpenTeamsSettingsModalArgs, SettingsSection};
 use crate::tab_configs::TabConfig;
 use crate::user_config::{load_launch_configs, load_tab_configs, tab_configs_dir};

@@ -19,12 +19,10 @@ use crate::app_state::{
     AppState, CodePaneSnapShot, CodePaneTabSnapshot, LeafContents, LeafSnapshot, PaneNodeSnapshot,
     TabSnapshot, TerminalPaneSnapshot, WindowSnapshot,
 };
-use crate::cloud_object::{CloudObjectPermissions, Owner};
 use crate::code::editor_management::CodeSource;
 use crate::notebooks::{CloudNotebook, CloudNotebookModel};
 use crate::persistence::model::ObjectPermissions;
 use crate::persistence::{BlockCompleted, ModelEvent, PersistenceScope};
-use crate::server::ids::ClientId;
 use crate::tab::SelectedTabColor;
 use crate::terminal::model::block::SerializedBlock;
 use crate::terminal::ShellLaunchData;
@@ -550,7 +548,6 @@ fn test_deserialize_corrupted_guests() {
         cloud_permissions,
         Some(CloudObjectPermissions {
             owner: Owner::Team {
-                team_uid: crate::server::ids::ServerId::from_string_lossy("team_uid12345678912345"),
             },
             permissions_last_updated_ts: Some(permissions_ts),
             anyone_with_link: None,

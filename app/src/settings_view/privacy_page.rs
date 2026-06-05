@@ -40,7 +40,6 @@ use crate::appearance::Appearance;
 use crate::auth::auth_manager::AuthManager;
 use crate::channel::ChannelState;
 use crate::modal::{Modal, ModalEvent, ModalViewState};
-use crate::server::telemetry::TelemetryEvent;
 use crate::settings::{AISettings, CustomSecretRegex, PrivacySettings, RegexDisplayInfo};
 use crate::settings_view::privacy::AddRegexModalViewState;
 use crate::settings_view::render_body_item_label;
@@ -53,8 +52,6 @@ use crate::ui_components::buttons::icon_button;
 use crate::ui_components::icons::Icon;
 use crate::util::links::PRIVACY_POLICY_URL;
 use crate::view_components::{Dropdown, DropdownItem};
-use crate::workspaces::user_workspaces::UserWorkspaces;
-use crate::workspaces::workspace::{
     AdminEnablementSetting, CustomerType, UgcCollectionEnablementSetting,
 };
 use crate::{report_if_error, send_telemetry_from_ctx};

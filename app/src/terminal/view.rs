@@ -302,9 +302,6 @@ use crate::banner::{
     Banner, BannerAction, BannerEvent, BannerState, BannerTextButton, BannerTextContent,
     DismissalType,
 };
-use crate::cloud_object::model::actions::ObjectActionType;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::{CloudObject, GenericStringObjectFormat, JsonObjectType};
 #[cfg(feature = "local_fs")]
 use crate::code::editor_management::CodeSource;
 use crate::code_review::comments::{
@@ -330,9 +327,6 @@ use crate::context_chips::prompt::Prompt;
 use crate::context_chips::prompt::PromptSelection;
 use crate::context_chips::prompt_type::PromptType;
 use crate::context_chips::ContextChipKind;
-use crate::drive::settings::WarpDriveSettings;
-use crate::drive::sharing::ShareableObject;
-use crate::drive::CloudObjectTypeAndId;
 use crate::editor::{AutosuggestionType, CrdtOperation, EditorAction};
 use crate::env_vars::env_var_collection_block::{
     EnvVarCollectionBlock, EnvVarCollectionBlockEvent,
@@ -354,10 +348,6 @@ use crate::resource_center::{
     mark_feature_used_and_write_to_user_defaults, Tip, TipHint, TipsCompleted,
 };
 use crate::search::slash_command_menu::static_commands::commands;
-use crate::server::cloud_objects::update_manager::UpdateManager;
-use crate::server::ids::{ObjectUid, SyncId};
-use crate::server::server_api::ServerApi;
-use crate::server::telemetry::{
     self, AgentModeAttachContextMethod, AgentModeEntrypoint, AgentModeRewindEntrypoint,
     AnonymousUserSignupEntrypoint, BlockLatencyInfo, BootstrappingInfo,
     CommandCorrectionAcceptedType, CommandCorrectionEvent, InteractionSource, LinkOpenMethod,
@@ -543,8 +533,6 @@ use crate::workspace::{
     CommandSearchOptions, ForkAIConversationParams, ForkFromExchange,
     ForkedConversationDestination, OneTimeModalModel, ToastStack, WorkspaceAction,
 };
-use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
-use crate::workspaces::workspace::CustomerType;
 use crate::{
     report_if_error, safe_error, safe_warn, send_telemetry_from_ctx, send_telemetry_on_executor,
     send_telemetry_sync_from_ctx, AIAgentActionResultType, AIRequestUsageModel,
@@ -25500,10 +25488,8 @@ impl TerminalView {
 
     pub(super) fn toggle_file_tree(
         &mut self,
-        cli_agent: Option<crate::server::telemetry::CLIAgentType>,
         ctx: &mut ViewContext<Self>,
     ) {
-        use crate::server::telemetry::{FileTreeSource, TelemetryEvent};
 
         self.toggle_left_panel_file_tree(false, ctx);
         send_telemetry_from_ctx!(

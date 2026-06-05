@@ -2,8 +2,6 @@ use itertools::Itertools;
 use warpui::{AppContext, SingletonEntity};
 
 use super::workflow_search_item::WorkflowSearchItem;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::{CloudObject, Space};
 use crate::search::data_source::{Query, QueryResult};
 use crate::search::mixer::{DataSourceRunErrorWrapper, SyncDataSource};
 use crate::search::notebook_embedding::embedded_fuzzy_match::FuzzyMatchEmbeddedObjectResult;

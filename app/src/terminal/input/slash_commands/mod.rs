@@ -38,13 +38,10 @@ use crate::ai::blocklist::{
     BlocklistAIHistoryModel, InputTypeAutoDetectionSource, QueuedQuery, QueuedQueryModel,
     QueuedQueryOrigin, SlashCommandRequest,
 };
-use crate::cloud_object::model::persistence::CloudModel;
 use crate::code_review::telemetry_event::CodeReviewPaneEntrypoint;
 use crate::search::slash_command_menu::static_commands::commands::{self, COMMAND_REGISTRY};
 use crate::search::slash_command_menu::static_commands::Availability;
 use crate::search::slash_command_menu::{SlashCommandId, StaticCommand};
-use crate::server::ids::SyncId;
-use crate::server::telemetry::SlashCommandAcceptedDetails;
 use crate::settings::AISettings;
 use crate::tab::SelectedTabColor;
 use crate::terminal::input::decorations::InputBackgroundJobOptions;
@@ -645,7 +642,6 @@ impl Input {
                         }
                     }
                     _ => {
-                        use crate::server::telemetry::PaletteSource;
 
                         ctx.emit(Event::OpenFilesPalette {
                             source: PaletteSource::Keybinding,

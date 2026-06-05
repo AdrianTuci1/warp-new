@@ -38,7 +38,6 @@ use crate::ai::blocklist::{
 use crate::ai::execution_profiles::profiles::AIExecutionProfilesModel;
 use crate::ai::llms::LLMPreferences;
 use crate::ai::AIRequestUsageModel;
-use crate::cloud_object::model::generic_string_model::StringModel;
 use crate::network::NetworkStatus;
 #[cfg(not(target_family = "wasm"))]
 use crate::search::ai_context_menu::view::AIContextMenu;
@@ -63,7 +62,6 @@ use crate::ui_components::icons::Icon;
 use crate::view_components::action_button::{
     ActionButton, ActionButtonTheme, ButtonSize, NakedTheme, TooltipAlignment,
 };
-use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::BlocklistAIHistoryModel;
 
 pub enum AtContextMenuDisabledReason {

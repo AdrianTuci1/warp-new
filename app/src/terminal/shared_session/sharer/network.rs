@@ -44,8 +44,6 @@ use {
 
 use crate::auth::{AuthStateProvider, UserUid};
 use crate::editor::{CrdtOperation, ReplicaId};
-use crate::server::iap::IapManager;
-use crate::server::server_api::ServerApiProvider;
 use crate::terminal::model::block::BlockId;
 use crate::terminal::shared_session::network::heartbeat::{Event as HeartbeatEvent, Heartbeat};
 use crate::terminal::shared_session::{

@@ -16,7 +16,6 @@ use super::model::terminal_model::{
 use super::model::tmux::commands::TmuxCommand;
 use crate::features::FeatureFlag;
 use crate::remote_server::manager::RemoteServerManager;
-use crate::server::telemetry::ImageProtocol;
 use crate::terminal::event::{
     AfterBlockCompletedEvent, BlockCompletedEvent, BlockMetadataReceivedEvent,
     BlockWorkingDirectoryUpdatedEvent, Event, ExecutedExecutorCommandEvent, InitSshEvent,

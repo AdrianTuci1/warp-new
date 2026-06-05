@@ -1,17 +1,8 @@
 use warpui::{AppContext, Entity, ModelContext, SingletonEntity};
 
-use super::{CloudNotebookModel, NotebookId};
 use crate::ai::document::ai_document_model::AIDocumentId;
-use crate::cloud_object::breadcrumbs::ContainingObject;
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
-use crate::cloud_object::model::view::{CloudViewModel, Editor, EditorState};
-use crate::cloud_object::{CloudObject, Owner, Space};
-use crate::drive::sharing::{ContentEditability, SharingAccessLevel};
-use crate::notebooks::CloudNotebook;
-use crate::server::cloud_objects::update_manager::{
     ObjectOperation, OperationSuccessType, UpdateManager, UpdateManagerEvent,
 };
-use crate::server::ids::{ClientId, SyncId};
 
 #[derive(Default, Clone)]
 pub enum ActiveNotebook {
@@ -22,7 +13,6 @@ pub enum ActiveNotebook {
     CommittedNotebook(SyncId),
     // A notebook that has been created and displayed in the view, but is not yet
     // committed to CloudModel
-    NewNotebook(Box<CloudNotebook>),
 }
 
 #[derive(PartialEq, Eq, Default, Clone, Copy, Debug)]
@@ -218,8 +208,6 @@ impl ActiveNotebookData {
         let new_id = ClientId::default();
 
         // Set the active notebook to be an uncommitted notebook
-        self.active_notebook = ActiveNotebook::NewNotebook(Box::new(CloudNotebook::new_local(
-            CloudNotebookModel::default(),
             owner,
             initial_folder_id,
             new_id,
