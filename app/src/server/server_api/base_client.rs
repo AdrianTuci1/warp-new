@@ -10,10 +10,10 @@ use super::ServerApi;
 use crate::server::graphql::default_request_options;
 
 /// Header key for the ambient workload token attached to multi-agent requests.
-pub const AMBIENT_WORKLOAD_TOKEN_HEADER: &str = "X-Warp-Ambient-Workload-Token";
+pub const AMBIENT_WORKLOAD_TOKEN_HEADER: &str = "X-Octomus-Ambient-Workload-Token";
 
 /// Header key for the cloud agent task ID attached to requests from ambient agents.
-pub const CLOUD_AGENT_ID_HEADER: &str = "X-Warp-Cloud-Agent-ID";
+pub const CLOUD_AGENT_ID_HEADER: &str = "X-Octomus-Cloud-Agent-ID";
 
 /// Duration for which the ambient workload token is valid (3 hours).
 const AMBIENT_WORKLOAD_TOKEN_DURATION: Duration = Duration::from_secs(3 * 60 * 60);

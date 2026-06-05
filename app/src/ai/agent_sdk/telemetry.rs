@@ -318,133 +318,133 @@ impl TelemetryEventDesc for CliTelemetryEventDiscriminants {
 
     fn description(&self) -> &'static str {
         match self {
-            CliTelemetryEventDiscriminants::AgentRun => "Ran an agent from the Warp CLI",
+            CliTelemetryEventDiscriminants::AgentRun => "Ran an agent from the Octomus CLI",
             CliTelemetryEventDiscriminants::AgentRunAmbient => {
-                "Ran an ambient agent from the Warp CLI"
+                "Ran an ambient agent from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::AgentProfileList => {
-                "Listed agent profiles from the Warp CLI"
+                "Listed agent profiles from the Octomus CLI"
             }
-            CliTelemetryEventDiscriminants::AgentList => "Listed agents from the Warp CLI",
-            CliTelemetryEventDiscriminants::AgentGet => "Got agent details from the Warp CLI",
-            CliTelemetryEventDiscriminants::AgentCreate => "Created an agent from the Warp CLI",
-            CliTelemetryEventDiscriminants::AgentUpdate => "Updated an agent from the Warp CLI",
-            CliTelemetryEventDiscriminants::AgentDelete => "Deleted an agent from the Warp CLI",
-            CliTelemetryEventDiscriminants::AgentSkills => "Listed agent skills from the Warp CLI",
+            CliTelemetryEventDiscriminants::AgentList => "Listed agents from the Octomus CLI",
+            CliTelemetryEventDiscriminants::AgentGet => "Got agent details from the Octomus CLI",
+            CliTelemetryEventDiscriminants::AgentCreate => "Created an agent from the Octomus CLI",
+            CliTelemetryEventDiscriminants::AgentUpdate => "Updated an agent from the Octomus CLI",
+            CliTelemetryEventDiscriminants::AgentDelete => "Deleted an agent from the Octomus CLI",
+            CliTelemetryEventDiscriminants::AgentSkills => "Listed agent skills from the Octomus CLI",
             CliTelemetryEventDiscriminants::EnvironmentList => {
-                "Listed cloud environments from the Warp CLI"
+                "Listed cloud environments from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::EnvironmentCreate => {
-                "Created a cloud environment from the Warp CLI"
+                "Created a cloud environment from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::EnvironmentDelete => {
-                "Deleted a cloud environment from the Warp CLI"
+                "Deleted a cloud environment from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::EnvironmentUpdate => {
-                "Updated a cloud environment from the Warp CLI"
+                "Updated a cloud environment from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::EnvironmentGet => {
-                "Got cloud environment details from the Warp CLI"
+                "Got cloud environment details from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::EnvironmentImageList => {
-                "Listed available base images from the Warp CLI"
+                "Listed available base images from the Octomus CLI"
             }
-            CliTelemetryEventDiscriminants::MCPList => "Listed MCP servers from the Warp CLI",
-            CliTelemetryEventDiscriminants::ModelList => "Listed models from the Warp CLI",
-            CliTelemetryEventDiscriminants::TaskList => "Listed tasks from the Warp CLI",
-            CliTelemetryEventDiscriminants::TaskGet => "Got status of task from the Warp CLI",
+            CliTelemetryEventDiscriminants::MCPList => "Listed MCP servers from the Octomus CLI",
+            CliTelemetryEventDiscriminants::ModelList => "Listed models from the Octomus CLI",
+            CliTelemetryEventDiscriminants::TaskList => "Listed tasks from the Octomus CLI",
+            CliTelemetryEventDiscriminants::TaskGet => "Got status of task from the Octomus CLI",
             CliTelemetryEventDiscriminants::ConversationGet => {
-                "Got conversation by ID from the Warp CLI"
+                "Got conversation by ID from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::RunConversationGet => {
-                "Got run conversation from the Warp CLI"
+                "Got run conversation from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::RunMessageWatch => {
-                "Watched run messages from the Warp CLI"
+                "Watched run messages from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::RunMessageSend => {
-                "Sent a run message from the Warp CLI"
+                "Sent a run message from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::RunMessageList => {
-                "Listed run messages from the Warp CLI"
+                "Listed run messages from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::RunMessageRead => {
-                "Read a run message from the Warp CLI"
+                "Read a run message from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::RunMessageMarkDelivered => {
-                "Marked a run message as delivered from the Warp CLI"
+                "Marked a run message as delivered from the Octomus CLI"
             }
-            CliTelemetryEventDiscriminants::Login => "Logged in via the Warp CLI",
-            CliTelemetryEventDiscriminants::Logout => "Logged out via the Warp CLI",
-            CliTelemetryEventDiscriminants::Whoami => "Printed current user info from the Warp CLI",
-            CliTelemetryEventDiscriminants::ProviderSetup => "Set up a provider via the Warp CLI",
-            CliTelemetryEventDiscriminants::ProviderList => "Listed providers from the Warp CLI",
+            CliTelemetryEventDiscriminants::Login => "Logged in via the Octomus CLI",
+            CliTelemetryEventDiscriminants::Logout => "Logged out via the Octomus CLI",
+            CliTelemetryEventDiscriminants::Whoami => "Printed current user info from the Octomus CLI",
+            CliTelemetryEventDiscriminants::ProviderSetup => "Set up a provider via the Octomus CLI",
+            CliTelemetryEventDiscriminants::ProviderList => "Listed providers from the Octomus CLI",
             CliTelemetryEventDiscriminants::IntegrationCreate => {
-                "Created an integration from the Warp CLI"
+                "Created an integration from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::IntegrationUpdate => {
-                "Updated an integration from the Warp CLI"
+                "Updated an integration from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::IntegrationList => {
-                "Listed integrations from the Warp CLI"
+                "Listed integrations from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::ArtifactUpload => {
-                "Uploaded an artifact from the Warp CLI"
+                "Uploaded an artifact from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::ArtifactGet => {
-                "Got artifact metadata from the Warp CLI"
+                "Got artifact metadata from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::ArtifactDownload => {
-                "Downloaded an artifact from the Warp CLI"
+                "Downloaded an artifact from the Octomus CLI"
             }
-            CliTelemetryEventDiscriminants::ApiKeyList => "Listed API keys from the Warp CLI",
-            CliTelemetryEventDiscriminants::ApiKeyCreate => "Created an API key from the Warp CLI",
-            CliTelemetryEventDiscriminants::ApiKeyExpire => "Expired an API key from the Warp CLI",
+            CliTelemetryEventDiscriminants::ApiKeyList => "Listed API keys from the Octomus CLI",
+            CliTelemetryEventDiscriminants::ApiKeyCreate => "Created an API key from the Octomus CLI",
+            CliTelemetryEventDiscriminants::ApiKeyExpire => "Expired an API key from the Octomus CLI",
             CliTelemetryEventDiscriminants::ScheduleCreate => {
-                "Created a scheduled agent from the Warp CLI"
+                "Created a scheduled agent from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::ScheduleList => {
-                "Listed scheduled agents from the Warp CLI"
+                "Listed scheduled agents from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::ScheduleGet => {
-                "Got scheduled agent configuration from the Warp CLI"
+                "Got scheduled agent configuration from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::SchedulePause => {
-                "Paused a scheduled agent from the Warp CLI"
+                "Paused a scheduled agent from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::ScheduleUnpause => {
-                "Unpaused a scheduled agent from the Warp CLI"
+                "Unpaused a scheduled agent from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::ScheduleUpdate => {
-                "Updated a scheduled agent from the Warp CLI"
+                "Updated a scheduled agent from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::ScheduleDelete => {
-                "Deleted a scheduled agent from the Warp CLI"
+                "Deleted a scheduled agent from the Octomus CLI"
             }
-            CliTelemetryEventDiscriminants::SecretCreate => "Created a secret from the Warp CLI",
-            CliTelemetryEventDiscriminants::SecretDelete => "Deleted a secret from the Warp CLI",
-            CliTelemetryEventDiscriminants::SecretUpdate => "Updated a secret from the Warp CLI",
-            CliTelemetryEventDiscriminants::SecretList => "Listed secrets from the Warp CLI",
+            CliTelemetryEventDiscriminants::SecretCreate => "Created a secret from the Octomus CLI",
+            CliTelemetryEventDiscriminants::SecretDelete => "Deleted a secret from the Octomus CLI",
+            CliTelemetryEventDiscriminants::SecretUpdate => "Updated a secret from the Octomus CLI",
+            CliTelemetryEventDiscriminants::SecretList => "Listed secrets from the Octomus CLI",
             CliTelemetryEventDiscriminants::FederateIssueToken => {
-                "Issued a federated identity token from the Warp CLI"
+                "Issued a federated identity token from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::FederateIssueGcpToken => {
-                "Issued a GCP federated identity token from the Warp CLI"
+                "Issued a GCP federated identity token from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::HarnessSupportPing => {
-                "Pinged harness-support from the Warp CLI"
+                "Pinged harness-support from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::HarnessSupportReportArtifact => {
-                "Reported an artifact via harness-support from the Warp CLI"
+                "Reported an artifact via harness-support from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::HarnessSupportNotifyUser => {
-                "Sent a user notification via harness-support from the Warp CLI"
+                "Sent a user notification via harness-support from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::HarnessSupportFinishTask => {
-                "Reported task completion via harness-support from the Warp CLI"
+                "Reported task completion via harness-support from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::HarnessSupportReportShutdown => {
-                "Reported agent shutdown via harness-support from the Warp CLI"
+                "Reported agent shutdown via harness-support from the Octomus CLI"
             }
         }
     }

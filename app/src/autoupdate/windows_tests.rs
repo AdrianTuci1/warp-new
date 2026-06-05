@@ -22,7 +22,7 @@ fn parses_exit_code_128() {
 fn parses_exit_code_embedded_in_multiline_log() {
     // The pattern appears after several unrelated log lines.
     let contents = log(
-        "[2024-01-01 00:00:00] Warp mutex still held after timeout; force-killing remaining processes.\n\
+        "[2024-01-01 00:00:00] Octomus mutex still held after timeout; force-killing remaining processes.\n\
          [2024-01-01 00:00:01] force-kill failed for warp.exe (exit code: 5)\n\
          [2024-01-01 00:00:02] Installation complete.",
     );

@@ -691,7 +691,7 @@ fn test_render_list_page_with_personal_and_team_environments_shows_section_heade
 
         app.update(|ctx| {
             // Ensure UserWorkspaces has a current team name so the "Team" section renders with the
-            // shared header copy ("Shared by Warp and <team>").
+            // shared header copy ("Shared by Octomus and <team>").
             UserWorkspaces::handle(ctx).update(ctx, |user_workspaces, ctx| {
                 user_workspaces.setup_test_workspace(ctx);
                 user_workspaces.update_current_workspace(
@@ -1222,7 +1222,7 @@ fn test_environment_matches_search_query_empty_query_matches_all() {
 #[test]
 fn test_environment_matches_search_query_name_description_image_repos() {
     let mut environment = make_test_environment(
-        "Warp Env",
+        "Octomus Env",
         "node:20-alpine",
         vec![("warpdotdev".to_string(), "warp-internal".to_string())],
         vec![],
@@ -1255,7 +1255,7 @@ fn test_environment_matches_search_query_is_case_insensitive() {
     let mut environment = make_test_environment(
         "warp-env",
         "ubuntu:latest",
-        vec![("WarpDotDev".to_string(), "Warp-Internal".to_string())],
+        vec![("WarpDotDev".to_string(), "Octomus-Internal".to_string())],
         vec![],
     );
     environment.description = Some("Some Description".to_string());

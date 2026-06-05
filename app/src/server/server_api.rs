@@ -68,7 +68,7 @@ pub const FETCH_CHANNEL_VERSIONS_TIMEOUT: std::time::Duration = Duration::from_s
 /// more specific error code information, so that the client can discern between different
 /// errors with the same error code.
 /// See errors/http_error_codes.go on the server for possible values.
-const WARP_ERROR_CODE_HEADER: &str = "X-Warp-Error-Code";
+const WARP_ERROR_CODE_HEADER: &str = "X-Octomus-Error-Code";
 
 /// An error indicating the user is out of credits. The server sends 429s to communicate this
 /// state, but if Cloud Run is overloaded, it can also send 429s that aren't credit-related.
@@ -160,7 +160,7 @@ pub enum AIApiError {
         user_display_message: Option<String>,
     },
 
-    #[error("Warp is currently overloaded. Please try again later.")]
+    #[error("Octomus is currently overloaded. Please try again later.")]
     ServerOverloaded,
 
     #[error("Internal error occurred at transport layer.")]
@@ -348,7 +348,7 @@ pub enum TranscribeError {
     #[error("Request failed due to lack of Voice quota.")]
     QuotaLimit,
 
-    #[error("Warp is currently overloaded. Please try again later.")]
+    #[error("Octomus is currently overloaded. Please try again later.")]
     ServerOverloaded,
 
     #[error("Internal error occurred at transport layer.")]
@@ -1436,7 +1436,7 @@ impl ServerApi {
         }
     }
 
-    /// Fetches updated Warp Channel Versions from Warp Server. If it is the first such request of
+    /// Fetches updated Octomus Channel Versions from Octomus Server. If it is the first such request of
     /// the current calendar day, first attempts to call the '/client_version/daily'. If that call
     /// fails or if it not the first request of the calendar day, returns the result of a call to
     /// `/client_version'. The caller can specify whether or not changelog information should be
@@ -1630,7 +1630,7 @@ impl ServerApiProvider {
     }
 
     /// Returns the shared HTTP client. This client is wired into network logging
-    /// and includes standard Warp request headers.
+    /// and includes standard Octomus request headers.
     pub fn get_http_client(&self) -> Arc<http_client::Client> {
         self.server_api.client.clone()
     }
