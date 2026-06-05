@@ -1,0 +1,439 @@
+Worktree: /tmp/worktree-agent-12-store (branch octomus/agent-12-store, bazat pe octomus/stage1).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
+
+cd /tmp/worktree-agent-12-store
+
+TASK: Adapt the multi-agent state sharing to work locally without warp-server cloud infrastructure. Instead of creating a new crate from scratch, modify the EXISTING files to use a local directory-based approach. The core structures (AgentDriver, RunAgentsExecutor, OrchestrationEventStreamer, ThirdPartyHarness) already exist — we just need to make them talk via local files instead of cloud APIs.
+
+=== PART 1: Create a lightweight AgentStore module ===
+
+CREATE app/src/ai/agent_store.rs
+
+A single-file module (NOT a separate crate — keep it simple, ~200 lines) that wraps the filesystem:
+
+```rust
+// Octomus — local agent state store for multi-agent orchestration.
+// Replaces cloud-dependent SSE event streaming, artifact reporting,
+// and snapshot upload with a local JSONL-based directory.
+
+use std::collections::HashMap;
+use std::fs;
+use std::io::{BufRead, BufReader, Write};
+use std::path::{Path, PathBuf};
+
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+const STORE_BASE: &str = ".octomus/agent-store";
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum AgentStoreEvent {
+    Lifecycle {
+        agent: String,
+        stage: String,
+        timestamp: i64,
+    },
+    Message {
+        from_agent: String,
+        to_agent: String,
+        message_type: String,
+        payload: Value,
+        timestamp: i64,
+    },
+    Artifact {
+        agent: String,
+        artifact_type: String,
+        data: Value,
+        timestamp: i64,
+    },
+    Error {
+        agent: String,
+        error: String,
+        timestamp: i64,
+    },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AgentStatus {
+    pub status: String, // "running" | "succeeded" | "failed"
+    pub summary: Option<String>,
+    pub exit_code: Option<i32>,
+}
+
+pub struct AgentStore {
+    store_root: PathBuf,
+    conversation_id: String,
+}
+
+impl AgentStore {
+    pub fn new(conversation_id: impl Into<String>) -> Self {
+        let conversation_id = conversation_id.into();
+        let store_root = dirs_next().unwrap_or_else(|| PathBuf::from("."))
+            .join(STORE_BASE)
+            .join(&conversation_id);
+        fs::create_dir_all(&store_root).ok();
+        Self { store_root, conversation_id }
+    }
+
+    fn dirs_next() -> Option<PathBuf> {
+        std::env::var("OCTOMUS_AGENT_STORE_DIR")
+            .ok()
+            .map(PathBuf::from)
+            .or_else(|| dirs::home_dir())
+    }
+
+    pub fn events_path(&self) -> PathBuf {
+        self.store_root.join("events.jsonl")
+    }
+
+    pub fn agent_dir(&self, agent_name: &str) -> PathBuf {
+        self.store_root.join(agent_name)
+    }
+
+    pub fn write_event(&self, event: AgentStoreEvent) -> std::io::Result<()> {
+        let path = self.events_path();
+        let mut f = fs::OpenOptions::new().create(true).append(true).open(&path)?;
+        let line = serde_json::to_string(&event)?;
+        writeln!(f, "{}", line)?;
+        Ok(())
+    }
+
+    pub fn poll_events(&self, since_line: usize) -> Vec<AgentStoreEvent> {
+        let path = self.events_path();
+        if !path.exists() {
+            return vec![];
+        }
+        let f = match fs::File::open(&path) {
+            Ok(f) => f,
+            Err(_) => return vec![],
+        };
+        let reader = BufReader::new(f);
+        reader
+            .lines()
+            .skip(since_line)
+            .filter_map(|l| l.ok())
+            .filter_map(|l| serde_json::from_str(&l).ok())
+            .collect()
+    }
+
+    pub fn update_status(&self, agent_name: &str, status: AgentStatus) -> std::io::Result<()> {
+        let dir = self.agent_dir(agent_name);
+        fs::create_dir_all(&dir)?;
+        let path = dir.join("status.json");
+        let json = serde_json::to_string_pretty(&status)?;
+        fs::write(&path, json)?;
+        Ok(())
+    }
+
+    pub fn read_status(&self, agent_name: &str) -> Option<AgentStatus> {
+        let path = self.agent_dir(agent_name).join("status.json");
+        let json = fs::read_to_string(&path).ok()?;
+        serde_json::from_str(&json).ok()
+    }
+
+    pub fn store_artifact(&self, agent_name: &str, name: &str, data: &str) -> std::io::Result<()> {
+        let dir = self.agent_dir(agent_name).join("artifacts");
+        fs::create_dir_all(&dir)?;
+        fs::write(dir.join(name), data)?;
+        Ok(())
+    }
+
+    pub fn snapshot_dir(&self, agent_name: &str) -> PathBuf {
+        self.agent_dir(agent_name).join("snapshot")
+    }
+
+    /// Clean up stores older than 7 days.
+    pub fn cleanup_old_stores() {
+        let base = Self::dirs_next()
+            .unwrap_or_else(|| PathBuf::from("."))
+            .join(STORE_BASE);
+        if !base.exists() {
+            return;
+        }
+        let cutoff = std::time::SystemTime::now()
+            .checked_sub(std::time::Duration::from_secs(7 * 86400));
+        let Some(cutoff) = cutoff else { return };
+        if let Ok(entries) = fs::read_dir(&base) {
+            for entry in entries.flatten() {
+                if let Ok(meta) = entry.metadata() {
+                    if let Ok(modified) = meta.modified() {
+                        if modified < cutoff {
+                            let _ = fs::remove_dir_all(entry.path());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// List all agent names for this conversation.
+    pub fn list_agents(&self) -> Vec<String> {
+        let mut agents = Vec::new();
+        if let Ok(entries) = fs::read_dir(&self.store_root) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.is_dir() {
+                    if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
+                        if name != "artifacts" {
+                            agents.push(name.to_string());
+                        }
+                    }
+                }
+            }
+        }
+        agents
+    }
+
+    /// Total line count in events.jsonl — used to know "since" for polling.
+    pub fn event_count(&self) -> usize {
+        let path = self.events_path();
+        if !path.exists() {
+            return 0;
+        }
+        fs::read_to_string(&path)
+            .map(|s| s.lines().count())
+            .unwrap_or(0)
+    }
+}
+```
+
+=== PART 2: Create LocalEventStreamer ===
+
+CREATE app/src/ai/blocklist/local_event_streamer.rs
+
+A drop-in replacement for the cloud SSE event streamer that reads from AgentStore:
+
+```rust
+// Octomus — local event streamer for multi-agent orchestration.
+// Replaces OrchestrationEventStreamer's cloud SSE dependency with
+// file-based polling on the AgentStore events.jsonl.
+
+use std::collections::HashMap;
+use std::time::Duration;
+
+use warpui::r#async::Timer;
+use warpui::{Entity, ModelContext};
+
+use crate::ai::agent_store::{AgentStore, AgentStoreEvent};
+
+const POLL_INTERVAL: Duration = Duration::from_millis(500);
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum LocalEventStreamerEvent {
+    NewEvents {
+        events: Vec<AgentStoreEvent>,
+    },
+    AgentStatusChanged {
+        agent_name: String,
+    },
+}
+
+pub struct LocalEventStreamer {
+    store: AgentStore,
+    last_event_count: usize,
+    known_statuses: HashMap<String, String>,
+    poll_timer: Option<warpui::r#async::SpawnedFutureHandle>,
+}
+
+impl Entity for LocalEventStreamer {
+    type Event = LocalEventStreamerEvent;
+}
+
+impl LocalEventStreamer {
+    pub fn new(conversation_id: impl Into<String>) -> Self {
+        let store = AgentStore::new(conversation_id);
+        let last_event_count = store.event_count();
+        Self {
+            store,
+            last_event_count,
+            known_statuses: HashMap::new(),
+            poll_timer: None,
+        }
+    }
+
+    pub fn start_polling(&mut self, ctx: &mut ModelContext<Self>) {
+        self.poll_timer = Some(ctx.spawn(
+            async { Timer::after(POLL_INTERVAL).await },
+            |streamer, _, ctx| {
+                // Check for new events
+                let current_count = streamer.store.event_count();
+                if current_count > streamer.last_event_count {
+                    let new_events = streamer.store.poll_events(streamer.last_event_count);
+                    streamer.last_event_count = current_count;
+                    if !new_events.is_empty() {
+                        ctx.emit(LocalEventStreamerEvent::NewEvents {
+                            events: new_events,
+                        });
+                    }
+                }
+                // Check for status changes
+                for agent_name in streamer.store.list_agents() {
+                    if let Some(status) = streamer.store.read_status(&agent_name) {
+                        let prev = streamer
+                            .known_statuses
+                            .get(&agent_name)
+                            .cloned()
+                            .unwrap_or_default();
+                        if status.status != prev {
+                            streamer
+                                .known_statuses
+                                .insert(agent_name.clone(), status.status.clone());
+                            ctx.emit(LocalEventStreamerEvent::AgentStatusChanged {
+                                agent_name: agent_name.clone(),
+                            });
+                        }
+                    }
+                }
+                // Reschedule
+                streamer.start_polling(ctx);
+            },
+        ));
+    }
+
+    pub fn write_event(&self, event: AgentStoreEvent) {
+        let _ = self.store.write_event(event);
+    }
+
+    pub fn write_status(&self, agent_name: &str, status: crate::ai::agent_store::AgentStatus) {
+        let _ = self.store.update_status(agent_name, status);
+    }
+
+    pub fn snapshot_dir_for(&self, agent_name: &str) -> std::path::PathBuf {
+        self.store.snapshot_dir(agent_name)
+    }
+}
+```
+
+=== PART 3: Wire AgentStore into AgentDriver ===
+
+EDIT app/src/ai/agent_sdk/driver.rs:
+
+Find the `AgentDriver` struct (around line 270). Add a new field:
+
+```rust
+/// Local agent store for multi-agent state sharing (Octomus).
+/// Initialized when FeatureFlag::LocalAgentStore is enabled.
+agent_store: Option<Arc<AgentStore>>,
+```
+
+In `AgentDriver::new` (or wherever the constructor is), after initializing other fields, add:
+
+```rust
+agent_store: if FeatureFlag::LocalAgentStore.is_enabled() {
+    task_id
+        .as_ref()
+        .map(|tid| Arc::new(AgentStore::new(tid.to_string())))
+} else {
+    None
+},
+```
+
+Find where the driver reports completion (search for `HarnessSupportClient`, `finish_task`, `report_artifact` calls). Add AgentStore fallbacks:
+
+- Where `finish_task` is called: also write `agent_store.update_status(agent_name, AgentStatus { status, summary, exit_code })`
+- Where `report_artifact` is called: also write `agent_store.store_artifact(agent_name, artifact_name, artifact_data)`
+- Where lifecycle events are emitted: also write `agent_store.write_event(AgentStoreEvent::Lifecycle { ... })`
+
+These should be ADDED alongside existing calls (not replacing them), gated behind `FeatureFlag::LocalAgentStore.is_enabled()`.
+
+=== PART 4: Wire LocalEventStreamer into RunAgentsExecutor ===
+
+EDIT app/src/ai/blocklist/action_model/execute/run_agents.rs:
+
+In `RunAgentsExecutor::dispatch_prepared_run_agents`, after the child agents are launched, create a `LocalEventStreamer` and pass it to the child spawns. Add:
+
+```rust
+if FeatureFlag::LocalAgentStore.is_enabled() {
+    let streamer = ctx.add_model(|_ctx| {
+        let mut s = LocalEventStreamer::new(parent_conversation_id.to_string());
+        s.write_event(AgentStoreEvent::Lifecycle {
+            agent: "orchestrator".to_string(),
+            stage: format!("launched_{}_children", agent_run_configs.len()),
+            timestamp: std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_secs() as i64,
+        });
+        s.start_polling(_ctx);
+        s
+    });
+}
+```
+
+=== PART 5: Adapt snapshot upload to local ===
+
+EDIT app/src/ai/agent_sdk/driver/snapshot.rs:
+
+In `run_snapshot_upload` (or wherever the main upload function is), add a local fallback before the cloud upload:
+
+```rust
+// Octomus: if LocalAgentStore is enabled, write snapshots locally
+if FeatureFlag::LocalAgentStore.is_enabled() {
+    if let Some(task_id) = task_id {
+        let store = AgentStore::new(task_id.to_string());
+        let snapshot_dir = store.snapshot_dir("main");
+        fs::create_dir_all(&snapshot_dir)?;
+        // Copy git diffs and changed files to snapshot_dir
+        for file in gathered_files {
+            let dest = snapshot_dir.join(&file.rel_path);
+            if let Some(parent) = dest.parent() {
+                fs::create_dir_all(parent)?;
+            }
+            fs::write(&dest, &file.contents)?;
+        }
+        store.write_event(AgentStoreEvent::Lifecycle {
+            agent: "main".to_string(),
+            stage: "snapshot_saved".to_string(),
+            timestamp: /* ... */,
+        }).ok();
+    }
+    return Ok(()); // Skip cloud upload entirely
+}
+```
+
+=== PART 6: Add FeatureFlag ===
+
+EDIT crates/warp_core/src/features.rs:
+
+Add to the `FeatureFlag` enum:
+
+```rust
+/// Enables local file-based agent state store for multi-agent orchestration.
+/// On by default in Oss channel, disable-able via settings.
+LocalAgentStore,
+```
+
+Add to `DOGFOOD_FLAGS` (or the Oss flags equivalent):
+
+```rust
+pub const DOGFOOD_FLAGS: &[FeatureFlag] = &[
+    // ... existing flags ...
+    FeatureFlag::LocalAgentStore,
+];
+```
+
+=== PART 7: Module declarations ===
+
+EDIT app/src/ai/mod.rs — add:
+```rust
+pub mod agent_store;
+```
+
+EDIT app/src/ai/blocklist/mod.rs — add:
+```rust
+pub mod local_event_streamer;
+```
+
+=== FINAL CHECK ===
+
+```bash
+grep -rn "ServerApiProvider\|HarnessSupportClient" app/src/ai/agent_store.rs app/src/ai/blocklist/local_event_streamer.rs
+```
+Should return NOTHING — no cloud dependencies.
+
+```bash
+git add -A
+git commit -m "octomus: local agent state store for multi-agent orchestration — replaces cloud SSE/snapshots with file-based JSONL store"
+git push origin octomus/agent-12-agent-store
+```

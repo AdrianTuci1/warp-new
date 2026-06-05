@@ -1,14 +1,7 @@
-GITHUB_TOKEN auto-pasat via env_passthrough.
+Worktree: /tmp/worktree-agent-4-branding (branch octomus/agent-4-branding).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
 
-Repo: AdrianTuci1/warp-new
-Branch: octomus/agent-4-branding
-
-[bash]
-git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
-cd /tmp/repo
-git checkout master
-git checkout -b octomus/agent-4-branding
-[/bash]
+cd /tmp/worktree-agent-4-branding
 
 TASK: Replace "Warp" with "Octomus" in user-facing UI strings only. Do NOT touch:
 - Rust identifiers (struct names like AppState, enum variants, function names)

@@ -1,0 +1,328 @@
+Worktree: /tmp/worktree-agent-11-remote (branch octomus/agent-11-remote, bazat pe octomus/stage1).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
+
+cd /tmp/worktree-agent-11-remote
+
+TASK: Adapt the remote execution pipeline to generic backends. The cloud-specific agent_sdk/ was deleted by agent-1, but we keep agent_management/ for agent configuration. We'll build a thin generic remote executor layer.
+
+=== PART 1: Create the RemoteExecutor trait ===
+
+CREATE new file: app/src/ai/remote_executor.rs
+
+This is the core abstraction. Each backend implements this trait:
+
+```rust
+// Octomus — generic remote executor for "Run Remote".
+// Supports SSH, Modal, and custom HTTP endpoints configured via settings.
+
+use std::path::PathBuf;
+use std::sync::Arc;
+use futures::stream::Stream;
+use serde::{Deserialize, Serialize};
+
+/// The backend type configured in settings.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum RemoteBackendType {
+    /// Execute via SSH on a user-provided VPS.
+    Ssh,
+    /// Execute via Modal API (modal.com).
+    Modal,
+    /// Custom HTTP endpoint (user runs their own orchestrator).
+    Custom,
+}
+
+/// Configuration for a remote backend, stored in settings.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RemoteBackendConfig {
+    pub backend_type: RemoteBackendType,
+    /// SSH: "user@host:22", Modal: "modal", Custom: "https://..."
+    pub host: String,
+    /// SSH private key path, Modal token, or Custom API key
+    pub credential: String,
+    /// Optional: docker image to use, env vars, timeout
+    pub image: Option<String>,
+    pub timeout_seconds: Option<u64>,
+    pub extra_env: Vec<(String, String)>,
+}
+
+/// A single line of output from the remote execution.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum RemoteOutput {
+    Stdout(String),
+    Stderr(String),
+    Exit(i32),
+    Error(String),
+}
+
+/// Prep step: what to copy and run remotely.
+#[derive(Debug, Clone)]
+pub struct RemoteTask {
+    /// Working directory contents to upload (paths relative to working dir).
+    pub files: Vec<PathBuf>,
+    /// The command to run remotely.
+    pub command: String,
+    /// Environment variables to set.
+    pub env: Vec<(String, String)>,
+    /// Working directory on the remote host.
+    pub remote_work_dir: String,
+}
+
+/// The trait that every backend implements.
+#[async_trait::async_trait]
+pub trait RemoteExecutor: Send + Sync {
+    /// Test connectivity. Returns an error if unreachable.
+    async fn test_connection(&self, config: &RemoteBackendConfig) -> Result<(), String>;
+    /// Execute a task and return a stream of output lines.
+    async fn execute(
+        &self,
+        config: &RemoteBackendConfig,
+        task: RemoteTask,
+    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send + Unpin>, String>;
+}
+
+/// Factory: build the right executor for a given backend type.
+pub fn create_executor(backend_type: &RemoteBackendType) -> Box<dyn RemoteExecutor> {
+    match backend_type {
+        RemoteBackendType::Ssh => Box::new(ssh::SshExecutor::new()),
+        RemoteBackendType::Modal => Box::new(modal::ModalExecutor::new()),
+        RemoteBackendType::Custom => Box::new(custom::CustomExecutor::new()),
+    }
+}
+```
+
+=== PART 2: Create SSH executor stub ===
+
+CREATE app/src/ai/remote_executor/ssh.rs:
+
+```rust
+use super::{RemoteBackendConfig, RemoteExecutor, RemoteOutput, RemoteTask};
+use futures::stream::{self, Stream};
+
+pub struct SshExecutor;
+
+impl SshExecutor {
+    pub fn new() -> Self { Self }
+}
+
+#[async_trait::async_trait]
+impl RemoteExecutor for SshExecutor {
+    async fn test_connection(&self, config: &RemoteBackendConfig) -> Result<(), String> {
+        // Execute: ssh -o ConnectTimeout=5 {host} "echo ok"
+        let output = std::process::Command::new("ssh")
+            .args(["-o", "ConnectTimeout=5", &config.host, "echo ok"])
+            .output()
+            .map_err(|e| format!("SSH command failed: {e}"))?;
+        if output.status.success() {
+            Ok(())
+        } else {
+            Err(String::from_utf8_lossy(&output.stderr).to_string())
+        }
+    }
+
+    async fn execute(
+        &self,
+        config: &RemoteBackendConfig,
+        task: RemoteTask,
+    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send + Unpin>, String> {
+        // TODO: full implementation with scp upload + ssh command + output streaming
+        // For MVP: just run the command via ssh and stream stdout
+        let host = config.host.clone();
+        let command = task.command.clone();
+        
+        // Spawn ssh process, capture output line by line
+        let child = std::process::Command::new("ssh")
+            .args([&host, &command])
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::piped())
+            .spawn()
+            .map_err(|e| format!("Failed to spawn ssh: {e}"))?;
+
+        // For now return a simple stream from stdout
+        let output = child.wait_with_output().map_err(|e| format!("SSH wait error: {e}"))?;
+        let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+        let lines: Vec<RemoteOutput> = stdout
+            .lines()
+            .map(|l| RemoteOutput::Stdout(l.to_string()))
+            .collect();
+        Ok(Box::new(stream::iter(lines)))
+    }
+}
+```
+
+=== PART 3: Create Modal executor stub ===
+
+CREATE app/src/ai/remote_executor/modal.rs:
+
+```rust
+use super::{RemoteBackendConfig, RemoteExecutor, RemoteOutput, RemoteTask};
+use futures::stream::{self, Stream};
+
+pub struct ModalExecutor;
+
+impl ModalExecutor {
+    pub fn new() -> Self { Self }
+}
+
+#[async_trait::async_trait]
+impl RemoteExecutor for ModalExecutor {
+    async fn test_connection(&self, config: &RemoteBackendConfig) -> Result<(), String> {
+        // Check that modal CLI is installed and token works
+        let output = std::process::Command::new("modal")
+            .args(["token", "check"])
+            .env("MODAL_TOKEN_ID", &config.credential)
+            .env("MODAL_TOKEN_SECRET", "")
+            .output()
+            .map_err(|e| format!("Modal CLI not found: {e}"))?;
+        if output.status.success() {
+            Ok(())
+        } else {
+            Err(String::from_utf8_lossy(&output.stderr).to_string())
+        }
+    }
+
+    async fn execute(
+        &self,
+        _config: &RemoteBackendConfig,
+        task: RemoteTask,
+    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send + Unpin>, String> {
+        // TODO: use modal SDK to create sandbox, upload workspace, execute, stream output
+        let placeholder = RemoteOutput::Stderr(
+            "Modal executor: full implementation pending".to_string()
+        );
+        Ok(Box::new(stream::iter(vec![placeholder])))
+    }
+}
+```
+
+=== PART 4: Create Custom HTTP executor stub ===
+
+CREATE app/src/ai/remote_executor/custom.rs:
+
+```rust
+use super::{RemoteBackendConfig, RemoteExecutor, RemoteOutput, RemoteTask};
+use futures::stream::{self, Stream};
+
+pub struct CustomExecutor;
+
+impl CustomExecutor {
+    pub fn new() -> Self { Self }
+}
+
+#[async_trait::async_trait]
+impl RemoteExecutor for CustomExecutor {
+    async fn test_connection(&self, config: &RemoteBackendConfig) -> Result<(), String> {
+        // POST {host}/health → expect 200
+        let client = reqwest::Client::new();
+        let resp = client
+            .get(format!("{}/health", config.host))
+            .header("Authorization", format!("Bearer {}", config.credential))
+            .send()
+            .await
+            .map_err(|e| format!("Health check failed: {e}"))?;
+        if resp.status().is_success() {
+            Ok(())
+        } else {
+            Err(format!("Health check returned {}", resp.status()))
+        }
+    }
+
+    async fn execute(
+        &self,
+        _config: &RemoteBackendConfig,
+        task: RemoteTask,
+    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send + Unpin>, String> {
+        // POST {host}/execute with task JSON, stream SSE response
+        let placeholder = RemoteOutput::Stderr(
+            "Custom executor: full implementation pending".to_string()
+        );
+        Ok(Box::new(stream::iter(vec![placeholder])))
+    }
+}
+```
+
+=== PART 5: Add remote_executor module to ai/mod.rs ===
+
+EDIT app/src/ai/mod.rs:
+
+Add: `pub mod remote_executor;`
+
+You'll also need to create:
+- app/src/ai/remote_executor/mod.rs (re-export the trait + backends)
+- app/src/ai/remote_executor/ssh.rs (from part 2)
+- app/src/ai/remote_executor/modal.rs (from part 3)
+- app/src/ai/remote_executor/custom.rs (from part 4)
+
+CREATE app/src/ai/remote_executor/mod.rs:
+```rust
+mod ssh;
+mod modal;
+mod custom;
+
+pub use super::remote_executor::{
+    create_executor, RemoteBackendConfig, RemoteBackendType, RemoteExecutor, RemoteOutput, RemoteTask,
+};
+```
+
+=== PART 6: Add Remote Backend settings page ===
+
+CREATE app/src/settings_view/remote_backend_page.rs:
+
+A minimal settings page with:
+- Dropdown: Backend Type (SSH / Modal / Custom HTTP)
+- Text field: Host (user@host:22 / modal / https://api.example.com)
+- Text field: Credential (path to SSH key / Modal token / API key)
+- Text field: Docker image (optional)
+- Number: Timeout seconds (optional)
+- "Test Connection" button
+- "Save" button
+
+The page should read/write to app settings like this:
+
+```rust
+// Settings structure (add to settings/)
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RemoteBackendSettings {
+    pub backend_type: RemoteBackendType,
+    pub host: String,
+    pub credential: String,
+    pub image: Option<String>,
+    pub timeout_seconds: Option<u64>,
+}
+```
+
+CREATE the page file with warpui components (TextField, Dropdown, Button, etc.) following existing settings page patterns (look at ai_page.rs for reference).
+
+=== PART 7: Wire "Run Remote" button ===
+
+The existing agent_management/view.rs has a "Run" button that starts local execution.
+Add a "Run Remote" option that:
+1. Reads the RemoteBackendSettings from settings
+2. Creates the appropriate executor via `create_executor()`
+3. Packages the current workspace
+4. Calls `executor.execute(task)` and streams output
+
+If no backend is configured, show a dialog: "No remote backend configured. Go to Settings → Remote Backend to set up SSH, Modal, or a custom endpoint."
+
+=== IMPORTANT NOTES ===
+
+- The agent_sdk/ directory is DELETED by agent-1 — you CANNOT import from it.
+- The agent_management/ directory is KEPT — you CAN import from it.
+- All new code must NOT depend on ServerApiProvider, CloudModel, AuthStateProvider, or any deleted modules.
+- Use warpui::AppContext for app state, not server API.
+- For SSH, use std::process::Command to call ssh/scp (available on all platforms Octomus targets).
+- For Modal, use their CLI (modal.com CLI tool) or raw HTTP to api.modal.com.
+- For Custom, use reqwest to POST to the configured endpoint.
+
+=== FINAL CLEANUP ===
+
+After done:
+```
+grep -rn "ServerApiProvider\|ServerApi\|CloudModel\|AuthState" app/src/ai/remote_executor/ --include="*.rs"
+```
+Should return NOTHING.
+
+```
+git add -A
+git commit -m "octomus: generic remote execution — SSH/Modal/Custom backends + settings page"
+git push origin octomus/agent-11-remote
+```

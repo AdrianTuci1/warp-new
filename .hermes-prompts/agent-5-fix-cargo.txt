@@ -1,14 +1,7 @@
-GITHUB_TOKEN auto-pasat via env_passthrough.
+Worktree: /tmp/worktree-agent-5-cargo (branch octomus/agent-5-cargo).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
 
-Repo: AdrianTuci1/warp-new
-Branch: octomus/agent-5-cargo
-
-[bash]
-git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
-cd /tmp/repo
-git checkout master
-git checkout -b octomus/agent-5-cargo
-[/bash]
+cd /tmp/worktree-agent-5-cargo
 
 TASK: Edit Cargo.toml, notebooks/, workflows/, and other non-lib.rs modules.
 

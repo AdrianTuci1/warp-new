@@ -1,0 +1,70 @@
+Worktree: /tmp/worktree-agent-8-ci (branch octomus/agent-8-ci, bazat pe octomus/stage1).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
+
+cd /tmp/worktree-agent-8-ci
+
+TASK: Clean up CI/CD workflows, packaging scripts, and remove Warp cloud infrastructure references.
+
+1. EDIT .github/workflows/ci.yml:
+Remove or simplify:
+- Remove Sentry-related steps (sentry-cli, upload debug symbols)
+- Remove GCS/GCP auth steps that reference warpdotdev GCP projects
+- Remove Apple notarization steps
+- Remove SSH test steps that require GCP VM tunnel
+- Remove self-hosted runner references (namespace-profile-mac-ci)
+- Keep basic: checkout, install Rust, cargo check, cargo clippy, cargo test (nextest)
+- The matrix should stay (macOS, Linux, Windows) but simplified
+
+2. EDIT .github/workflows/create_release.yml:
+Major simplification:
+- Remove Sentry release creation steps
+- Remove GCS upload steps
+- Remove Apple codesign + notarization
+- Remove GCP auth
+- Keep: build macOS arm64/x86_64 bins, build Linux, build Windows
+- GitHub Releases stays — just upload the raw binaries (no signing)
+- Remove secrets: WARP_DEVELOPER_ID_CERT, WARP_DEVELOPER_ID_CERT_PASSWORD,
+  WARP_CODESIGN_KEYCHAIN_PASSWORD, SENTRY_RELEASE_TOKEN, GCP-related secrets
+
+3. Remove or simplify these workflow files:
+- .github/workflows/populate_build_cache.yml — remove references to self-hosted runners
+- .github/workflows/sync-pr-checks.yml — keep, needed for GitHub integration
+- .github/workflows/close_stale_fix_prs.yml — keep
+- .github/workflows/warp_cleanup_fix_prs.yml — rename to octomus_cleanup_fix_prs.yml
+- .github/workflows/feature_flag_cleanup.yml — keep, useful
+- .github/workflows/repo-sync.yml — update URLs if they reference warpdotdev/warp
+- .github/workflows/changelog_draft.yml — remove if it references warp.dev API
+
+4. DELETE these workflow files (too specific to Warp infra):
+- .github/workflows/check_approvals.yml (if it references Warp team)
+- .github/workflows/docubot_reply_to_comment.yml
+- .github/workflows/label_external_contributors.yml (keep but simplify)
+
+5. EDIT script/macos/bundle:
+- Remove notarisation steps (--notarise, xcrun altool, etc.)
+- Remove codesign steps (codesign --deep, security unlock-keychain)
+- Keep: cargo bundle, create-dmg
+- The output should just be a .dmg, unsigned, unnotarized
+
+6. EDIT packaging metadata:
+Search for "warp" in these and replace with "octomus" where appropriate:
+- about.h (or about.rc) — about dialog text
+- .github/ISSUE_TEMPLATE/ — issue templates
+- .github/pull_request_template.md — PR template
+- CODEOWNERS — remove team references
+- Any plist files, entitlements, Info.plist
+
+7. EDIT app/Cargo.toml:
+Remove sentry from dependencies if not already done by agent-7.
+
+8. Scan for warp.dev URLs and hardcoded server endpoints:
+grep -r . . --include="*.rs" --include="*.toml" --include="*.plist" --include="*.json" --include="*.md" 2>/dev/null | grep -v ".git/" | grep -v "target/"
+
+Replace warp.dev URLs with localhost or remove the URL entirely (especially in config/defaults files).
+
+After done:
+```
+git add -A
+git commit -m "octomus: clean CI, remove codesign/notarize/Sentry/GCS, remove warp.dev URLs"
+git push origin octomus/agent-8-ci
+```

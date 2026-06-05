@@ -1,0 +1,143 @@
+Repo: AdrianTuci1/warp-new
+
+Ești orchestratorul Octomus — STAGE 1/2. 1 sandbox (16vCPU/32GB, lifetime 14400s).
+
+🚨 REGULA #1 — Toți agenții lucrează pe ACEEAȘI MAȘINĂ (același sandbox) 🚨
+Copiii NU au nevoie de token — doar execută comenzi în worktree-uri.
+Token-ul e injectat direct în prompt (__GH_TOKEN__).
+
+=== STRATEGIE: 1 CLONE + WORKTREE-URI + 2 BATCH-URI + MERGE + CARGO CHECK ===
+
+=== PAS 1: CLONE REPO + WORKTREE-URI ===
+Clonează repo-ul O SINGURĂ DATĂ, apoi creează worktree-uri pentru fiecare agent.
+Toți agenții lucrează pe același sandbox, în worktree-uri separate.
+
+[bash]
+if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q "AdrianTuci1/warp-new"; then
+  cd /tmp/repo && git fetch origin && git checkout master && git pull origin master
+else
+  rm -rf /tmp/repo
+  git clone https://x-access-token:__GH_TOKEN__@github.com/AdrianTuci1/warp-new.git /tmp/repo
+  cd /tmp/repo
+fi
+
+# Curăță worktree-uri vechi (dacă există)
+for wt in agent-1-delete agent-2-lib agent-3-ai agent-4-branding agent-5-cargo agent-6-simplify agent-7-crates; do
+  wt_dir="/tmp/worktree-$wt"
+  rm -rf "$wt_dir"
+  git branch -D "octomus/$wt" 2>/dev/null || true
+done
+
+# Creează worktree-uri — fiecare agent are propriul director + branch
+git worktree add /tmp/worktree-agent-1-delete -b octomus/agent-1-delete master
+git worktree add /tmp/worktree-agent-2-lib -b octomus/agent-2-lib master
+git worktree add /tmp/worktree-agent-3-ai -b octomus/agent-3-ai master
+git worktree add /tmp/worktree-agent-4-branding -b octomus/agent-4-branding master
+git worktree add /tmp/worktree-agent-5-cargo -b octomus/agent-5-cargo master
+git worktree add /tmp/worktree-agent-6-simplify -b octomus/agent-6-simplify master
+git worktree add /tmp/worktree-agent-7-crates -b octomus/agent-7-crates master
+
+echo "Repo gata. Worktree-uri create in /tmp/worktree-*"
+[/bash]
+
+=== STRATEGIE: 2 BATCH-URI PARALELE + MERGE + CARGO CHECK ===
+
+Toți agenții lucrează în worktree-uri separate pe ACEEAȘI MAȘINĂ.
+Merge-ul la final rezolvă conflictele prin --theirs.
+La final trebuie să avem un build care trece cargo check.
+
+Batch 1: A1, A2, A3, A4 în paralel (delete + lib + AI strip + branding)
+Batch 2: A5, A6, A7 în paralel (cargo + simplify + crate cleanup)
+Apoi merge + cargo check.
+
+=== BATCH 1: DELETE + LIB + AI + BRANDING (4 agenți, paralel) ===
+
+Lansează 4 agenți simultan. Prompt-urile sunt în `/tmp/repo/.hermes-prompts/` (din repo):
+
+| Agent | Prompt file (.hermes-prompts/) | Worktree                        | Task                          |
+|-------|-------------------------------|---------------------------------|-------------------------------|
+| A1    | agent-1-delete-dirs.txt       | /tmp/worktree-agent-1-delete    | Șterge dirs cloud + credite  |
+| A2    | agent-2-fix-lib.txt           | /tmp/worktree-agent-2-lib       | Curăță lib.rs                 |
+| A3    | agent-3-fix-ai.txt            | /tmp/worktree-agent-3-ai        | Curăță ai/ + strip credite    |
+| A4    | agent-4-branding.txt          | /tmp/worktree-agent-4-branding  | Warp→Octomus, rename binary   |
+
+[bash]
+prompt_dir="/tmp/repo/.hermes-prompts"
+
+# Agent 1 — delete cloud dirs
+cat "$prompt_dir/agent-1-delete-dirs.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+# Agent 2 — fix lib.rs
+cat "$prompt_dir/agent-2-fix-lib.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+# Agent 3 — fix ai/
+cat "$prompt_dir/agent-3-fix-ai.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+# Agent 4 — branding
+cat "$prompt_dir/agent-4-branding.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+
+wait
+echo "✅ Batch 1 — toți 4 agenții au terminat"
+[/bash]
+
+Dacă un agent eșuează, raportează și NU continua cu batch-ul următor.
+
+=== BATCH 2: CARGO + SIMPLIFY + CRATES (3 agenți, paralel) ===
+
+| Agent | Prompt file (.hermes-prompts/) | Worktree                        | Task                          |
+|-------|-------------------------------|---------------------------------|-------------------------------|
+| A5    | agent-5-fix-cargo.txt         | /tmp/worktree-agent-5-cargo     | Cargo.toml, settings, voice   |
+| A6    | agent-6-simplify.txt          | /tmp/worktree-agent-6-simplify  | Notebooks, workflows, menus   |
+| A7    | agent-7-cleanup-crates.txt    | /tmp/worktree-agent-7-crates    | Cloud crates, feature flags   |
+
+[bash]
+prompt_dir="/tmp/repo/.hermes-prompts"
+
+cat "$prompt_dir/agent-5-fix-cargo.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-6-simplify.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-7-cleanup-crates.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+
+wait
+echo "✅ Batch 2 — toți 3 agenții au terminat"
+[/bash]
+
+=== MERGE + CARGO CHECK ===
+
+După ce toți 7 agenții au terminat, fă merge-ul din /tmp/repo (clone-ul principal, unde ai toate branch-urile):
+
+[bash]
+cd /tmp/repo
+git fetch origin
+git checkout master
+git checkout -b octomus/stage1
+for b in agent-1-delete agent-2-lib agent-3-ai agent-4-branding agent-5-cargo agent-6-simplify agent-7-crates; do
+  if git merge "origin/octomus/$b" --no-edit 2>&1; then
+    echo "Merged $b cleanly"
+  else
+    echo "CONFLICT in $b — resolving with --theirs..."
+    git diff --name-only --diff-filter=U | while read f; do
+      git checkout --theirs "$f" 2>/dev/null || true
+    done
+    git add .
+    git diff --cached --quiet || git commit -m "merge $b: resolve conflicts"
+  fi
+done
+[/bash]
+
+[bash]
+cd /tmp/repo && cargo check 2>&1 | tail -80
+[/bash]
+
+Dacă erori: citește fișierele, editează, re-rulează cargo check (max 20 iterații).
+
+La final:
+[bash]
+cd /tmp/repo
+if git diff --cached --quiet; then echo "clean"; else git add -A && git commit -m "octomus: post-merge fixes — stage 1"; fi
+git push origin octomus/stage1
+[/bash]
+
+Raportează "✅ STAGE 1 COMPLETE — octomus/stage1 pushed, cargo check trece!"
+Menționează explicit: "Acum rulează master-octomus-stage2.txt pentru finalizare."
+
+=== COMUNICARE ===
+- După fiecare batch: "✅ Batch X done — [Y/Z] agenți au trecut"
+- Dacă un agent eșuează: raportează eroarea, NU continua batch-ul următor
+- Sandbox lifetime: 14400s. Dacă <30min rămase, raportează

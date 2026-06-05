@@ -1,0 +1,100 @@
+Worktree: /tmp/worktree-agent-9-final (branch octomus/agent-9-final, bazat pe octomus/stage1).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
+
+cd /tmp/worktree-agent-9-final
+
+TASK: Final scan and cleanup — dead imports, integration tests, docs, and remaining references.
+
+1. GREP for dead references across the ENTIRE codebase:
+Run each of these and fix ALL findings:
+
+```
+# Auth/Billing/Cloud singletons that no longer exist
+grep -rn "AuthState::as_ref\|AuthState::handle\|AuthStateProvider\|AuthManager" app/src/ --include="*.rs" | grep -v "_tests.rs"
+
+grep -rn "ServerApiProvider\|IapManager\|IapState\|ExportManager" app/src/ --include="*.rs" | grep -v "_tests.rs"
+
+grep -rn "CloudModel\|CloudViewModel\|CloudNotebook\|CloudWorkflow" app/src/ --include="*.rs" | grep -v "_tests.rs"
+
+grep -rn "UserWorkspaces\|TeamTesterStatus\|TeamUpdateManager" app/src/ --include="*.rs" | grep -v "_tests.rs"
+
+grep -rn "ReferralThemeStatus\|ChangelogModel\|ResourceCenter" app/src/ --include="*.rs" | grep -v "_tests.rs"
+
+grep -rn "SharedSessionManager\|OrchestrationViewer\|OrchestrationLaunch" app/src/ --include="*.rs" | grep -v "_tests.rs"
+
+grep -rn "ServerExperiments\|TelemetryCollector\|AppTelemetryContext" app/src/ --include="*.rs" | grep -v "_tests.rs"
+
+grep -rn "NetworkLogModel\|NetworkLogPaneManager\|SyncQueue" app/src/ --include="*.rs" | grep -v "_tests.rs"
+
+grep -rn "ApiKeyManager\|ServerVoiceTranscriber\|Listener" app/src/ --include="*.rs" | grep -v "_tests.rs"
+
+grep -rn "UpdateManager\|AIDocumentModel\|cloud_object" app/src/ --include="*.rs" | grep -v "_tests.rs"
+```
+
+For each finding, either:
+- Remove the import + usage if the type is gone
+- Stub with a no-op if the code path is required but the cloud version is gone
+- Use #[cfg_attr(test, expect(unused))] for variables that become unused
+
+2. DELETE integration tests that test cloud features:
+Run this to find cloud-specific tests:
+```
+grep -rln "auth\|billing\|pricing\|server_api\|cloud_object\|drive\|workspaces\|shared_session\|remote_server\|telemetry\|iam\|sentry" app/src/ --include="*_tests.rs" | head -50
+```
+
+For each test file that only tests cloud features, delete it.
+For test files that have BOTH cloud and non-cloud tests, remove just the cloud test functions.
+
+Do the same for:
+```
+grep -rln "auth\|billing\|pricing\|server_api\|cloud_object\|drive\|workspaces\|shared_session\|remote_server\|sentry" crates/ --include="*_tests.rs" | grep -v warpui | head -50
+```
+
+3. EDIT README.md:
+- Title: "Octomus" instead of "Warp"
+- Description: "A fast, modern terminal emulator" — remove "with AI and collaboration"
+- Remove references to Warp Drive, Team features, Cloud sync
+- Remove references to warp.dev, sign up, login
+- Update install instructions: download from GitHub Releases, not warp.dev
+- Add: "This is a community fork. For the original, see warpdotdev/warp."
+- Add build from source instructions
+
+4. EDIT or DELETE onboarding/landing page files:
+Look for files like:
+- app/src/onboarding/ — keep basic onboarding (theme picker, shell setup) but remove login/signup flows
+- app/src/workspace/view/openwarp_launch_modal/ — already deleted by agent-1
+- app/src/workspace/view/orchestration_launch_modal/ — already deleted by agent-1
+- app/src/terminal/view/zero_state_block.rs — if it shows "Sign in" or "Create account", remove those sections
+
+5. Asset files:
+Search for Warp logo/icon references:
+```
+find . -name "*.png" -o -name "*.icns" -o -name "*.ico" -o -name "*.svg" 2>/dev/null | grep -i "warp\|logo\|icon" | grep -v ".git/" | grep -v "target/" | head -30
+```
+Note them for manual replacement (binary files can't be edited by an agent).
+
+6. Keyboard shortcuts / command palette:
+grep -rn "OpenWarp\|warp.dev\|Contact Support\|Send Feedback\|Warp Drive\|Warp AI\|About Warp\|Warp Help\|Get Warp\|Buy Credits\|Upgrade\|Free Trial" app/src/ --include="*.rs" | grep -v "_tests.rs"
+
+For any remaining occurrences, remove or replace with Octomus equivalents.
+
+7. FINAL cargo check:
+After all fixes:
+```
+|cargo check 2>&1 | tail -80
+```
+Fix any compilation errors. Re-run cargo check until clean (max 10 iterations).
+Focus on: unresolved imports, missing types, unused variables that should be removed.
+
+After done:
+```
+git add -A
+git commit -m "octomus: final scan — dead imports, tests, README, docs"
+git push origin octomus/agent-9-final
+```
+
+Report back:
+- Number of dead import fixes
+- Number of test files deleted
+- Number of UI string replacements
+- cargo check status (clean / errors remaining)

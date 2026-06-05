@@ -1,0 +1,23 @@
+Worktree: /tmp/worktree-agent-6-simplify (branch octomus/agent-6-simplify).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
+
+cd /tmp/worktree-agent-6-simplify
+
+TASK: Fă aceste schimbări:
+
+1. app/src/notebooks/ — delete invalid imports, delete CloudNotebook, simplify to local-only
+2. app/src/workflows/ — delete invalid imports, delete WorkflowSource::Team/PersonalCloud
+3. app/src/util/links.rs — delete warp.dev URLs
+4. app/src/app_menus.rs — delete "Send Feedback"/"Contact Support" items + dead imports
+5. app/src/root_view.rs — delete feedback/support actions + dead imports
+6. app/src/settings_view/ai_page.rs — strip credits, keep only: provider URL, model name, API key input
+7. app/src/settings_view/mcp_servers/ — delete marketplace, keep manual config only
+8. app/src/autoupdate/ — rewrite to check GitHub Releases (github.com/AdrianTuci1/warp-new/releases)
+9. app/src/settings_view/mod.rs — delete module declarations for deleted files (teams_page, billing_and_usage_page, billing_and_usage_page_v2, billing_and_usage_dispatch)
+10. app/src/appearance.rs — replace "Warp" with "Octomus" in display strings
+11. app/src/settings/ai.rs — remove WarpCredits fallback settings (can_use_warp_credits, warp_credits_* toml keys)
+12. app/src/terminal/input/ — strip credit checks in agent.rs, common.rs, universal.rs (remove credit gating since BYOK)
+13. app/src/terminal/profile_model_selector.rs — remove credit/cost display near model names
+14. Final grep: any file importing from deleted modules
+
+git add -A && git commit -m "octomus: simplify remaining files — local only" && git push origin octomus/agent-6-simplify

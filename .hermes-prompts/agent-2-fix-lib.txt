@@ -1,14 +1,7 @@
-GITHUB_TOKEN auto-pasat via env_passthrough.
+Worktree: /tmp/worktree-agent-2-lib (branch octomus/agent-2-lib).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
 
-Repo: AdrianTuci1/warp-new
-Branch: octomus/agent-2-lib
-
-[bash]
-git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
-cd /tmp/repo
-git checkout master
-git checkout -b octomus/agent-2-lib
-[/bash]
+cd /tmp/worktree-agent-2-lib
 
 TASK: Edit ONLY app/src/lib.rs. Remove all references to deleted cloud modules. Do NOT touch any other file.
 

@@ -1,0 +1,157 @@
+Worktree: /tmp/worktree-agent-10-telemetry (branch octomus/agent-10-telemetry, bazat pe octomus/stage1).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
+
+cd /tmp/worktree-agent-10-telemetry
+
+TASK: Redirect telemetry to Octomus's own analytics endpoint. KEEP the telemetry infrastructure (RudderStack-based), but:
+- Point it to Octomus's own data plane URL (we'll use a configurable env var)
+- Strip events.rs down to minimal usage events only
+- Remove the UGC (user-generated content) telemetry split — everything is simple analytics
+
+IMPORTANT: Do NOT delete any telemetry files. We're keeping the infrastructure, just changing the destination and what's tracked.
+
+=== PART 1: Change default telemetry config for Oss channel ===
+
+EDIT crates/warp_core/src/channel/state.rs:
+
+In the `init()` function (around lines 38-55), currently `telemetry_config: None` for Oss channel.
+Change to provide a basic telemetry config with an Octomus RudderStack endpoint.
+
+Find this block:
+```
+telemetry_config: None,
+```
+
+Replace with:
+```
+telemetry_config: Some(TelemetryConfig {
+    telemetry_file_name: "octomus_telemetry_events.json".into(),
+    rudderstack_config: Some(RudderStackConfig {
+        write_key: std::env::var("OCTOMUS_RUDDER_WRITE_KEY")
+            .unwrap_or_else(|_| "octomus_default_write_key".to_string()).into(),
+        root_url: std::env::var("OCTOMUS_RUDDER_DATA_PLANE_URL")
+            .unwrap_or_else(|_| "https://telemetry.octomus.dev".to_string()).into(),
+        ugc_write_key: "".into(),
+    }),
+}),
+```
+
+Also update the import block at the top to add:
+```
+use crate::channel::config::{
+    ChannelConfig, IapConfig, McpOAuthProviderConfig, OzConfig, RudderStackConfig,
+    RudderStackDestination, TelemetryConfig, WarpServerConfig,
+};
+```
+(just add `RudderStackConfig` and `TelemetryConfig` to the existing import)
+
+Also change the app_id in init() from `"WarpOss"` to `"Octomus"`:
+```
+let app_id = AppId::new("dev", "octomus", "Octomus");
+```
+
+=== PART 2: Strip events.rs to minimal usage events ===
+
+EDIT app/src/server/telemetry/mod.rs:
+
+This file is ~7355 lines. We need to strip it down to ~100 lines with only:
+- AppOpened — when the app starts
+- AppClosed — when the app closes
+- AppActive — periodic active usage signal (keeps existing timer)
+- ModelUsed — which AI model the user selected (model name only, no cost)
+- FeatureUsed — which feature was triggered (basic feature name only, no user data)
+
+Delete ALL OTHER event types. The file should contain just these 5 minimal event structs.
+
+Replace the ENTIRE file content with:
+```rust
+// Octomus telemetry — minimal usage analytics only.
+// No user-generated content, no cost/credit tracking, no PII.
+
+use serde::{Deserialize, Serialize};
+
+/// App was launched.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AppOpened {
+    pub app_version: String,
+    pub os: String,
+}
+
+/// App was closed. Contains session duration.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AppClosed {
+    pub session_duration_seconds: u64,
+}
+
+/// Periodic active usage heartbeat.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AppActive {
+    pub timestamp: i64,
+}
+
+/// User selected an AI model. Model name only, no API key or config.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ModelUsed {
+    pub model_name: String,
+    pub provider_name: String,
+}
+
+/// A feature was used. Generic feature name only.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FeatureUsed {
+    pub feature_name: String,
+}
+
+// Re-export all for backward compatibility with mod.rs
+pub use self::AppOpened as AppOpenedEvent;
+pub use self::AppClosed as AppClosedEvent;
+pub use self::AppActive as AppActiveEvent;
+pub use self::ModelUsed as ModelUsedEvent;
+pub use self::FeatureUsed as FeatureUsedEvent;
+```
+
+=== PART 3: Simplify collector.rs ===
+
+EDIT app/src/server/telemetry/collector.rs:
+
+Remove the UGC-related logic. Replace the `schedule_send_active_usage_event` to not depend on `AuthStateProvider` (which was deleted by agent-1).
+
+Find and remove the `use crate::auth::AuthStateProvider;` import.
+
+In `schedule_send_active_usage_event`, replace:
+```rust
+let auth_state = AuthStateProvider::as_ref(ctx).get().clone();
+```
+with:
+```rust
+// Octomus: no auth, use anonymous ID only
+```
+
+And replace any `auth_state.user_id()` or `auth_state.anonymous_id()` with empty/anonymous defaults.
+
+=== PART 4: Simplify mod.rs (app/src/server/telemetry/mod.rs) ===
+
+Remove the UGC-split logic in `send_batch_messages_to_rudder`. Currently it partitions messages
+into UGC and non-UGC and sends to different destinations. Since Octomus has no UGC distinction,
+just send everything to the main destination.
+
+Simplify the for loop so there's only one batch sent to `rudderstack_non_ugc_destination()`.
+
+=== PART 5: Update warpui_core telemetry ===
+
+The warpui_core telemetry (app_focus_telemetry.rs, event_store) should stay — it's used by the
+collector. Just make sure the event_store doesn't log user-specific data.
+
+=== FINAL CHECK ===
+Run to verify no breakage:
+```
+grep -rn "AuthState\|auth_state" app/src/server/telemetry/ --include="*.rs"
+```
+Should return nothing (or only in comments).
+
+After done:
+```
+git add -A
+git commit -m "octomus: redirect telemetry to Octomus — minimal usage events, own RudderStack endpoint"
+git push origin octomus/agent-10-telemetry
+```

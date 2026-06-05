@@ -1,0 +1,271 @@
+Worktree: /tmp/worktree-agent-15-skills (branch octomus/agent-15-skills, bazat pe octomus/stage1).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
+
+cd /tmp/worktree-agent-15-skills
+
+TASK: Clean up bundled skills (remove Oz/Warp cloud references) and adapt the orchestration RunAgents card so "Run Remote" points to the user's configured VPS/cloud remote backend (from Agent 11) instead of Oz cloud environments.
+
+=== BACKGROUND ===
+
+The Warp codebase bundles ~10 SKILL.md files in `resources/bundled/skills/`. These are loaded at startup by `SkillManager::load_bundled_skills()` and rendered into agent prompts. Several of these skills reference Warp cloud, Oz agents, and Warp-specific paths that don't apply to Octomus.
+
+Additionally, the agent plan generation flow uses `RunAgentsExecutor` + `RunAgentsCardView` to offer delegation to child agents. The UI has a "Run Remote" toggle that currently points to Oz cloud environments — for Octomus, it should point to the user's configured Remote Backend (from Agent 11's `RemoteBackendSettings`).
+
+=== PART 1: Delete the oz-platform skill ===
+
+This skill is entirely about Warp Cloud / Oz agents — it references `warp_cli_binary_name agent run-cloud`, Oz REST API, cloud environments, schedules. None of this exists in Octomus.
+
+DELETE: resources/bundled/skills/oz-platform/SKILL.md
+DELETE: resources/bundled/skills/oz-platform/ (entire directory if empty after SKILL.md removal)
+
+Also check if there's an `oz-platform/` entry in any skill manifest/lock file and remove it.
+
+=== PART 2: Rename Warp template variables in bundled skill context ===
+
+EDIT app/src/ai/skills/skill_manager.rs:
+
+The function `build_bundled_skill_context()` (around line 582) provides template variables that get substituted into bundled SKILL.md files. Find:
+
+```rust
+fn build_bundled_skill_context() -> HashMap<String, String> {
+    let mut context: HashMap<String, String> = [
+        (
+            "warp_server_url".to_owned(),
+            ChannelState::server_root_url().into_owned(),
+        ),
+        (
+            "warp_cli_binary_name".to_owned(),
+            ChannelState::channel().cli_command_name().to_owned(),
+        ),
+        (
+            "warp_url_scheme".to_owned(),
+            ChannelState::url_scheme().to_owned(),
+        ),
+        ...
+    ]
+    ...
+}
+```
+
+For Octomus, `warp_server_url` is local-only (no server), `warp_url_scheme` is meaningless. We still need `warp_cli_binary_name` (renamed to `octomus` by Agent 4). Add an Octomus-specific variable and keep backward compat:
+
+Replace with:
+```rust
+fn build_bundled_skill_context() -> HashMap<String, String> {
+    let mut context: HashMap<String, String> = [
+        (
+            "warp_server_url".to_owned(),
+            // Octomus: no cloud server — use localhost as placeholder
+            "http://localhost:0".to_owned(),
+        ),
+        (
+            "octomus_cli_binary_name".to_owned(),
+            ChannelState::channel().cli_command_name().to_owned(),
+        ),
+        (
+            // Keep for backward compat with skills that use {{warp_cli_binary_name}}
+            "warp_cli_binary_name".to_owned(),
+            ChannelState::channel().cli_command_name().to_owned(),
+        ),
+        (
+            // Octomus: no custom URL scheme
+            "warp_url_scheme".to_owned(),
+            String::new(),
+        ),
+        (
+            "settings_file_path".to_owned(),
+            user_preferences_toml_file_path().display().to_string(),
+        ),
+        (
+            "keybindings_file_path".to_owned(),
+            keybinding_file_path().display().to_string(),
+        ),
+    ]
+    .into_iter()
+    .collect();
+
+    if let Some(schema_path) =
+        warp_core::paths::bundled_resources_dir().map(|dir| dir.join("settings_schema.json"))
+    {
+        context.insert(
+            "settings_schema_path".to_owned(),
+            schema_path.display().to_string(),
+        );
+    }
+
+    context
+}
+```
+
+=== PART 3: Fix Warp branding in bundled skills ===
+
+Several bundled skills reference `~/.warp/`, `Warp`, `warp-cli`, etc. Update them for Octomus.
+
+READ each bundled skill and fix Warp references. These are the files:
+
+A) EDIT resources/bundled/skills/add-mcp-server/SKILL.md:
+Find: `~/.warp/.mcp.json` and `{repo_root}/.warp/.mcp.json`
+Replace with: `~/.octomus/.mcp.json` and `{repo_root}/.octomus/.mcp.json`
+
+Also find "Warp" in the description/body and replace with "Octomus" where appropriate.
+
+B) EDIT resources/bundled/skills/change-keybinding/SKILL.md:
+Find: `~/.warp*/` references
+Replace with: `~/.octomus*/` (or `~/.warp*/` → `~/.octomus*/` — the glob still works because Agent 4 renames the config dir)
+
+Actually, the keybinding file path uses `{{keybindings_file_path}}` which already resolves correctly from ChannelState. Just update the description text from "Warp" to "Octomus":
+Find: "Warp keyboard shortcuts" → "Octomus keyboard shortcuts"
+Find: "Warp reads at launch" → "Octomus reads at launch"
+
+C) EDIT resources/bundled/skills/modify-settings/SKILL.md:
+Find: "Warp application settings" → "Octomus application settings"
+The `{{settings_schema_path}}` and `{{settings_file_path}}` template vars are auto-resolved.
+
+D) EDIT resources/bundled/skills/tab-configs/SKILL.md:
+Find: `~/.warp/tab_configs/` and `~/.warp-<channel>/tab_configs/`
+Replace with: `~/.octomus/tab_configs/` and `~/.octomus-<channel>/tab_configs/`
+Find: "Warp" → "Octomus" in text
+
+E) EDIT resources/bundled/skills/create-tab-config/SKILL.md:
+Find: `~/.warp/tab_configs/` and `~/.warp*/` patterns
+Replace directory pattern: `ls -d ~/.octomus*/` instead of `ls -d ~/.warp*/`
+Find: "Warp build" → "Octomus build", "Warp tab config" → "Octomus tab config"
+
+F) EDIT resources/bundled/skills/update-tab-config/SKILL.md:
+Find: "Warp tab config" → "Octomus tab config"
+Find: "Warp build/channel" → "Octomus build/channel"
+
+G) The `claude-api`, `create-skill`, and `pr-comments` skills are provider-specific (Anthropic, GitHub) — they don't reference Warp/Oz. Leave them as-is. Same for `tab-configs` meta-skill.
+
+H) Leave `change-keybinding` mostly alone except for the brand name change — the `{{keybindings_file_path}}` template var takes care of the actual path.
+
+=== PART 4: Icon fallback for bundled skills ===
+
+EDIT app/src/ai/skills/skill_manager.rs:
+
+Find `icon_for_bundled_skill()` (around line 623):
+```rust
+fn icon_for_bundled_skill(skill_id: &str) -> Icon {
+    match skill_id {
+        "pr-comments" => Icon::Github,
+        _ => Icon::WarpLogoLight,
+    }
+}
+```
+
+The `Icon::WarpLogoLight` fallback should become an Octomus icon. The simplest approach — use a generic AI/robot icon if available, or keep WarpLogoLight for now (the icon rename is Agent 4's job).
+
+Actually, don't change this — Agent 4 handles the Warp→Octomus icon rename. The icon rendering will pick up the new name automatically.
+
+=== PART 5: Adapt RunAgents remote mode to use Octomus Remote Backend ===
+
+The orchestration card in `run_agents_card_view.rs` shows an "Execution Mode" toggle (Local/Remote). When Remote is selected, it shows environment pickers for Oz cloud environments. For Octomus, remote should use the user's `RemoteBackendSettings` (from Agent 11).
+
+However, the RunAgentsExecutor and RunAgentsCardView are complex and deeply integrated with the Oz cloud environment system. Rather than rewriting them (risky), the safest approach for now:
+
+EDIT app/src/ai/blocklist/inline_action/run_agents_card_view.rs:
+
+Find where the "execution mode" toggle is rendered. When remote mode is selected and no cloud environment is configured, show a message linking to Settings → Remote Backend instead of offering Oz cloud environments.
+
+Search for code that renders the environment picker (HostPicker, CreateEnvironmentModal). When these are shown in remote mode, ADD a fallback message:
+
+```rust
+// Octomus: if no cloud environments are configured (Oz is gone),
+// point the user to Remote Backend settings.
+if remote_environments_are_empty(ctx) {
+    // Show: "No remote environments configured. Go to Settings → Remote Backend to set up SSH, Modal, or a custom endpoint."
+}
+```
+
+The exact implementation depends on how `HostPicker` and environment list are rendered. The key change:
+
+1. In `RunAgentsCardView::render()`, after the execution mode toggle, when remote is selected:
+   - Check if any remote environments exist (via `HostPicker` data)
+   - If none, show a text widget: "Configure a remote backend in Settings → Remote Backend to run agents remotely."
+   - Disable the Accept button until one is configured OR only allow Local mode
+
+2. In `orchestration_controls.rs`, find where environment picker fetches environments. Add a check:
+   - If the environment list is empty AND mode is Remote, disable Accept
+   - Show a settings link: "No remote backends configured. Enable one in Settings."
+
+This is a guidance change, not a full rewrite — the Remote Backend implementation from Agent 11 will be the target, but we don't need to wire it fully into RunAgents in this agent. The goal is to make the UX clear: "go configure remote backend" instead of "no Oz environments found."
+
+=== PART 6: Update SkillManager comments ===
+
+EDIT app/src/ai/skills/skill_manager.rs:
+
+Find doc comments that reference Warp cloud:
+Line 71-77: `/// Skills bundled into Warp...`
+Line 74-77: `/// Set by AgentDriver when a cloud environment with configured repos is active`
+
+Update:
+```rust
+    /// Skills bundled into Octomus, each with activation condition and icon.
+    bundled_skills: HashMap<String, BundledSkill>,
+    /// When true, all skills in `directory_skills` are in scope regardless of
+    /// the current working directory. Set by `AgentDriver` when a remote
+    /// environment with configured repos is active, so the agent sees every
+    /// skill from every cloned repo.
+    is_cloud_environment: bool,
+```
+
+Line 116-117: `/// Marks this manager as running in a cloud environment...`
+Update to:
+```rust
+    /// Marks this manager as running in a remote environment, enabling all
+    /// directory skills to be in scope regardless of the current working directory.
+```
+
+Line 451: `/// Load skill definitions bundled with Warp.`
+Update to: `/// Load skill definitions bundled with Octomus.`
+
+=== PART 7: Update skill references in other files ===
+
+Search for "Warp" text in bundled skill descriptions that appear in the UI:
+
+EDIT app/src/ai/skills/skill_utils.rs if it references Warp in display strings:
+Find "Warp" in user-visible strings (not in comments) and replace with "Octomus".
+
+EDIT app/src/ai/blocklist/action_model/execute/read_skill.rs:
+This file reads SKILL.md files and sends them to agents. Check if there are any Warp/Oz references.
+
+Actually, the skill files themselves (SKILL.md) are the main source of Warp branding. The Rust code mostly just loads and passes them through. The bundling code (`build_bundled_skill_context`) is what we fixed in PART 2.
+
+=== PART 8: Remove cloud environment check from SkillManager ===
+
+EDIT app/src/ai/skills/skill_manager.rs:
+
+In `get_skills_for_working_directory()` (around line 141), there's:
+```rust
+        if self.is_cloud_environment {
+            // In cloud environments, all skills are in scope regardless of cwd.
+            ...
+        }
+```
+
+This stays — it's functional logic, not branding. It works the same for local multi-agent with AgentStore (Agent 12 sets `is_cloud_environment = true` when running in a worktree with multiple repos).
+
+But UPDATE the comment:
+```rust
+        if self.is_cloud_environment {
+            // In remote/multi-repo environments, all skills are in scope.
+```
+
+=== FINAL CHECK ===
+
+```bash
+# Verify no Warp cloud references remain in bundled skills
+grep -rn "oz-platform\|warp.dev\|api.warp.dev\|Oz cloud\|warp agent run-cloud\|warp_server_url" resources/bundled/skills/ --include="*.md"
+
+# Verify template variables are updated
+grep "warp_server_url\|warp_url_scheme\|warp_cli_binary_name" app/src/ai/skills/skill_manager.rs
+
+# Check for remaining Warp references in skill display strings
+grep -rn '"Warp"' app/src/ai/skills/ --include="*.rs" | grep -v test | grep -v "//"
+```
+
+```bash
+git add -A
+git commit -m "octomus: clean bundled skills — remove oz-platform, rename Warp→Octomus in skills, update template vars"
+git push origin octomus/agent-15-skills
+```

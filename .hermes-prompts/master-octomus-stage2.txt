@@ -1,0 +1,133 @@
+Repo: AdrianTuci1/warp-new
+
+Ești orchestratorul Octomus — STAGE 2/2. 1 sandbox (16vCPU/32GB, lifetime 14400s).
+
+🚨 REGULA #1 — Toți agenții lucrează pe ACEEAȘI MAȘINĂ (același sandbox) 🚨
+Copiii NU au nevoie de token — doar execută comenzi în worktree-uri.
+Token-ul e injectat direct în prompt (__GH_TOKEN__).
+
+=== CONTEXT ===
+
+Stage 1 (master-octomus-stage1.txt) a produs branch-ul octomus/stage1 care trece cargo check.
+Stage 2 pleacă de pe octomus/stage1 și adaugă CI, scan, telemetry, remote execution, agent store.
+
+IMPORTANT: Toți agenții din stage 2 pornesc de pe branch-ul octomus/stage1 (NU master!).
+
+=== PAS 1: CLONE REPO + WORKTREE-URI ===
+Clonează repo-ul O SINGURĂ DATĂ, checkout octomus/stage1, apoi creează worktree-uri.
+
+[bash]
+if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q "AdrianTuci1/warp-new"; then
+  cd /tmp/repo && git fetch origin && git checkout octomus/stage1 && git pull origin octomus/stage1
+else
+  rm -rf /tmp/repo
+  git clone https://x-access-token:__GH_TOKEN__@github.com/AdrianTuci1/warp-new.git /tmp/repo
+  cd /tmp/repo
+  git fetch origin octomus/stage1 && git checkout octomus/stage1
+fi
+
+# Curăță worktree-uri vechi
+for wt in agent-8-ci agent-9-final agent-10-telemetry agent-11-remote agent-12-store agent-14-voice agent-15-skills; do
+  wt_dir="/tmp/worktree-$wt"
+  rm -rf "$wt_dir"
+  git branch -D "octomus/$wt" 2>/dev/null || true
+done
+
+# Creează worktree-uri — fiecare din octomus/stage1
+git worktree add /tmp/worktree-agent-8-ci -b octomus/agent-8-ci octomus/stage1
+git worktree add /tmp/worktree-agent-9-final -b octomus/agent-9-final octomus/stage1
+git worktree add /tmp/worktree-agent-10-telemetry -b octomus/agent-10-telemetry octomus/stage1
+git worktree add /tmp/worktree-agent-11-remote -b octomus/agent-11-remote octomus/stage1
+git worktree add /tmp/worktree-agent-12-store -b octomus/agent-12-store octomus/stage1
+git worktree add /tmp/worktree-agent-14-voice -b octomus/agent-14-voice octomus/stage1
+git worktree add /tmp/worktree-agent-15-skills -b octomus/agent-15-skills octomus/stage1
+
+echo "Repo gata. Worktree-uri create in /tmp/worktree-*"
+[/bash]
+
+=== STRATEGIE: 2 BATCH-URI PARALELE + MERGE + CARGO CHECK ===
+
+Batch 3: A8, A9, A10, A11, A14, A15 în paralel (CI + scan + telemetry + remote + voice + skills)
+Batch 4: A12 singur (agent store — e izolat, poate rula odată cu batch 3)
+Apoi merge + cargo check final.
+
+=== BATCH 3: CI + SCAN + TELEMETRY + REMOTE + VOICE + SKILLS (6 agenți, paralel) ===
+
+Lansează 6 agenți simultan. Prompt-urile sunt în `/tmp/repo/.hermes-prompts/` (din repo):
+
+| Agent | Prompt file (.hermes-prompts/)         | Worktree                          | Task                                      |
+|-------|----------------------------------------|-----------------------------------|-------------------------------------------|
+| A8    | agent-8-ci-packaging.txt               | /tmp/worktree-agent-8-ci          | GitHub Actions, Sentry/GCS/codesign       |
+| A9    | agent-9-final-scan.txt                 | /tmp/worktree-agent-9-final       | Dead imports, tests, README, cargo check  |
+| A10   | agent-10-telemetry.txt                 | /tmp/worktree-agent-10-telemetry  | Redirect telemetry → Octomus              |
+| A11   | agent-11-remote-execution.txt          | /tmp/worktree-agent-11-remote     | Generic remote backend                    |
+| A12   | agent-12-agent-store.txt               | /tmp/worktree-agent-12-store      | Local agent store                          |
+| A14   | agent-14-voice.txt                     | /tmp/worktree-agent-14-voice      | Direct Whisper API                        |
+| A15   | agent-15-skills.txt                    | /tmp/worktree-agent-15-skills     | Clean bundled skills                      |
+
+[bash]
+prompt_dir="/tmp/repo/.hermes-prompts"
+
+cat "$prompt_dir/agent-8-ci-packaging.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-9-final-scan.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-10-telemetry.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-11-remote-execution.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-12-agent-store.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-14-voice.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-15-skills.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+
+wait
+echo "✅ Batch 3 — toți agenții au terminat"
+[/bash]
+
+=== MERGE FINAL + CARGO CHECK ===
+
+După ce toți agenții au terminat, fă merge-ul din /tmp/repo (clone-ul principal):
+
+[bash]
+cd /tmp/repo
+git fetch origin
+git checkout octomus/stage1
+git checkout -b octomus/release
+for b in agent-8-ci agent-9-final agent-10-telemetry agent-11-remote agent-12-store agent-14-voice agent-15-skills; do
+  if git merge "origin/octomus/$b" --no-edit 2>&1; then
+    echo "Merged $b cleanly"
+  else
+    echo "CONFLICT in $b — resolving with --theirs..."
+    git diff --name-only --diff-filter=U | while read f; do
+      git checkout --theirs "$f" 2>/dev/null || true
+    done
+    git add .
+    git diff --cached --quiet || git commit -m "merge $b: resolve conflicts"
+  fi
+done
+[/bash]
+
+[bash]
+cd /tmp/repo && cargo check 2>&1 | tail -80
+[/bash]
+
+Dacă erori: citește fișierele, editează, re-rulează cargo check (max 20 iterații).
+
+La final:
+[bash]
+cd /tmp/repo
+if git diff --cached --quiet; then echo "clean"; else git add -A && git commit -m "octomus: post-merge fixes — stage 2"; fi
+git push origin octomus/release
+[/bash]
+
+Raportează "🎉 OCTOMUS RELEASE READY — octomus/release pushed, cargo check trece!"
+
+=== CELE 4 DEPENDENȚE CLOUD ÎNLOCUITE ===
+
+După stage 2, Octomus are toate cele 4 dependențe cloud rezolvate local:
+
+1. SSE event streaming     → LocalEventStreamer (file-based JSONL polling, 500ms)
+2. Snapshot upload (GCS)   → agent-store/<conversation>/<agent>/snapshot/
+3. Artifact reporting      → AgentStore::store_artifact() → artifacts/
+4. Handoff/fork            → copiere locală conversație + snapshot
+
+=== COMUNICARE ===
+- După fiecare batch: "✅ Batch X done — [Y/Z] agenți au trecut"
+- Dacă un agent eșuează: raportează eroarea, NU continua batch-ul următor
+- Sandbox lifetime: 14400s. Dacă <30min rămase, raportează

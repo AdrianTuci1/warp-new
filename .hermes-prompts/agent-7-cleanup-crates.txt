@@ -1,0 +1,82 @@
+Worktree: /tmp/worktree-agent-7-crates (branch octomus/agent-7-crates).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
+
+cd /tmp/worktree-agent-7-crates
+
+TASK: Clean up workspace-level Cargo.toml, feature flags, and crate dependencies. The previous agents (1-6) removed app-level code. Now we clean up the crates.
+Do NOT touch app/src/lib.rs or app/src/ai/ — those were done by agents 2 and 3.
+
+1. EDIT Cargo.toml (workspace root, in current dir):
+Remove these from [workspace.members]:
+- "crates/cloud_object_client"
+- "crates/cloud_object_models"
+- "crates/cloud_objects"
+- "crates/cloud_object_persistence"
+- "crates/warp_graphql"
+- "crates/warp_server_auth"
+- "crates/warp_server_client"
+
+Remove these from [workspace.dependencies]:
+- cloud_object_client
+- cloud_object_models
+- cloud_objects
+- cloud_object_persistence
+- warp_graphql
+- warp_server_auth
+- warp_server_client
+
+2. DELETE these entire crate directories (rm -rf):
+|- crates/cloud_object_client/
+|- crates/cloud_object_models/
+|- crates/cloud_objects/
+|- crates/cloud_object_persistence/
+|- crates/warp_graphql/
+|- crates/warp_server_auth/
+|- crates/warp_server_client/
+
+3. EDIT crates/warp_core/src/features.rs:
+Remove FeatureFlag variants that reference cloud/billing/auth:
+- CloudAgent (and any cloud_agent related)
+- WarpDrive
+- AgentMode (only if cloud-gated)
+- GlobalSearch (if it was cloud-gated)
+- Any flag with "cloud", "billing", "team", "workspace" in its name
+Remove them from DOGFOOD_FLAGS, PREVIEW_FLAGS, RELEASE_FLAGS arrays.
+
+4. EDIT crates/persistence/:
+Remove any database migrations/tables for cloud objects, workspaces, shared sessions.
+Check crates/persistence/migrations/ for any SQL that creates tables like
+cloud_objects, workspaces, shared_sessions, user_profiles, api_keys, etc. Remove those migrations.
+
+5. EDIT app/Cargo.toml:
+Remove remaining dependency references:
+- cloud_object_client = { workspace = true }
+- cloud_object_models = { workspace = true }
+- cloud_objects = { workspace = true }
+- cloud_object_persistence = { workspace = true }
+- warp_graphql = { workspace = true }
+- warp_server_auth = { workspace = true }
+- warp_server_client = { workspace = true }
+- oauth2
+- sentry, sentry-core, sentry-types (crash reporting gone)
+- Any other dependency that was only used by deleted cloud modules
+
+Look at the [features] section. Remove any feature flags like:
+- "cloud_object_*"
+- "drive_*"
+- "billing_*"
+- "server_*"
+- "auth_backend"
+- "crash_reporting"
+
+6. Scan remaining crates for dependency on deleted cloud crates:
+grep -r "cloud_object_client\|cloud_object_models\|cloud_objects\|warp_graphql\|warp_server_auth\|warp_server_client" crates/ --include="*.toml"
+
+For any Cargo.toml that still references them, remove the dependency. If removing it breaks the crate, mark the entire crate for deletion (those crates can't work without cloud).
+
+After done:
+```
+git add -A
+git commit -m "octomus: remove cloud crates + feature flags + dead deps"
+git push origin octomus/agent-7-crates
+```

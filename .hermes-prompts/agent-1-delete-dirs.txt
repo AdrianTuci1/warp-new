@@ -1,14 +1,7 @@
-GITHUB_TOKEN auto-pasat via env_passthrough.
+Worktree: /tmp/worktree-agent-1-delete (branch octomus/agent-1-delete).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
 
-Repo: AdrianTuci1/warp-new
-Branch: octomus/agent-1-delete
-
-[bash]
-git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
-cd /tmp/repo
-git checkout master
-git checkout -b octomus/agent-1-delete
-[/bash]
+cd /tmp/worktree-agent-1-delete
 
 TASK: Delete these directories and files. ONLY deletions — do NOT edit any remaining files.
 
@@ -29,6 +22,10 @@ Delete ALL contents of these directories (rm -rf):
 - app/src/ai/agent_sdk/
 - app/src/ai/cloud_agent_config/ (everything: agent_config, api_key, artifact, common, config_file, driver, environment, federate, harness_support, mcp, oauth_flow, output, profiles, provider, retry, schedule, secret, telemetry, text_layout)
 
+--- Additional directories ---
+- app/src/settings_view/billing_and_usage/ (entire dir: credit tracking, billing cycle UI)
+- app/src/ai/blocklist/usage/ (entire dir: credit usage rollup + conversation usage views)
+
 --- Individual files ---
 - app/src/ai/connected_self_hosted_workers.rs
 - app/src/ai/connected_self_hosted_workers_tests.rs
@@ -39,8 +36,27 @@ Delete ALL contents of these directories (rm -rf):
 - app/src/changelog_model.rs
 - app/src/reward_view.rs
 - app/src/referral_theme_status.rs
+
+--- Credit/billing files ---
+- app/src/terminal/buy_credits_banner.rs (credit purchase banner — not needed when BYOK)
+- app/src/workspace/bonus_grant_notification_model.rs (bonus credits notification)
+- app/src/workspace/view/build_plan_migration_modal.rs (credit plan migration modal)
+- app/src/workspace/view/cloud_agent_capacity_modal/ (out of credits modal)
+- app/src/workspace/view/free_tier_limit_hit_modal.rs (free tier limit)
+- app/src/workspace/view/launch_modal/oz_launch.rs (launch credits onboarding)
+- app/src/settings_view/billing_and_usage_page.rs (billing page)
+- app/src/settings_view/billing_and_usage_page_v2.rs (billing page v2)
+- app/src/settings_view/billing_and_usage_dispatch.rs (billing dispatch)
+- app/src/settings_view/teams_page.rs (team page — references credits)
+- app/src/ai/request_usage_model.rs (request cost/credit tracking model)
+- app/src/ai/request_usage_model_tests.rs
+- app/src/terminal/enable_auto_reload_modal.rs (auto-reload credits modal)
+- app/src/terminal/view/shared_session/conversation_ended_tombstone_view.rs (credit display)
+- app/src/terminal/view/shared_session/conversation_ended_tombstone_view_tests.rs
+- app/src/workspace/view.rs (contains credit logic — too large to edit, delete and let rebuild)
+
 ```
 git add -A
-git commit -m "octomus: delete cloud auth/server/drive/workspaces/cloud-ai dirs"
+git commit -m "octomus: delete cloud + credit/billing files — local-only, BYOK"
 git push origin octomus/agent-1-delete
 ```

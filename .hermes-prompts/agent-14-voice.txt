@@ -1,0 +1,342 @@
+Worktree: /tmp/worktree-agent-14-voice (branch octomus/agent-14-voice, bazat pe octomus/stage1).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
+
+cd /tmp/worktree-agent-14-voice
+
+TASK: Replace cloud-dependent voice transcription (Wispr via Warp server) with direct OpenAI Whisper API. Voice input is disabled by default — user must provide their own API key.
+
+=== BACKGROUND ===
+
+Current flow: Editor → VoiceInput crate → VoiceTranscriber.transcribe(wav_base64) → ServerVoiceTranscriber → ServerApi::transcribe(Provider::Wispr) → Warp cloud → Wispr.
+
+After Agent 1, app/src/server/ is DELETED. ServerVoiceTranscriber and TranscribeError from server::server_api are gone. The Transcriber trait (app/src/voice/transcriber.rs) survives. We create a direct OpenAI Whisper implementation.
+
+=== PART 1: Create WhisperTranscriber ===
+
+CREATE app/src/ai/whisper_transcriber.rs:
+
+```rust
+// Octomus — direct OpenAI Whisper API transcription.
+// Replaces ServerVoiceTranscriber (deleted with app/src/server/).
+
+use std::time::Duration;
+
+use reqwest::Client;
+
+/// Error type for Whisper transcription.
+#[derive(Debug, Clone)]
+pub enum WhisperTranscribeError {
+    NoApiKey,
+    RequestFailed(String),
+    ApiError(String),
+}
+
+impl std::fmt::Display for WhisperTranscribeError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::NoApiKey => write!(f, "Whisper API key not configured"),
+            Self::RequestFailed(msg) => write!(f, "Network error: {msg}"),
+            Self::ApiError(msg) => write!(f, "Whisper API: {msg}"),
+        }
+    }
+}
+
+/// Minimal OpenAI Whisper response.
+#[derive(serde::Deserialize)]
+struct WhisperResponse {
+    text: String,
+}
+
+/// Direct OpenAI Whisper API transcriber. BYOK — no cloud involved.
+pub struct WhisperTranscriber {
+    api_key: String,
+    model: String,
+    client: Client,
+}
+
+impl WhisperTranscriber {
+    pub fn new(api_key: String) -> Self {
+        Self {
+            api_key,
+            model: "whisper-1".to_string(),
+            client: Client::builder()
+                .timeout(Duration::from_secs(60))
+                .build()
+                .expect("reqwest client build"),
+        }
+    }
+
+    /// Transcribe base64-encoded WAV audio to text via OpenAI Whisper API.
+    pub async fn transcribe_wav(&self, wav_base64: &str) -> Result<String, WhisperTranscribeError> {
+        if self.api_key.is_empty() {
+            return Err(WhisperTranscribeError::NoApiKey);
+        }
+
+        let audio_bytes = base64_decode(wav_base64)
+            .ok_or_else(|| WhisperTranscribeError::RequestFailed("invalid base64 audio".into()))?;
+
+        let form = reqwest::multipart::Form::new()
+            .text("model", self.model.clone())
+            .part(
+                "file",
+                reqwest::multipart::Part::bytes(audio_bytes)
+                    .file_name("audio.wav")
+                    .mime_str("audio/wav")
+                    .map_err(|e| WhisperTranscribeError::RequestFailed(e.to_string()))?,
+            );
+
+        let response = self
+            .client
+            .post("https://api.openai.com/v1/audio/transcriptions")
+            .bearer_auth(&self.api_key)
+            .multipart(form)
+            .send()
+            .await
+            .map_err(|e| WhisperTranscribeError::RequestFailed(e.to_string()))?;
+
+        if !response.status().is_success() {
+            let status = response.status();
+            let body = response.text().await.unwrap_or_default();
+            return Err(WhisperTranscribeError::ApiError(format!("{status}: {body}")));
+        }
+
+        let whisper_response: WhisperResponse = response
+            .json()
+            .await
+            .map_err(|e| WhisperTranscribeError::ApiError(e.to_string()))?;
+
+        Ok(whisper_response.text)
+    }
+}
+
+fn base64_decode(input: &str) -> Option<Vec<u8>> {
+    use base64::Engine as _;
+    base64::engine::general_purpose::STANDARD.decode(input).ok()
+}
+```
+
+IMPORTANT: Check if `base64` is already in app/Cargo.toml. If not, add `base64 = "0.22"`.
+
+=== PART 2: Update the Transcriber trait ===
+
+EDIT app/src/voice/transcriber.rs:
+
+TranscribeError was imported from `server::server_api` (deleted). Change the trait to define TranscribeError locally.
+
+FIND:
+```rust
+use crate::server::server_api::TranscribeError;
+```
+DELETE this line.
+
+FIND the trait:
+```rust
+pub trait Transcriber: Send + Sync {
+    async fn transcribe(&self, wav_base64: String) -> Result<String, TranscribeError>;
+}
+```
+
+REPLACE with:
+```rust
+/// Error type for transcription. Octomus: String (server::server_api was deleted).
+pub type TranscribeError = String;
+
+pub trait Transcriber: Send + Sync {
+    async fn transcribe(&self, wav_base64: String) -> Result<String, TranscribeError>;
+}
+```
+
+ADD `new_disabled` to VoiceTranscriber. Find the `new` method and add after it:
+```rust
+    pub fn new_disabled() -> Self {
+        Self { transcriber: None }
+    }
+```
+
+=== PART 3: Change voice default + add whisper API key setting ===
+
+EDIT app/src/settings/ai.rs:
+
+A) Change voice_input_enabled default from true → false. Find:
+```rust
+voice_input_enabled_internal: VoiceInputEnabled {
+    type: bool,
+    default: true,
+```
+Change to:
+```rust
+voice_input_enabled_internal: VoiceInputEnabled {
+    type: bool,
+    default: false, // Octomus: disabled by default, enabled when API key is set
+```
+
+B) Find the `explicitly_interacted_with_voice` field and add AFTER it:
+```rust
+    whisper_api_key: WhisperApiKey {
+        type: String,
+        default: String::new(),
+        supported_platforms: SupportedPlatforms::DESKTOP,
+        sync_to_cloud: SyncToCloud::Never,
+        private: true,
+        toml_path: "agents.voice.whisper_api_key",
+        description: "Your OpenAI API key for Whisper voice transcription. Leave empty to disable voice input.",
+    },
+```
+
+C) Find `is_voice_input_enabled` (around line 1549) and UPDATE:
+```rust
+    pub fn is_voice_input_enabled(&self, app: &warpui::AppContext) -> bool {
+        cfg!(feature = "voice_input")
+            && self.is_any_ai_enabled(app)
+            && *self.voice_input_enabled_internal
+            && !self.whisper_api_key.is_empty()
+    }
+```
+
+D) Add getter near the same area:
+```rust
+    pub fn whisper_api_key(&self) -> &str {
+        &self.whisper_api_key
+    }
+```
+
+=== PART 4: Wire in lib.rs ===
+
+EDIT app/src/lib.rs:
+
+A) REMOVE: `use server::voice_transcriber::ServerVoiceTranscriber;`
+
+B) ADD: `use ai::whisper_transcriber::WhisperTranscriber;`
+
+C) REPLACE the VoiceTranscriber wiring. Find:
+```rust
+    #[cfg(feature = "voice_input")]
+    ctx.add_singleton_model(voice_input::VoiceInput::new);
+    ctx.add_singleton_model(|_| {
+        VoiceTranscriber::new(Arc::new(ServerVoiceTranscriber::new(server_api.clone())))
+    });
+```
+
+Replace with:
+```rust
+    #[cfg(feature = "voice_input")]
+    ctx.add_singleton_model(voice_input::VoiceInput::new);
+
+    let whisper_api_key = AISettings::handle(&ctx).as_ref(&ctx).whisper_api_key().to_string();
+    if !whisper_api_key.is_empty() {
+        let transcriber = Arc::new(WhisperTranscriber::new(whisper_api_key));
+        ctx.add_singleton_model(move |_| VoiceTranscriber::new(transcriber));
+    } else {
+        ctx.add_singleton_model(|_| VoiceTranscriber::new_disabled());
+    }
+```
+
+=== PART 5: Clean up editor/view/voice.rs ===
+
+EDIT app/src/editor/view/voice.rs. Remove dead references to DELETED modules:
+
+A) REMOVE these imports:
+```
+use crate::server::server_api::TranscribeError;
+use crate::workspaces::user_workspaces::UserWorkspaces;
+```
+
+B) REMOVE all 4 `if !UserWorkspaces::handle(ctx).as_ref(ctx).is_voice_enabled()` guard blocks. They look like:
+```
+        if !UserWorkspaces::handle(ctx).as_ref(ctx).is_voice_enabled() {
+            return;
+        }
+```
+or:
+```
+        if !UserWorkspaces::handle(ctx).as_ref(ctx).is_voice_enabled() {
+            return false;
+        }
+```
+Delete each entire if-block.
+
+C) REMOVE the credit check block:
+```
+                if !crate::ai::AIRequestUsageModel::handle(ctx)
+                    .as_ref(ctx)
+                    .can_request_voice()
+                {
+                    self.voice_error_toast(super::VOICE_LIMIT_HIT_TOAST_TEXT, ctx);
+                    return false;
+                }
+```
+
+D) REMOVE all 3 `send_telemetry_from_ctx!` blocks for `TelemetryEvent::VoiceInputUsed`. Search for "VoiceInputUsed" and delete each.
+
+E) SIMPLIFY the error handler in `apply_transcribed_voice_input`. Find:
+```
+            Err(e) => match e {
+                TranscribeError::QuotaLimit => {
+                    self.voice_error_toast(super::VOICE_LIMIT_HIT_TOAST_TEXT, ctx)
+                }
+                _ => {
+                    log::error!("Failed to transcribe voice input: {e:?}");
+                    self.voice_error_toast(super::VOICE_ERROR_TOAST_TEXT, ctx)
+                }
+            },
+```
+Replace with:
+```
+            Err(e) => {
+                log::error!("Failed to transcribe voice input: {e}");
+                self.voice_error_toast(super::VOICE_ERROR_TOAST_TEXT, ctx)
+            },
+```
+
+=== PART 6: Add module declaration ===
+
+EDIT app/src/ai/mod.rs, add:
+```rust
+pub mod whisper_transcriber;
+```
+
+=== PART 7: Delete Wispr types ===
+
+DELETE:
+- app/src/ai/voice/transcribe/api/request.rs
+- app/src/ai/voice/transcribe/api/response.rs
+- app/src/ai/voice/transcribe/api/mod.rs
+
+READ app/src/ai/voice/transcribe/mod.rs. If it only re-exports from api/, rewrite to:
+```rust
+// Octomus — direct Whisper API in whisper_transcriber.rs.
+```
+
+=== PART 8: Add Whisper API key field to settings page ===
+
+EDIT app/src/settings_view/ai_page.rs:
+
+Find the voice section (search for `voice_input_enabled` toggle). Add a password text field:
+
+- `#[cfg(feature = "voice_input")]`
+- Label "Whisper API Key", placeholder "sk-...", password field (asterisks)
+- Reads from `AISettings::whisper_api_key()`, updates on change
+- Helper text: "Your OpenAI API key. Leave empty to disable voice input."
+
+Follow the same warpui TextField pattern used for other API key fields on this page (see how OpenAI/Bedrock keys are rendered).
+
+=== PART 9: Add base64 dependency if missing ===
+
+Check if `base64` is already in app/Cargo.toml dependencies. If not, add:
+```toml
+base64 = "0.22"
+```
+
+=== FINAL CHECK ===
+
+```bash
+grep -rn "ServerApi\|server_api\|ServerVoiceTranscriber\|UserWorkspaces\|AIRequestUsage\|TelemetryEvent::VoiceInput" app/src/voice/ app/src/editor/view/voice.rs app/src/ai/whisper_transcriber.rs --include="*.rs"
+grep "whisper_transcriber" app/src/ai/mod.rs
+grep -A2 "voice_input_enabled_internal" app/src/settings/ai.rs | head -10
+```
+
+```bash
+git add -A
+git commit -m "octomus: replace cloud voice with direct OpenAI Whisper — disabled by default, BYOK"
+git push origin octomus/agent-14-voice
+```

@@ -1,16 +1,13 @@
-GITHUB_TOKEN auto-pasat via env_passthrough.
+Worktree: /tmp/worktree-agent-3-ai (branch octomus/agent-3-ai).
+Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
 
-Repo: AdrianTuci1/warp-new
-Branch: octomus/agent-3-ai
-
-[bash]
-git clone https://oauth2:${GITHUB_TOKEN}@github.com/AdrianTuci1/warp-new.git /tmp/repo
-cd /tmp/repo
-git checkout master
-git checkout -b octomus/agent-3-ai
-[/bash]
+cd /tmp/worktree-agent-3-ai
 
 TASK: Edit ONLY app/src/ai/ files. Do NOT touch other files.
+
+Credit removal: Since users bring their own API key (BYOK), there's no credits system.
+The following files have been deleted by agent-1 (request_usage_model, blocklist/usage/).
+Now strip credit-related fields from remaining AI files.
 
 1. EDIT app/src/ai/mod.rs:
 Remove these module declarations:
@@ -53,6 +50,81 @@ If LLMPreferences is more complex and used elsewhere, just empty the model list/
 Remove or comment out tests that reference deleted model configurations.
 
 4. Check if any other files in app/src/ai/ import from the deleted modules (cloud_environments, agent_sdk, etc.). If so, remove those imports.
+
+=== CREDIT STRIPPING ===
+
+5. EDIT app/src/ai/agent/conversation.rs:
+Search for and remove ALL credit-related fields/types. Look for:
+- `credits_used`, `credits_remaining`, `credit_balance`, `credit_cost`
+- Any usage/cost tracking that was on `RequestUsageModel` (now deleted)
+- Mark unused fields with `#[serde(default)]` or remove them
+- Look for `RequestUsageModel` imports and remove them
+
+6. EDIT app/src/ai/conversation_details_panel.rs:
+Remove credit display lines. Search for "credit", "cost", "usage", "token" in the display logic
+and remove those sections. If the panel only showed credits, stub it to show nothing.
+
+7. EDIT app/src/ai/blocklist/block/view_impl/output.rs:
+Remove credit/cost display in agent output. Search for "credits", "cost", "tokens", "usage"
+in the UI rendering sections and remove those elements.
+
+8. EDIT app/src/ai/blocklist/view_util.rs:
+Remove credit-related helper functions. Search for "credit" functions and remove them.
+
+9. EDIT app/src/ai/blocklist/agent_view/agent_message_bar.rs:
+Remove credit/cost display from the message bar. Search for "credit", "cost" in the UI and remove.
+
+10. EDIT app/src/ai/blocklist/agent_view/zero_state_block.rs:
+Remove credit-related onboarding text. Search for "credit", "free", "tier".
+
+11. EDIT app/src/ai/blocklist/controller.rs:
+Remove credit checking logic. Search for "credit", "usage", "RequestUsageModel".
+If credit checks are gating features, remove the gates (all features are free in BYOK).
+
+12. EDIT app/src/ai/blocklist/history_model.rs:
+Remove credit fields from conversation history. Search for "credit", "usage", "cost".
+
+13. EDIT app/src/ai/agent/api.rs and app/src/ai/agent/api/impl.rs:
+Remove credit-related API fields. Search for "credit", "usage", "cost".
+
+14. EDIT app/src/ai/agent_management/view.rs:
+Remove credit display from agent management UI.
+
+15. EDIT app/src/ai/llms.rs:
+Remove credit cost calculations. Search for "credit", "cost", "pricing" and remove.
+
+16. EDIT app/src/ai/ambient_agents/:
+Remove credit checks. Search for "credit", "usage".
+
+17. EDIT app/src/ai/agent_conversations_model/entry.rs:
+Remove credit fields from conversation entries.
+
+18. EDIT app/src/ai/execution_profiles/model_menu_items.rs:
+Remove credit/cost display next to model names.
+
+19. EDIT app/src/ai/agent_tips.rs:
+Remove any tips mentioning credits.
+
+20. EDIT app/src/ai/blocklist/block/model/model_impl.rs:
+Remove credit display from block model.
+
+21. EDIT app/src/ai/blocklist/block/view_impl/common.rs:
+Remove credit from common block view.
+
+22. EDIT app/src/ai/blocklist/prompt/prompt_alert.rs:
+Remove credit-related alerts.
+
+23. EDIT app/src/ai/blocklist/orchestration_topology.rs:
+Remove credit mention.
+
+24. EDIT app/src/ai/blocklist/mod.rs:
+Remove credit from blocklist.
+
+STRATEGY for each file:
+- First, grep for "credit|usage|cost|RequestUsage" in the file
+- If the field/function is ONLY about credits, delete it
+- If removing breaks compilation, replace the value with a constant (0, None, false)
+- Use `#[allow(dead_code)]` or `#[cfg_attr(test, expect(unused))]` for any temp stubs
 
 After done:
 ```
