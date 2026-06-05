@@ -44,7 +44,6 @@ impl ExpireApiKeyButton {
         self.request_state = RequestState::Pending;
         ctx.notify();
 
-        let auth_client =
         let uid_for_req = self.key_uid.clone();
         ctx.spawn(
             async move { auth_client.expire_api_key(&uid_for_req).await },

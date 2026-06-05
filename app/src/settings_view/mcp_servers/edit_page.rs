@@ -251,7 +251,6 @@ impl MCPServersEditPageView {
                     });
                 }
             }
-            }
             Some(ServerCardItemId::FileBasedMCP(_)) => {
                 log::warn!("Editing of file-based MCP unimplemented");
             }
@@ -414,8 +413,7 @@ impl MCPServersEditPageView {
 
                 is_authorized_editor || !is_shared
             }
-                false
-            }
+            Some(ServerCardItemId::FileBasedMCP(_)) => false,
             None => true,
         }
     }
@@ -848,7 +846,6 @@ impl TypedActionView for MCPServersEditPageView {
                             ctx.emit(MCPServersEditPageViewEvent::Back);
                         }
                     }
-                }
                 }
                 Some(ServerCardItemId::FileBasedMCP(_)) => {
                     log::warn!("Editing of file-based MCP unimplemented");

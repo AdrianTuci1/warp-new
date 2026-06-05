@@ -613,7 +613,6 @@ impl ServerCardView {
                     .get_installed_server(&installation_uuid);
                 if let Some(installation) = installation {
                     let template_uuid = installation.template_uuid();
-                    };
                     let cloud_server = CloudTemplatableMCPServer::get_by_uuid(&template_uuid, app);
                     let template_sync_id_text = match cloud_server {
                         Some(cloud_server) => {

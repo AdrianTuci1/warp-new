@@ -3217,12 +3217,6 @@ impl TypedActionView for AISettingsPageView {
                 }
                 ctx.notify();
             }
-                AISettings::handle(ctx).update(ctx, |settings, ctx| {
-                    report_if_error!(settings
-                        .toggle_and_save_value(ctx));
-                });
-                ctx.notify();
-            }
             AISettingsPageAction::HyperlinkClick(hyperlink) => {
                 ctx.notify();
                 ctx.open_url(&hyperlink.url);
@@ -3668,6 +3662,7 @@ impl TypedActionView for AISettingsPageView {
             }
         }
     }
+}
 
 impl SettingsPageMeta for AISettingsPageView {
     fn section() -> SettingsSection {
@@ -7501,7 +7496,7 @@ impl ApiKeysWidget {
         }
         list.finish()
     }
-
+}
 
 impl SettingsWidget for ApiKeysWidget {
     type View = AISettingsPageView;
@@ -7608,13 +7603,6 @@ impl SettingsWidget for ApiKeysWidget {
                     app,
                 ));
             }
-        }
-
-        if is_byo_enabled || show_custom_inference {
-            column.add_child(
-                    .with_margin_top(16.)
-                    .finish(),
-            );
         }
 
         // Upgrade CTA if BYOK not enabled
