@@ -3,7 +3,6 @@ use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud}
 use warpui::{AppContext, SingletonEntity};
 
 use crate::terminal::model::ObfuscateSecrets;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 /// How secrets should be displayed in the block list
 #[derive(

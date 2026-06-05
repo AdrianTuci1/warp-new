@@ -16,7 +16,6 @@ use crate::ai::execution_profiles::{
 };
 use crate::ai::llms::LLMModelHost;
 use crate::auth::UserUid;
-use crate::server::ids::ServerId;
 use crate::settings::AgentModeCommandExecutionPredicate;
 
 #[derive(Clone, Copy, Hash, Debug, PartialEq, Eq)]

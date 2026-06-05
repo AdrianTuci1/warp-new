@@ -13,7 +13,6 @@ use super::{
 };
 use crate::ai::agent_sdk::driver::OZ_MESSAGE_LISTENER_MANAGED_EXTERNALLY_ENV;
 use crate::ai::ambient_agents::task::{normalize_orchestrator_agent_name, HarnessConfig};
-use crate::server::server_api::ai::MockAIClient;
 use crate::terminal::shell::ShellType;
 
 struct EnvVarGuard {

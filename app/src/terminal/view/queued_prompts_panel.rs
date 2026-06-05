@@ -42,7 +42,6 @@ use crate::editor::{
     PropagateAndNoOpNavigationKeys, PropagateHorizontalNavigationKeys, TextOptions,
 };
 use crate::send_telemetry_from_ctx;
-use crate::server::telemetry::TelemetryEvent;
 use crate::terminal::input::suggestions_mode_model::InputSuggestionsModeModel;
 use crate::ui_components::icons::Icon as TerminalIcon;
 use crate::util::truncation::truncate_from_end;

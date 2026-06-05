@@ -36,7 +36,6 @@ use warp_graphql::queries::user_repo_auth_status::{
 use super::ServerApi;
 use crate::channel::ChannelState;
 use crate::features::FeatureFlag;
-use crate::server::graphql::{get_request_context, get_user_facing_error_message};
 
 #[cfg(not(target_family = "wasm"))]
 pub trait IntegrationsClientBounds: Send + Sync {}

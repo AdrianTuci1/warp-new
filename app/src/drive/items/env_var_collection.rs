@@ -7,10 +7,6 @@ use warpui::{AppContext, Element, SingletonEntity};
 
 use super::{WarpDriveItem, WarpDriveItemId};
 use crate::appearance::Appearance;
-use crate::cloud_object::model::actions::{ObjectActionType, ObjectActions};
-use crate::cloud_object::CloudObjectMetadata;
-use crate::drive::index::DriveIndexAction;
-use crate::drive::{CloudObjectTypeAndId, DriveObjectType};
 use crate::env_vars::{CloudEnvVarCollection, EnvVarValue};
 use crate::themes::theme::Fill;
 

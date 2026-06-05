@@ -23,8 +23,6 @@ use crate::auth::AuthStateProvider;
 use crate::pricing::PricingInfoModel;
 use crate::ui_components::blended_colors;
 use crate::ui_components::icons::Icon;
-use crate::workspaces::user_workspaces::UserWorkspaces;
-use crate::workspaces::workspace::CustomerType;
 use crate::{send_telemetry_from_ctx, TelemetryEvent};
 
 const MODAL_WIDTH: f32 = 360.;

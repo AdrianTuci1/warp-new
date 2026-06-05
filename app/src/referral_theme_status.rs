@@ -6,7 +6,6 @@ use warpui::{Entity, ModelContext, SingletonEntity};
 
 use crate::auth::AuthStateProvider;
 use crate::safe_info;
-use crate::server::server_api::referral::{ReferralInfo, ReferralsClient};
 
 // Note: The name of this key is from before this model was created. For consistency, it should
 // remain the same value

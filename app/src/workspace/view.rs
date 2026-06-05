@@ -226,9 +226,6 @@ use crate::billing::shared_objects_creation_denied_modal::{
 };
 use crate::changelog_model::{ChangelogModel, ChangelogRequestType, Event as ChangelogEvent};
 use crate::channel::{Channel, ChannelState};
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::toast_message::CloudObjectToastMessage;
-use crate::cloud_object::{
     CloudObject, GenericStringObjectFormat, JsonObjectType, ObjectType, Owner, Space,
 };
 use crate::code::buffer_location::LocalOrRemotePath;
@@ -244,13 +241,6 @@ use crate::code_review::GlobalCodeReviewModel;
 use crate::coding_panel_enablement_state::CodingPanelEnablementState;
 use crate::context_chips::ChipRuntimeCapabilities;
 use crate::default_terminal::DefaultTerminal;
-use crate::drive::export::ExportManager;
-use crate::drive::import::modal::{ImportModal, ImportModalEvent};
-use crate::drive::items::WarpDriveItemId;
-use crate::drive::settings::{WarpDriveSettings, WarpDriveSettingsChangedEvent};
-use crate::drive::workflows::arguments::ArgumentsState;
-use crate::drive::workflows::modal::{WorkflowModal, WorkflowModalEvent};
-use crate::drive::{
     CloudObjectTypeAndId, DriveObjectType, DrivePanel, DrivePanelEvent, OpenWarpDriveObjectSettings,
 };
 use crate::editor::{
@@ -303,14 +293,8 @@ use crate::search::command_search::settings::CommandSearchSettings;
 use crate::search::command_search::view::{CommandSearchEvent, CommandSearchView};
 use crate::search::slash_command_menu::static_commands::commands;
 use crate::search::{self, QueryFilter};
-use crate::server::cloud_objects::update_manager::{
     ObjectOperation, OperationSuccessType, UpdateManager, UpdateManagerEvent,
 };
-use crate::server::ids::{ObjectUid, ServerId, SyncId};
-use crate::server::network_log_pane_manager::NetworkLogPaneManager;
-use crate::server::server_api::ai::AIClient;
-use crate::server::server_api::{ServerApi, ServerApiProvider, ServerTime};
-use crate::server::telemetry::{
     AddTabWithShellSource, AnonymousUserSignupEntrypoint, CloseTarget, EnvVarTelemetryMetadata,
     FileTreeSource, KnowledgePaneEntrypoint, LaunchConfigUiLocation,
     MCPServerCollectionPaneEntrypoint, NotificationsTurnedOnSource, OpenedWarpAISource,
@@ -497,8 +481,6 @@ use crate::workspace::view::orchestration_launch_modal::{
 };
 use crate::workspace::view::right_panel::{RightPanelEvent, RightPanelView};
 use crate::workspace::{ForkFromExchange, ForkedConversationDestination};
-use crate::workspaces::user_workspaces::UserWorkspaces;
-use crate::workspaces::workspace::AdminEnablementSetting;
 use crate::{
     autoupdate, report_if_error, send_telemetry_from_ctx, settings, AgentNotificationsModel,
     BlocklistAIHistoryModel, GlobalResourceHandles, TelemetryEvent,
@@ -7896,7 +7878,6 @@ impl Workspace {
                 Some(WarpDriveItemId::Object(
                     CloudObjectTypeAndId::from_generic_string_object(
                         GenericStringObjectFormat::Json(
-                            crate::cloud_object::JsonObjectType::EnvVarCollection,
                         ),
                         *env_var_collection_id,
                     ),
@@ -15493,7 +15474,6 @@ impl Workspace {
                             Some(WarpDriveItemId::Object(
                                 CloudObjectTypeAndId::from_generic_string_object(
                                     GenericStringObjectFormat::Json(
-                                        crate::cloud_object::JsonObjectType::EnvVarCollection,
                                     ),
                                     env_var_collection_id,
                                 ),

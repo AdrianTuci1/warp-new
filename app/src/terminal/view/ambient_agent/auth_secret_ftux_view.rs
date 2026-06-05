@@ -33,7 +33,6 @@ use crate::terminal::view::ambient_agent::auth_secret_ftux_dropdown::{
 use crate::ui_components::icons::Icon as UiIcon;
 use crate::view_components::DismissibleToast;
 use crate::workspace::ToastStack;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 const DESCRIPTION_FONT_SIZE: f32 = 14.;
 

@@ -11,7 +11,6 @@ use warpui::SingletonEntity as _;
 #[cfg(not(target_family = "wasm"))]
 use crate::ai::{AIRequestUsageModel, AIRequestUsageModelEvent};
 #[cfg(not(target_family = "wasm"))]
-use crate::server::server_api::ServerApiProvider;
 
 #[cfg(not(target_family = "wasm"))]
 pub mod auth_context;

@@ -40,15 +40,10 @@ use crate::ai::facts::{AIFact, CloudAIFactModel};
 use crate::ai::mcp::templatable::{CloudTemplatableMCPServerModel, TemplatableMCPServer};
 use crate::auth::auth_manager::AuthManager;
 use crate::auth::AuthStateProvider;
-use crate::cloud_object::model::actions::{
     ObjectAction, ObjectActionHistory, ObjectActionType, ObjectActions,
 };
-use crate::cloud_object::model::generic_string_model::{
     GenericStringModel, GenericStringObjectId, Serializer, StringModel,
 };
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent, UpdateSource};
-use crate::cloud_object::model::view::{CloudViewModel, Editor, EditorState};
-use crate::cloud_object::{
     CloudLinkSharing, CloudModelType, CloudObject, CloudObjectEventEntrypoint, CloudObjectLocation,
     CloudObjectSyncStatus, CreateCloudObjectResult, CreateObjectRequest, GenericCloudObject,
     GenericServerObject, GenericStringObjectFormat, JsonObjectType, NumInFlightRequests,
@@ -59,37 +54,25 @@ use crate::cloud_object::{
     ServerScheduledAmbientAgent, ServerTemplatableMCPServer, ServerWorkflowEnum, Space,
     UpdateCloudObjectResult,
 };
-use crate::drive::drive_helpers::{
     is_feature_gated_anonymous_user_past_env_var_limit,
     is_feature_gated_anonymous_user_past_notebook_limit,
     is_feature_gated_anonymous_user_past_workflow_limit,
 };
-use crate::drive::folders::{CloudFolderModel, FolderId};
-use crate::drive::sharing::SharingAccessLevel;
-use crate::drive::CloudObjectTypeAndId;
 use crate::env_vars::{CloudEnvVarCollectionModel, EnvVarCollection};
 use crate::network::{NetworkStatus, NetworkStatusEvent, NetworkStatusKind};
 use crate::notebooks::{CloudNotebookModel, NotebookId};
 use crate::persistence::ModelEvent;
-use crate::server::ids::{
     parse_sqlite_id_to_uid, ClientId, HashableId, HashedSqliteId, ObjectUid, ServerId, SyncId,
     ToServerId,
 };
-use crate::server::retry_strategies::{
     OUT_OF_BAND_REQUEST_RETRY_STRATEGY, PERIODIC_POLL, PERIODIC_POLL_RETRY_STRATEGY,
 };
-use crate::server::server_api::object::{GuestIdentifier, ObjectClient};
-use crate::server::sync_queue::{
     CreationFailureReason, GenericStringObjectToCreate, QueueItem, SyncQueue, SyncQueueEvent,
 };
 use crate::settings::cloud_preferences::Preference;
 use crate::workflows::workflow::Workflow;
 use crate::workflows::workflow_enum::{CloudWorkflowEnum, CloudWorkflowEnumModel, WorkflowEnum};
 use crate::workflows::{CloudWorkflowModel, WorkflowId};
-use crate::workspaces::team_tester::{TeamTesterStatus, TeamTesterStatusEvent};
-use crate::workspaces::update_manager::TeamUpdateManager;
-use crate::workspaces::user_profiles::{UserProfileWithUID, UserProfiles};
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 lazy_static! {
     /// For online-only operations, we want to quickly determine if the operation can succeed,
@@ -233,7 +216,6 @@ impl UpdateManager {
 
     #[cfg(test)]
     pub fn mock(ctx: &mut ModelContext<Self>) -> Self {
-        use crate::server::server_api::ServerApiProvider;
 
         Self::new(
             None,
@@ -2681,7 +2663,6 @@ impl UpdateManager {
                     .get_server_conversation_metadata(&conversation_id)
                     .map(|metadata| metadata.permissions.clone())?;
                 permissions.anyone_link_sharing =
-                    access_level.map(|level| crate::cloud_object::ServerLinkSharing {
                         access_level: level.into(),
                         source: None,
                     });

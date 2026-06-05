@@ -40,16 +40,12 @@ use crate::ai::mcp::{
     TemplatableMCPServerInstallation,
 };
 use crate::appearance::Appearance;
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
-use crate::cloud_object::{GenericStringObjectFormat, JsonObjectType};
-use crate::drive::CloudObjectTypeAndId;
 use crate::editor::{
     EditorView, PropagateAndNoOpNavigationKeys, SingleLineEditorOptions, TextOptions,
 };
 use crate::modal::{Modal, ModalEvent, ModalViewState};
 use crate::pane_group::Direction;
 use crate::search_bar::SearchBar;
-use crate::server::telemetry::{MCPTemplateInstallationSource, TelemetryEvent};
 use crate::settings::{AISettings, AISettingsChangedEvent};
 use crate::settings_view::mcp_servers::server_card::{
     ServerCardEvent, ServerCardOptions, ServerCardStatus, ServerCardView, TitleChip,
@@ -66,7 +62,6 @@ use crate::view_components::action_button::{ActionButton, NakedTheme};
 use crate::view_components::DismissibleToast;
 use crate::workflows::local_workflows::tail_command_for_shell;
 use crate::workspace::Workspace;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::ToastStack;
 
 const DESCRIPTION_TEXT: &str = "Add MCP servers to extend the Warp Agent's capabilities. MCP servers expose data sources or tools to agents through a standardized interface, essentially acting like plugins. Add a custom server, or use the presets to get started with popular servers. You can also find team servers that have been shared with you here. ";

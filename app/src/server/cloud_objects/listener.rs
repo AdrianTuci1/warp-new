@@ -9,13 +9,9 @@ use warpui::r#async::Timer;
 use warpui::{Entity, ModelContext, RequestState, SingletonEntity};
 
 use super::update_manager::UpdateManager;
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
 use crate::network::{NetworkStatus, NetworkStatusEvent, NetworkStatusKind};
 use crate::report_error;
-use crate::server::retry_strategies::LISTENER_RETRY_STRATEGY;
-use crate::server::server_api::object::ObjectClient;
 use crate::system::{SystemStats, SystemStatsEvent};
-use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
 
 lazy_static::lazy_static! {
     /// Between successful websocket connections, we ensured at least this amount of time
@@ -125,7 +121,6 @@ impl Listener {
 
     #[cfg(test)]
     pub fn mock(ctx: &mut ModelContext<Self>) -> Self {
-        use crate::server::server_api::ServerApiProvider;
 
         Self::new(ServerApiProvider::new_for_test().get(), ctx)
     }

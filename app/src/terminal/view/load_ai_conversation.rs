@@ -37,7 +37,6 @@ use crate::ai::blocklist::{
 use crate::ai::document::ai_document_model::AIDocumentModel;
 use crate::ai::get_relevant_files::controller::GetRelevantFilesController;
 use crate::persistence::model::AgentConversationData;
-use crate::server::server_api::ServerApiProvider;
 use crate::terminal::find::TerminalFindModel;
 use crate::terminal::input::message_bar::{Message as InputMessage, MessageItem};
 use crate::terminal::model::block::SerializedBlock;

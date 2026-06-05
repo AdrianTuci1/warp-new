@@ -29,7 +29,6 @@ use crate::editor::{
     EditorOptions, EditorView, EnterAction, EnterSettings, Event as EditorEvent, InteractionState,
     PropagateAndNoOpNavigationKeys, TextOptions,
 };
-use crate::server::ids::SyncId;
 use crate::ui_components::buttons::{highlight, icon_button};
 use crate::ui_components::icons::{self, Icon};
 use crate::workflows::workflow::ArgumentType;

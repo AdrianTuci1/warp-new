@@ -56,9 +56,6 @@ use crate::ai::voice::transcribe::{TranscribeRequest, TranscribeResponse};
 use crate::auth::auth_manager::AuthManager;
 use crate::auth::auth_state::AuthState;
 use crate::auth::UserUid;
-use crate::server::iap::{IapManager, IapState};
-use crate::server::server_api::presigned_upload::HttpStatusError;
-use crate::server::telemetry::TelemetryApi;
 use crate::settings::PrivacySettingsSnapshot;
 use crate::{settings_view, ChannelState};
 
@@ -1066,7 +1063,6 @@ impl ServerApi {
     }
 
     /// Synchronously sends a [`TelemetryEvent`] to the Rudderstack API. Prefer not to call this
-    /// directly, use the macros defined in crate::server::telemetry::macros. If telemetry is
     /// disabled, this is a no-op.
     pub async fn send_telemetry_event(
         &self,

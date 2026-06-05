@@ -4,9 +4,6 @@ use warpui::fonts::{Properties, Weight};
 use warpui::{AppContext, Element, SingletonEntity};
 
 use crate::appearance::Appearance;
-use crate::cloud_object::CloudObject;
-use crate::drive::cloud_object_styling::warp_drive_icon_color;
-use crate::drive::{CloudObjectTypeAndId, DriveObjectType};
 use crate::notebooks::CloudNotebook;
 use crate::search::command_palette::mixer::CommandPaletteItemAction;
 use crate::search::command_palette::render_util::render_search_item_icon;

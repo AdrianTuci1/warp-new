@@ -18,18 +18,14 @@ use warpui::units::IntoPixels;
 use warpui::{App, SingletonEntity, TypedActionView, UpdateModel, ViewHandle};
 
 use crate::auth::AuthStateProvider;
-use crate::cloud_object::model::persistence::CloudModel;
 use crate::code::editor::view::{CodeEditorRenderOptions, CodeEditorView, CodeEditorViewAction};
 use crate::notebooks::editor::keys::NotebookKeybindings;
-use crate::server::server_api::team::MockTeamClient;
-use crate::server::server_api::workspace::MockWorkspaceClient;
 use crate::settings::AppEditorSettings;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
 use crate::test_util::settings::initialize_settings_for_tests;
 use crate::vim_registers::VimRegisters;
 use crate::workspace::sync_inputs::SyncedInputState;
 use crate::workspace::ActiveSession;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 // Await render/layout completion for a CodeEditorView in tests.
 async fn layout_editor_view(app: &mut App, editor: &ViewHandle<CodeEditorView>) {

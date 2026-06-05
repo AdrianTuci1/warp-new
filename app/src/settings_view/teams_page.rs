@@ -48,9 +48,6 @@ use crate::auth::auth_state::AuthState;
 use crate::auth::auth_view_modal::AuthViewVariant;
 use crate::auth::{AuthStateProvider, UserUid};
 use crate::channel::ChannelState;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::{CloudObjectEventEntrypoint, Space};
-use crate::drive::cloud_action_confirmation_dialog::{
     CloudActionConfirmationDialog, CloudActionConfirmationDialogEvent,
     CloudActionConfirmationDialogVariant,
 };
@@ -62,9 +59,6 @@ use crate::modal::{Modal, ModalEvent, ModalViewState};
 use crate::network::NetworkStatus;
 use crate::pricing::PricingInfoModel;
 use crate::send_telemetry_from_ctx;
-use crate::server::cloud_objects::update_manager::UpdateManager;
-use crate::server::ids::ServerId;
-use crate::server::telemetry::TelemetryEvent;
 use crate::themes::theme::Blend;
 use crate::themes::{self};
 use crate::ui_components::icons::Icon;
@@ -73,10 +67,6 @@ use crate::view_components::{
 };
 use crate::word_block_editor::{ChipEditorState, WordBlockEditorView, WordBlockEditorViewEvent};
 use crate::workspace::WorkspaceAction;
-use crate::workspaces::team::{DiscoverableTeam, MembershipRole, Team, TeamDeleteDisabledReason};
-use crate::workspaces::update_manager::{TeamUpdateManager, TeamUpdateManagerEvent};
-use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
-use crate::workspaces::workspace::{
     BillingMetadata, CustomerType, DelinquencyStatus, WorkspaceSizePolicy,
 };
 

@@ -24,7 +24,6 @@ use warpui::{App, Element, Entity, SingletonEntity, TypedActionView, View, ViewH
 use super::{EditorViewAction, LayoutAffectingAssetLoad, RichTextEditorConfig, RichTextEditorView};
 use crate::appearance::Appearance;
 use crate::auth::AuthStateProvider;
-use crate::cloud_object::model::persistence::CloudModel;
 use crate::editor::InteractionState;
 use crate::features::FeatureFlag;
 use crate::notebooks::editor::keys::NotebookKeybindings;
@@ -34,8 +33,6 @@ use crate::notebooks::editor::rich_text_styles;
 use crate::notebooks::file::MarkdownDisplayMode;
 use crate::notebooks::link::{LinkEvent, NotebookLinks, SessionSource};
 use crate::search::files::model::FileSearchModel;
-use crate::server::server_api::team::MockTeamClient;
-use crate::server::server_api::workspace::MockWorkspaceClient;
 use crate::settings::FontSettings;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
 use crate::terminal::keys::TerminalKeybindings;

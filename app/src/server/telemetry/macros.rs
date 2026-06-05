@@ -9,7 +9,6 @@ macro_rules! send_telemetry_sync_from_ctx {
         let event = $event;
         if event.enablement_state().is_enabled() {
             let server_api =
-                <$crate::server::server_api::ServerApiProvider as warpui::SingletonEntity>::handle(
                     $ctx,
                 )
                 .as_ref($ctx)
@@ -43,7 +42,6 @@ macro_rules! send_telemetry_sync_from_app_ctx {
         use warp_core::telemetry::TelemetryEvent as _;
         if $event.enablement_state().is_enabled() {
             let server_api =
-                <$crate::server::server_api::ServerApiProvider as warpui::SingletonEntity>::handle(
                     $app_ctx,
                 )
                 .as_ref($app_ctx)

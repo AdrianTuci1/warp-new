@@ -47,8 +47,6 @@ use crate::auth::{AuthManager, AuthStateProvider, UserUid};
 use crate::menu::{Event as MenuEvent, Menu, MenuItem, MenuItemFields};
 use crate::modal::{Modal, ModalEvent, ModalViewState};
 use crate::pricing::{PricingInfoModel, PricingInfoModelEvent};
-use crate::server::ids::ServerId;
-use crate::server::telemetry::TelemetryEvent;
 use crate::settings::ai::AISettings;
 use crate::settings_view::settings_page::TOGGLE_BUTTON_RIGHT_PADDING;
 use crate::ui_components::blended_colors;
@@ -58,11 +56,6 @@ use crate::ui_components::menu_button::{icon_button_with_context_menu, MenuDirec
 use crate::ui_components::tab_selector::{self, SettingsTab};
 use crate::view_components::action_button::{ActionButton, PrimaryTheme, SecondaryTheme};
 use crate::view_components::ToastFlavor;
-use crate::workspaces::team::Team;
-use crate::workspaces::update_manager::TeamUpdateManager;
-use crate::workspaces::user_profiles::UserProfiles;
-use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
-use crate::workspaces::workspace::{CustomerType, Workspace};
 use crate::{send_telemetry_from_ctx, WorkspaceAction};
 
 const HEADER_FONT_SIZE: f32 = 16.;

@@ -14,20 +14,13 @@ use super::{
     ForceCloudToMatchLocal, SETTINGS_FILE_LAST_SYNCED_HASH_KEY,
 };
 use crate::auth::auth_state::AuthState;
-use crate::cloud_object::model::generic_string_model::GenericStringObjectId;
-use crate::cloud_object::{
     BulkCreateCloudObjectResult, CreatedCloudObject, GenericStringObjectFormat,
     GenericStringObjectUniqueKey, JsonObjectType, ObjectDeleteResult, ObjectIdType, Owner,
     Revision, RevisionAndLastEditor, ServerMetadata, ServerObject, ServerPermissions,
     ServerPreference, UniquePer, UpdateCloudObjectResult,
 };
-use crate::server::cloud_objects::fake_object_client::FakeObjectClient;
-use crate::server::cloud_objects::test_utils::{
     create_update_manager_struct, initialize_app, UpdateManagerStruct,
 };
-use crate::server::cloud_objects::update_manager::{InitialLoadResponse, UpdateManager};
-use crate::server::ids::{ClientId, ServerId, ServerIdAndType, SyncId};
-use crate::server::sync_queue::SyncQueue;
 use crate::settings::cloud_preferences::{
     CloudPreferenceModel, CloudPreferencesSettings, Platform,
 };

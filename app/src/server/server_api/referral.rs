@@ -10,7 +10,6 @@ use warp_graphql::mutations::send_referral_invite_emails::{
 use warp_graphql::queries::get_referral_info::{GetReferralInfo, GetReferralInfoVariables};
 
 use super::ServerApi;
-use crate::server::graphql::{get_request_context, get_user_facing_error_message};
 
 /// Referral information for the logged-in user
 pub struct ReferralInfo {

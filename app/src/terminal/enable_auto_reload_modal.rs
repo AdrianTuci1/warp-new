@@ -19,11 +19,9 @@ use crate::menu::MenuItemFields;
 use crate::modal::{Modal, ModalEvent, MODAL_PADDING, MODAL_WIDTH};
 use crate::pricing::{PricingInfoModel, PricingInfoModelEvent};
 use crate::send_telemetry_from_ctx;
-use crate::server::telemetry::{AutoReloadModalAction, TelemetryEvent};
 use crate::settings_view::create_discount_badge;
 use crate::ui_components::blended_colors;
 use crate::view_components::{Dropdown, DropdownAction, ToastFlavor};
-use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
 
 const DENOMINATION_DROPDOWN_WIDTH: f32 = MODAL_WIDTH - 2. * MODAL_PADDING;
 

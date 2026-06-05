@@ -4,7 +4,6 @@ use remote_server::auth::RemoteServerAuthContext;
 use warpui::r#async::BoxFuture;
 
 use crate::auth::auth_state::AuthState;
-use crate::server::server_api::auth::AuthClient;
 
 /// Builds the app-wide auth context used by remote-server connections.
 pub fn server_api_auth_context(

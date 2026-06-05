@@ -15,7 +15,6 @@ use crate::settings_view::billing_and_usage::billing_cycle_usage_common::{
     ROW_BORDER_RADIUS, ROW_BORDER_WIDTH, TOOLTIP_GAP,
 };
 use crate::ui_components::blended_colors;
-use crate::workspaces::workspace::{
     AiCreditsUsageBucket, AiCreditsUsageSource, BillingCycleUsageEntry, UsageVisibility,
     UsageVisibilityGranularity,
 };

@@ -18,13 +18,8 @@ use super::{NotebookEvent, NotebookView, EDIT_WINDOW_DURATION, SAVE_PERIOD};
 use crate::auth::auth_manager::AuthManager;
 use crate::auth::user::{TEST_USER_EMAIL, TEST_USER_UID};
 use crate::auth::{AuthStateProvider, UserUid};
-use crate::cloud_object::model::actions::ObjectActions;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::model::view::{CloudViewModel, Editor, EditorState};
-use crate::cloud_object::{
     Owner, Revision, ServerCloudObject, ServerMetadata, ServerNotebook, ServerPermissions,
 };
-use crate::drive::OpenWarpDriveObjectSettings;
 use crate::editor::{DisplayPoint, EditorAction, InteractionState, SelectAction};
 use crate::network::NetworkStatus;
 use crate::notebooks::active_notebook_data::Mode;
@@ -32,24 +27,14 @@ use crate::notebooks::editor::keys::NotebookKeybindings;
 use crate::notebooks::editor::notebook_command::NotebookCommand;
 use crate::notebooks::editor::view::EditorViewAction;
 use crate::notebooks::notebook::FocusedComponent;
-use crate::notebooks::{CloudNotebook, CloudNotebookModel, NotebookLocation};
 use crate::pane_group::PaneEvent;
 use crate::search::files::model::FileSearchModel;
-use crate::server::cloud_objects::update_manager::{InitialLoadResponse, UpdateManager};
-use crate::server::ids::ClientId;
-use crate::server::ids::SyncId::ServerId;
-use crate::server::server_api::ServerApiProvider;
-use crate::server::sync_queue::{QueueItem, SyncQueue, SyncQueueEvent};
-use crate::server::telemetry::context_provider::AppTelemetryContextProvider;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
 use crate::terminal::keys::TerminalKeybindings;
 use crate::test_util::settings::initialize_settings_for_tests;
 use crate::workflows::workflow::Workflow;
 use crate::workflows::{WorkflowSource, WorkflowType};
 use crate::workspace::ActiveSession;
-use crate::workspaces::team_tester::TeamTesterStatus;
-use crate::workspaces::user_profiles::{UserProfileWithUID, UserProfiles};
-use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::{GlobalResourceHandles, GlobalResourceHandlesProvider, PrivacySettings};
 
 fn initialize_app(app: &mut App) {
@@ -129,7 +114,6 @@ fn create_notebook(app: &mut App) -> (WindowId, ViewHandle<NotebookView>, ViewHa
 fn open_notebook(
     app: &mut App,
     handle: &ViewHandle<NotebookView>,
-    notebook: CloudNotebook,
 ) -> BoxFuture<'static, ()> {
     let load_future = handle.update(app, |view, ctx| {
         view.load(notebook, &OpenWarpDriveObjectSettings::default(), ctx)
@@ -137,9 +121,6 @@ fn open_notebook(
     app.update(|ctx| ctx.await_spawned_future(load_future.future_id()))
 }
 
-fn cloud_notebook(title: impl Into<String>, data: impl Into<String>) -> CloudNotebook {
-    CloudNotebook::new_local(
-        CloudNotebookModel {
             title: title.into(),
             data: data.into(),
             ai_document_id: None,
@@ -156,7 +137,6 @@ fn mock_server_notebook(title: impl Into<String>, data: impl Into<String>) -> Se
     let metadata_ts = Utc::now().into();
     ServerNotebook::new(
         ServerId(123.into()),
-        CloudNotebookModel {
             title: title.into(),
             data: data.into(),
             ai_document_id: None,
@@ -581,7 +561,6 @@ fn test_baton_grab_editor_changed_offline() {
 
         // Create a notebook with no editor.
         let mut server_notebook = mock_server_notebook("Test Notebook", "Some text");
-        let cloud_notebook = CloudNotebook::new_from_server(server_notebook.clone());
 
         // Add the notebook to the cloud model, with no editor.
         CloudModel::handle(&app).update(&mut app, |cloud_model, _| {
@@ -637,7 +616,6 @@ fn test_baton_grab_editor_left_offline() {
         // Create a notebook with an editor.
         let mut server_notebook = mock_server_notebook("Test Notebook", "Some text");
         server_notebook.metadata.current_editor_uid = Some(other_uid.to_string());
-        let cloud_notebook = CloudNotebook::new_from_server(server_notebook.clone());
 
         // Add the notebook to the cloud model, with the saved editor.
         CloudModel::handle(&app).update(&mut app, |cloud_model, _| {
@@ -685,7 +663,6 @@ fn test_close_with_pending_changes() {
 
         // Create a notebook with a server ID, so it can be synced.
         let cloud_notebook =
-            CloudNotebook::new_from_server(mock_server_notebook("Test", "Some text"));
         let notebook_id = cloud_notebook.id;
 
         CloudModel::handle(&app).update(&mut app, |cloud_model, _| {
@@ -749,7 +726,6 @@ fn test_close_unmodified() {
 
         // Create a notebook with a server ID, so it can be synced.
         let cloud_notebook =
-            CloudNotebook::new_from_server(mock_server_notebook("Test", "Some text"));
         let notebook_id = cloud_notebook.id;
 
         CloudModel::handle(&app).update(&mut app, |cloud_model, _| {
@@ -792,7 +768,6 @@ fn test_only_user_title_edits_synced() {
 
         // Create a notebook with a server ID, so it can be synced.
         let mut server_notebook = mock_server_notebook("Initial Title", "Notebook contents");
-        let cloud_notebook: CloudNotebook = CloudNotebook::new_from_server(server_notebook.clone());
 
         CloudModel::handle(&app).update(&mut app, |cloud_model, _| {
             cloud_model.add_object(cloud_notebook.id, cloud_notebook.clone());
@@ -843,8 +818,6 @@ fn test_conflicting_notebook_read_only() {
 
         let mut server_notebook = mock_server_notebook("A Notebook", "Local Data");
         let server_id = server_notebook.id;
-        let mut cloud_notebook: CloudNotebook =
-            CloudNotebook::new_from_server(server_notebook.clone());
         server_notebook.model.data = "Remote Data".to_string();
         cloud_notebook.set_conflicting_object(Arc::new(server_notebook.clone()));
 

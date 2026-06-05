@@ -3,10 +3,6 @@ use warpui::{AppContext, Element};
 
 use super::{WarpDriveItem, WarpDriveItemId};
 use crate::appearance::Appearance;
-use crate::cloud_object::CloudObjectMetadata;
-use crate::drive::index::DriveIndexAction;
-use crate::drive::DriveObjectType;
-use crate::server::ids::ClientId;
 use crate::themes::theme::Fill;
 
 #[derive(Clone)]

@@ -5,8 +5,6 @@ use anyhow::{anyhow, Result};
 use warpui::r#async::Timer;
 use warpui::{duration_with_jitter, RetryOption};
 
-use crate::server::graphql::GraphQLError;
-use crate::server::server_api::presigned_upload::HttpStatusError;
 
 /// Common duration for a periodic poll. In our app, we generally have the following to update the same data:
 /// - RTC messages

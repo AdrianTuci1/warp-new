@@ -36,11 +36,8 @@ use crate::ai::predict::generate_ai_input_suggestions::{
 use crate::ai::predict::next_command_model::HistoryBasedAutosuggestionState;
 use crate::auth::auth_manager::LoginGatedFeature;
 use crate::channel::Channel;
-use crate::cloud_object::model::generic_string_model::GenericStringObjectId;
-use crate::cloud_object::{GenericStringObjectFormat, ObjectType, Space};
 #[cfg(feature = "local_fs")]
 use crate::code::editor_management::CodeSource;
-use crate::drive::{CloudObjectTypeAndId, DriveSortOrder};
 use crate::features::FeatureFlag;
 use crate::launch_configs::save_modal::SaveState;
 use crate::notebooks::telemetry::NotebookTelemetryAction;
@@ -50,8 +47,6 @@ use crate::pane_group::PaneDragDropLocation;
 use crate::prompt::editor_modal::OpenSource as PromptEditorOpenSource;
 use crate::search::command_search::searcher::CommandSearchItemAction;
 use crate::search::QueryFilter;
-use crate::server::block::DisplaySetting;
-use crate::server::ids::{ObjectUid, ServerId};
 use crate::settings::import::config::{ParsedTerminalSetting, SettingType};
 use crate::settings::import::model::TerminalType;
 use crate::settings::AgentModeCodingPermissionsType;

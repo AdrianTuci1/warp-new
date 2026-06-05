@@ -4,12 +4,7 @@ use warp_core::ui::appearance::Appearance;
 use warpui::App;
 
 use super::expand_dirs;
-use crate::cloud_object::model::persistence::CloudModel;
 use crate::network::NetworkStatus;
-use crate::server::cloud_objects::update_manager::UpdateManager;
-use crate::server::sync_queue::SyncQueue;
-use crate::workspaces::team_tester::TeamTesterStatus;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::{GlobalResourceHandles, GlobalResourceHandlesProvider};
 
 #[test]

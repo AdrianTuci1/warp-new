@@ -6,7 +6,6 @@ pub use cloud_object_client::{
 };
 use warpui::{Entity, ModelContext, SingletonEntity};
 
-use crate::server::ids::{HashedSqliteId, ObjectUid};
 
 pub enum ObjectActionsEvent {}
 
@@ -73,7 +72,6 @@ pub fn object_action_from_persisted(
 
     // NOTE: This is needed since we only store the sqlite hash, but we need the uid (the second part of the hash)
     // to index into CloudModel and store the object actions in memory.
-    let uid = crate::server::ids::parse_sqlite_id_to_uid(hashed_object_id.clone())?;
 
     Ok(ObjectAction {
         uid: uid.to_string(),

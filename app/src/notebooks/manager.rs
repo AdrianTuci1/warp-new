@@ -8,15 +8,9 @@ use warpui::r#async::SpawnedFutureHandle;
 use warpui::{Entity, EntityId, ModelContext, SingletonEntity, WeakViewHandle, WindowId};
 
 use super::notebook::NotebookView;
-use super::CloudNotebook;
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
-use crate::cloud_object::Owner;
-use crate::drive::OpenWarpDriveObjectSettings;
 use crate::pane_group::{NotebookPane, PaneContent};
-use crate::server::cloud_objects::update_manager::{
     ObjectOperation, OperationSuccessType, UpdateManager, UpdateManagerEvent,
 };
-use crate::server::ids::SyncId;
 use crate::workspace::PaneViewLocator;
 use crate::{safe_debug, safe_warn};
 
@@ -72,7 +66,6 @@ pub enum NotebookSource {
 
 impl NotebookManager {
     /// Create a new [`NotebookManager`] singleton.
-    pub fn new(cached_notebooks: Vec<CloudNotebook>, ctx: &mut ModelContext<Self>) -> Self {
         ctx.subscribe_to_model(
             &UpdateManager::handle(ctx),
             Self::handle_update_manager_event,
@@ -99,7 +92,6 @@ impl NotebookManager {
     }
 
     fn spawn_raw_text_parse_for_notebook(
-        notebook: CloudNotebook,
         ctx: &mut ModelContext<Self>,
     ) -> SpawnedFutureHandle {
         let hashed_id = notebook.id.uid();

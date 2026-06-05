@@ -20,8 +20,6 @@ use crate::search::mixer::{
 };
 use crate::search::result_renderer::ItemHighlightState;
 use crate::search::{QueryFilter, SyncDataSource};
-use crate::server::server_api::ServerApiProvider;
-use crate::server::telemetry::context_provider::AppTelemetryContextProvider;
 use crate::terminal::HistoryEntry;
 
 #[derive(Clone, Debug)]

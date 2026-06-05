@@ -23,14 +23,10 @@ use crate::ai::agent::AIAgentExchangeId;
 use crate::ai::ambient_agents::AmbientAgentTaskId;
 use crate::ai::document::ai_document_model::{AIDocumentId, AIDocumentVersion};
 use crate::auth::auth_manager::LoginGatedFeature;
-use crate::drive::items::WarpDriveItemId;
-use crate::drive::CloudObjectTypeAndId;
 use crate::palette::PaletteMode;
 use crate::pane_group::PaneGroup;
 use crate::prompt::editor_modal::OpenSource as PromptEditorOpenSource;
 use crate::search;
-use crate::server::ids::SyncId;
-use crate::server::telemetry::{
     AddTabWithShellSource, AgentModeEntrypoint, PaletteSource, SharingDialogSource,
 };
 use crate::settings_view::{SettingsAction as SettingsTabAction, SettingsSection};
@@ -556,7 +552,6 @@ pub enum WorkspaceAction {
         launch: Option<crate::ai::blocklist::handoff::PendingCloudLaunch>,
         #[cfg(not(all(feature = "local_fs", not(target_family = "wasm"))))]
         launch: Option<()>,
-        environment_id: Option<crate::server::ids::SyncId>,
         entry_point: crate::ai::ambient_agents::telemetry::HandoffEntryPoint,
     },
     /// Automatically hand off the active running local agent conversation in the

@@ -5,7 +5,6 @@ use super::cloud_object_styling::warp_drive_icon_color;
 use super::index::{warp_drive_section_header_position_id, DriveIndexAction, DriveIndexSection};
 use super::{CloudObjectTypeAndId, DriveObjectType};
 use crate::appearance::Appearance;
-use crate::cloud_object::{CloudObjectMetadata, Space};
 use crate::themes::theme::Fill;
 use crate::ui_components::icons::Icon;
 

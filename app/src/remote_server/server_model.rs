@@ -74,7 +74,6 @@ use crate::ai::blocklist::handoff::snapshot::upload_result_to_proto;
 use crate::ai::blocklist::{read_local_file_context, ReadFileContextResult};
 use crate::auth::auth_state::{AuthState, AuthStateProvider};
 use crate::features::FeatureFlag;
-use crate::server::server_api::ServerApiProvider;
 use crate::terminal::model::session::command_executor::{
     ExecuteCommandOptions, LocalCommandExecutor,
 };

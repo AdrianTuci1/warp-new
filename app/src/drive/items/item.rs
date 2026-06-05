@@ -16,17 +16,10 @@ use warpui::{AppContext, Element, SingletonEntity, ViewHandle};
 
 use super::WarpDriveItemId;
 use crate::appearance::Appearance;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::model::view::CloudViewModel;
-use crate::cloud_object::{CloudObject, CloudObjectLocation, CloudObjectMetadataExt, Owner, Space};
-use crate::drive::index::{
     DriveIndexAction, AUTOSCROLL_DETECTION_DISTANCE, AUTOSCROLL_SPEED_MULTIPLIER,
     DRIVE_INDEX_VIEW_POSITION_ID, FOLDER_DEPTH_INDENT, INDEX_CONTENT_MARGIN_LEFT, ITEM_FONT_SIZE,
     ITEM_MARGIN_BOTTOM, ITEM_PADDING_HORIZONTAL, ITEM_PADDING_VERTICAL,
 };
-use crate::drive::items::WarpDriveItem;
-use crate::drive::panel::WARP_DRIVE_POSITION_ID;
-use crate::drive::CloudObjectTypeAndId;
 use crate::menu::Menu;
 use crate::ui_components::blended_colors;
 use crate::ui_components::icons::{Icon, ICON_DIMENSIONS};
@@ -36,8 +29,6 @@ use crate::ui_components::menu_button::{
 };
 use crate::workspace::header_toolbar_item::HeaderToolbarItemKind;
 use crate::workspace::tab_settings::TabSettings;
-use crate::workspaces::user_profiles::UserProfiles;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 pub(crate) fn tools_panel_menu_direction(app: &AppContext) -> MenuDirection {
     let config = TabSettings::as_ref(app)

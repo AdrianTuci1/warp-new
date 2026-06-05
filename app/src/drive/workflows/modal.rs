@@ -32,12 +32,6 @@ use super::workflow_arg_selector::{
 use super::workflow_arg_type_helpers::{self, ArgumentEditorRowIndex};
 use crate::appearance::Appearance;
 use crate::auth::UserUid;
-use crate::cloud_object::breadcrumbs::{ContainingObject, ContainingObjectKind};
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
-use crate::cloud_object::{CloudObject, CloudObjectEventEntrypoint, ObjectType, Owner, Revision};
-use crate::drive::cloud_object_styling::warp_drive_icon_color;
-use crate::drive::items::WarpDriveItemId;
-use crate::drive::{CloudObjectTypeAndId, DriveObjectType};
 use crate::editor::{
     EditorOptions, EditorView, EnterAction, EnterSettings, Event as EditorEvent, InteractionState,
     PlainTextEditorViewAction as EditorAction, PropagateAndNoOpNavigationKeys, TextOptions,
@@ -45,9 +39,6 @@ use crate::editor::{
 };
 use crate::menu::{Event, Menu, MenuItem, MenuItemFields};
 use crate::network::NetworkStatus;
-use crate::server::cloud_objects::update_manager::UpdateManager;
-use crate::server::ids::{ClientId, ServerId, SyncId};
-use crate::server::server_api::ai::AIClient;
 use crate::themes::theme::AnsiColorIdentifier;
 use crate::ui_components::blended_colors;
 use crate::ui_components::breadcrumb::{self, BreadcrumbState};

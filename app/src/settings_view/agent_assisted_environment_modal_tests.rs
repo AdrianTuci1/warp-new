@@ -7,7 +7,6 @@ use warpui::platform::WindowStyle;
 use warpui::{App, AppContext, Element, Entity, TypedActionView, View, ViewContext, ViewHandle};
 
 use super::*;
-use crate::server::server_api::ServerApiProvider;
 use crate::test_util::settings::initialize_settings_for_tests;
 use crate::workspace::ToastStack;
 

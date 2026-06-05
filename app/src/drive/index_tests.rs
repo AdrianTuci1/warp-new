@@ -7,30 +7,16 @@ use super::{DriveIndex, DriveIndexAction};
 use crate::ai::blocklist::BlocklistAIHistoryModel;
 use crate::auth::auth_manager::AuthManager;
 use crate::auth::AuthStateProvider;
-use crate::cloud_object::model::actions::ObjectActions;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::model::view::CloudViewModel;
-use crate::cloud_object::{
     CloudObjectSyncStatus, ObjectIdType, ObjectType, Owner, ServerCreationInfo, Space,
 };
-use crate::drive::items::WarpDriveItemId;
-use crate::drive::CloudObjectTypeAndId;
 use crate::menu::MenuItem;
 use crate::network::NetworkStatus;
 use crate::notebooks::{CloudNotebook, CloudNotebookModel};
-use crate::server::cloud_objects::update_manager::UpdateManager;
-use crate::server::ids::{ClientId, ServerIdAndType, SyncId};
-use crate::server::server_api::ServerApiProvider;
-use crate::server::sync_queue::{QueueItem, SyncQueue};
-use crate::server::telemetry::context_provider::AppTelemetryContextProvider;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
 use crate::terminal::shared_session::permissions_manager::SessionPermissionsManager;
 use crate::test_util::settings::initialize_settings_for_tests;
 use crate::workflows::workflow::Workflow;
 use crate::workflows::{CloudWorkflow, CloudWorkflowModel};
-use crate::workspaces::team_tester::TeamTesterStatus;
-use crate::workspaces::user_profiles::UserProfiles;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::ASSETS;
 
 fn initialize_app(app: &mut App) {
@@ -246,7 +232,6 @@ fn test_retry_menu_item_logic() {
 
 #[test]
 fn test_warp_drive_navigation_states() {
-    use crate::drive::index::DriveIndexAction;
     App::test((), |mut app| async move {
         initialize_app(&mut app);
         let index = create_index(&mut app);

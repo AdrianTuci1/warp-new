@@ -3,7 +3,6 @@ use std::fmt::{Display, Formatter, Result};
 
 use uuid::Uuid;
 
-use crate::server::ids::ObjectUid;
 
 pub mod destructive_mcp_confirmation_dialog;
 pub mod edit_page;

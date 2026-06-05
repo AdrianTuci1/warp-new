@@ -27,7 +27,6 @@ use crate::appearance::Appearance;
 use crate::auth::auth_view_body::AuthViewBody;
 use crate::modal::Modal;
 use crate::root_view::unthemed_window_border;
-use crate::server::server_api::auth::UserAuthenticationError;
 use crate::util::bindings::CustomAction;
 
 pub fn init(app: &mut AppContext) {

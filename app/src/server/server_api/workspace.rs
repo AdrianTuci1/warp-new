@@ -23,10 +23,6 @@ use warp_graphql::queries::get_ai_overages_for_workspace::{
 
 use super::team::TeamClient;
 use super::ServerApi;
-use crate::server::graphql::{get_request_context, get_user_facing_error_message};
-use crate::server::ids::ServerId;
-use crate::workspaces::user_workspaces::WorkspacesMetadataResponse;
-use crate::workspaces::workspace::AiOverages;
 
 #[cfg_attr(test, automock)]
 #[cfg_attr(not(target_family = "wasm"), async_trait)]

@@ -16,12 +16,7 @@ use warpui::{
 
 use super::modal_body::{ImportModalBody, ImportModalBodyAction, ImportModalBodyEvent};
 use crate::appearance::Appearance;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::{CloudObject, Owner};
-use crate::server::ids::SyncId;
-use crate::server::sync_queue::SyncQueue;
 use crate::themes::theme::WarpTheme;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 const CLOSE_BUTTON_SIZE: f32 = 24.;
 const HEADER_FONT_SIZE: f32 = 16.;

@@ -35,16 +35,12 @@ use crate::ai::cloud_environments::{
     AmbientAgentEnvironment, CloudAmbientAgentEnvironment, CloudAmbientAgentEnvironmentModel,
 };
 use crate::ai::llms::LLMId;
-use crate::cloud_object::model::persistence::CloudModel;
-use crate::cloud_object::{CloudObjectMetadata, CloudObjectPermissions};
 use crate::context_chips::prompt::Prompt;
 use crate::editor::{AutosuggestionLocation, AutosuggestionType, CrdtOperation};
 use crate::features::FeatureFlag;
 use crate::pane_group::focus_state::PaneGroupFocusState;
 use crate::pane_group::pane::PaneStack;
 use crate::pane_group::{BackingView, TerminalPaneId};
-use crate::server::ids::{ClientId, SyncId};
-use crate::server::server_api::ai::SpawnAgentRequest;
 use crate::settings::import::model::ImportedConfigModel;
 use crate::settings::{AISettings, AppEditorSettings, WarpPromptSeparator};
 use crate::terminal::alt_screen::should_intercept_mouse;

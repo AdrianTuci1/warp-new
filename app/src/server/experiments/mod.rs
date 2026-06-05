@@ -18,8 +18,6 @@ use warpui::SingletonEntity as _;
 use warpui::SingletonEntity;
 
 use crate::features::FeatureFlag;
-use crate::workspaces::user_workspaces::UserWorkspaces;
-use crate::workspaces::workspace::CustomerType;
 
 mod convert;
 mod model;
