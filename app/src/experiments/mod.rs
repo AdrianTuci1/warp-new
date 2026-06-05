@@ -322,6 +322,7 @@ pub trait Experiment<T: Experiment<T>>: FromStr {
                 let group_assignment = group.variant();
                 // Send synchronously since this we rely on this event to collect experiment data.
                 send_telemetry_sync_from_app_ctx!(
+                    TelemetryEvent::ExperimentAssignment {
                         experiment: Self::name(),
                         layer: Self::layer().name(),
                         group_assignment,

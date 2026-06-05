@@ -545,10 +545,11 @@ fn open_launch_config(arg: &OpenLaunchConfigArg, ctx: &mut AppContext) {
     );
 }
 
+fn open_launch_config_in_workspace(_arg: OpenLaunchConfigArg, ctx: &mut AppContext) {
     if let Some(workspace) = active_workspace(ctx) {
-        workspace.update(ctx, |workspace, ctx| {
+        workspace.update(ctx, |_workspace, _ctx| {
+            // TODO: implement launch config opening
         });
-    } else {
     }
 }
 
@@ -1104,6 +1105,7 @@ fn open_new_with_shell(shell: &Option<AvailableShell>, ctx: &mut AppContext) {
 /// 2. Set the terminal input buffer to a command that should open a subshell
 /// 3. Set a flag that we should automatically bootstrap that subshell if its we can bootstrap its
 /// [`ShellType`].
+fn open_subshell_command(
     arg: &SubshellCommandArg,
     ctx: &mut AppContext,
 ) {
@@ -2729,6 +2731,7 @@ impl RootView {
 
     /// "warpifying" its [`ShellType`], set a flag to automatically bootstrap it when the command's
     /// block receives the [`AfterBlockStarted`] event.
+    fn open_subshell_command_in_workspace(
         &mut self,
         arg: &SubshellCommandArg,
         ctx: &mut ViewContext<Self>,
@@ -2736,10 +2739,7 @@ impl RootView {
         let window_id = ctx.window_id();
         if let AuthOnboardingState::Terminal(handle) = &self.auth_onboarding_state {
             handle.update(ctx, |workspace, ctx| {
-                    &arg.command,
-                    arg.shell_type,
-                    ctx,
-                );
+                workspace.open_subshell_command(arg, ctx);
                 ctx.windows().show_window_and_focus_app(window_id);
             })
         } else {
@@ -3060,7 +3060,7 @@ impl RootView {
         ctx: &mut ViewContext<Self>,
     ) {
         match event {
-                log::warn!("Web auth handoff is unavailable");
+            WebHandoffEvent::Unavailable => {
                 if let AuthOnboardingState::WebImport(target) = &self.auth_onboarding_state {
                     self.auth_onboarding_state = match target {
                         AuthOnboardingTarget::Workspace(args) => {

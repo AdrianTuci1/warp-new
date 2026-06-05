@@ -131,9 +131,6 @@ use crate::ai::{AIRequestUsageModel, AIRequestUsageModelEvent};
 use crate::appearance::Appearance;
 use crate::editor::{EditorView, Event as EditorEvent, TextOptions};
 use crate::menu::{MenuItem, MenuItemFields};
-    AgentModeAutoDetectionSettingOrigin, AutonomySettingToggleSource,
-    ToggleCodeSuggestionsSettingSource,
-};
 use crate::settings::{AISettings, VoiceInputToggleKey};
 use crate::ui_components::blended_colors;
 use crate::ui_components::icons::Icon;
@@ -3671,7 +3668,6 @@ impl TypedActionView for AISettingsPageView {
             }
         }
     }
-}
 
 impl SettingsPageMeta for AISettingsPageView {
     fn section() -> SettingsSection {
@@ -7506,28 +7502,6 @@ impl ApiKeysWidget {
         list.finish()
     }
 
-        &self,
-        view: &AISettingsPageView,
-        app: &AppContext,
-    ) -> Box<dyn Element> {
-        let ai_settings = AISettings::as_ref(app);
-
-            ai_settings.is_any_ai_enabled(app),
-            &view.local_only_icon_tooltip_states,
-            app,
-        );
-
-        let description = render_ai_setting_description(
-            ai_settings.is_any_ai_enabled(app),
-            app,
-        );
-
-        Flex::column()
-            .with_child(toggle)
-            .with_child(description)
-            .finish()
-    }
-}
 
 impl SettingsWidget for ApiKeysWidget {
     type View = AISettingsPageView;

@@ -1137,16 +1137,6 @@ define_settings_group!(AISettings, settings: [
         description: "Whether the \"What's new\" section is shown in the agent view.",
     }
 
-    // Whether or not the user has enabled fallback to Warp credits for user-provided models.
-        type: bool,
-        default: false,
-        supported_platforms: SupportedPlatforms::ALL,
-        sync_to_cloud: SyncToCloud::Globally(RespectUserSyncSetting::Yes),
-        private: false,
-        storage_key: "CanUseWarpCreditsWithByok",
-        description: "Whether Warp credits can be used as a fallback for user-provided models.",
-    }
-
     should_render_use_agent_footer_for_user_commands: ShouldRenderUseAgentToolbarForUserCommands {
         type: bool,
         default: true,
@@ -1611,9 +1601,7 @@ impl AISettings {
         if !privacy.is_cloud_conversation_storage_enabled {
             return false;
         }
-        !matches!(
-            UserWorkspaces::as_ref(app).get_cloud_conversation_storage_enablement_setting(),
-        )
+        true
     }
     pub fn is_ampersand_handoff_enabled(&self, app: &warpui::AppContext) -> bool {
         self.is_cloud_handoff_enabled(app) && !*self.should_force_disable_ampersand_handoff

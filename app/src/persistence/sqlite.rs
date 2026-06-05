@@ -79,10 +79,7 @@ use crate::app_state::{
 use crate::auth::auth_manager::PersistedCurrentUserInformation;
 use crate::auth::auth_state::AuthStateProvider;
 use crate::auth::UserUid;
-    object_action_from_persisted, ObjectAction, ObjectActionSubtype,
-};
 use crate::code::editor_management::CodeSource;
-use crate::notebooks::NotebookId;
 use crate::persistence::agent::read_agent_conversations;
 use crate::persistence::block_list::{get_all_restored_blocks, read_ai_queries};
 use crate::persistence::model::{
@@ -2562,16 +2559,17 @@ fn read_sqlite_data(
 
     let team_member_rows: Vec<model::TeamMemberRow> =
         schema::team_members::dsl::team_members.load(conn)?;
-        team_member_rows
-            .into_iter()
-            .fold(HashMap::new(), |mut acc, row| {
-                    uid: UserUid::new(&row.user_uid),
-                    email: row.email,
-                    role: serde_json::from_str(&row.role)
-                };
-                acc.entry(row.team_id).or_default().push(member);
-                acc
-            });
+    let members_by_team_id: HashMap<i32, Vec<model::TeamMember>> = team_member_rows
+        .into_iter()
+        .fold(HashMap::new(), |mut acc, row| {
+            let member = model::TeamMember {
+                uid: UserUid::new(&row.user_uid),
+                email: row.email,
+                role: serde_json::from_str(&row.role).unwrap_or_default(),
+            };
+            acc.entry(row.team_id).or_default().push(member);
+            acc
+        });
 
     let team_settings_rows: Vec<model::TeamSetting> =
         schema::team_settings::dsl::team_settings.load(conn)?;

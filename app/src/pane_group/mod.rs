@@ -105,8 +105,7 @@ use crate::resource_center::{
     mark_feature_used_and_write_to_user_defaults, Tip, TipAction, TipsCompleted,
 };
 #[cfg(target_family = "wasm")]
-    AnonymousUserSignupEntrypoint, PaletteSource, SharingDialogSource, TelemetryEvent,
-};
+use crate::server::telemetry::{AnonymousUserSignupEntrypoint, PaletteSource, SharingDialogSource, TelemetryEvent};
 use crate::session_management::SessionNavigationData;
 use crate::settings::{AISettings, DefaultSessionMode, PaneSettings};
 use crate::settings_view::mcp_servers_page::MCPServersSettingsPage;
@@ -175,7 +174,7 @@ pub use pane::ai_document_pane::AIDocumentPane;
 pub use pane::ai_fact_pane::AIFactPane;
 pub use pane::code_diff_pane::CodeDiffPane;
 pub use pane::code_pane::CodePane;
-pub use pane::env_var_collection_pane::EnvVarCollectionPane;
+
 pub use pane::environment_management_pane::EnvironmentManagementPane;
 pub use pane::execution_profile_editor_pane::ExecutionProfileEditorPane;
 pub use pane::file_pane::FilePane;
