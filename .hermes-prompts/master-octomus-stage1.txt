@@ -65,13 +65,13 @@ Lansează 4 agenți simultan. Prompt-urile sunt în `/tmp/repo/.hermes-prompts/`
 prompt_dir="/tmp/repo/.hermes-prompts"
 
 # Agent 1 — delete cloud dirs
-cat "$prompt_dir/agent-1-delete-dirs.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-1-delete-dirs.txt" | hermes chat --yolo &
 # Agent 2 — fix lib.rs
-cat "$prompt_dir/agent-2-fix-lib.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-2-fix-lib.txt" | hermes chat --yolo &
 # Agent 3 — fix ai/
-cat "$prompt_dir/agent-3-fix-ai.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-3-fix-ai.txt" | hermes chat --yolo &
 # Agent 4 — branding
-cat "$prompt_dir/agent-4-branding.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-4-branding.txt" | hermes chat --yolo &
 
 wait
 echo "✅ Batch 1 — toți 4 agenții au terminat"
@@ -90,9 +90,9 @@ Dacă un agent eșuează, raportează și NU continua cu batch-ul următor.
 [bash]
 prompt_dir="/tmp/repo/.hermes-prompts"
 
-cat "$prompt_dir/agent-5-fix-cargo.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
-cat "$prompt_dir/agent-6-simplify.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
-cat "$prompt_dir/agent-7-cleanup-crates.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-5-fix-cargo.txt" | hermes chat --yolo &
+cat "$prompt_dir/agent-6-simplify.txt" | hermes chat --yolo &
+cat "$prompt_dir/agent-7-cleanup-crates.txt" | hermes chat --yolo &
 
 wait
 echo "✅ Batch 2 — toți 3 agenții au terminat"

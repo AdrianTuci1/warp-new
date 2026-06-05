@@ -68,13 +68,13 @@ Lansează 6 agenți simultan. Prompt-urile sunt în `/tmp/repo/.hermes-prompts/`
 [bash]
 prompt_dir="/tmp/repo/.hermes-prompts"
 
-cat "$prompt_dir/agent-8-ci-packaging.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
-cat "$prompt_dir/agent-9-final-scan.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
-cat "$prompt_dir/agent-10-telemetry.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
-cat "$prompt_dir/agent-11-remote-execution.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
-cat "$prompt_dir/agent-12-agent-store.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
-cat "$prompt_dir/agent-14-voice.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
-cat "$prompt_dir/agent-15-skills.txt" | HERMES_PROMPT_FILE=/dev/stdin hermes chat --yolo &
+cat "$prompt_dir/agent-8-ci-packaging.txt" | hermes chat --yolo &
+cat "$prompt_dir/agent-9-final-scan.txt" | hermes chat --yolo &
+cat "$prompt_dir/agent-10-telemetry.txt" | hermes chat --yolo &
+cat "$prompt_dir/agent-11-remote-execution.txt" | hermes chat --yolo &
+cat "$prompt_dir/agent-12-agent-store.txt" | hermes chat --yolo &
+cat "$prompt_dir/agent-14-voice.txt" | hermes chat --yolo &
+cat "$prompt_dir/agent-15-skills.txt" | hermes chat --yolo &
 
 wait
 echo "✅ Batch 3 — toți agenții au terminat"
