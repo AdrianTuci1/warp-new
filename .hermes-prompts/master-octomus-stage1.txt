@@ -100,41 +100,15 @@ echo "✅ Batch 2 — toți 3 agenții au terminat"
 
 === MERGE + CARGO CHECK ===
 
-După ce toți 7 agenții au terminat, fă merge-ul din /tmp/repo (clone-ul principal, unde ai toate branch-urile):
+După ce toți 7 agenții au terminat, lansează agentul de merge care rezolvă conflictele inteligent și rulează cargo check:
 
 [bash]
-cd /tmp/repo
-git fetch origin
-git checkout master
-git checkout -b octomus/stage1
-for b in agent-1-delete agent-2-lib agent-3-ai agent-4-branding agent-5-cargo agent-6-simplify agent-7-crates; do
-  if git merge "origin/octomus/$b" --no-edit 2>&1; then
-    echo "Merged $b cleanly"
-  else
-    echo "CONFLICT in $b — resolving with --theirs..."
-    git diff --name-only --diff-filter=U | while read f; do
-      git checkout --theirs "$f" 2>/dev/null || true
-    done
-    git add .
-    git diff --cached --quiet || git commit -m "merge $b: resolve conflicts"
-  fi
-done
+prompt_dir="/tmp/repo/.hermes-prompts"
+cat "$prompt_dir/agent-merge-stage1.txt" | hermes chat --yolo
 [/bash]
 
-[bash]
-cd /tmp/repo && cargo check 2>&1 | tail -80
-[/bash]
+Raportează ce a produs agentul de merge. Dacă a eșuat, re-lansează manual.
 
-Dacă erori: citește fișierele, editează, re-rulează cargo check (max 20 iterații).
-
-La final:
-[bash]
-cd /tmp/repo
-if git diff --cached --quiet; then echo "clean"; else git add -A && git commit -m "octomus: post-merge fixes — stage 1"; fi
-git push origin octomus/stage1
-[/bash]
-
-Raportează "✅ STAGE 1 COMPLETE — octomus/stage1 pushed, cargo check trece!"
 Menționează explicit: "Acum rulează master-octomus-stage2.txt pentru finalizare."
 
 === COMUNICARE ===

@@ -1,0 +1,60 @@
+Ești agentul de merge — STAGE 2. Rulezi în /tmp/repo (clone-ul principal).
+Nu clona nimic — /tmp/repo există deja.
+
+cd /tmp/repo
+
+=== SARCINĂ ===
+
+Fă merge a 7 branch-uri de agent în octomus/release, rezolvă conflictele inteligent, și rulează cargo check până trece. Branch-ul de bază e octomus/stage1 (produs de stage 1).
+
+=== PAS 1: FETCH + CHECKOUT ===
+
+git fetch origin
+git checkout octomus/stage1
+git checkout -b octomus/release 2>/dev/null || git checkout octomus/release
+
+=== PAS 2: MERGE FIE CARE BRANCH ===
+
+Branch-urile de agent (în orice ordine, dar recomandat):
+1. octomus/agent-8-ci         — GitHub Actions, Sentry/GCS/codesign cleanup
+2. octomus/agent-9-final      — dead imports scan, tests, README
+3. octomus/agent-10-telemetry — redirect telemetry to Octomus
+4. octomus/agent-11-remote    — generic remote execution (SSH/Modal/Custom)
+5. octomus/agent-12-store     — local agent state store
+6. octomus/agent-14-voice     — direct Whisper API
+7. octomus/agent-15-skills    — clean bundled skills
+
+Pentru fiecare branch — aceeași procedură ca stage 1:
+1. `git merge origin/octomus/agent-X-branch --no-edit`
+2. Dacă merge curat → următorul
+3. Dacă conflicte:
+   a. Identifică fișierele cu conflicte
+   b. Pentru fiecare: citește, înțelege ambele versiuni, COMBINĂ corect
+   c. `git add <fișier>`, apoi `git commit`
+4. `cargo check 2>&1 | tail -20` după fiecare merge (opțional, doar dacă vrei să verifici)
+
+=== PAS 3: CARGO CHECK FINAL ===
+
+cargo check 2>&1 | tail -80
+
+Dacă erori de compilare → repară și re-rulează (max 30 iterații).
+
+=== REGULI DE REZOLVARE A CONFLICTELOR ===
+
+Aceleași reguli ca stage 1:
+- COMBINĂ, nu alege oarbă
+- Citește ambele versiuni înainte să decizi
+- Asigură-te că nu rămân markeri de conflict
+- Pentru fișiere șterse de agent-1: orice modificare e moartă, acceptă ștergerea
+- Pentru funcții care au fost mutate/rename-uite: păstrează versiunea corectă
+
+=== LA FINAL ===
+
+git add -A
+git diff --cached --quiet || git commit -m "octomus: post-merge fixes — stage 2"
+git push origin octomus/release
+
+Raportează:
+- "🎉 OCTOMUS RELEASE READY — octomus/release pushed, cargo check trece!"
+- Câte conflicte ai rezolvat
+- Câte iterații de cargo check

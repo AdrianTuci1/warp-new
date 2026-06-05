@@ -1,0 +1,74 @@
+Ești agentul de merge — STAGE 1. Rulezi în /tmp/repo (clone-ul principal, unde ai toate branch-urile).
+Nu clona nimic — /tmp/repo există deja.
+
+cd /tmp/repo
+
+=== SARCINĂ ===
+
+Fă merge a 7 branch-uri de agent în octomus/stage1, rezolvă conflictele inteligent (nu --theirs oarbă!), și rulează cargo check până trece.
+
+=== PAS 1: FETCH + CHECKOUT ===
+
+git fetch origin
+git checkout master
+git checkout -b octomus/stage1 2>/dev/null || git checkout octomus/stage1
+
+=== PAS 2: MERGE FIE CARE BRANCH ===
+
+Branch-urile de agent (în ordinea asta):
+1. octomus/agent-1-delete  — șterge directoare cloud + billing
+2. octomus/agent-2-lib     — curăță lib.rs (elimină module cloud)
+3. octomus/agent-3-ai      — curăță ai/ (elimină credite, cloud agent code)
+4. octomus/agent-4-branding — Warp→Octomus în UI strings
+5. octomus/agent-5-cargo   — Cargo.toml, notebooks, workflows
+6. octomus/agent-6-simplify — simplify restul fișierelor
+7. octomus/agent-7-crates  — șterge crates cloud
+
+Pentru fiecare branch:
+1. `git merge origin/octomus/agent-X-branch --no-edit`
+2. Dacă merge curat → treci la următorul
+3. Dacă conflicte:
+   a. `git diff --name-only --diff-filter=U` — vezi care fișiere au conflicte
+   b. PENTRU FIECARE FIȘIER CU CONFLICT:
+      - Deschide fișierul, citește părțile conflictuale (<<<<<<<, =======, >>>>>>>)
+      - Înțelege ce face fiecare branch și combină-le corect (NU alege oarbă --theirs)
+      - Salvează fișierul rezolvat
+      - `git add <fișier>`
+   c. `git commit` fără `--no-edit` (lasă mesajul default de merge)
+4. Rulează `cargo check 2>&1 | tail -30` după fiecare merge
+
+=== PAS 3: CARGO CHECK ===
+
+După ce toate branch-urile sunt merge-uite:
+cargo check 2>&1 | tail -80
+
+Dacă erori de compilare:
+- Citește erorile, identifică fișierele problemă
+- Editează-le să repari erorile
+- Rulează din nou cargo check
+- Maxim 30 de iterații
+
+=== REGULI DE REZOLVARE A CONFLICTELOR ===
+
+Regula generală: COMBINĂ AMBELE SCHIMBĂRI acolo unde e posibil.
+Exemple:
+- Un branch șterge o linie, altul o modifică → păstrează versiunea modificată (agentul care a editat știe ce face)
+- Ambele branch-uri adaugă linii diferite în același loc → păstrează ambele adăugiri
+- Un branch șterge un fișier, altul îl modifică → șterge fișierul (agent-1 șterge și orice modificare ulterioară e moartă)
+- Conflicte în imports → păstrează importurile care încă există, elimină referințe la module șterse
+
+Pentru fișiere .rs cu conflicte:
+- Citește ambele versiuni
+- Asigură-te că codul e valid sintactic (paranteze, punct și virgulă)
+- Nu lăsa `<<<<<<<`, `=======`, `>>>>>>>` în fișier
+
+=== LA FINAL ===
+
+git add -A
+git diff --cached --quiet || git commit -m "octomus: post-merge fixes — stage 1"
+git push origin octomus/stage1
+
+Raportează:
+- "✅ STAGE 1 MERGE COMPLETE — octomus/stage1 pushed"
+- Câte conflicte ai rezolvat
+- Câte iterații de cargo check
