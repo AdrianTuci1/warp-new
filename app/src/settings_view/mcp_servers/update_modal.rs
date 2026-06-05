@@ -271,7 +271,6 @@ impl UpdateModalBody {
                     formatted_time.to_string(),
                 )
             }
-            MCPServerUpdate::Gallery {
                 name, new_version, ..
             } => (
                 format!("Update from {name}"),

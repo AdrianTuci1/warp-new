@@ -381,8 +381,6 @@ impl ServerCardView {
     }
 
     fn render_server_icon_and_status(&self, appearance: &Appearance) -> Box<dyn Element> {
-        // TODO(aeybel) will want to use gallery ids instead of title in the future
-        // pending data model for the gallery items
         let product_icon = ExternalProductIcon::from_string(self.title.as_str());
         let avatar_content = if let Some(icon) = product_icon {
             AvatarContent::ExternalProductIcon(icon)
@@ -615,10 +613,6 @@ impl ServerCardView {
                     .get_installed_server(&installation_uuid);
                 if let Some(installation) = installation {
                     let template_uuid = installation.template_uuid();
-                    let gallery_uuid = installation.gallery_uuid();
-                    let gallery_uuid_text = match gallery_uuid {
-                        Some(uuid) => format!("Gallery Id: {uuid}"),
-                        None => "Gallery Id: None".to_string(),
                     };
                     let cloud_server = CloudTemplatableMCPServer::get_by_uuid(&template_uuid, app);
                     let template_sync_id_text = match cloud_server {
@@ -631,11 +625,9 @@ impl ServerCardView {
                         "{}",
                         ServerCardItemId::TemplatableMCP(template_uuid)
                     ));
-                    lines.push(gallery_uuid_text);
                     lines.push(template_sync_id_text);
                 }
             }
-            ServerCardItemId::GalleryMCP(_) => {}
             ServerCardItemId::FileBasedMCP(_) => {}
         }
 
