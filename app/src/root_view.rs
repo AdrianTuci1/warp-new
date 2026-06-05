@@ -2574,9 +2574,7 @@ impl RootView {
                     });
                 }
                 _ => {
-                    log::info!(
-                        arg.object_type
-                    )
+                    log::info!("{}", arg.object_type)
                 }
             }
 

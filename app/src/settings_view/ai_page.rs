@@ -4214,9 +4214,7 @@ impl SettingsWidget for UsageWidget {
         .with_padding_bottom(HEADER_PADDING)
         .finish();
 
-        let request_limit_description = format!(
-            ai_request_usage_model.refresh_duration_to_string()
-        );
+        let request_limit_description = ai_request_usage_model.refresh_duration_to_string();
 
         let request_usage_row = self.render_ai_usage_limit_row(
             request_limit_description,
@@ -7893,9 +7891,7 @@ impl AwsBedrockWidget {
         let user_workspaces = UserWorkspaces::as_ref(app);
         let is_any_ai_enabled = ai_settings.is_any_ai_enabled(app);
         let is_section_enabled = is_any_ai_enabled && is_bedrock_available;
-        let is_admin_enforced = matches!(
-            user_workspaces.aws_bedrock_host_enablement_setting(),
-        );
+        let is_admin_enforced = false;
         let is_toggleable =
             is_section_enabled && user_workspaces.is_aws_bedrock_credentials_toggleable();
         let are_credentials_enabled = user_workspaces.is_aws_bedrock_credentials_enabled(app);

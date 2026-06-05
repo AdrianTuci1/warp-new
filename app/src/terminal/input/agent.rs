@@ -329,12 +329,6 @@ impl Input {
 
         let mut outer_stack = Stack::new().with_constrain_absolute_children();
         outer_stack.add_child(column.finish());
-            &mut outer_stack,
-            self.is_pane_focused(app),
-            self.terminal_view_id,
-            self.is_input_at_top(&model, app),
-            app,
-        );
 
         SavePosition::new(outer_stack.finish(), &self.save_position_id()).finish()
     }
@@ -488,12 +482,6 @@ impl Input {
 
         let mut outer_stack = Stack::new().with_constrain_absolute_children();
         outer_stack.add_child(input);
-            &mut outer_stack,
-            self.is_pane_focused(app),
-            self.terminal_view_id,
-            self.is_input_at_top(&model, app),
-            app,
-        );
 
         SavePosition::new(outer_stack.finish(), &self.save_position_id()).finish()
     }
@@ -682,12 +670,6 @@ impl Input {
             && !ambient_agent_model.is_waiting_for_session();
 
         let model = self.model.lock();
-            &mut stack,
-            self.focus_handle.as_ref().is_none_or(|h| h.is_focused(app)),
-            self.terminal_view_id,
-            self.is_input_at_top(&model, app),
-            app,
-        );
 
         let save_position =
             SavePosition::new(stack.finish(), &self.status_free_input_save_position_id()).finish();

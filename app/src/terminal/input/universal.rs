@@ -148,13 +148,6 @@ impl Input {
             );
         }
 
-            &mut stack,
-            self.is_pane_focused(app),
-            self.terminal_view_id,
-            self.is_input_at_top(&model, app),
-            app,
-        );
-
         // If the file tree is enabled, don't include the top margin for UDI so that the UDI is flush with the
         // file tree.
         let margin_top = if FeatureFlag::FileTree.is_enabled() && self.is_input_at_top(&model, app)

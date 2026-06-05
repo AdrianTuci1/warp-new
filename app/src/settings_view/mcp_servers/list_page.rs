@@ -1019,12 +1019,6 @@ impl MCPServersListPageView {
             .filter(|(_, v)| Self::server_card_handle_matches_search(v, &search_term, app))
             .map(|(k, v)| (*k, v.clone()))
             .collect();
-
-            .values()
-            .filter(|v| Self::server_card_handle_matches_search(v, &search_term, app))
-            .cloned()
-            .collect();
-
         // Collect filtered file-based server cards by provider.
         let mut filtered_file_based_cards: HashMap<MCPProvider, Vec<ViewHandle<ServerCardView>>> =
             HashMap::new();

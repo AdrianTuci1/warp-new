@@ -32,11 +32,6 @@ use crate::ai::execution_profiles::{
 };
 use crate::ai::harness_availability::HarnessAvailabilityModel;
 use crate::ai::llms::{LLMId, LLMPreferences};
-#[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
-    AgentConfigSnapshot, AmbientAgentTaskState, AttachmentInput, SpawnAgentRequest,
-};
-    AIApiError, ClientError, CloudAgentCapacityError, ServerApiProvider,
-};
 use crate::settings::PrivacySettings;
 use crate::terminal::view::ambient_agent::{SetupCommandGroupId, SetupCommandState};
 use crate::terminal::CLIAgent;
