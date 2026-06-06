@@ -43,6 +43,7 @@ pub use remote_executor::custom;
 pub use remote_executor::modal;
 pub use remote_executor::ssh;
 pub mod agent_store;
+pub mod whisper_transcriber;
 pub use agent_tips::*;
 pub use request_usage_model::*;
 use warpui::AppContext;

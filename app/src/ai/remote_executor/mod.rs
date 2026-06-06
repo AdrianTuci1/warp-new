@@ -1,8 +1,11 @@
 // Octomus — generic remote executor for "Run Remote".
 // Supports SSH, Modal, and custom HTTP endpoints configured via settings.
 
+pub mod ssh;
+pub mod modal;
+pub mod custom;
+
 use std::path::PathBuf;
-use std::sync::Arc;
 use futures::stream::Stream;
 use serde::{Deserialize, Serialize};
 
@@ -57,7 +60,7 @@ pub trait RemoteExecutor: Send + Sync {
         &self,
         config: &RemoteBackendConfig,
         task: RemoteTask,
-    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send + Unpin>, String>;
+    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send>, String>;
 }
 
 /// Factory: build the right executor for a given backend type.

@@ -68,7 +68,7 @@ use crate::features::FeatureFlag;
 use crate::network::NetworkStatus;
 use crate::send_telemetry_from_ctx;
 #[cfg(feature = "voice_input")]
-use crate::server::server_api::TranscribeError;
+use crate::voice::transcriber::TranscribeError;
 #[cfg(not(target_family = "wasm"))]
 use crate::server::telemetry::PluginChipTelemetryAction;
 use crate::server::telemetry::{PluginChipTelemetryKind, TelemetryEvent};
@@ -1884,15 +1884,10 @@ impl AgentInputFooter {
                     }
                 }
             }
-            Err(e) => match e {
-                TranscribeError::QuotaLimit => {
-                    self.show_cli_voice_error_toast("Voice input limit reached", ctx);
-                }
-                _ => {
-                    log::error!("Failed to transcribe CLI voice input: {e:?}");
-                    self.show_cli_voice_error_toast("Failed to transcribe voice input", ctx);
-                }
-            },
+            Err(e) => {
+                log::error!("Failed to transcribe CLI voice input: {e}");
+                self.show_cli_voice_error_toast("Failed to transcribe voice input", ctx);
+            }
         }
 
         self.cli_voice_input_state = CLIVoiceInputState::Stopped;

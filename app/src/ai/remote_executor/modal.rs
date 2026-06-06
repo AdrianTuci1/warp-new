@@ -19,7 +19,6 @@ impl RemoteExecutor for ModalExecutor {
         if config.credential.is_empty() {
             return Err("Modal token not configured".into());
         }
-        // Stub: validate token format (starts with "ak-") like Modal tokens do.
         if !config.credential.starts_with("ak-") {
             return Err("Modal token appears invalid".into());
         }
@@ -30,7 +29,7 @@ impl RemoteExecutor for ModalExecutor {
         &self,
         _config: &RemoteBackendConfig,
         _task: RemoteTask,
-    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send + Unpin>, String> {
+    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send>, String> {
         let s = stream! {
             yield RemoteOutput::Stdout("Modal executor: full implementation pending".to_string());
             yield RemoteOutput::Exit(0);

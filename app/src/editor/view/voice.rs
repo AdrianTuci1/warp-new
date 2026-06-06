@@ -1,6 +1,5 @@
 use settings::Setting as _;
 use voice_input::{StartListeningError, VoiceInput, VoiceSessionResult};
-use warp_core::send_telemetry_from_ctx;
 use warp_core::ui::theme::color::internal_colors;
 use warp_core::ui::theme::AnsiColorIdentifier;
 use warpui::elements::{Container, CornerRadius, Icon, Radius};
@@ -14,15 +13,12 @@ use super::{EditorAction, EditorView, VoiceTranscriber, VoiceTranscriptionOption
 use crate::ai::blocklist::InputType;
 use crate::appearance::Appearance;
 use crate::editor::EditorElement;
-use crate::server::server_api::TranscribeError;
-use crate::server::telemetry::TelemetryEvent;
 use crate::settings::{AISettings, VoiceInputToggleKey};
 use crate::themes::theme::Fill;
 use crate::ui_components::buttons::{icon_button, icon_button_with_color};
 use crate::ui_components::icons;
 use crate::view_components::{FeaturePopup, NewFeaturePopupLabel};
 use crate::workspace::ToastStack;
-use crate::workspaces::user_workspaces::UserWorkspaces;
 
 const MICROPHONE_ACCESS_ERROR_ID: &str = "MICROPHONE_ACCESS_ERROR";
 const NUM_TIMES_TO_SHOW_VOICE_NEW_FEATURE_POPUP: usize = 4;
@@ -131,10 +127,6 @@ impl EditorView {
         options: VoiceTranscriptionOptions,
         ctx: &mut ViewContext<Self>,
     ) {
-        if !UserWorkspaces::handle(ctx).as_ref(ctx).is_voice_enabled() {
-            return;
-        }
-
         log::debug!("update_voice_transcription_options: {options:?}");
         self.voice_transcription_options = options;
         if !self.voice_transcription_options.is_enabled() {
@@ -157,10 +149,6 @@ impl EditorView {
         cancel_transcription: bool,
         ctx: &mut ViewContext<Self>,
     ) {
-        if !UserWorkspaces::handle(ctx).as_ref(ctx).is_voice_enabled() {
-            return;
-        }
-
         let voice_input = voice_input::VoiceInput::handle(ctx);
         if voice_input.as_ref(ctx).is_listening() {
             log::debug!("Stopping voice input, cancelling transcription: {cancel_transcription}");
@@ -201,10 +189,6 @@ impl EditorView {
         source: &voice_input::VoiceInputToggledFrom,
         ctx: &mut ViewContext<Self>,
     ) -> bool {
-        if !UserWorkspaces::handle(ctx).as_ref(ctx).is_voice_enabled() {
-            return false;
-        }
-
         if !matches!(
             Self::voice_options(ctx),
             VoiceTranscriptionOptions::Enabled { .. }
@@ -259,14 +243,6 @@ impl EditorView {
                     return false;
                 }
 
-                if !crate::ai::AIRequestUsageModel::handle(ctx)
-                    .as_ref(ctx)
-                    .can_request_voice()
-                {
-                    self.voice_error_toast(super::VOICE_LIMIT_HIT_TOAST_TEXT, ctx);
-                    return false;
-                }
-
                 // We allow toggling voice input from a button click even if the editor is not focused.
                 if self.focused || matches!(*source, voice_input::VoiceInputToggledFrom::Button) {
                     // Try to start voice input and get the session
@@ -293,25 +269,6 @@ impl EditorView {
 
                     // Immediately transition to Listening state
                     self.set_voice_input_state(VoiceInputState::Listening, ctx);
-
-                    // Send telemetry for start
-                    let is_udi_enabled = crate::settings::InputSettings::handle(ctx)
-                        .as_ref(ctx)
-                        .is_universal_developer_input_enabled(ctx);
-                    let current_input_mode = if self.is_ai_input {
-                        InputType::AI
-                    } else {
-                        InputType::Shell
-                    };
-                    send_telemetry_from_ctx!(
-                        TelemetryEvent::VoiceInputUsed {
-                            action: "start".to_string(),
-                            session_duration_ms: None,
-                            is_udi_enabled,
-                            current_input_mode,
-                        },
-                        ctx
-                    );
 
                     // Spawn future to await the session result
                     ctx.spawn(
@@ -408,34 +365,11 @@ impl EditorView {
         result: VoiceSessionResult,
         ctx: &mut ViewContext<Self>,
     ) {
-        if !UserWorkspaces::handle(ctx).as_ref(ctx).is_voice_enabled() {
-            return;
-        }
-
-        let is_udi_enabled = crate::settings::InputSettings::handle(ctx)
-            .as_ref(ctx)
-            .is_universal_developer_input_enabled(ctx);
-        let current_input_mode = if self.is_ai_input {
-            InputType::AI
-        } else {
-            InputType::Shell
-        };
-
         match result {
             VoiceSessionResult::Audio {
                 wav_base64,
-                session_duration_ms,
+                session_duration_ms: _,
             } => {
-                send_telemetry_from_ctx!(
-                    TelemetryEvent::VoiceInputUsed {
-                        action: "stop".to_string(),
-                        session_duration_ms: Some(session_duration_ms),
-                        is_udi_enabled,
-                        current_input_mode,
-                    },
-                    ctx
-                );
-
                 // Start transcription
                 let voice_transcriber = VoiceTranscriber::handle(ctx).as_ref(ctx);
                 if let Some(transcriber) = voice_transcriber.transcriber() {
@@ -459,19 +393,9 @@ impl EditorView {
                 }
             }
             VoiceSessionResult::Aborted {
-                session_duration_ms,
+                session_duration_ms: _,
             } => {
                 log::info!("Aborted listening for voice input");
-
-                send_telemetry_from_ctx!(
-                    TelemetryEvent::VoiceInputUsed {
-                        action: "cancel".to_string(),
-                        session_duration_ms,
-                        is_udi_enabled,
-                        current_input_mode,
-                    },
-                    ctx
-                );
 
                 self.set_voice_input_state(VoiceInputState::Stopped, ctx);
             }
@@ -495,15 +419,10 @@ impl EditorView {
                 log::debug!("Transcribed voice input: {transcribe_response:?}");
                 self.user_insert(&transcribe_response, ctx);
             }
-            Err(e) => match e {
-                TranscribeError::QuotaLimit => {
-                    self.voice_error_toast(super::VOICE_LIMIT_HIT_TOAST_TEXT, ctx)
-                }
-                _ => {
-                    log::error!("Failed to transcribe voice input: {e:?}");
-                    self.voice_error_toast(super::VOICE_ERROR_TOAST_TEXT, ctx)
-                }
-            },
+            Err(e) => {
+                log::error!("Failed to transcribe voice input: {e}");
+                self.voice_error_toast(super::VOICE_ERROR_TOAST_TEXT, ctx)
+            }
         }
         ctx.notify();
     }

@@ -2,8 +2,9 @@
 
 use std::process::Stdio;
 
-use async_stream::try_stream;
+use async_stream::stream;
 use futures::stream::Stream;
+use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::process::Command;
 
 use super::{RemoteBackendConfig, RemoteExecutor, RemoteOutput, RemoteTask};
@@ -51,8 +52,7 @@ impl RemoteExecutor for SshExecutor {
         &self,
         config: &RemoteBackendConfig,
         task: RemoteTask,
-    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send + Unpin>, String> {
-        // 1. Ensure remote work dir exists.
+    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send>, String> {
         let mkdir_args = Self::ssh_args(&config.host, &config.credential);
         let mkdir_status = Command::new("ssh")
             .args(&mkdir_args)
@@ -64,7 +64,6 @@ impl RemoteExecutor for SshExecutor {
             return Err("ssh mkdir failed".into());
         }
 
-        // 2. Upload files via scp.
         for file in &task.files {
             if let Some(file_name) = file.file_name().and_then(|n| n.to_str()) {
                 let dest = format!("{}:{}/{}", config.host, task.remote_work_dir, file_name);
@@ -90,14 +89,13 @@ impl RemoteExecutor for SshExecutor {
             }
         }
 
-        // 3. Run command remotely and stream stdout/stderr.
         let host = config.host.clone();
         let credential = config.credential.clone();
         let remote_dir = task.remote_work_dir.clone();
         let command = task.command.clone();
         let env = task.env.clone();
 
-        let stream = try_stream! {
+        let stream = stream! {
             let mut ssh_cmd = Command::new("ssh");
             ssh_cmd.args(Self::ssh_args(&host, &credential));
             for (k, v) in env {
@@ -107,12 +105,33 @@ impl RemoteExecutor for SshExecutor {
             ssh_cmd.stdout(Stdio::piped());
             ssh_cmd.stderr(Stdio::piped());
 
-            let mut child = ssh_cmd.spawn().map_err(|e| format!("ssh spawn failed: {e}"))?;
-            let stdout = child.stdout.take().ok_or("failed to capture stdout")?;
-            let stderr = child.stderr.take().ok_or("failed to capture stderr")?;
+            let mut child = match ssh_cmd.spawn() {
+                Ok(c) => c,
+                Err(e) => {
+                    yield RemoteOutput::Error(format!("ssh spawn failed: {e}"));
+                    yield RemoteOutput::Exit(-1);
+                    return;
+                }
+            };
+            let stdout = match child.stdout.take() {
+                Some(s) => s,
+                None => {
+                    yield RemoteOutput::Error("failed to capture stdout".into());
+                    yield RemoteOutput::Exit(-1);
+                    return;
+                }
+            };
+            let stderr = match child.stderr.take() {
+                Some(s) => s,
+                None => {
+                    yield RemoteOutput::Error("failed to capture stderr".into());
+                    yield RemoteOutput::Exit(-1);
+                    return;
+                }
+            };
 
-            let mut stdout_reader = tokio::io::BufReader::new(stdout).lines();
-            let mut stderr_reader = tokio::io::BufReader::new(stderr).lines();
+            let mut stdout_reader = BufReader::new(stdout).lines();
+            let mut stderr_reader = BufReader::new(stderr).lines();
 
             loop {
                 tokio::select! {

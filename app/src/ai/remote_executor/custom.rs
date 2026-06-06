@@ -1,6 +1,6 @@
 // Octomus — Custom HTTP remote executor.
 
-use async_stream::try_stream;
+use async_stream::stream;
 use futures::stream::Stream;
 use serde_json::json;
 
@@ -37,7 +37,7 @@ impl RemoteExecutor for CustomExecutor {
         &self,
         config: &RemoteBackendConfig,
         task: RemoteTask,
-    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send + Unpin>, String> {
+    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send>, String> {
         let client = reqwest::Client::builder()
             .timeout(std::time::Duration::from_secs(
                 config.timeout_seconds.unwrap_or(300),
@@ -82,7 +82,7 @@ impl RemoteExecutor for CustomExecutor {
             .map_err(|e| format!("custom http read body failed: {e}"))?;
         let text = String::from_utf8_lossy(&bytes).to_string();
 
-        let stream = try_stream! {
+        let stream = stream! {
             for line in text.lines() {
                 if let Some(json) = line.strip_prefix("data: ") {
                     match serde_json::from_str::<RemoteOutput>(json) {

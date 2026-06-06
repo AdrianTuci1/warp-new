@@ -772,7 +772,7 @@ define_settings_group!(AISettings, settings: [
     // `is_voice_input_enabled()` getter.
     voice_input_enabled_internal: VoiceInputEnabled {
         type: bool,
-        default: true,
+        default: false, // Octomus: disabled by default, enabled when API key is set
         supported_platforms: SupportedPlatforms::DESKTOP,
         sync_to_cloud: SyncToCloud::Globally(RespectUserSyncSetting::Yes),
         private: false,
@@ -810,6 +810,15 @@ define_settings_group!(AISettings, settings: [
         // Never sync to cloud to keep state separate across devices, since microphone access is per-device.
         sync_to_cloud: SyncToCloud::Never,
         private: true,
+    },
+    whisper_api_key: WhisperApiKey {
+        type: String,
+        default: String::new(),
+        supported_platforms: SupportedPlatforms::DESKTOP,
+        sync_to_cloud: SyncToCloud::Never,
+        private: true,
+        toml_path: "agents.voice.whisper_api_key",
+        description: "Your OpenAI API key for Whisper voice transcription. Leave empty to disable voice input.",
     },
     // Predicates that Agent Mode can use to decide if it can execute
     // a command without explicit user consent.
@@ -1551,6 +1560,11 @@ impl AISettings {
         cfg!(feature = "voice_input")
             && self.is_any_ai_enabled(app)
             && *self.voice_input_enabled_internal
+            && !self.whisper_api_key.is_empty()
+    }
+
+    pub fn whisper_api_key(&self) -> &str {
+        &self.whisper_api_key
     }
 
     /// Returns `true` if input autodetection is enabled.
