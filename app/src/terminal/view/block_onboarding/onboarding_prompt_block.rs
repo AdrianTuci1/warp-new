@@ -66,7 +66,7 @@ impl OnboardingPromptBlock {
             "Warp works with many custom prompts like oh-my-zsh, Starship, Powerlevel10K. ";
         const LINK_TEXT: &str = "Learn more";
         const LINK_DESTINATION: &str =
-            "https://docs.localhost:8080/terminal/appearance/prompt#custom-prompt-compatibility-table";
+            "https://docs.warp.dev/terminal/appearance/prompt#custom-prompt-compatibility-table";
 
         Flex::column()
             .with_children([

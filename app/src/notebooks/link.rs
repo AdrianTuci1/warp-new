@@ -13,7 +13,7 @@ use warpui::r#async::SpawnedFutureHandle;
 use warpui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity, WindowId};
 
 use super::file::is_markdown_file;
-use crate::drive::OpenOctomusDriveObjectArgs;
+use crate::drive::OpenWarpDriveObjectArgs;
 use crate::terminal::model::session::Session;
 use crate::uri::parse_url_paths::{get_item_data_from_warp_link, WarpWebLink};
 #[cfg(feature = "local_fs")]
@@ -259,7 +259,7 @@ impl NotebookLinks {
         match link {
             LinkTarget::Url(url) => {
                 if let Some(WarpWebLink::DriveObject(args)) = get_item_data_from_warp_link(&url) {
-                    return ctx.emit(LinkEvent::OpenOctomusDriveLink {
+                    return ctx.emit(LinkEvent::OpenWarpDriveLink {
                         open_warp_drive_args: *args,
                     });
                 }
@@ -418,8 +418,8 @@ pub enum LinkEvent {
         path: PathBuf,
         session: Arc<Session>,
     },
-    OpenOctomusDriveLink {
-        open_warp_drive_args: OpenOctomusDriveObjectArgs,
+    OpenWarpDriveLink {
+        open_warp_drive_args: OpenWarpDriveObjectArgs,
     },
     /// This event tells the parent pane group to open a new terminal session in the given
     /// directory.

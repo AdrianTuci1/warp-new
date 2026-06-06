@@ -499,7 +499,7 @@ impl CommandSearchView {
                 AcceptHistory(_)
                 | AcceptWorkflow(_)
                 | AcceptNotebook(_)
-                | OpenOctomusAI
+                | OpenWarpAI
                 | AcceptEnvVarCollection(_)
                 | TranslateUsingWarpAI
                 | AcceptAIQuery(_) => false,

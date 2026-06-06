@@ -24,7 +24,7 @@ use crate::cloud_object::model::view::{CloudViewModel, Editor, EditorState};
 use crate::cloud_object::{
     Owner, Revision, ServerCloudObject, ServerMetadata, ServerNotebook, ServerPermissions,
 };
-use crate::drive::OpenOctomusDriveObjectSettings;
+use crate::drive::OpenWarpDriveObjectSettings;
 use crate::editor::{DisplayPoint, EditorAction, InteractionState, SelectAction};
 use crate::network::NetworkStatus;
 use crate::notebooks::active_notebook_data::Mode;
@@ -132,7 +132,7 @@ fn open_notebook(
     notebook: CloudNotebook,
 ) -> BoxFuture<'static, ()> {
     let load_future = handle.update(app, |view, ctx| {
-        view.load(notebook, &OpenOctomusDriveObjectSettings::default(), ctx)
+        view.load(notebook, &OpenWarpDriveObjectSettings::default(), ctx)
     });
     app.update(|ctx| ctx.await_spawned_future(load_future.future_id()))
 }
@@ -521,8 +521,8 @@ fn test_not_eager_baton_grab_different_editor() {
         // Complete the initial load so that grab-the-baton behavior applies.
         initial_load(&mut app, vec![]).await;
 
-        let uid = "ian@localhost:8080".to_string();
-        let email = "ian@localhost:8080".to_string();
+        let uid = "ian@warp.dev".to_string();
+        let email = "ian@warp.dev".to_string();
 
         let (_, notebook_view, _) = create_notebook(&mut app);
         let mut cloud_notebook = cloud_notebook("Test Notebook", r#"A notebook"#);
@@ -574,8 +574,8 @@ fn test_baton_grab_editor_changed_offline() {
     App::test((), |mut app| async move {
         initialize_app(&mut app);
 
-        let other_uid = "ben@localhost:8080";
-        let other_email = "ben@localhost:8080";
+        let other_uid = "ben@warp.dev";
+        let other_email = "ben@warp.dev";
 
         let (_, notebook_view, _) = create_notebook(&mut app);
 
@@ -630,7 +630,7 @@ fn test_baton_grab_editor_left_offline() {
     App::test((), |mut app| async move {
         initialize_app(&mut app);
 
-        let other_uid = "ben@localhost:8080";
+        let other_uid = "ben@warp.dev";
 
         let (_, notebook_view, _) = create_notebook(&mut app);
 

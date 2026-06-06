@@ -152,7 +152,7 @@ pub enum WorkflowType {
     Local(Workflow),
     /// Saved workflows from personal or team collections, saved using cloud-sync.
     Cloud(Box<CloudWorkflow>),
-    /// Ephemeral/transient workflows created from Octomus AI output
+    /// Ephemeral/transient workflows created from Warp AI output
     AIGenerated {
         workflow: Workflow,
         origin: AIWorkflowOrigin,

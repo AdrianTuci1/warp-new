@@ -223,7 +223,7 @@ impl EnableAutoReloadModalBody {
             ),
             FormattedTextFragment::hyperlink(
                 "Learn more",
-                "https://docs.localhost:8080/support-and-community/plans-and-billing/add-on-credits#id-2.-enable-auto-reload",
+                "https://docs.warp.dev/support-and-community/plans-and-billing/add-on-credits#id-2.-enable-auto-reload",
             ),
         ];
         let explanation_text = warpui::elements::FormattedTextElement::new(

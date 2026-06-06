@@ -53,7 +53,7 @@ use crate::drive::drive_helpers::has_feature_gated_anonymous_user_reached_notebo
 use crate::drive::export::ExportManager;
 use crate::drive::items::WarpDriveItemId;
 use crate::drive::sharing::ShareableObject;
-use crate::drive::{CloudObjectTypeAndId, OpenOctomusDriveObjectSettings};
+use crate::drive::{CloudObjectTypeAndId, OpenWarpDriveObjectSettings};
 use crate::editor::{
     EditOrigin, EditorView, Event as EditorEvent, InteractionState, PropagateAndNoOpNavigationKeys,
     SingleLineEditorOptions, TextColors, TextOptions,
@@ -1498,7 +1498,7 @@ impl NotebookView {
     pub fn wait_for_initial_load_then_load(
         &mut self,
         notebook_id: SyncId,
-        settings: &OpenOctomusDriveObjectSettings,
+        settings: &OpenWarpDriveObjectSettings,
         window_id: WindowId,
         ctx: &mut ViewContext<Self>,
     ) {
@@ -1537,7 +1537,7 @@ impl NotebookView {
     fn fetch_and_load_notebook(
         &mut self,
         notebook_id: ServerId,
-        settings: &OpenOctomusDriveObjectSettings,
+        settings: &OpenWarpDriveObjectSettings,
         window_id: WindowId,
         ctx: &mut ViewContext<Self>,
     ) {
@@ -1581,7 +1581,7 @@ impl NotebookView {
     pub fn load(
         &mut self,
         notebook: CloudNotebook,
-        settings: &OpenOctomusDriveObjectSettings,
+        settings: &OpenWarpDriveObjectSettings,
         ctx: &mut ViewContext<Self>,
     ) -> SpawnedFutureHandle {
         self.set_title(&notebook.model().title, ctx);
@@ -1844,7 +1844,7 @@ impl NotebookView {
         if let Some(notebook) = CloudModel::as_ref(ctx).get_notebook(&id) {
             self.load(
                 notebook.clone(),
-                &OpenOctomusDriveObjectSettings::default(),
+                &OpenWarpDriveObjectSettings::default(),
                 ctx,
             );
         }

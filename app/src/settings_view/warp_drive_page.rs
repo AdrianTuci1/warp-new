@@ -39,7 +39,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
 ) {
     ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
         vec![ToggleSettingActionPair::custom(
-            SettingActionPairDescriptions::new("Enable Octomus Drive", "Disable Octomus Drive"),
+            SettingActionPairDescriptions::new("Enable Warp Drive", "Disable Warp Drive"),
             builder(SettingsAction::WarpDrive(
                 WarpDriveSettingsPageAction::ToggleShowWarpDrive,
             )),
@@ -49,7 +49,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             ),
             None,
         )
-        .with_enabled(|| FeatureFlag::OpenOctomusNewSettingsModes.is_enabled())],
+        .with_enabled(|| FeatureFlag::OpenWarpNewSettingsModes.is_enabled())],
         app,
     );
 }
@@ -117,7 +117,7 @@ impl SettingsPageMeta for WarpDriveSettingsPageView {
     }
 
     fn should_render(&self, _ctx: &AppContext) -> bool {
-        FeatureFlag::OpenOctomusNewSettingsModes.is_enabled()
+        FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
     }
 
     fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
@@ -168,7 +168,7 @@ impl SettingsWidget for WarpDriveHeaderWidget {
 
         let message = Container::new(
             Text::new_inline(
-                "To use Octomus Drive, please create an account.".to_string(),
+                "To use Warp Drive, please create an account.".to_string(),
                 appearance.ui_font_family(),
                 14.,
             )
@@ -247,11 +247,11 @@ impl SettingsWidget for WarpDriveToggleWidget {
                 .is_anonymous_or_logged_out();
 
         render_body_item::<WarpDriveSettingsPageAction>(
-            "Octomus Drive".into(),
+            "Warp Drive".into(),
             Some(AdditionalInfo {
                 mouse_state: self.info_icon_mouse_state.clone(),
                 on_click_action: Some(WarpDriveSettingsPageAction::OpenUrl(
-                    "https://docs.localhost:8080/knowledge-and-collaboration/warp-drive".to_string(),
+                    "https://docs.warp.dev/knowledge-and-collaboration/warp-drive".to_string(),
                 )),
                 secondary_text: None,
                 tooltip_override_text: None,
@@ -277,7 +277,7 @@ impl SettingsWidget for WarpDriveToggleWidget {
                     }
                 })
                 .finish(),
-            Some("Octomus Drive is a workspace in your terminal where you can save Workflows, Notebooks, Prompts, and Environment Variables for personal use or to share with a team.".into()),
+            Some("Warp Drive is a workspace in your terminal where you can save Workflows, Notebooks, Prompts, and Environment Variables for personal use or to share with a team.".into()),
         )
     }
 }

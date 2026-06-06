@@ -310,7 +310,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
         ),
     );
 
-    if !FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
+    if !FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
         toggle_binding_pairs.push(
             ToggleSettingActionPair::custom(
                 SettingActionPairDescriptions::new(
@@ -1441,7 +1441,7 @@ impl AppearanceSettingsPageView {
         let tab_settings = TabSettings::as_ref(ctx);
         let mut tab_settings_widgets: Vec<Box<dyn SettingsWidget<View = Self>>> =
             vec![Box::new(TabIndicatorWidget::default())];
-        if !FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
+        if !FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
             tab_settings_widgets.push(Box::new(CodeReviewButtonWidget::default()));
         }
         if FeatureFlag::FullScreenZenMode.is_enabled()
@@ -2675,7 +2675,7 @@ impl SettingsWidget for CreateCustomThemeWidget {
                 .ui_builder()
                 .link(
                     "Create your own custom theme".to_string(),
-                    Some("https://docs.localhost:8080/terminal/appearance/custom-themes".to_string()),
+                    Some("https://docs.warp.dev/terminal/appearance/custom-themes".to_string()),
                     None,
                     self.mouse_state.clone(),
                 )
@@ -3228,7 +3228,7 @@ impl SettingsWidget for WindowBlurWidget {
         let label_info = AdditionalInfo {
             mouse_state: self.info_button.clone(),
             on_click_action: Some(AppearancePageAction::OpenUrl(
-                "https://docs.localhost:8080/terminal/appearance/size-opacity-blurring".into(),
+                "https://docs.warp.dev/terminal/appearance/size-opacity-blurring".into(),
             )),
             secondary_text: None,
             tooltip_override_text: None,
@@ -5089,7 +5089,7 @@ impl SettingsWidget for AltScreenPaddingWidget {
             Some(AdditionalInfo {
                 mouse_state: self.additional_info_mouse_state.clone(),
                 on_click_action: Some(AppearancePageAction::OpenUrl(
-                    "https://docs.localhost:8080/terminal/more-features/full-screen-apps#padding".into(),
+                    "https://docs.warp.dev/terminal/more-features/full-screen-apps#padding".into(),
                 )),
                 secondary_text: None,
                 tooltip_override_text: None,

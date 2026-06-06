@@ -40,7 +40,7 @@ use crate::themes::theme::Fill as ThemeFill;
 use crate::util::color::{darken, lighten};
 use crate::{report_error, send_telemetry_from_ctx, send_telemetry_sync_from_ctx};
 
-const TOS_URL: &str = "https://www.localhost:8080/terms-of-service";
+const TOS_URL: &str = "https://www.warp.dev/terms-of-service";
 
 const COMMON_BODY_UI_FONT_SIZE: f32 = 12.;
 const AUTH_MODAL_GAP: f32 = 16.;
@@ -607,7 +607,7 @@ impl AuthViewBody {
                 "In order to use Warp’s AI features or collaborate with others, please create an account."
             }
             AuthViewVariant::HitDriveObjectLimitCloseable => {
-                "In order to create more objects in Octomus Drive, please create an account."
+                "In order to create more objects in Warp Drive, please create an account."
             }
             AuthViewVariant::ShareRequirementCloseable => {
                 "In order to share, please create an account."

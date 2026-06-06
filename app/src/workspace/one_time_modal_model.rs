@@ -24,7 +24,7 @@ pub struct OneTimeModalModel {
     is_build_plan_migration_modal_open: bool,
     /// Whether the Oz launch modal is currently being shown.
     is_oz_launch_modal_open: bool,
-    /// Whether the OpenOctomus launch modal is currently being shown.
+    /// Whether the OpenWarp launch modal is currently being shown.
     is_openwarp_launch_modal_open: bool,
     is_orchestration_launch_modal_open: bool,
     /// Whether the HOA onboarding flow is currently being shown.
@@ -89,7 +89,7 @@ impl OneTimeModalModel {
                         .did_check_to_trigger_openwarp_launch_modal
                         .set_value(true, ctx)
                     {
-                        log::warn!("Failed to mark OpenOctomus launch modal as dismissed: {e}");
+                        log::warn!("Failed to mark OpenWarp launch modal as dismissed: {e}");
                     }
                 });
             }
@@ -119,7 +119,7 @@ impl OneTimeModalModel {
         self.set_oz_launch_modal_open(false, ctx);
     }
 
-    /// Returns whether the OpenOctomus launch modal is currently open.
+    /// Returns whether the OpenWarp launch modal is currently open.
     pub fn is_openwarp_launch_modal_open(&self) -> bool {
         self.is_openwarp_launch_modal_open && self.target_window_id.is_some()
     }
@@ -231,7 +231,7 @@ impl OneTimeModalModel {
             }
         });
 
-        // The OpenOctomus launch modal takes priority over the Oz launch modal
+        // The OpenWarp launch modal takes priority over the Oz launch modal
         // when both are enabled.
         if self.check_and_trigger_openwarp_launch_modal(ctx) {
             return;
@@ -311,7 +311,7 @@ impl OneTimeModalModel {
 
     fn check_and_trigger_openwarp_launch_modal(&mut self, ctx: &mut ModelContext<Self>) -> bool {
         // Only show if the feature flag is enabled.
-        if !FeatureFlag::OpenOctomusLaunchModal.is_enabled() {
+        if !FeatureFlag::OpenWarpLaunchModal.is_enabled() {
             return false;
         }
 
@@ -329,7 +329,7 @@ impl OneTimeModalModel {
                 .did_check_to_trigger_openwarp_launch_modal
                 .set_value(true, ctx)
             {
-                log::warn!("Failed to mark OpenOctomus launch modal as dismissed: {e}");
+                log::warn!("Failed to mark OpenWarp launch modal as dismissed: {e}");
             }
         });
 

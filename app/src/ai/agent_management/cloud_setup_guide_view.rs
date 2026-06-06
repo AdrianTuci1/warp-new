@@ -31,10 +31,10 @@ use crate::view_components::action_button::{ActionButton, SecondaryTheme};
 use crate::workflows::workflow::{Argument, ArgumentType, Workflow};
 use crate::workflows::WorkflowType;
 
-const DOCS_URL: &str = "https://docs.localhost:8080/agent-platform/cloud-agents/overview";
+const DOCS_URL: &str = "https://docs.warp.dev/agent-platform/cloud-agents/overview";
 const ENV_DOCS_URL: &str =
-    "https://docs.localhost:8080/reference/cli/integration-setup#creating-an-environment";
-const OZ_URL: &str = "https://oz.localhost:8080";
+    "https://docs.warp.dev/reference/cli/integration-setup#creating-an-environment";
+const OZ_URL: &str = "https://oz.warp.dev";
 
 const CONTENT_MAX_WIDTH: f32 = 720.;
 
@@ -209,13 +209,13 @@ impl CloudSetupGuideView {
         header_container.finish()
     }
 
-    /// Render the quick start banner with link to oz.localhost:8080.
+    /// Render the quick start banner with link to oz.warp.dev.
     fn render_quick_start_banner(&self, appearance: &Appearance) -> Box<dyn Element> {
         let theme = appearance.theme();
         let font_size = 16.;
 
         let text = Text::new_inline(
-            "Quick start: Visit oz.localhost:8080 for a UI-based setup experience.",
+            "Quick start: Visit oz.warp.dev for a UI-based setup experience.",
             appearance.ui_font_family(),
             font_size,
         )

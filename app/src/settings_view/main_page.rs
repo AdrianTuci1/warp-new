@@ -154,7 +154,7 @@ impl From<&MainPageAction> for LoginGatedFeature {
 pub enum MainSettingsPageEvent {
     CheckForUpdate,
     #[allow(dead_code)]
-    OpenOctomusDrive,
+    OpenWarpDrive,
     SignupAnonymousUser,
 }
 
@@ -511,7 +511,7 @@ impl AccountWidget {
                             .ui_builder()
                             .link(
                                 "Contact support".into(),
-                                Some("mailto:support@localhost:8080".into()),
+                                Some("mailto:support@warp.dev".into()),
                                 None,
                                 self.ui_state_handles.enterprise_contact_us_link.clone(),
                             )
@@ -706,7 +706,7 @@ impl SettingsWidget for SettingsSyncWidget {
         let label_info = AdditionalInfo {
             mouse_state: self.tooltip_state.clone(),
             on_click_action: Some(MainPageAction::OpenUrl(
-                "https://docs.localhost:8080/terminal/more-features/settings-sync".into(),
+                "https://docs.warp.dev/terminal/more-features/settings-sync".into(),
             )),
             secondary_text: None,
             tooltip_override_text: None,

@@ -2900,7 +2900,7 @@ fn resolve_icon_with_status_variant(
             icon: typed.icon(),
             icon_color: main_text,
         },
-        // Octomus Drive object types use their established index colors
+        // Warp Drive object types use their established index colors
         TypedPane::Notebook { is_plan } => IconWithStatusVariant::Neutral {
             icon: typed.icon(),
             icon_color: drive_color(DriveObjectType::Notebook {

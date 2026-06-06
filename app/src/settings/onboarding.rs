@@ -34,7 +34,7 @@ pub fn apply_onboarding_settings(selected_settings: &SelectedSettings, app: &mut
             show_agent_notifications,
         } => {
             // In old onboarding, there's nothing to set for terminal intent.
-            if !FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
+            if !FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
                 true
             } else {
                 if let Some(ui) = ui_customization {
@@ -53,7 +53,7 @@ pub fn apply_onboarding_settings(selected_settings: &SelectedSettings, app: &mut
         }
     };
 
-    if FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
+    if FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
         AISettings::handle(app).update(app, |settings, ctx| {
             report_if_error!(settings.is_any_ai_enabled.set_value(is_ai_enabled, ctx));
         });
@@ -68,7 +68,7 @@ fn apply_ui_customization_settings(
     app: &mut AppContext,
 ) {
     // Customize UI slide should only exist with this flag enabled.
-    if !FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
+    if !FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
         return;
     }
     TabSettings::handle(app).update(app, |settings, ctx| {

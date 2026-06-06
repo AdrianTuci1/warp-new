@@ -64,7 +64,7 @@ const FONT_SIZE: f32 = 12.;
 const SAFE_MODE_TITLE: &str = "Secret redaction";
 static SAFE_MODE_DESCRIPTION: LazyLock<&'static str> = LazyLock::new(|| {
     "When this setting is enabled, Warp will scan blocks, the contents of \
-        Octomus Drive objects, and Oz prompts for potential sensitive \
+        Warp Drive objects, and Oz prompts for potential sensitive \
         information and prevent saving or sending this data to any \
         servers. You can customize this list via regexes."
 });
@@ -83,7 +83,7 @@ const TELEMETRY_DESCRIPTION: &str =
 const TELEMETRY_FREE_TIER_NOTE: &str =
     "On the free tier, analytics must be enabled to use AI features.";
 const TELEMETRY_DOCS_URL: &str =
-    "https://docs.localhost:8080/support-and-community/privacy-and-security/privacy#what-telemetry-data-does-warp-collect-and-why";
+    "https://docs.warp.dev/support-and-community/privacy-and-security/privacy#what-telemetry-data-does-warp-collect-and-why";
 
 const DATA_MANAGEMENT_TITLE: &str = "Manage your data";
 const DATA_MANAGEMENT_DESCRIPTION: &str =
@@ -1431,7 +1431,7 @@ impl SettingsWidget for AppAnalyticsWidget {
     }
 
     fn should_render(&self, app: &AppContext) -> bool {
-        // Builds without a telemetry config (e.g. OpenOctomus) cannot ship
+        // Builds without a telemetry config (e.g. OpenWarp) cannot ship
         // telemetry, so the toggle would be a no-op. Hide it in that case.
         if !ChannelState::is_telemetry_available() {
             return false;
@@ -1599,7 +1599,7 @@ impl SettingsWidget for CrashReportsWidget {
     }
 
     fn should_render(&self, app: &AppContext) -> bool {
-        // Builds without a crash reporting config (e.g. OpenOctomus) cannot ship
+        // Builds without a crash reporting config (e.g. OpenWarp) cannot ship
         // crash reports, so the toggle would be a no-op. Hide it in that case.
         if !ChannelState::is_crash_reporting_available() {
             return false;

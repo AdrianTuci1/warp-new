@@ -1,5 +1,5 @@
 //! Module to attribute AI-generated requested commands
-//! to known documents (e.g. Octomus Drive objects).
+//! to known documents (e.g. Warp Drive objects).
 
 use markdown_parser::{parse_markdown, FormattedTextLine};
 use warpui::{AppContext, SingletonEntity};
@@ -29,7 +29,7 @@ pub(crate) fn is_command_copied_from_document(
 }
 
 /// Returns true iff the `command` is directly copied from the
-/// Octomus Drive object identified by `object_uid`.
+/// Warp Drive object identified by `object_uid`.
 fn is_command_copied_from_warp_drive_object(
     command: &str,
     object_uid: &str,

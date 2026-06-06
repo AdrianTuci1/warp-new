@@ -346,7 +346,7 @@ impl CodeSettingsPageView {
 
         #[cfg(feature = "local_fs")]
         let external_editor_view;
-        let page = if FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
+        let page = if FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
             #[cfg(feature = "local_fs")]
             {
                 external_editor_view = Some(ctx.add_typed_action_view(ExternalEditorView::new));
@@ -471,7 +471,7 @@ impl CodeSettingsPageView {
     /// Builds the full categorized page with all Code widgets.
     /// Used for the default/legacy view and when resetting to all-widgets mode for search.
     fn build_full_page(ctx: &mut ViewContext<Self>) -> PageType<Self> {
-        if FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
+        if FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
             let manual_add_directory_button = ctx.add_typed_action_view(|_| {
                 ActionButton::new("Index new folder", SecondaryTheme)
                     .with_icon(Icon::FindAll)
@@ -933,7 +933,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
         );
     }
 
-    if FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
+    if FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
         ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
             vec![
                 ToggleSettingActionPair::new(
@@ -2653,7 +2653,7 @@ impl SettingsPageMeta for CodeSettingsPageView {
 
     fn should_render(&self, _ctx: &AppContext) -> bool {
         FeatureFlag::FullSourceCodeEmbedding.is_enabled()
-            || FeatureFlag::OpenOctomusNewSettingsModes.is_enabled()
+            || FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
     }
 
     fn on_page_selected(&mut self, _: bool, ctx: &mut ViewContext<Self>) {

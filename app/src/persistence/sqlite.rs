@@ -85,7 +85,7 @@ use crate::cloud_object::model::actions::{
 use crate::cloud_object::model::generic_string_model::{CloudStringObject, GenericStringObjectId};
 use crate::cloud_object::{CloudObject, ObjectIdType};
 use crate::code::editor_management::CodeSource;
-use crate::drive::OpenOctomusDriveObjectSettings;
+use crate::drive::OpenWarpDriveObjectSettings;
 use crate::notebooks::NotebookId;
 use crate::persistence::agent::read_agent_conversations;
 use crate::persistence::block_list::{get_all_restored_blocks, read_ai_queries};
@@ -2168,7 +2168,7 @@ fn read_node(conn: &mut SqliteConnection, node: model::PaneNode) -> Result<PaneN
                         Some(path) => NotebookPaneSnapshot::LocalFileNotebook { path: Some(path) },
                         None => NotebookPaneSnapshot::CloudNotebook {
                             notebook_id,
-                            settings: OpenOctomusDriveObjectSettings::default(),
+                            settings: OpenWarpDriveObjectSettings::default(),
                         },
                     })
                 }
@@ -2186,7 +2186,7 @@ fn read_node(conn: &mut SqliteConnection, node: model::PaneNode) -> Result<PaneN
 
                     LeafContents::Workflow(WorkflowPaneSnapshot::CloudWorkflow {
                         workflow_id,
-                        settings: OpenOctomusDriveObjectSettings::default(),
+                        settings: OpenWarpDriveObjectSettings::default(),
                     })
                 }
                 CODE_PANE_KIND => {

@@ -39,7 +39,7 @@ use crate::themes::theme::Fill as ThemeFill;
 use crate::util::bindings::CustomAction;
 use crate::{send_telemetry_from_ctx, send_telemetry_sync_from_ctx};
 
-const TOS_URL: &str = "https://www.localhost:8080/terms-of-service";
+const TOS_URL: &str = "https://www.warp.dev/terms-of-service";
 
 // ---------------------------------------------------------------------------
 // Init (keybindings)
@@ -164,7 +164,7 @@ pub struct LoginSlideView {
     /// Onboarding intention selected by the user, used to render Drive-focused
     /// copy on the Terminal+Drive path. On the login slide, `intention ==
     /// OnboardingIntention::Terminal` is equivalent to "Terminal+Drive":
-    /// `RootView` only routes Terminal-intent users here when Octomus Drive is
+    /// `RootView` only routes Terminal-intent users here when Warp Drive is
     /// enabled.
     intention: OnboardingIntention,
     theme_visual_path: &'static str,
@@ -476,7 +476,7 @@ impl LoginSlideView {
 
         let is_terminal = matches!(self.intention, OnboardingIntention::Terminal);
         let title_text = if is_terminal {
-            "Get started with Octomus Drive"
+            "Get started with Warp Drive"
         } else {
             "Get started with AI"
         };
@@ -600,7 +600,7 @@ impl LoginSlideView {
 
         let cmd_enter = Keystroke::parse("cmdorctrl-enter").unwrap_or_default();
         let skip_label = if matches!(self.intention, OnboardingIntention::Terminal) {
-            "Disable Octomus Drive"
+            "Disable Warp Drive"
         } else {
             "Disable AI features"
         };
@@ -897,7 +897,7 @@ impl LoginSlideView {
 
         let is_terminal = matches!(self.intention, OnboardingIntention::Terminal);
         let title_text = if is_terminal {
-            "Are you sure you want to disable Octomus Drive?"
+            "Are you sure you want to disable Warp Drive?"
         } else {
             "Are you sure you want to disable AI features?"
         };
@@ -933,7 +933,7 @@ impl LoginSlideView {
             .finish();
 
         let body_text_str = if is_terminal {
-            "Octomus Drive lets you save workflows and knowledge across devices and share them with your team. By continuing, you won't have access to the following features:"
+            "Warp Drive lets you save workflows and knowledge across devices and share them with your team. By continuing, you won't have access to the following features:"
         } else {
             "Warp is better with AI. By continuing, you won't have access to any of the following features:"
         };
@@ -988,7 +988,7 @@ impl LoginSlideView {
             .finish();
 
         let cancel_label = if is_terminal {
-            "Enable Octomus Drive"
+            "Enable Warp Drive"
         } else {
             "Enable AI features"
         };

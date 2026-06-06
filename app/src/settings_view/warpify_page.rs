@@ -545,7 +545,7 @@ impl TitleWidget {
             ),
             FormattedTextFragment::hyperlink(
                 "Learn more",
-                "https://docs.localhost:8080/terminal/warpify/subshells",
+                "https://docs.warp.dev/terminal/warpify/subshells",
             ),
         ];
 
@@ -764,7 +764,7 @@ impl SettingsWidget for SSHWidget {
                     Some(AdditionalInfo {
                         mouse_state: self.additional_info_mouse_state.clone(),
                         on_click_action: Some(WarpifyPageAction::OpenUrl(
-                            "https://docs.localhost:8080/terminal/warpify/ssh".into(),
+                            "https://docs.warp.dev/terminal/warpify/ssh".into(),
                         )),
                         secondary_text: None,
                         tooltip_override_text: None,

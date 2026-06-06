@@ -5,7 +5,7 @@ use crate::app_state::{
     AppState, BranchSnapshot, LeafContents, LeafSnapshot, NotebookPaneSnapshot, PaneFlex,
     PaneNodeSnapshot, SplitDirection, TabSnapshot, TerminalPaneSnapshot, WindowSnapshot,
 };
-use crate::drive::OpenOctomusDriveObjectSettings;
+use crate::drive::OpenWarpDriveObjectSettings;
 use crate::tab::SelectedTabColor;
 
 fn single_tab_snapshot(root: PaneNodeSnapshot) -> AppState {
@@ -78,7 +78,7 @@ fn test_config_from_snapshot_flattens_single_pane() {
                     custom_vertical_tabs_title: None,
                     contents: LeafContents::Notebook(NotebookPaneSnapshot::CloudNotebook {
                         notebook_id: None,
-                        settings: OpenOctomusDriveObjectSettings::default(),
+                        settings: OpenWarpDriveObjectSettings::default(),
                     }),
                 }),
             ),
@@ -148,7 +148,7 @@ fn test_config_from_snapshot_filters_panes() {
                     custom_vertical_tabs_title: None,
                     contents: LeafContents::Notebook(NotebookPaneSnapshot::CloudNotebook {
                         notebook_id: None,
-                        settings: OpenOctomusDriveObjectSettings::default(),
+                        settings: OpenWarpDriveObjectSettings::default(),
                     }),
                 }),
             ),
@@ -212,7 +212,7 @@ fn test_config_from_snapshot_filters_tabs() {
                 custom_vertical_tabs_title: None,
                 contents: LeafContents::Notebook(NotebookPaneSnapshot::CloudNotebook {
                     notebook_id: None,
-                    settings: OpenOctomusDriveObjectSettings::default(),
+                    settings: OpenWarpDriveObjectSettings::default(),
                 }),
             }),
         )],
@@ -282,7 +282,7 @@ fn test_config_with_active_tab_index_and_filtered_tabs() {
                             custom_vertical_tabs_title: None,
                             contents: LeafContents::Notebook(NotebookPaneSnapshot::CloudNotebook {
                                 notebook_id: None,
-                                settings: OpenOctomusDriveObjectSettings::default(),
+                                settings: OpenWarpDriveObjectSettings::default(),
                             }),
                         }),
                     )],
@@ -373,7 +373,7 @@ fn test_config_with_active_tab_being_filtered() {
                             custom_vertical_tabs_title: None,
                             contents: LeafContents::Notebook(NotebookPaneSnapshot::CloudNotebook {
                                 notebook_id: None,
-                                settings: OpenOctomusDriveObjectSettings::default(),
+                                settings: OpenWarpDriveObjectSettings::default(),
                             }),
                         }),
                     )],

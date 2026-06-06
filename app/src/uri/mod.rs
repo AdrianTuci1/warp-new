@@ -23,7 +23,7 @@ use crate::ai::active_agent_views_model::{ActiveAgentViewsModel, ConversationOrT
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::ambient_agents::github_auth_notifier::GitHubAuthNotifier;
 use crate::cloud_object::ObjectType;
-use crate::drive::{OpenOctomusDriveObjectArgs, OpenOctomusDriveObjectSettings};
+use crate::drive::{OpenWarpDriveObjectArgs, OpenWarpDriveObjectSettings};
 use crate::features::FeatureFlag;
 use crate::launch_configs::launch_config::LaunchConfig;
 use crate::linear::{LinearAction, LinearIssueWork};
@@ -300,10 +300,10 @@ impl UriHost {
                         ctx.root_view_id(window_id)
                             .map(|view_id| (window_id, view_id))
                     });
-                    let args = OpenOctomusDriveObjectArgs {
+                    let args = OpenWarpDriveObjectArgs {
                         object_type,
                         server_id,
-                        settings: OpenOctomusDriveObjectSettings {
+                        settings: OpenWarpDriveObjectSettings {
                             focused_folder_id,
                             invitee_email,
                         },

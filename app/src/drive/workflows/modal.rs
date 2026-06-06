@@ -423,7 +423,7 @@ impl WorkflowModal {
     #[allow(dead_code)]
     fn populate(&mut self, workflow: Workflow, ctx: &mut ViewContext<Self>) {
         // Sanitize the arguments generated for the workflow by removing any illegal characters.
-        // Necessary since Octomus AI command search sometimes provides arguments in an invalid argument format.
+        // Necessary since Warp AI command search sometimes provides arguments in an invalid argument format.
         let mut sanitized_content = workflow.content().to_string();
         let sanitized_arguments = workflow
             .arguments()
@@ -1724,7 +1724,7 @@ impl WorkflowModal {
                 .finish();
 
             let button_with_tool_tip = appearance.ui_builder().tool_tip_on_element(
-                "Generate a title, descriptions, or parameters with Octomus AI".to_string(),
+                "Generate a title, descriptions, or parameters with Warp AI".to_string(),
                 self.button_mouse_states.ai_assist_tool_tip.clone(),
                 rendered_button,
                 ParentAnchor::BottomMiddle,

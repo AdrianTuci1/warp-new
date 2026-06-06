@@ -28,13 +28,13 @@ const VERTICAL_TEXT_MARGIN: f32 = 16.;
 
 #[derive(Debug, Clone)]
 pub enum WarpifySuccessBlockEvent {
-    OpenOctomusifySettings,
+    OpenWarpifySettings,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum WarpifySuccessBlockAction {
     ClearAutoWarpifySnippet,
-    OpenOctomusifySettings,
+    OpenWarpifySettings,
     OpenUrl(String),
 }
 
@@ -343,8 +343,8 @@ impl TypedActionView for WarpifySuccessBlock {
 
     fn handle_action(&mut self, action: &Self::Action, ctx: &mut ViewContext<Self>) {
         match action {
-            WarpifySuccessBlockAction::OpenOctomusifySettings => {
-                ctx.emit(WarpifySuccessBlockEvent::OpenOctomusifySettings);
+            WarpifySuccessBlockAction::OpenWarpifySettings => {
+                ctx.emit(WarpifySuccessBlockEvent::OpenWarpifySettings);
             }
             WarpifySuccessBlockAction::OpenUrl(url) => {
                 ctx.open_url(url);

@@ -216,7 +216,7 @@ impl View for WasmNUXDialog {
                 ))
         } else {
             let object_kind = match web_intent_parser::current_web_intent() {
-                Some(WebIntent::DriveObject(_)) => "Octomus Drive objects",
+                Some(WebIntent::DriveObject(_)) => "Warp Drive objects",
                 Some(WebIntent::SessionView(_)) => "shared sessions",
                 _ => "Warp links",
             };
@@ -276,12 +276,12 @@ impl TypedActionView for WasmNUXDialog {
                 }
             }
             WasmNUXDialogAction::OpenDownloadDesktopAppLink => {
-                ctx.open_url("https://app.localhost:8080/get_warp");
+                ctx.open_url("https://app.warp.dev/get_warp");
                 self.requested_download = true;
                 ctx.notify();
             }
             WasmNUXDialogAction::LearnMore => {
-                ctx.open_url("https://www.localhost:8080");
+                ctx.open_url("https://www.warp.dev");
             }
         }
     }

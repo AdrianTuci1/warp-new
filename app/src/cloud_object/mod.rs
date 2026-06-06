@@ -26,7 +26,7 @@ use crate::appearance::Appearance;
 use crate::auth::UserUid;
 use crate::channel::ChannelState;
 use crate::drive::items::WarpDriveItem;
-use crate::drive::{CloudObjectTypeAndId, OpenOctomusDriveObjectArgs, OpenOctomusDriveObjectSettings};
+use crate::drive::{CloudObjectTypeAndId, OpenWarpDriveObjectArgs, OpenWarpDriveObjectSettings};
 use crate::persistence::ModelEvent;
 use crate::server::cloud_objects::update_manager::InitiatedBy;
 use crate::server::ids::{HashableId, HashedSqliteId, ObjectUid, ServerId, SyncId, ToServerId};
@@ -159,8 +159,8 @@ pub trait CloudObject: Debug {
         true
     }
 
-    /// Creates a new Octomus Drive item for this object.  Returns None if this
-    /// object is not rendered in Octomus Drive.
+    /// Creates a new Warp Drive item for this object.  Returns None if this
+    /// object is not rendered in Warp Drive.
     fn to_warp_drive_item(&self, appearance: &Appearance) -> Option<Box<dyn WarpDriveItem>>;
 
     /// Returns the web link of this object. Will return none if we do not support web links
@@ -447,7 +447,7 @@ pub trait CloudModelType: Debug + Clone + Send + Sync {
     }
 
     /// Creates a new warp drive item for this model type. Returns None
-    /// if this object does not render in Octomus Drive.
+    /// if this object does not render in Warp Drive.
     fn to_warp_drive_item(
         &self,
         id: SyncId,
@@ -455,10 +455,10 @@ pub trait CloudModelType: Debug + Clone + Send + Sync {
         object: &Self::CloudObjectType,
     ) -> Option<Box<dyn WarpDriveItem>>;
 
-    /// Returns the display name for this model (e.g. to show in the Octomus Drive index)
+    /// Returns the display name for this model (e.g. to show in the Warp Drive index)
     fn display_name(&self) -> String;
 
-    /// Sets the display name to show in the Octomus Drive Index.  Setting the name
+    /// Sets the display name to show in the Warp Drive Index.  Setting the name
     /// is not currently supported by all object types, hence the default empty
     /// implementation.
     fn set_display_name(&mut self, _name: &str) {}
@@ -800,7 +800,7 @@ where
 /// can be opened natively in Warp with no web interaction.
 pub fn extract_server_id_and_object_type_from_warp_drive_link(
     url: &Url,
-) -> Option<OpenOctomusDriveObjectArgs> {
+) -> Option<OpenWarpDriveObjectArgs> {
     let server_id = url
         .path_segments()
         .and_then(|mut segments| segments.next_back())
@@ -809,7 +809,7 @@ pub fn extract_server_id_and_object_type_from_warp_drive_link(
 
     let object_type = url.path_segments().and_then(|mut segments| segments.nth(1));
 
-    // Parse the object portion of the path segment (localhost:8080/drive/{object})
+    // Parse the object portion of the path segment (warp.dev/drive/{object})
     // into an object type
     let object_type = match object_type {
         Some("notebook") => ObjectType::Notebook,
@@ -823,13 +823,13 @@ pub fn extract_server_id_and_object_type_from_warp_drive_link(
 
     let invitee_email: Option<String> = query_string.get("invitee_email").map(|s| s.to_string());
 
-    Some(OpenOctomusDriveObjectArgs {
+    Some(OpenWarpDriveObjectArgs {
         object_type,
         server_id: match server_id {
             Some(server_id) => server_id.try_into().ok()?,
             _ => return None,
         },
-        settings: OpenOctomusDriveObjectSettings {
+        settings: OpenWarpDriveObjectSettings {
             focused_folder_id,
             invitee_email,
         },
@@ -890,7 +890,7 @@ pub trait CloudObjectMetadataExt {
     /// Returns None if the revision and last_editor are None.
     fn semantic_editing_history(&self, app: &AppContext) -> Option<String>;
 
-    /// Returns a semantic summary of the object's creator. For example, "Alice" or "joan@localhost:8080".
+    /// Returns a semantic summary of the object's creator. For example, "Alice" or "joan@warp.dev".
     #[cfg_attr(target_family = "wasm", expect(dead_code))]
     fn semantic_creator(&self, app: &AppContext) -> Option<String>;
 
@@ -903,7 +903,7 @@ impl CloudObjectMetadataExt for CloudObjectMetadata {
     fn semantic_editing_history(&self, app: &AppContext) -> Option<String> {
         let user_profiles = UserProfiles::as_ref(app);
 
-        // First, the editor. For example, "Joan Didion" or "joan@localhost:8080".
+        // First, the editor. For example, "Joan Didion" or "joan@warp.dev".
         let editor_string = self
             .last_editor_uid
             .as_ref()

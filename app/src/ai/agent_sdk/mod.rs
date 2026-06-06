@@ -629,7 +629,7 @@ impl AgentDriverRunner {
             )
             .await?;
 
-        // Wait for Octomus Drive to sync before building the task config, since
+        // Wait for Warp Drive to sync before building the task config, since
         // prompt resolution (SavedPrompt -> workflow lookup) and environment
         // resolution (CloudAmbientAgentEnvironment lookup) depend on it.
         setup_events

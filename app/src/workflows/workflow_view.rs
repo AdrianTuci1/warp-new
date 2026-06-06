@@ -59,7 +59,7 @@ use crate::drive::workflows::workflow_arg_selector::{
     WorkflowArgSelector, WorkflowArgSelectorEvent,
 };
 use crate::drive::workflows::workflow_arg_type_helpers::{self, ArgumentEditorRowIndex};
-use crate::drive::{CloudObjectTypeAndId, DriveObjectType, OpenOctomusDriveObjectSettings};
+use crate::drive::{CloudObjectTypeAndId, DriveObjectType, OpenWarpDriveObjectSettings};
 use crate::editor::{
     EditorOptions, EditorView, EnterAction, EnterSettings, Event as EditorEvent, InteractionState,
     PlainTextEditorViewAction as EditorAction, PropagateAndNoOpNavigationKeys,
@@ -576,7 +576,7 @@ impl WorkflowView {
                 {
                     self.load(
                         workflow.clone(),
-                        &OpenOctomusDriveObjectSettings::default(),
+                        &OpenWarpDriveObjectSettings::default(),
                         self.workflow_view_mode,
                         ctx,
                     );
@@ -596,7 +596,7 @@ impl WorkflowView {
                 {
                     self.load(
                         workflow,
-                        &OpenOctomusDriveObjectSettings::default(),
+                        &OpenWarpDriveObjectSettings::default(),
                         self.workflow_view_mode,
                         ctx,
                     );
@@ -614,7 +614,7 @@ impl WorkflowView {
         if let Some(workflow) = cloud_workflow {
             self.load(
                 workflow,
-                &OpenOctomusDriveObjectSettings::default(),
+                &OpenWarpDriveObjectSettings::default(),
                 self.workflow_view_mode,
                 ctx,
             );
@@ -624,7 +624,7 @@ impl WorkflowView {
     pub fn wait_for_initial_load_then_load(
         &mut self,
         workflow_id: SyncId,
-        settings: &OpenOctomusDriveObjectSettings,
+        settings: &OpenWarpDriveObjectSettings,
         mode: WorkflowViewMode,
         window_id: WindowId,
         ctx: &mut ViewContext<Self>,
@@ -665,7 +665,7 @@ impl WorkflowView {
     fn fetch_and_load_workflow(
         &mut self,
         workflow_id: ServerId,
-        settings: &OpenOctomusDriveObjectSettings,
+        settings: &OpenWarpDriveObjectSettings,
         mode: WorkflowViewMode,
         window_id: WindowId,
         ctx: &mut ViewContext<Self>,
@@ -703,7 +703,7 @@ impl WorkflowView {
     pub fn load(
         &mut self,
         workflow: CloudWorkflow,
-        settings: &OpenOctomusDriveObjectSettings,
+        settings: &OpenWarpDriveObjectSettings,
         mode: WorkflowViewMode,
         ctx: &mut ViewContext<Self>,
     ) {
@@ -1565,7 +1565,7 @@ impl WorkflowView {
     }
 
     /// Save the workflow and associated state. This makes a best-effort attempt to not
-    /// unnecessarily modify the backing Octomus Drive object.
+    /// unnecessarily modify the backing Warp Drive object.
     fn save(&mut self, ctx: &mut ViewContext<Self>) {
         if FeatureFlag::WorkflowAliases.is_enabled() && self.are_aliases_dirty(ctx) {
             self.save_aliases(ctx);
@@ -2450,7 +2450,7 @@ impl WorkflowView {
                     .finish();
 
                 let button_with_tool_tip = appearance.ui_builder().tool_tip_on_element(
-                    "Generate a title, descriptions, or parameters with Octomus AI".to_string(),
+                    "Generate a title, descriptions, or parameters with Warp AI".to_string(),
                     self.ui_state_handles.ai_assist_tool_tip.clone(),
                     rendered_button,
                     ParentAnchor::TopMiddle,

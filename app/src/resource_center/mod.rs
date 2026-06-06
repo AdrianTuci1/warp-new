@@ -89,9 +89,9 @@ pub enum TipAction {
     AiCommandSearch,
     SaveNewLaunchConfig,
     WarpAI,
-    // This toggles Octomus Drive rather than opening it. This enum can't directly be
+    // This toggles Warp Drive rather than opening it. This enum can't directly be
     // renamed because we serialize it into the welcome tips.
-    OpenOctomusDrive,
+    OpenWarpDrive,
     Changelog,
     // Note that this item has been deprecated from the UI and is not in any section.
     // We are leaving it in this enum to ensure that we don't re-use `Workflows` as a
@@ -111,7 +111,7 @@ impl TipAction {
             TipAction::ThemePicker => "workspace:show_theme_chooser",
             TipAction::SaveNewLaunchConfig => "workspace:open_launch_config_save_modal",
             TipAction::WarpAI => "workspace:toggle_ai_assistant",
-            TipAction::OpenOctomusDrive => "workspace:toggle_left_panel",
+            TipAction::OpenWarpDrive => "workspace:toggle_left_panel",
             // Slash commands are also registered as editable bindings, so callers can look them up here
             // the same way they do regular app actions.
             TipAction::Changelog => "/changelog",

@@ -173,7 +173,7 @@ pub enum TeamsPageAction {
     SendEmailInvites {
         team_uid: ServerId,
     },
-    OpenOctomusDrive,
+    OpenWarpDrive,
     GenerateUpgradeLink {
         team_uid: ServerId,
     },
@@ -285,7 +285,7 @@ impl TryFrom<&TeamsPageAction> for TelemetryEvent {
 #[derive(Clone)]
 pub enum TeamsPageViewEvent {
     TeamsChanged,
-    OpenOctomusDrive,
+    OpenWarpDrive,
     ShowToast {
         message: String,
         flavor: ToastFlavor,
@@ -531,7 +531,7 @@ impl TypedActionView for TeamsPageView {
                 self.send_email_invites(*team_uid, ctx);
                 ctx.notify();
             }
-            TeamsPageAction::OpenOctomusDrive => ctx.emit(TeamsPageViewEvent::OpenOctomusDrive),
+            TeamsPageAction::OpenWarpDrive => ctx.emit(TeamsPageViewEvent::OpenWarpDrive),
             TeamsPageAction::ShowLeaveTeamConfirmationDialog => {
                 let variant = if self.should_show_reload_credits_confirmation(ctx) {
                     CloudActionConfirmationDialogVariant::LeaveTeamReloadCredits
@@ -972,7 +972,7 @@ impl TeamsPageView {
                 ctx.open_url(upgrade_link);
             }
             UserWorkspacesEvent::GenerateUpgradeLinkRejected(err) => self.show_error(
-                "Failed to generate upgrade link. Please contact us at feedback@localhost:8080",
+                "Failed to generate upgrade link. Please contact us at feedback@warp.dev",
                 Some(err),
                 ctx,
             ),
@@ -980,7 +980,7 @@ impl TeamsPageView {
                 ctx.open_url(billing_session_link);
             }
             UserWorkspacesEvent::GenerateStripeBillingPortalLinkRejected(err) => self.show_error(
-                "Failed to generate billing link. Please contact us at feedback@localhost:8080",
+                "Failed to generate billing link. Please contact us at feedback@warp.dev",
                 Some(err),
                 ctx,
             ),
@@ -992,7 +992,7 @@ impl TeamsPageView {
                 self.show_error("Failed to toggle team discoverability", Some(err), ctx);
             }
             UserWorkspacesEvent::JoinTeamWithTeamDiscoverySuccess => {
-                // Force refresh of Octomus Drive objects after joining a team
+                // Force refresh of Warp Drive objects after joining a team
                 UpdateManager::handle(ctx).update(ctx, move |update_manager, ctx| {
                     update_manager.refresh_updated_objects(ctx);
                 });
@@ -1484,7 +1484,7 @@ impl TeamsPageView {
                 ctx,
             );
         });
-        ctx.dispatch_typed_action(&WorkspaceAction::OpenOctomusDrive);
+        ctx.dispatch_typed_action(&WorkspaceAction::OpenWarpDrive);
     }
 
     fn set_team_member_role(
@@ -4424,18 +4424,18 @@ impl SettingsWidget for TeamsWidget {
 #[cfg(test)]
 #[test]
 pub fn test_valid_domains() {
-    assert!(!TeamsPageView::is_valid_domain("@localhost:8080"));
+    assert!(!TeamsPageView::is_valid_domain("@warp.dev"));
     assert!(!TeamsPageView::is_valid_domain("warp,"));
     assert!(!TeamsPageView::is_valid_domain("warpdev"));
     assert!(!TeamsPageView::is_valid_domain(".dev"));
     assert!(!TeamsPageView::is_valid_domain("warp..dev"));
     assert!(!TeamsPageView::is_valid_domain(" "));
     assert!(!TeamsPageView::is_valid_domain("warp!.dev"));
-    assert!(!TeamsPageView::is_valid_domain("localhost:8080>"));
-    assert!(!TeamsPageView::is_valid_domain("localhost:8080."));
-    assert!(TeamsPageView::is_valid_domain("app.localhost:8080"));
+    assert!(!TeamsPageView::is_valid_domain("warp.dev>"));
+    assert!(!TeamsPageView::is_valid_domain("warp.dev."));
+    assert!(TeamsPageView::is_valid_domain("app.warp.dev"));
     assert!(TeamsPageView::is_valid_domain("warp0.dev0"));
-    assert!(TeamsPageView::is_valid_domain("localhost:8080"));
+    assert!(TeamsPageView::is_valid_domain("warp.dev"));
     assert!(TeamsPageView::is_valid_domain("miniclip.com"));
 }
 

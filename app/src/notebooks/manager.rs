@@ -11,7 +11,7 @@ use super::notebook::NotebookView;
 use super::CloudNotebook;
 use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
 use crate::cloud_object::Owner;
-use crate::drive::OpenOctomusDriveObjectSettings;
+use crate::drive::OpenWarpDriveObjectSettings;
 use crate::pane_group::{NotebookPane, PaneContent};
 use crate::server::cloud_objects::update_manager::{
     ObjectOperation, OperationSuccessType, UpdateManager, UpdateManagerEvent,
@@ -30,7 +30,7 @@ mod tests;
 /// [pane group](crate::pane_group::PaneGroup) views, as they contain all open notebook panes.
 ///
 /// The overall flow is:
-/// 1. A `Workspace` is asked to open a notebook (from the Octomus Drive index, universal search, etc.).
+/// 1. A `Workspace` is asked to open a notebook (from the Warp Drive index, universal search, etc.).
 /// 2. It checks the `NotebookManager` to see if the notebook is already open.
 /// 3. If it is, the existing notebook pane is focused (this may be in another window).
 /// 4. If not, the `Workspace` uses the `NotebookManager` to create a new notebook pane and
@@ -175,7 +175,7 @@ impl NotebookManager {
     pub fn create_pane(
         &mut self,
         source: &NotebookSource,
-        settings: &OpenOctomusDriveObjectSettings,
+        settings: &OpenWarpDriveObjectSettings,
         window_id: WindowId,
         ctx: &mut ModelContext<Self>,
     ) -> NotebookPane {

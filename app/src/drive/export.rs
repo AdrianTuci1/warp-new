@@ -29,7 +29,7 @@ use crate::{
     workspace::WorkspaceAction,
 };
 
-/// Singleton model for exporting from Octomus Drive.
+/// Singleton model for exporting from Warp Drive.
 pub struct ExportManager {
     exports: HashMap<ExportId, Export>,
 }
@@ -52,7 +52,7 @@ pub enum ExportEvent {
     Completed { id: ExportId, path: PathBuf },
 }
 
-/// A single Octomus Drive export.
+/// A single Warp Drive export.
 struct Export {
     /// The ID of the window that started this export, for showing toasts.
     window_id: WindowId,

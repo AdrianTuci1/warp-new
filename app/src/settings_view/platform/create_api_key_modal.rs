@@ -29,9 +29,9 @@ use crate::view_components::dropdown::{DROPDOWN_PADDING, TOP_MENU_BAR_HEIGHT};
 use crate::view_components::{Dropdown as DropdownView, DropdownItem};
 use crate::workspaces::user_workspaces::UserWorkspaces;
 
-const OZ_AGENTS_URL: &str = "https://oz.localhost:8080/agents?new=true";
+const OZ_AGENTS_URL: &str = "https://oz.warp.dev/agents?new=true";
 const API_KEY_DOCS_URL: &str =
-    "https://docs.localhost:8080/reference/cli/api-keys/#personal-vs-agent-keys";
+    "https://docs.warp.dev/reference/cli/api-keys/#personal-vs-agent-keys";
 
 const LABEL_FONT_SIZE: f32 = 14.;
 const INPUT_WIDTH: f32 = 428.; // 460px - (2 * 16px) padding

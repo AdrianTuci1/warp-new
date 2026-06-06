@@ -641,15 +641,15 @@ const BOOTSTRAP_FAILED_DURATION: Duration = Duration::from_secs(7);
 /// during the bootstrap period.
 const ENV_VAR_BOOTSTRAP_FAILED_DURATION: Duration = Duration::from_secs(60);
 const KNOWN_ISSUES_URL: &str =
-    "https://docs.localhost:8080/support-and-community/troubleshooting-and-support/known-issues";
+    "https://docs.warp.dev/support-and-community/troubleshooting-and-support/known-issues";
 
 /// Link to supported custom prompts.
 const PROMPT_COMPATIBILITY_URL: &str =
-    "https://docs.localhost:8080/terminal/appearance/prompt#custom-prompt-compatibility-table";
+    "https://docs.warp.dev/terminal/appearance/prompt#custom-prompt-compatibility-table";
 
 /// Link to troubleshooting steps for ControlMaster errors.
 const CONTROLMASTER_ISSUES_URL: &str =
-    "https://docs.localhost:8080/terminal/warpify/ssh-legacy#troubleshooting";
+    "https://docs.warp.dev/terminal/warpify/ssh-legacy#troubleshooting";
 
 /// Link to instructions on how to update p10k.
 const P10K_UPDATE_INSTRUCTIONS_URL: &str =
@@ -665,9 +665,9 @@ const MIN_DELTA_FOR_TEXT_SELECTION: f32 = 0.5;
 /// Notifications-specific info
 /// TODO (suraj): add documentation for notifications in gitbook
 const NOTIFICATIONS_LEARN_MORE_URL: &str =
-    "https://docs.localhost:8080/terminal/more-features/notifications";
+    "https://docs.warp.dev/terminal/more-features/notifications";
 pub const NOTIFICATIONS_TROUBLESHOOT_URL: &str =
-    "https://docs.localhost:8080/terminal/more-features/notifications#troubleshooting-notifications";
+    "https://docs.warp.dev/terminal/more-features/notifications#troubleshooting-notifications";
 
 const DEBOUNCE_PERIOD: Duration = Duration::from_millis(40);
 
@@ -1661,7 +1661,7 @@ pub enum Event {
     OpenWorkflowModalWithCloudWorkflow(SyncId),
     // Tell the pane group to open the workflow modal with an unsaved workflow.
     OpenWorkflowModalWithTemporary(Box<Workflow>),
-    OpenOctomusDriveObjectInPane(ObjectUid),
+    OpenWarpDriveObjectInPane(ObjectUid),
     OpenSuggestedAgentModeWorkflowModal {
         workflow_and_id: SuggestedAgentModeWorkflowAndId,
     },
@@ -2395,7 +2395,7 @@ impl Default for TerminalViewStateChange {
 }
 
 /// Whether or not this is the active terminal session. The active session for a pane group
-/// is the one used for executing workflows, Octomus AI suggestions, etc.
+/// is the one used for executing workflows, Warp AI suggestions, etc.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ActiveSessionState {
     Active,
@@ -4157,7 +4157,7 @@ impl TerminalView {
                 ConversationDetailsPanelEvent::OpenPlanNotebook { notebook_uid } => {
                     // Convert NotebookId -> SyncId -> ObjectUid (String)
                     let object_uid = SyncId::from(*notebook_uid).uid();
-                    ctx.emit(Event::OpenOctomusDriveObjectInPane(object_uid));
+                    ctx.emit(Event::OpenWarpDriveObjectInPane(object_uid));
                 }
             }
         });
@@ -9660,7 +9660,7 @@ impl TerminalView {
         ctx: &mut ViewContext<Self>,
     ) {
         match event {
-            WarpifySuccessBlockEvent::OpenOctomusifySettings => {
+            WarpifySuccessBlockEvent::OpenWarpifySettings => {
                 ctx.emit(Event::OpenSettings(SettingsSection::Warpify));
             }
         }
@@ -12733,7 +12733,7 @@ impl TerminalView {
                 me.remove_ssh_remote_server_choice_block(session_id, ctx);
                 ctx.emit(Event::RemoteServerSkipRequested { session_id });
             }
-            SshRemoteServerChoiceViewEvent::OpenOctomusifySettings => {
+            SshRemoteServerChoiceViewEvent::OpenWarpifySettings => {
                 ctx.emit(Event::OpenSettings(SettingsSection::Warpify));
             }
         });
@@ -13293,7 +13293,7 @@ impl TerminalView {
         self.hide_slow_bootstrap_banner(ctx);
 
         if self.auth_state.is_anonymous_or_logged_out()
-            && !FeatureFlag::OpenOctomusNewSettingsModes.is_enabled()
+            && !FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
         {
             self.insert_anonymous_user_ai_sign_up_banner(ctx);
         }
@@ -16663,7 +16663,7 @@ impl TerminalView {
                     } else {
                         items.extend([
                             MenuItem::Separator,
-                            MenuItemFields::new("Ask Octomus AI")
+                            MenuItemFields::new("Ask Warp AI")
                                 .with_on_select_action(TerminalAction::ContextMenu(
                                     ContextMenuAction::AskAI(AskAISource::SelectedBlockOrText),
                                 ))
@@ -17299,7 +17299,7 @@ impl TerminalView {
             items.extend(self.session_sharing_context_menu_items(&model, false));
         }
 
-        // Section 2: AI Command Search, Ask Octomus AI
+        // Section 2: AI Command Search, Ask Warp AI
         items.extend([
             MenuItem::Separator,
             MenuItemFields::new("Command search")
@@ -17330,7 +17330,7 @@ impl TerminalView {
 
             if !selected_input_text.is_empty() && !FeatureFlag::AgentMode.is_enabled() {
                 items.push(
-                    MenuItemFields::new("Ask Octomus AI")
+                    MenuItemFields::new("Ask Warp AI")
                         .with_on_select_action(TerminalAction::InputContextMenuItem(
                             InputContextMenuAction::AskWarpAI,
                         ))
@@ -20032,10 +20032,10 @@ impl TerminalView {
             }
             AIBlockEvent::OpenCitation(citation) => match citation {
                 AIAgentCitation::WarpDriveObject { uid } => {
-                    ctx.emit(Event::OpenOctomusDriveObjectInPane(uid.clone()));
+                    ctx.emit(Event::OpenWarpDriveObjectInPane(uid.clone()));
                 }
                 AIAgentCitation::WarpDocumentation { path } => {
-                    ctx.open_url(&format!("https://docs.localhost:8080/{path}"));
+                    ctx.open_url(&format!("https://docs.warp.dev/{path}"));
                 }
                 AIAgentCitation::WebPage { url } => {
                     ctx.open_url(url);
@@ -20046,7 +20046,7 @@ impl TerminalView {
             }
             AIBlockEvent::OpenWorkflow { sync_id } => {
                 if let Some(object) = CloudModel::as_ref(ctx).get_workflow(sync_id) {
-                    ctx.emit(Event::OpenOctomusDriveObjectInPane(object.uid()));
+                    ctx.emit(Event::OpenWarpDriveObjectInPane(object.uid()));
                 }
             }
             AIBlockEvent::OpenSuggestedAgentModeWorkflowModal { workflow_and_id } => {
@@ -24683,7 +24683,7 @@ impl TerminalView {
 
         match action {
             LearnMore => {
-                ctx.open_url("https://docs.localhost:8080/terminal/warpify/ssh-legacy#implementation");
+                ctx.open_url("https://docs.warp.dev/terminal/warpify/ssh-legacy#implementation");
             }
             Settings => {
                 if FeatureFlag::SSHTmuxWrapper.is_enabled() {

@@ -309,15 +309,15 @@ pub enum WorkspaceAction {
         position: RectF,
     },
     DropGroup,
-    /// Toggles the left panel. In Code Mode V1 this toggles Octomus Drive.
+    /// Toggles the left panel. In Code Mode V1 this toggles Warp Drive.
     /// In Code Mode V2 this toggles the left panel which contains both the project explorer and
-    /// Octomus Drive. This happens as explicit action from the user.
+    /// Warp Drive. This happens as explicit action from the user.
     ToggleLeftPanel,
-    /// Toggles directly to the Octomus Drive tab of the left panel in Code Mode V2
+    /// Toggles directly to the Warp Drive tab of the left panel in Code Mode V2
     ToggleWarpDrive,
-    /// Unconditionally opens Octomus Drive. This is used in the case of user lifecycle
+    /// Unconditionally opens Warp Drive. This is used in the case of user lifecycle
     /// events like new user onboarding or when the user joins a team.
-    OpenOctomusDrive,
+    OpenWarpDrive,
     /// Toggles the right panel. This happens as an explicit action from the user.
     ToggleRightPanel,
     /// Opens the code review panel (right panel) without toggling. If already open,
@@ -638,12 +638,12 @@ pub enum WorkspaceAction {
     /// Reset the Oz launch modal dismissed state (for debugging)
     #[cfg(debug_assertions)]
     ResetOzLaunchModalState,
-    /// Open the OpenOctomus Launch Modal (for debugging)
+    /// Open the OpenWarp Launch Modal (for debugging)
     #[cfg(debug_assertions)]
-    OpenOpenOctomusLaunchModal,
-    /// Reset the OpenOctomus launch modal dismissed state (for debugging)
+    OpenOpenWarpLaunchModal,
+    /// Reset the OpenWarp launch modal dismissed state (for debugging)
     #[cfg(debug_assertions)]
-    ResetOpenOctomusLaunchModalState,
+    ResetOpenWarpLaunchModalState,
     /// Open the Orchestration Launch Modal (for debugging)
     #[cfg(debug_assertions)]
     OpenOrchestrationLaunchModal,
@@ -937,7 +937,7 @@ impl WorkspaceAction {
             | StartGroupDrag(_)
             | ToggleLeftPanel
             | ToggleWarpDrive
-            | OpenOctomusDrive
+            | OpenWarpDrive
             | ClosePanel
             | ToggleRightPanel
             | OpenCodeReviewPanel(..)
@@ -1060,8 +1060,8 @@ impl WorkspaceAction {
             | DebugResetAwsBedrockLoginBannerDismissed
             | OpenOzLaunchModal
             | ResetOzLaunchModalState
-            | OpenOpenOctomusLaunchModal
-            | ResetOpenOctomusLaunchModalState
+            | OpenOpenWarpLaunchModal
+            | ResetOpenWarpLaunchModalState
             | OpenOrchestrationLaunchModal
             | ResetOrchestrationLaunchModalState
             | InstallOpenCodeWarpPlugin

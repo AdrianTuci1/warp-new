@@ -170,8 +170,8 @@ const GIT_OPERATIONS_AUTOGEN_DESCRIPTION: &str =
     "Let AI generate commit messages and pull request titles and descriptions.";
 const WISPR_FLOW_URL: &str = "https://wisprflow.ai/";
 const CUSTOM_INFERENCE_LEARN_MORE_URL: &str =
-    "https://docs.localhost:8080/support-and-community/plans-and-billing/bring-your-own-api-key/";
-const CUSTOM_INFERENCE_TERMS_URL: &str = "https://www.localhost:8080/legal/terms-of-service";
+    "https://docs.warp.dev/support-and-community/plans-and-billing/bring-your-own-api-key/";
+const CUSTOM_INFERENCE_TERMS_URL: &str = "https://www.warp.dev/legal/terms-of-service";
 const CUSTOM_INFERENCE_INFO_TOOLTIP_MAX_WIDTH: f32 = 320.;
 
 pub fn init_actions_from_parent_view<T: Action + Clone>(
@@ -496,7 +496,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                 FeatureFlag::AIRules.is_enabled() && FeatureFlag::SuggestedRules.is_enabled()
             }),
             ToggleSettingActionPair::new(
-                "Octomus Drive as agent context",
+                "Warp Drive as agent context",
                 builder(SettingsAction::AI(
                     AISettingsPageAction::ToggleWarpDriveContext,
                 )),
@@ -4272,7 +4272,7 @@ impl SettingsWidget for UsageWidget {
                 }
             } else {
                 vec![
-                    FormattedTextFragment::hyperlink("Contact support", "mailto:support@localhost:8080"),
+                    FormattedTextFragment::hyperlink("Contact support", "mailto:support@warp.dev"),
                     FormattedTextFragment::plain_text(" for more AI usage."),
                 ]
             }
@@ -5365,7 +5365,7 @@ impl AgentsWidget {
             ),
             FormattedTextFragment::hyperlink(
                 "Learn more",
-                "https://docs.localhost:8080/agent-platform/capabilities/codebase-context",
+                "https://docs.warp.dev/agent-platform/capabilities/codebase-context",
             ),
         ];
         let description = Container::new(
@@ -5443,7 +5443,7 @@ impl AgentsWidget {
                 FormattedTextFragment::plain_text(" or "),
                 FormattedTextFragment::hyperlink(
                     "learn more about MCPs.",
-                    "https://docs.localhost:8080/agent-platform/capabilities/mcp",
+                    "https://docs.warp.dev/agent-platform/capabilities/mcp",
                 ),
             ];
 
@@ -5930,7 +5930,7 @@ impl SettingsWidget for MCPServersWidget {
             ),
             FormattedTextFragment::hyperlink(
                 "Learn more",
-                "https://docs.localhost:8080/agent-platform/capabilities/mcp",
+                "https://docs.warp.dev/agent-platform/capabilities/mcp",
             ),
         ];
 
@@ -5976,7 +5976,7 @@ impl SettingsWidget for MCPServersWidget {
                                 ),
                                 FormattedTextFragment::hyperlink(
                                     "See supported providers.",
-                                    "https://docs.localhost:8080/agent-platform/capabilities/mcp#file-based-mcp-servers",
+                                    "https://docs.warp.dev/agent-platform/capabilities/mcp#file-based-mcp-servers",
                                 ),
                             ]
                         });
@@ -6061,7 +6061,7 @@ impl AIFactWidget {
             ),
             FormattedTextFragment::hyperlink(
                 "Learn more",
-                "https://docs.localhost:8080/agent-platform/capabilities/rules",
+                "https://docs.warp.dev/agent-platform/capabilities/rules",
             ),
         ];
         let description = Container::new(
@@ -6125,7 +6125,7 @@ impl AIFactWidget {
         app: &warpui::AppContext,
     ) -> Box<dyn Element> {
         let toggle = render_ai_setting_toggle::<WarpDriveContextEnabled>(
-            "Octomus Drive as agent context",
+            "Warp Drive as agent context",
             AISettingsPageAction::ToggleWarpDriveContext,
             *ai_settings.warp_drive_context_enabled,
             ai_settings.is_any_ai_enabled(app),
@@ -6135,7 +6135,7 @@ impl AIFactWidget {
         );
 
         let description = render_ai_setting_description(
-            "The Warp Agent can leverage your Octomus Drive Contents to tailor responses to your personal and team developer workflows and environments. This includes any Workflows, Notebooks, and Environment Variables.",
+            "The Warp Agent can leverage your Warp Drive Contents to tailor responses to your personal and team developer workflows and environments. This includes any Workflows, Notebooks, and Environment Variables.",
             ai_settings.is_any_ai_enabled(app),
             app,
         );
@@ -6455,7 +6455,7 @@ impl SettingsWidget for OtherAIWidget {
         // TODO: OpenConversationLayoutPreference should not depend on local_fs, but it lives under the external editor settings
         // which does require local_fs. It was a mistake to put it there, but now we keep it there for backward compatibility.
         #[cfg(feature = "local_fs")]
-        if FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
+        if FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
             use crate::util::file::external_editor::settings::OpenConversationLayoutPreference;
 
             column.add_child(render_dropdown_item(
@@ -7678,7 +7678,7 @@ impl SettingsWidget for ApiKeysWidget {
             {
                 if team.billing_metadata.customer_type == CustomerType::Enterprise {
                     vec![
-                        FormattedTextFragment::hyperlink("Contact sales", "mailto:sales@localhost:8080"),
+                        FormattedTextFragment::hyperlink("Contact sales", "mailto:sales@warp.dev"),
                         FormattedTextFragment::plain_text(
                             " to enable bringing your own API keys on your Enterprise plan.",
                         ),

@@ -48,14 +48,14 @@ pub enum SshRemoteServerChoiceViewAction {
     Install,
     Skip,
     ToggleDoNotAskAgain,
-    OpenOctomusifySettings,
+    OpenWarpifySettings,
 }
 
 #[derive(Clone, Debug)]
 pub enum SshRemoteServerChoiceViewEvent {
     Install,
     Skip,
-    OpenOctomusifySettings,
+    OpenWarpifySettings,
 }
 
 /// Choice block prompting the user to install the remote-server binary on the remote host or skip.
@@ -178,7 +178,7 @@ impl SshRemoteServerChoiceView {
                 "Manage Warpify settings".into(),
                 None,
                 Some(Box::new(|ctx| {
-                    ctx.dispatch_typed_action(SshRemoteServerChoiceViewAction::OpenOctomusifySettings);
+                    ctx.dispatch_typed_action(SshRemoteServerChoiceViewAction::OpenWarpifySettings);
                 })),
                 self.manage_settings_mouse_state.clone(),
             )
@@ -305,8 +305,8 @@ impl TypedActionView for SshRemoteServerChoiceView {
                 );
                 ctx.notify();
             }
-            SshRemoteServerChoiceViewAction::OpenOctomusifySettings => {
-                ctx.emit(SshRemoteServerChoiceViewEvent::OpenOctomusifySettings);
+            SshRemoteServerChoiceViewAction::OpenWarpifySettings => {
+                ctx.emit(SshRemoteServerChoiceViewEvent::OpenWarpifySettings);
             }
         }
     }
