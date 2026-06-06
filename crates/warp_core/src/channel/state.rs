@@ -113,7 +113,7 @@ impl ChannelState {
         let Ok(url) = Url::parse(Self::server_root_url().as_ref()) else {
             return false;
         };
-        url.host_str() == Some("staging.warp.dev")
+        url.host_str() == Some("staging.localhost")
     }
 
     /// Returns the canonical identifier for the application.

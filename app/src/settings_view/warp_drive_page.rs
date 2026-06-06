@@ -249,7 +249,7 @@ impl SettingsWidget for WarpDriveToggleWidget {
             Some(AdditionalInfo {
                 mouse_state: self.info_icon_mouse_state.clone(),
                 on_click_action: Some(WarpDriveSettingsPageAction::OpenUrl(
-                    "https://docs.warp.dev/knowledge-and-collaboration/warp-drive".to_string(),
+                    "http://localhost:8080/docs/knowledge-and-collaboration/warp-drive".to_string(),
                 )),
                 secondary_text: None,
                 tooltip_override_text: None,

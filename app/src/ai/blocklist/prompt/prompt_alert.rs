@@ -332,7 +332,7 @@ impl PromptAlertView {
                     } else {
                         text_fragments.push(FormattedTextFragment::hyperlink(
                             CONTACT_SUPPORT_TEXT,
-                            "mailto:support@warp.dev".to_owned(),
+                            "mailto:support@localhost".to_owned(),
                         ));
                     }
                 } else {

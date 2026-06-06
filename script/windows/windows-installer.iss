@@ -3,7 +3,7 @@
 #include "environment.iss"
 
 #define MyAppPublisher "Denver Technologies, Inc."
-#define MyAppURL "https://www.warp.dev/"
+#define MyAppURL "https://www.localhost/"
 #ifndef MyAppName
   #define MyAppName "WarpDev"
 #endif

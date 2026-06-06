@@ -1,6 +1,6 @@
 [package]
 name = "input_classifier"
-authors = ["Warp Team <dev@warp.dev>"]
+authors = ["Octomus Contributors <dev@octomus.dev>"]
 edition = "2024"
 publish.workspace = true
 license.workspace = true

@@ -157,8 +157,8 @@ const GIT_OPERATIONS_AUTOGEN_DESCRIPTION: &str =
     "Let AI generate commit messages and pull request titles and descriptions.";
 const WISPR_FLOW_URL: &str = "https://wisprflow.ai/";
 const CUSTOM_INFERENCE_LEARN_MORE_URL: &str =
-    "https://docs.warp.dev/support-and-community/plans-and-billing/bring-your-own-api-key/";
-const CUSTOM_INFERENCE_TERMS_URL: &str = "https://www.warp.dev/legal/terms-of-service";
+    "http://localhost:8080/docs/support-and-community/plans-and-billing/bring-your-own-api-key/";
+const CUSTOM_INFERENCE_TERMS_URL: &str = "http://localhost:8080/legal/terms-of-service";
 const CUSTOM_INFERENCE_INFO_TOOLTIP_MAX_WIDTH: f32 = 320.;
 
 pub fn init_actions_from_parent_view<T: Action + Clone>(
@@ -4244,7 +4244,7 @@ impl SettingsWidget for UsageWidget {
                 }
             } else {
                 vec![
-                    FormattedTextFragment::hyperlink("Contact support", "mailto:support@warp.dev"),
+                    FormattedTextFragment::hyperlink("Contact support", "mailto:support@localhost"),
                     FormattedTextFragment::plain_text(" for more AI usage."),
                 ]
             }
@@ -5337,7 +5337,7 @@ impl AgentsWidget {
             ),
             FormattedTextFragment::hyperlink(
                 "Learn more",
-                "https://docs.warp.dev/agent-platform/capabilities/codebase-context",
+                "http://localhost:8080/docs/agent-platform/capabilities/codebase-context",
             ),
         ];
         let description = Container::new(
@@ -5415,7 +5415,7 @@ impl AgentsWidget {
                 FormattedTextFragment::plain_text(" or "),
                 FormattedTextFragment::hyperlink(
                     "learn more about MCPs.",
-                    "https://docs.warp.dev/agent-platform/capabilities/mcp",
+                    "http://localhost:8080/docs/agent-platform/capabilities/mcp",
                 ),
             ];
 
@@ -5902,7 +5902,7 @@ impl SettingsWidget for MCPServersWidget {
             ),
             FormattedTextFragment::hyperlink(
                 "Learn more",
-                "https://docs.warp.dev/agent-platform/capabilities/mcp",
+                "http://localhost:8080/docs/agent-platform/capabilities/mcp",
             ),
         ];
 
@@ -5948,7 +5948,7 @@ impl SettingsWidget for MCPServersWidget {
                                 ),
                                 FormattedTextFragment::hyperlink(
                                     "See supported providers.",
-                                    "https://docs.warp.dev/agent-platform/capabilities/mcp#file-based-mcp-servers",
+                                    "http://localhost:8080/docs/agent-platform/capabilities/mcp#file-based-mcp-servers",
                                 ),
                             ]
                         });
@@ -6033,7 +6033,7 @@ impl AIFactWidget {
             ),
             FormattedTextFragment::hyperlink(
                 "Learn more",
-                "https://docs.warp.dev/agent-platform/capabilities/rules",
+                "http://localhost:8080/docs/agent-platform/capabilities/rules",
             ),
         ];
         let description = Container::new(
@@ -7608,7 +7608,7 @@ impl SettingsWidget for ApiKeysWidget {
             {
                 if team.billing_metadata.customer_type == CustomerType::Enterprise {
                     vec![
-                        FormattedTextFragment::hyperlink("Contact sales", "mailto:sales@warp.dev"),
+                        FormattedTextFragment::hyperlink("Contact sales", "mailto:sales@localhost"),
                         FormattedTextFragment::plain_text(
                             " to enable bringing your own API keys on your Enterprise plan.",
                         ),

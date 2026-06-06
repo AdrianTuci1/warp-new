@@ -63,19 +63,19 @@ pub fn sections(ctx: &mut ViewContext<ResourceCenterMainView>) -> Vec<Section> {
             ContentItem {
                 title: "Use your custom prompt",
                 description: "Set up Octomus to honor your PS1 setting",
-                url: "https://docs.warp.dev/terminal/appearance/prompt",
+                url: "http://localhost:8080/docs/terminal/appearance/prompt",
                 button_label: "View documentation",
             },
             ContentItem {
                 title: "Integrate Octomus with your IDE",
                 description: "Configure Octomus to launch from your most used development tools",
-                url: "https://docs.warp.dev/terminal/integrations-and-plugins",
+                url: "http://localhost:8080/docs/terminal/integrations-and-plugins",
                 button_label: "View documentation",
             },
             ContentItem {
                 title: "How Octomus uses Octomus",
                 description: "Learn how Octomus's engineering team uses their favorite features",
-                url: "https://www.warp.dev/blog/how-warp-uses-warp",
+                url: "http://localhost:8080/blog/how-warp-uses-warp",
                 button_label: "Read article",
             },
         ],

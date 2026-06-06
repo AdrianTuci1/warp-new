@@ -3,7 +3,7 @@
 Thanks for helping improve Warp! This guide explains how to open issues, propose changes, and get your work reviewed.
 
 > [!TIP]
-> **Chat with us in Slack.** Connect with other contributors and the Warp team in the [`#oss-contributors`](https://warpcommunity.slack.com/archives/C0B0LM8N4DB) channel — a good place for ad-hoc questions, design discussion, and pairing with maintainers as you work through an issue or PR. New here? [Join the Warp Slack community](https://go.warp.dev/join-preview) first, then hop into `#oss-contributors`.
+> **Chat with us in Slack.** Connect with other contributors and the Warp team in the [`#oss-contributors`](https://warpcommunity.slack.com/archives/C0B0LM8N4DB) channel — a good place for ad-hoc questions, design discussion, and pairing with maintainers as you work through an issue or PR. New here? [Join the Warp Slack community](https://go.localhost/join-preview) first, then hop into `#oss-contributors`.
 
 ## TL;DR
 
@@ -15,7 +15,7 @@ Thanks for helping improve Warp! This guide explains how to open issues, propose
 
 ## How Contributing to Warp Works
 
-Warp's contribution model is shaped by [Oz](https://oz.warp.dev), an agent that automates parts of triage, spec writing, implementation, and review. Compared with a typical open-source repository, a few things work differently here:
+Warp's contribution model is shaped by [Oz](https://oz.localhost), an agent that automates parts of triage, spec writing, implementation, and review. Compared with a typical open-source repository, a few things work differently here:
 
 - **Issues are the starting point for everything.** Discussion, scoping, and design happen on the issue before any PR is opened.
 - **Feature requests differ from bug fixes:**
@@ -146,7 +146,7 @@ While you can use coding agents for implementation, we expect contributors to **
 
 All pull requests go through a two-stage review process:
 
-1. **Oz review** — When you open a PR, [Oz](https://warp.dev/oz) is automatically assigned and produces the first review. Oz checks for correctness, style, test coverage, and alignment with the linked issue and any associated specs.
+1. **Oz review** — When you open a PR, [Oz](http://localhost:8080/oz) is automatically assigned and produces the first review. Oz checks for correctness, style, test coverage, and alignment with the linked issue and any associated specs.
 2. **Warp team review** — Only after Oz has **approved** the PR is it routed to a Warp team subject-matter expert for a final human review. PRs that have not yet been approved by Oz will not be assigned to a team member.
 
 You do not need to manually request reviewers at any stage. After pushing changes that address Oz's feedback, comment `/oz-review` on the PR to request a re-review — you can do this up to **three times** per PR. If something looks stuck or you need additional reviews, mention **@oss-maintainers** on the PR to escalate to the team.
@@ -190,7 +190,7 @@ Run unit tests with `cargo nextest run`.
 
 ## Code of Conduct
 
-This project adopts the [Contributor Covenant](https://www.contributor-covenant.org/) (v2.1) as its code of conduct. All contributors and maintainers are expected to follow it in every project space. See [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) for the full text, or report violations to warp-coc at warp.dev.
+This project adopts the [Contributor Covenant](https://www.contributor-covenant.org/) (v2.1) as its code of conduct. All contributors and maintainers are expected to follow it in every project space. See [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) for the full text, or report violations to warp-coc at localhost.
 
 ## Reporting Security Issues
 
@@ -198,6 +198,6 @@ See [`SECURITY.md`](SECURITY.md) for our security disclosure policy and private 
 
 ## Getting Help
 
-- Chat with other contributors and the Warp team in [`#oss-contributors`](https://warpcommunity.slack.com/archives/C0B0LM8N4DB) on the [Warp Slack community](https://go.warp.dev/join-preview) (join the workspace first if you're new).
-- Browse the [Warp docs](https://docs.warp.dev/).
+- Chat with other contributors and the Warp team in [`#oss-contributors`](https://warpcommunity.slack.com/archives/C0B0LM8N4DB) on the [Warp Slack community](https://go.localhost/join-preview) (join the workspace first if you're new).
+- Browse the [Warp docs](http://localhost:8080/docs/).
 - Open a [GitHub issue](https://github.com/warpdotdev/warp/issues) for bugs or feature requests.

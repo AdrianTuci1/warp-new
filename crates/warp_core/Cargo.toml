@@ -1,15 +1,15 @@
 [package]
 name = "warp_core"
 edition = "2021"
-authors = ["Warp Team <dev@warp.dev>"]
+authors = ["Octomus Contributors"]
 publish.workspace = true
 license.workspace = true
 
 [features]
-crash_reporting = ["dep:sentry", "dep:sentry-log"]
 integration_tests = []
 local_fs = []
 release_bundle = []
+crash_reporting = []
 test-util = ["dep:mockito", "warp_features/test-util"]
 
 [dependencies]
@@ -35,8 +35,6 @@ serde.workspace = true
 settings.workspace = true
 serde_json.workspace = true
 serde_with.workspace = true
-sentry = { workspace = true, optional = true }
-sentry-log = { workspace = true, optional = true }
 strum.workspace = true
 strum_macros.workspace = true
 sysinfo.workspace = true
