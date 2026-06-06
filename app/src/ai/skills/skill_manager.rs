@@ -68,7 +68,7 @@ pub struct SkillManager {
     /// Reverse lookup: skill name → set of paths with that name.
     /// This allows efficient lookup by skill name without scanning all paths.
     skills_by_name: HashMap<String, HashSet<LocalOrRemotePath>>,
-    /// Skills bundled into Warp, each with activation condition and icon.
+    /// Skills bundled into Octomus, each with activation condition and icon.
     bundled_skills: HashMap<String, BundledSkill>,
     /// When true, all skills in `directory_skills` are in scope regardless of
     /// the current working directory. Set by `AgentDriver` when a cloud
@@ -113,7 +113,7 @@ impl SkillManager {
         }
     }
 
-    /// Marks this manager as running in a cloud environment, enabling all
+    /// Marks this manager as running in a remote environment, enabling all
     /// directory skills to be in scope regardless of the current working directory.
     pub fn set_cloud_environment(&mut self, value: bool) {
         self.is_cloud_environment = value;
@@ -139,7 +139,7 @@ impl SkillManager {
         }
 
         if self.is_cloud_environment {
-            // In cloud environments, all skills are in scope regardless of cwd.
+            // In remote/multi-repo environments, all skills are in scope.
             for (dir, dir_skill_paths) in &self.directory_skills {
                 if is_home_directory(dir) {
                     continue;
@@ -448,7 +448,7 @@ impl SkillManager {
         }
     }
 
-    /// Load skill definitions bundled with Warp.
+    /// Load skill definitions bundled with Octomus.
     async fn load_bundled_skills() -> HashMap<String, BundledSkill> {
         let Some(resources_dir) = warp_core::paths::bundled_resources_dir() else {
             return HashMap::new();
@@ -573,9 +573,10 @@ async fn read_bundled_skills(skills_dir: &Path) -> HashMap<String, ParsedSkill> 
 /// Builds the context map for bundled skill variable substitution.
 ///
 /// Supported variables:
-/// - `{{warp_server_url}}` - The server root URL (e.g., `https://api.warp.dev`)
-/// - `{{warp_cli_binary_name}}` - The CLI binary name (e.g., `warp` or `warp-cli`)
-/// - `{{warp_url_scheme}}` - The URL scheme (e.g., `warp`, `warpdev`, `warppreview`)
+/// - `{{warp_server_url}}` - Local placeholder (Octomus has no cloud server)
+/// - `{{octomus_cli_binary_name}}` - The CLI binary name (e.g., `octomus`)
+/// - `{{warp_cli_binary_name}}` - Kept for backward compat with existing skills
+/// - `{{warp_url_scheme}}` - Empty for Octomus (no custom URL scheme)
 /// - `{{settings_schema_path}}` - Path to the bundled JSON settings schema
 /// - `{{settings_file_path}}` - Path to the user's settings TOML file
 /// - `{{keybindings_file_path}}` - Path to the user's keybindings YAML file
@@ -583,15 +584,22 @@ fn build_bundled_skill_context() -> HashMap<String, String> {
     let mut context: HashMap<String, String> = [
         (
             "warp_server_url".to_owned(),
-            ChannelState::server_root_url().into_owned(),
+            // Octomus: no cloud server — use localhost as placeholder
+            "http://localhost:0".to_owned(),
         ),
         (
+            "octomus_cli_binary_name".to_owned(),
+            ChannelState::channel().cli_command_name().to_owned(),
+        ),
+        (
+            // Keep for backward compat with skills that use {{warp_cli_binary_name}}
             "warp_cli_binary_name".to_owned(),
             ChannelState::channel().cli_command_name().to_owned(),
         ),
         (
+            // Octomus: no custom URL scheme
             "warp_url_scheme".to_owned(),
-            ChannelState::url_scheme().to_owned(),
+            String::new(),
         ),
         (
             "settings_file_path".to_owned(),

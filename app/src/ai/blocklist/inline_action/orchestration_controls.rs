@@ -258,7 +258,7 @@ impl OrchestrationEditState {
                 if self.harness_type.eq_ignore_ascii_case("opencode") =>
             {
                 Some(
-                    "OpenCode is not supported on Cloud yet. Switch to Local or pick a different harness.",
+                    "OpenCode is not supported on Remote yet. Switch to Local or pick a different harness.",
                 )
             }
             RunAgentsExecutionMode::Remote { .. } => None,
@@ -1832,7 +1832,7 @@ pub fn render_mode_toggle<A: OrchestrationControlAction>(
         active_segment_bg,
     );
     let cloud_segment = render_segment_button::<A>(
-        "Cloud",
+        "Remote",
         is_remote,
         A::execution_mode_toggled(true),
         handles.cloud_toggle.clone(),
@@ -2102,6 +2102,9 @@ pub fn render_validation_error(
     .finish()
 }
 
+/// Octomus: returns a guidance message when remote mode is selected but no
+/// cloud environment is configured. Since Oz cloud environments are not
+/// available, points the user to Settings → Remote Backend instead.
 pub fn empty_env_recommendation_message(
     execution_mode: &RunAgentsExecutionMode,
     app: &AppContext,
@@ -2122,8 +2125,8 @@ pub fn empty_env_recommendation_message(
     }
     let env_count = CloudAmbientAgentEnvironment::get_all(app).len();
     Some(if env_count > 0 {
-        "We recommend selecting an environment for cloud agents.".to_string()
+        "We recommend selecting an environment for remote agents.".to_string()
     } else {
-        "We recommend creating an environment for cloud agents.".to_string()
+        "No remote environments configured. Go to Settings → Remote Backend to set up SSH, Modal, or a custom endpoint.".to_string()
     })
 }
