@@ -1,6 +1,7 @@
 use warpui::AppContext;
 
 use crate::channel::ChannelState;
+use crate::server::ids::ServerId;
 
 /// Shared admin panel actions and utilities for settings views
 pub struct AdminActions;
@@ -19,12 +20,12 @@ impl AdminActions {
 
     /// Open the support email link
     pub fn contact_support(ctx: &mut AppContext) {
-        ctx.open_url("mailto:support@localhost");
+        ctx.open_url("mailto:support@localhost:8080");
     }
 
     /// Open the contact sales page
     pub fn contact_sales(ctx: &mut AppContext) {
-        ctx.open_url("http://localhost:8080/contact-sales");
+        ctx.open_url("https://localhost:8080/contact-sales");
     }
 }
 

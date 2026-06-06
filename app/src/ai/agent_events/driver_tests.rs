@@ -8,6 +8,7 @@ use futures::stream::{self, BoxStream};
 use futures::StreamExt;
 
 use super::*;
+use crate::server::server_api::ai::AgentRunEvent;
 
 const ZERO_BACKOFF_STEPS: &[u64] = &[0];
 
@@ -356,6 +357,7 @@ fn failure_threshold_is_reached_at_and_above_limit() {
 }
 
 fn make_http_status_error(status: u16) -> anyhow::Error {
+    use crate::server::server_api::presigned_upload::HttpStatusError;
     anyhow::Error::new(HttpStatusError {
         status,
         body: "not found".to_string(),

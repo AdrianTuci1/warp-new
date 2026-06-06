@@ -4,14 +4,17 @@ use futures_lite::future::yield_now;
 use warpui::{AppContext, SingletonEntity};
 
 use super::WorkflowSearchItem;
+use crate::cloud_object::model::persistence::CloudModel;
 use crate::search::async_snapshot_data_source::AsyncSnapshotDataSource;
 use crate::search::command_search::searcher::CommandSearchItemAction;
 use crate::search::data_source::{Query, QueryResult};
 use crate::search::mixer::{BoxFuture, DataSourceRunErrorWrapper};
 use crate::search::workflows::fuzzy_match::FuzzyMatchWorkflowResult;
 use crate::search::QueryFilter;
+use crate::server::ids::SyncId;
 use crate::settings::AISettings;
 use crate::workflows::{CloudWorkflowModel, WorkflowSource};
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 pub(crate) struct WorkflowMatchCandidate {
     pub id: SyncId,
@@ -26,7 +29,7 @@ pub(crate) struct CloudWorkflowsSnapshot {
     filter_to_command_workflows: bool,
 }
 
-/// Creates an async data source for cloud workflows (i.e. those that exist in Warp Drive).
+/// Creates an async data source for cloud workflows (i.e. those that exist in Octomus Drive).
 pub fn cloud_workflows_data_source(
 ) -> AsyncSnapshotDataSource<CloudWorkflowsSnapshot, CommandSearchItemAction> {
     AsyncSnapshotDataSource::new(

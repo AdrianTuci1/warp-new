@@ -16,8 +16,10 @@ use crate::ai::agent::{AIAgentActionType, StartAgentExecutionMode};
 use crate::ai::blocklist::action_model::{
     compose_run_agents_child_prompt, run_agents_to_start_agent_mode,
 };
+use crate::auth::UserUid;
 use crate::settings::AISettings;
 use crate::test_util::settings::initialize_settings_for_tests;
+use crate::workspaces::user_profiles::{UserProfileWithUID, UserProfiles};
 
 #[test]
 fn reasoning_auto_collapses_when_user_has_not_manually_toggled() {

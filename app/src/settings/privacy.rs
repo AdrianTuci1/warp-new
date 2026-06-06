@@ -13,9 +13,17 @@ use warpui::{AppContext, Entity, ModelContext, SingletonEntity, UpdateModel};
 
 use super::cloud_preferences_syncer::CloudPreferencesSyncer;
 use crate::ai::blocklist::telemetry_banner::should_collect_ai_ugc_telemetry;
+use crate::auth::auth_state::AuthState;
+use crate::auth::AuthStateProvider;
+use crate::cloud_object::model::persistence::CloudModel;
 use crate::report_error;
+use crate::server::cloud_objects::update_manager::UpdateManager;
 #[cfg(test)]
+use crate::server::server_api::auth::MockAuthClient;
+use crate::server::server_api::auth::{AuthClient, SyncedUserSettings};
+use crate::server::server_api::ServerApiProvider;
 use crate::terminal::safe_mode_settings::SafeModeSettings;
+use crate::workspaces::workspace::EnterpriseSecretRegex;
 
 pub trait RegexDisplayInfo {
     fn pattern(&self) -> &str;
@@ -748,7 +756,7 @@ impl PrivacySettings {
                 Some(is_cloud_conversation_storage_enabled),
             ) => {
                 log::info!(
-                    "Local Storage privacy preferences are set, using those for telemetry={is_telemetry_enabled}, \
+                    "Octomus Drive privacy preferences are set, using those for telemetry={is_telemetry_enabled}, \
                     crash_reporting={is_crash_reporting_enabled}, cloud_conversation_storage={is_cloud_conversation_storage_enabled}"
                 );
                 self.set_is_telemetry_enabled(is_telemetry_enabled, ctx);
@@ -760,7 +768,7 @@ impl PrivacySettings {
             }
             _ => {
                 log::info!(
-                    "Local Storage privacy preferences are not set, syncing local PrivacySettings values to \
+                    "Octomus Drive privacy preferences are not set, syncing local PrivacySettings values to \
                     WarpDrivePrivacySettings and cloud. telemetry={}, crash_reporting={}, \
                     cloud_conversation_storage={}",
                     self.is_telemetry_enabled,

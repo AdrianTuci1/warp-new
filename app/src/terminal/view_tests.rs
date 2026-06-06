@@ -35,12 +35,16 @@ use crate::ai::cloud_environments::{
     AmbientAgentEnvironment, CloudAmbientAgentEnvironment, CloudAmbientAgentEnvironmentModel,
 };
 use crate::ai::llms::LLMId;
+use crate::cloud_object::model::persistence::CloudModel;
+use crate::cloud_object::{CloudObjectMetadata, CloudObjectPermissions};
 use crate::context_chips::prompt::Prompt;
 use crate::editor::{AutosuggestionLocation, AutosuggestionType, CrdtOperation};
 use crate::features::FeatureFlag;
 use crate::pane_group::focus_state::PaneGroupFocusState;
 use crate::pane_group::pane::PaneStack;
 use crate::pane_group::{BackingView, TerminalPaneId};
+use crate::server::ids::{ClientId, SyncId};
+use crate::server::server_api::ai::SpawnAgentRequest;
 use crate::settings::import::model::ImportedConfigModel;
 use crate::settings::{AISettings, AppEditorSettings, WarpPromptSeparator};
 use crate::terminal::alt_screen::should_intercept_mouse;
@@ -4548,14 +4552,14 @@ fn test_link_at_range_trims_zero_width_spaces() {
         let terminal = add_window_with_terminal(&mut app, None);
 
         // NOTE: this has two zero-width spaces, one after the '(', and one before the ')'
-        let input_url = "(\u{200b}https://warp.dev\u{200b})";
+        let input_url = "(\u{200b}https://localhost:8080\u{200b})";
         // NOTE: the final character in this string is a zero-width space
-        let non_escaped_url = "https://warp.dev\u{200b}";
-        let escaped_url = "https://warp.dev";
+        let non_escaped_url = "https://localhost:8080\u{200b}";
+        let escaped_url = "https://localhost:8080";
 
         terminal.update(&mut app, |view, _ctx| {
             view.model.lock().simulate_block(
-                r"printf '(%bhttps://warp.dev%b)\n' '\U200b' '\U200b'",
+                r"printf '(%bhttps://localhost:8080%b)\n' '\U200b' '\U200b'",
                 input_url,
             );
         });

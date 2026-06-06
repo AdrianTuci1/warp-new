@@ -25,6 +25,9 @@ use crate::code::buffer_location::LocalOrRemotePath;
 use crate::code::file_tree::FileTreeEvent;
 use crate::code::file_tree::FileTreeView;
 use crate::coding_panel_enablement_state::CodingPanelEnablementState;
+use crate::drive::panel::{
+    DrivePanel, DrivePanelEvent, MAX_SIDEBAR_WIDTH_RATIO, MIN_SIDEBAR_WIDTH,
+};
 use crate::pane_group::pane::view::header::components::HEADER_EDGE_PADDING;
 use crate::pane_group::pane::view::header::PANE_HEADER_HEIGHT;
 use crate::pane_group::working_directories::WorkingDirectory;
@@ -32,6 +35,8 @@ use crate::pane_group::{
     PaneGroup, WorkingDirectoriesEvent, WorkingDirectoriesModel, {self},
 };
 #[cfg(feature = "local_fs")]
+use crate::server::telemetry::CodePanelsFileOpenEntrypoint;
+use crate::server::telemetry::{FileTreeSource, WarpDriveSource};
 use crate::settings_view::keybindings::{KeybindingChangedEvent, KeybindingChangedNotifier};
 use crate::terminal::resizable_data::{ModalType, ResizableData};
 use crate::ui_components::buttons::{icon_button, icon_button_with_color};
@@ -431,7 +436,7 @@ impl LeftPanelView {
                 ToolbeltButtonConfig {
                     icon: Icon::WarpDrive,
                     active_icon: None,
-                    tooltip_text: "Local Storage".to_string(),
+                    tooltip_text: "Octomus Drive".to_string(),
                     action: LeftPanelAction::WarpDrive,
                     render_with_active_state: false,
                     tooltip_keybinding: toolbelt_tooltip_keybinding(&tooltip_keybinding_names, ctx),

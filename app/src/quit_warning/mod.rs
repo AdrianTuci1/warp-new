@@ -7,6 +7,7 @@ use warpui::{AppContext, EntityId, SingletonEntity, ViewContext, WeakViewHandle,
 
 use crate::code::editor_management::{CodeEditorStatus, CodeEditorSummary};
 use crate::pane_group::{CodePane, PaneGroup, PaneId, TerminalPane};
+use crate::server::telemetry::CloseTarget;
 use crate::session_management::{RunningSessionSummary, SessionNavigationData};
 use crate::terminal::general_settings::GeneralSettings;
 use crate::workspace::Workspace;
@@ -430,7 +431,7 @@ impl<'a> QuitWarningDialog<'a> {
             QuitScope::Tabs(tabs) if tabs.len() == 1 => "Close tab?",
             QuitScope::Tabs(_) => "Close tabs?",
             QuitScope::Window(_) => "Close window?",
-            QuitScope::App => "Quit Octomus?",
+            QuitScope::App => "Quit Warp?",
             QuitScope::EditorTab { .. } => "Save changes?",
         };
 

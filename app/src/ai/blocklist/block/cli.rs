@@ -75,6 +75,7 @@ use crate::code::editor::view::{CodeEditorEvent, CodeEditorRenderOptions, CodeEd
 use crate::code::editor_management::CodeSource;
 use crate::editor::InteractionState;
 use crate::menu::{Event as MenuEvent, Menu, MenuItemFields, MenuVariant};
+use crate::server::telemetry::TelemetryEvent;
 use crate::settings::AISettings;
 use crate::settings_view::SettingsSection;
 use crate::terminal::input::SET_INPUT_MODE_TERMINAL_ACTION_NAME;
@@ -1501,7 +1502,7 @@ impl TypedActionView for CLISubagentView {
                     .write(ClipboardContent::plain_text(debug_id.clone()));
             }
             CLISubagentAction::OpenFeedbackDocs => {
-                ctx.open_url("http://localhost:8080/docs/support-and-billing/sending-us-feedback");
+                ctx.open_url("https://docs.localhost:8080/support-and-billing/sending-us-feedback");
             }
         }
     }

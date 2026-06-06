@@ -33,11 +33,14 @@ use crate::ai::agent_conversations_model::{
 use crate::ai::agent_management::telemetry::{AgentManagementTelemetryEvent, OpenedFrom};
 use crate::ai::blocklist::history_model::BlocklistAIHistoryModel;
 use crate::appearance::Appearance;
+use crate::drive::sharing::dialog::SharingDialog;
+use crate::drive::sharing::ShareableObject;
 use crate::editor::{
     EditorView, Event as EditorEvent, PropagateAndNoOpNavigationKeys,
     PropagateHorizontalNavigationKeys, SingleLineEditorOptions, TextOptions,
 };
 use crate::menu::{Event as MenuEvent, Menu, MenuItem, MenuItemFields};
+use crate::server::telemetry::SharingDialogSource;
 use crate::view_components::action_button::{ActionButton, ButtonSize, SecondaryTheme};
 use crate::view_components::DismissibleToast;
 use crate::workspace::global_actions::ForkedConversationDestination;

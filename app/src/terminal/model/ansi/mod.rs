@@ -1144,7 +1144,7 @@ where
                 }
             }
 
-            // Received a Octomus OSC used for in-band generators.
+            // Received a Warp OSC used for in-band generators.
             WARP_IN_BAND_GENERATOR_OSC_MARKER => match params.get(1) {
                 Some(&WARP_IN_BAND_GENERATOR_START_BYTE) => {
                     log::info!("Received a Warp OSC marker for starting in-band command output.");
@@ -1158,7 +1158,7 @@ where
                 }
             },
 
-            // Received a Octomus OSC used for shell hooks.
+            // Received a Warp OSC used for shell hooks.
             WARP_OSC_MARKER => {
                 let Some(json_marker_char) = params
                     .get(1)
@@ -1214,7 +1214,7 @@ where
                 self.handler.on_reset_grid();
             }
 
-            // Received a Octomus OSC used for completions.
+            // Received a Warp OSC used for completions.
             WARP_COMPLETIONS_OSC_MARKER => match params.get(1) {
                 Some(&WARP_COMPLETIONS_START_BYTE) => {
                     let Some(format) = params

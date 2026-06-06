@@ -27,9 +27,11 @@ use warpui::platform::OperatingSystem;
 use warpui::{AppContext, Entity, ModelContext, SingletonEntity, UpdateModel};
 
 use crate::ai::request_usage_model::RequestLimitInfo;
+use crate::auth::AuthStateProvider;
 use crate::report_if_error;
 use crate::settings::PrivacySettings;
 use crate::terminal::CLIAgent;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 pub enum FocusedTerminalInfoEvent {
     TerminalInfoUpdated,
@@ -1009,7 +1011,7 @@ define_settings_group!(AISettings, settings: [
         sync_to_cloud: SyncToCloud::Globally(RespectUserSyncSetting::Yes),
         private: false,
         toml_path: "agents.knowledge.warp_drive_context_enabled",
-        description: "Whether Warp Drive context is included in AI requests.",
+        description: "Whether Octomus Drive context is included in AI requests.",
     }
 
     // Whether the codebase speedbump banner has been permanently dismissed for a given repo path.
@@ -1134,6 +1136,18 @@ define_settings_group!(AISettings, settings: [
         private: false,
         toml_path: "agents.warp_agent.other.should_show_oz_updates_in_zero_state",
         description: "Whether the \"What's new\" section is shown in the agent view.",
+    }
+
+    // Whether or not the user has enabled fallback to Warp credits for user-provided models.
+    can_use_warp_credits_for_fallback: CanUseWarpCreditsForFallback {
+        type: bool,
+        default: false,
+        supported_platforms: SupportedPlatforms::ALL,
+        sync_to_cloud: SyncToCloud::Globally(RespectUserSyncSetting::Yes),
+        private: false,
+        storage_key: "CanUseWarpCreditsWithByok",
+        toml_path: "cloud_platform.third_party_api_keys.can_use_warp_credits_with_byok",
+        description: "Whether Warp credits can be used as a fallback for user-provided models.",
     }
 
     should_render_use_agent_footer_for_user_commands: ShouldRenderUseAgentToolbarForUserCommands {
@@ -1600,7 +1614,10 @@ impl AISettings {
         if !privacy.is_cloud_conversation_storage_enabled {
             return false;
         }
-        true
+        !matches!(
+            UserWorkspaces::as_ref(app).get_cloud_conversation_storage_enablement_setting(),
+            crate::workspaces::workspace::AdminEnablementSetting::Disable
+        )
     }
     pub fn is_ampersand_handoff_enabled(&self, app: &warpui::AppContext) -> bool {
         self.is_cloud_handoff_enabled(app) && !*self.should_force_disable_ampersand_handoff

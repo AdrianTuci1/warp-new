@@ -8,6 +8,7 @@ use session_sharing_protocol::common::{
 use warp_core::command::ExitCode;
 use warpui::App;
 
+use crate::auth::UserUid;
 use crate::terminal::model::ansi::{CommandFinishedValue, Handler};
 use crate::terminal::model::blocks::BlockList;
 use crate::terminal::model::test_utils::TestBlockListBuilder;

@@ -39,12 +39,12 @@ pub fn render_inline_ssh_wrapper_banner(
     let (style, title) = if state.wrapper_enabled {
         (
             InlineBannerStyle::LowPriority,
-            "Octomus SSH wrapper enabled".to_string(),
+            "Warp SSH wrapper enabled".to_string(),
         )
     } else {
         (
             InlineBannerStyle::VeryLowPriority,
-            "Octomus SSH wrapper disabled".to_string(),
+            "Warp SSH wrapper disabled".to_string(),
         )
     };
     let buttons = vec![

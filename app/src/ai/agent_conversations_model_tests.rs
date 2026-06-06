@@ -35,6 +35,10 @@ use crate::ai::blocklist::history_model::{
     BlocklistAIHistoryEvent, BlocklistAIHistoryModel, ConversationStatusUpdate,
 };
 use crate::ai::conversation_navigation::ConversationNavigationData;
+use crate::auth::AuthStateProvider;
+use crate::cloud_object::{Owner, Revision, ServerMetadata, ServerPermissions};
+use crate::server::ids::ServerId;
+use crate::server::server_api::presigned_upload::HttpStatusError;
 use crate::test_util::ai_agent_tasks::{create_api_task, create_message};
 use crate::workspace::WorkspaceAction;
 
@@ -2083,13 +2087,13 @@ fn test_harness_filter_matches_only_selected_harness() {
             assert_eq!(
                 oz_items.len(),
                 2,
-                "expected 2 Octomus Agent matches, got {oz_items:?}"
+                "expected 2 Warp Agent matches, got {oz_items:?}"
             );
             assert!(oz_items.contains(&format!("task:{}", task_oz_default.task_id)));
             assert!(oz_items.contains(&format!("conversation:{conv_id}")));
             assert!(
                 !oz_items.contains(&format!("task:{}", task_no_snapshot.task_id)),
-                "stub task with no snapshot should not match the Octomus Agent filter"
+                "stub task with no snapshot should not match the Warp Agent filter"
             );
         });
     });

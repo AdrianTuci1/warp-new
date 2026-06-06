@@ -8,8 +8,13 @@ mod antivirus;
 mod app_menus;
 mod app_services;
 mod app_state;
+mod auth;
+mod autoupdate;
 mod banner;
+mod billing;
+mod changelog_model;
 mod chip_configurator;
+mod cloud_object;
 mod code;
 mod code_review;
 mod coding_entrypoints;
@@ -20,9 +25,15 @@ mod completer;
 mod context_chips;
 #[cfg(enable_crash_recovery)]
 mod crash_recovery;
+#[cfg(feature = "crash_reporting")]
+mod crash_reporting;
 mod debug_dump;
 mod default_terminal;
 mod download_method;
+mod drive;
+#[cfg(windows)]
+mod dynamic_libraries;
+mod env_vars;
 mod experiments;
 mod external_secrets;
 #[cfg(target_family = "wasm")]
@@ -37,6 +48,7 @@ mod login_item;
 mod menu;
 mod modal;
 mod network;
+mod notebooks;
 mod notification;
 mod palette;
 mod persistence;
@@ -46,13 +58,19 @@ mod plugin;
 mod prefix;
 #[cfg(target_os = "macos")]
 mod preview_config_migration;
+mod pricing;
 mod profiling;
 mod projects;
 mod prompt;
 mod quit_warning;
+mod referral_theme_status;
+#[allow(dead_code)]
+mod remote_server;
 mod resource_limits;
+mod reward_view;
 mod safe_triangle;
 mod search_bar;
+mod server;
 mod session_management;
 mod shell_indicator;
 mod suggestions;
@@ -77,16 +95,6 @@ mod warp_managed_paths_watcher;
 mod wasm_nux_dialog;
 mod window_settings;
 mod word_block_editor;
-
-// Stub modules for cloud functionality removed in Octomus
-mod auth;
-mod billing;
-mod cloud_object;
-mod drive;
-mod notebooks;
-mod pricing;
-mod remote_server;
-mod server;
 mod workspaces;
 
 // PLEASE DO NOT ADD MORE PUBLIC MODULES!
@@ -241,15 +249,24 @@ use crate::antivirus::AntivirusInfo;
 use crate::app_state::AppState;
 use crate::autoupdate::{AutoupdateState, RelaunchModel};
 use crate::changelog_model::ChangelogModel;
+use crate::cloud_object::model::actions::{ObjectAction, ObjectActions};
+use crate::cloud_object::model::persistence::CloudModel;
+use crate::cloud_object::model::view::CloudViewModel;
 use crate::code::global_buffer_model::GlobalBufferModel;
 #[cfg(feature = "local_fs")]
 use crate::code::language_server_shutdown_manager::LanguageServerShutdownManager;
 use crate::context_chips::prompt::Prompt;
 use crate::default_terminal::DefaultTerminal;
+use crate::drive::export::ExportManager;
+use crate::drive::CloudObjectTypeAndId;
+use crate::env_vars::manager::EnvVarCollectionManager;
 use crate::experiments::ImprovedPaletteSearch;
 pub use crate::global_resource_handles::{GlobalResourceHandles, GlobalResourceHandlesProvider};
 use crate::gpu_state::GPUState;
 use crate::network::NetworkStatus;
+use crate::notebooks::editor::keys::NotebookKeybindings;
+use crate::notebooks::manager::NotebookManager;
+use crate::notebooks::CloudNotebook;
 use crate::notification::NotificationContext;
 use crate::palette::PaletteMode;
 use crate::persistence::model::AgentConversationData;
@@ -258,9 +275,17 @@ use crate::projects::ProjectManagementModel;
 use crate::root_view::{
     quake_mode_window_id, quake_mode_window_is_open, OpenFromRestoredArg, OpenPath,
 };
+use crate::server::cloud_objects::listener::Listener;
+use crate::server::cloud_objects::update_manager::UpdateManager;
+use crate::server::experiments::ServerExperiments;
+use crate::server::iap::IapManager;
+use crate::server::sync_queue::{QueueItem, SyncQueue};
+pub use crate::server::telemetry::{
     AgentModeEntrypoint, AgentModeEntrypointSelectionType, TelemetryEvent,
 };
+use crate::server::telemetry::{AppStartupInfo, CloseTarget, PaletteSource, TelemetryCollector};
 use crate::session_management::{RunningSessionSummary, SessionNavigationData};
+use crate::settings::cloud_preferences_syncer::initialize_cloud_preferences_syncer;
 use crate::settings::manager::SettingsManager;
 use crate::settings::{AISettings, AccessibilitySettings, ScrollSettings, SelectionSettings};
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
@@ -282,6 +307,10 @@ use crate::workflows::local_workflows::LocalWorkflows;
 use crate::workspace::{
     ActiveSession, OneTimeModalModel, PaneViewLocator, ToastStack, Workspace, WorkspaceAction,
 };
+use crate::workspaces::team_tester::TeamTesterStatus;
+use crate::workspaces::update_manager::TeamUpdateManager;
+use crate::workspaces::user_profiles::UserProfiles;
+use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
 
 /// Our embedded application assets.
 pub static ASSETS: warp_assets::Assets = warp_assets::Assets;

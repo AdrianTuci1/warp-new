@@ -402,7 +402,7 @@ fn enabled_features() -> HashSet<FeatureFlag> {
         #[cfg(feature = "oz_launch_modal")]
         FeatureFlag::OzLaunchModal,
         #[cfg(feature = "open_warp_launch_modal")]
-        FeatureFlag::OpenWarpLaunchModal,
+        FeatureFlag::OpenOctomusLaunchModal,
         #[cfg(feature = "orchestration_launch_modal")]
         FeatureFlag::OrchestrationLaunchModal,
         #[cfg(feature = "new_tab_styling")]
@@ -438,7 +438,7 @@ fn enabled_features() -> HashSet<FeatureFlag> {
         #[cfg(feature = "directory_tab_colors")]
         FeatureFlag::DirectoryTabColors,
         #[cfg(feature = "open_warp_new_settings_modes")]
-        FeatureFlag::OpenWarpNewSettingsModes,
+        FeatureFlag::OpenOctomusNewSettingsModes,
         #[cfg(feature = "hoa_code_review")]
         FeatureFlag::HoaCodeReview,
         #[cfg(feature = "vertical_tabs")]

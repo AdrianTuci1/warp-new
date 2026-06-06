@@ -21,7 +21,7 @@ impl ScratchSubkey {
                 .as_nanos(),
             name,
         );
-        let path = format!(r"Software\Octomus\LoginItemTests\{suffix}");
+        let path = format!(r"Software\Warp\LoginItemTests\{suffix}");
         RegKey::predef(HKEY_CURRENT_USER)
             .create_subkey(&path)
             .expect("create scratch subkey");
@@ -45,10 +45,10 @@ impl Drop for ScratchSubkey {
 #[test]
 fn register_writes_quoted_path() {
     let scratch = ScratchSubkey::new("register_writes_quoted_path");
-    let exe = PathBuf::from(r"C:\Program Files\Octomus\warp.exe");
-    register_in(HKEY_CURRENT_USER, &scratch.path, "Octomus", &exe).unwrap();
+    let exe = PathBuf::from(r"C:\Program Files\Warp\warp.exe");
+    register_in(HKEY_CURRENT_USER, &scratch.path, "Warp", &exe).unwrap();
     assert_eq!(
-        scratch.read("Octomus").as_deref(),
+        scratch.read("Warp").as_deref(),
         Some(r#""C:\Program Files\Warp\warp.exe""#)
     );
 }
@@ -59,19 +59,19 @@ fn register_overwrites_previous_path() {
     register_in(
         HKEY_CURRENT_USER,
         &scratch.path,
-        "Octomus",
+        "Warp",
         &PathBuf::from(r"C:\old\warp.exe"),
     )
     .unwrap();
     register_in(
         HKEY_CURRENT_USER,
         &scratch.path,
-        "Octomus",
+        "Warp",
         &PathBuf::from(r"C:\new\warp.exe"),
     )
     .unwrap();
     assert_eq!(
-        scratch.read("Octomus").as_deref(),
+        scratch.read("Warp").as_deref(),
         Some(r#""C:\new\warp.exe""#)
     );
 }
@@ -80,18 +80,18 @@ fn register_overwrites_previous_path() {
 fn unregister_is_idempotent() {
     let scratch = ScratchSubkey::new("unregister_is_idempotent");
     // Never registered: unregister should be Ok.
-    unregister_in(HKEY_CURRENT_USER, &scratch.path, "Octomus").unwrap();
+    unregister_in(HKEY_CURRENT_USER, &scratch.path, "Warp").unwrap();
     // Register, then unregister twice.
     register_in(
         HKEY_CURRENT_USER,
         &scratch.path,
-        "Octomus",
+        "Warp",
         &PathBuf::from(r"C:\warp.exe"),
     )
     .unwrap();
-    unregister_in(HKEY_CURRENT_USER, &scratch.path, "Octomus").unwrap();
-    unregister_in(HKEY_CURRENT_USER, &scratch.path, "Octomus").unwrap();
-    assert!(scratch.read("Octomus").is_none());
+    unregister_in(HKEY_CURRENT_USER, &scratch.path, "Warp").unwrap();
+    unregister_in(HKEY_CURRENT_USER, &scratch.path, "Warp").unwrap();
+    assert!(scratch.read("Warp").is_none());
 }
 
 #[test]
@@ -100,7 +100,7 @@ fn unregister_leaves_other_values_alone() {
     register_in(
         HKEY_CURRENT_USER,
         &scratch.path,
-        "Octomus",
+        "Warp",
         &PathBuf::from(r"C:\warp.exe"),
     )
     .unwrap();
@@ -112,9 +112,9 @@ fn unregister_leaves_other_values_alone() {
     )
     .unwrap();
 
-    unregister_in(HKEY_CURRENT_USER, &scratch.path, "Octomus").unwrap();
+    unregister_in(HKEY_CURRENT_USER, &scratch.path, "Warp").unwrap();
 
-    assert!(scratch.read("Octomus").is_none());
+    assert!(scratch.read("Warp").is_none());
     assert_eq!(
         scratch.read("WarpPreview").as_deref(),
         Some(r#""C:\warp-preview.exe""#)
@@ -125,8 +125,8 @@ fn unregister_leaves_other_values_alone() {
 fn unregister_missing_subkey_is_ok() {
     unregister_in(
         HKEY_CURRENT_USER,
-        r"Software\Octomus\LoginItemTests\does-not-exist",
-        "Octomus",
+        r"Software\Warp\LoginItemTests\does-not-exist",
+        "Warp",
     )
     .unwrap();
 }

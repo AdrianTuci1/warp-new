@@ -139,6 +139,23 @@ pub fn get_ai_block_overflow_menu_element_position_id(view_id: EntityId) -> Stri
     format!("aiblock:{view_id}.overflow_menu_position")
 }
 
+/// Formats credit count to display as whole numbers when the value is effectively a whole number,
+/// otherwise displays with one decimal place.
+/// Returns a formatted string with proper pluralization ("credit" vs "credits").
+pub fn format_credits(credits: f32) -> String {
+    // If the first part of the decimal is 0, we just display the whole number.
+    if credits.fract() < 0.1 {
+        let whole = credits.trunc() as i32;
+        if whole == 1 {
+            format!("{whole} credit")
+        } else {
+            format!("{whole} credits")
+        }
+    } else {
+        format!("{credits:.1} credits")
+    }
+}
+
 /// Renders a secondary button with an MCP/skill provider icon and a text label.
 pub(crate) fn render_provider_icon_button<F>(
     button_label: &str,

@@ -9,6 +9,8 @@ use warpui::{App, AppContext, Element};
 
 use super::*;
 use crate::appearance::Appearance;
+use crate::auth::auth_manager::AuthManager;
+use crate::auth::AuthStateProvider;
 use crate::search::command_search::history::history_data_source;
 use crate::search::command_search::searcher::CommandSearchMixer;
 use crate::search::data_source::{Query, QueryResult};
@@ -18,6 +20,8 @@ use crate::search::mixer::{
 };
 use crate::search::result_renderer::ItemHighlightState;
 use crate::search::{QueryFilter, SyncDataSource};
+use crate::server::server_api::ServerApiProvider;
+use crate::server::telemetry::context_provider::AppTelemetryContextProvider;
 use crate::terminal::HistoryEntry;
 
 #[derive(Clone, Debug)]

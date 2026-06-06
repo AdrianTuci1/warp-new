@@ -23,7 +23,7 @@ use crate::workflows::workflow::Workflow;
 
 lazy_static! {
     pub static ref LAUNCH_CONFIG_COMMENT: String = format!(
-        "# Octomus Launch Configuration
+        "# Warp Launch Configuration
 #
 #
 # Use this to start a certain configuration of windows, tabs, and panes.
@@ -31,7 +31,7 @@ lazy_static! {
 #
 # This file defines your launch configuration.
 # More on how to do so here:
-# http://localhost:8080/docs/terminal/sessions/launch-configurations
+# https://docs.localhost:8080/terminal/sessions/launch-configurations
 #
 # All launch configurations are stored under {}.
 # Edit them anytime!

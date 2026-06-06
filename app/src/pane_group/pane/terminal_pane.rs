@@ -46,7 +46,9 @@ use crate::pane_group::CodeSource;
 use crate::pane_group::Event::OpenConversationHistory;
 use crate::pane_group::{self, Direction, PaneGroup};
 use crate::persistence::{BlockCompleted, ModelEvent};
+use crate::server::server_api::ai::{SpawnAgentRequest, UserQueryMode};
 #[cfg(not(target_family = "wasm"))]
+use crate::server::server_api::ServerApiProvider;
 use crate::session_management::SessionNavigationData;
 use crate::terminal::cli_agent_sessions::CLIAgentSessionsModel;
 use crate::terminal::general_settings::GeneralSettings;
@@ -1256,8 +1258,8 @@ fn handle_terminal_view_event(
             Event::RoleRequestCancelled(role_request_id) => {
                 group.remove_shared_session_role_request(role_request_id.clone(), ctx);
             }
-            Event::OpenWarpDriveObjectInPane(uid) => {
-                ctx.emit(pane_group::Event::OpenWarpDriveObjectInPane(uid.clone()));
+            Event::OpenOctomusDriveObjectInPane(uid) => {
+                ctx.emit(pane_group::Event::OpenOctomusDriveObjectInPane(uid.clone()));
             }
             Event::OpenSuggestedAgentModeWorkflowModal { workflow_and_id } => {
                 ctx.emit(pane_group::Event::OpenSuggestedAgentModeWorkflowModal {

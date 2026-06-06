@@ -92,7 +92,7 @@ pub fn parse_event(title: Option<&str>, body: &str) -> Option<CLIAgentEvent> {
         None => {
             log::error!(
                 "Received CLI agent event with unsupported schema version \
-                 {version}. The CLI agent plugin or Octomus may need to be updated."
+                 {version}. The CLI agent plugin or Warp may need to be updated."
             );
             None
         }

@@ -146,11 +146,11 @@ impl CliAgentPluginManager for ClaudeCodePluginManager {
     }
 
     fn install_success_message(&self) -> &'static str {
-        "Octomus plugin installed. Please run /reload-plugins to activate."
+        "Warp plugin installed. Please run /reload-plugins to activate."
     }
 
     fn update_success_message(&self) -> &'static str {
-        "Octomus plugin updated. Please run /reload-plugins to activate."
+        "Warp plugin updated. Please run /reload-plugins to activate."
     }
 
     fn install_instructions(&self) -> &'static PluginInstructions {
@@ -228,17 +228,17 @@ impl CliAgentPluginManager for ClaudeCodePluginManager {
 
 static INSTALL_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| {
     PluginInstructions {
-        title: "Install Octomus Plugin for Claude Code",
+        title: "Install Warp Plugin for Claude Code",
         subtitle: "Ensure that jq is installed on your machine. Then, run these commands.",
         steps: &[
             PluginInstructionStep {
-                description: "Add the Octomus plugin marketplace repository",
+                description: "Add the Warp plugin marketplace repository",
                 command: "claude plugin marketplace add warpdotdev/claude-code-warp",
                 executable: true,
                 link: None,
             },
             PluginInstructionStep {
-                description: "Install the Octomus plugin",
+                description: "Install the Warp plugin",
                 command: "claude plugin install warp@claude-code-warp",
                 executable: true,
                 link: None,
@@ -253,7 +253,7 @@ static INSTALL_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| {
 });
 
 static UPDATE_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| PluginInstructions {
-    title: "Update Octomus Plugin for Claude Code",
+    title: "Update Warp Plugin for Claude Code",
     subtitle: "Run the following commands.",
     steps: &[
         PluginInstructionStep {

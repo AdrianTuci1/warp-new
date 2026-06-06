@@ -11,10 +11,15 @@ use warp_managed_secrets::{ManagedSecretManager, ManagedSecretValue};
 use warpui::{Entity, ModelContext, RequestState, SingletonEntity};
 
 use crate::ai::harness_display;
+use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};
+use crate::auth::AuthStateProvider;
 use crate::network::{NetworkStatus, NetworkStatusEvent, NetworkStatusKind};
 use crate::report_error;
+use crate::server::retry_strategies::{
     is_transient_graphql_or_http_error, OUT_OF_BAND_REQUEST_RETRY_STRATEGY,
 };
+use crate::server::server_api::ServerApiProvider;
+use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
 
 const CACHE_KEY: &str = "AvailableHarnesses";
 const AUTH_SECRET_FETCH_FAILURE_COOLDOWN: Duration = Duration::from_secs(60);
@@ -42,7 +47,7 @@ pub struct HarnessAvailability {
 fn default_harnesses() -> Vec<HarnessAvailability> {
     vec![HarnessAvailability {
         harness: Harness::Oz,
-        display_name: "Octomus".to_string(),
+        display_name: "Warp".to_string(),
         enabled: true,
         available_models: vec![],
     }]

@@ -16,6 +16,7 @@ use warpui::{SingletonEntity, View, ViewContext};
 
 use super::AmbientAgentTaskId;
 use crate::ai::artifacts::{deserialize_artifacts, Artifact};
+use crate::server::server_api::ServerApiProvider;
 use crate::ui_components::icons::Icon;
 use crate::view_components::DismissibleToast;
 use crate::workspace::ToastStack;
@@ -73,7 +74,7 @@ impl AgentSource {
             AgentSource::Slack => "Slack",
             AgentSource::Cli => "CLI",
             AgentSource::ScheduledAgent => "Scheduled",
-            AgentSource::Interactive | AgentSource::CloudMode => "Octomus App",
+            AgentSource::Interactive | AgentSource::CloudMode => "Warp App",
             AgentSource::WebApp => "Oz Web",
             AgentSource::GitHubAction => "GitHub Action",
         }

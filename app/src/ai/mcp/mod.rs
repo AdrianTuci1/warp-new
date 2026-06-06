@@ -9,11 +9,19 @@ use strum_macros::EnumIter;
 use warp_core::ui::appearance::Appearance;
 use warp_core::ui::Icon;
 
+use crate::cloud_object::model::generic_string_model::StringModel;
+use crate::cloud_object::model::json_model::JsonModel;
+use crate::cloud_object::{
     CloudObjectUuid, GenericStringObjectFormat, GenericStringObjectUniqueKey, JsonObjectType,
     Revision,
 };
+use crate::drive::items::mcp_server::WarpDriveMCPServer;
+use crate::drive::items::WarpDriveItem;
+use crate::drive::CloudObjectTypeAndId;
 #[cfg(not(target_family = "wasm"))]
 use crate::persistence::model::MCPEnvironmentVariables;
+use crate::server::ids::SyncId;
+use crate::server::sync_queue::QueueItem;
 
 pub mod manager;
 pub mod templatable_manager;
@@ -495,7 +503,7 @@ pub enum MCPProvider {
 impl MCPProvider {
     pub fn display_name(&self) -> &str {
         match self {
-            MCPProvider::Warp => "Octomus",
+            MCPProvider::Warp => "Warp",
             MCPProvider::Claude => "Claude",
             MCPProvider::Codex => "Codex",
             MCPProvider::Agents => "Other Agents",

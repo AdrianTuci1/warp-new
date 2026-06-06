@@ -45,6 +45,8 @@ use crate::coding_panel_enablement_state::CodingPanelEnablementState;
 use crate::editor::{EditorOptions, EditorView, TextOptions};
 use crate::menu::{Menu, MenuItem, MenuItemFields};
 #[cfg(feature = "local_fs")]
+use crate::server::telemetry::CodePanelsFileOpenEntrypoint;
+use crate::server::telemetry::TelemetryEvent;
 use crate::terminal::input::InputDropTargetData;
 use crate::terminal::view::{TerminalDropTargetData, TerminalView};
 use crate::ui_components::icons::Icon;
@@ -1434,6 +1436,7 @@ impl FileTreeView {
         target_item: &FileTreeEntryState,
         ctx: &mut ViewContext<Self>,
     ) {
+        use crate::remote_server::manager::RemoteServerManager;
 
         if !FeatureFlag::SshRemoteServer.is_enabled() {
             return;

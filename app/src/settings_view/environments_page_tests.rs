@@ -13,12 +13,19 @@ use crate::ai::ambient_agents::github_auth_notifier::GitHubAuthNotifier;
 use crate::ai::cloud_environments::{
     AmbientAgentEnvironment, CloudAmbientAgentEnvironmentModel, GithubRepo,
 };
+use crate::auth::AuthStateProvider;
 use crate::network::NetworkStatus;
 use crate::root_view::CreateEnvironmentArg;
+use crate::server::cloud_objects::update_manager::UpdateManager;
+use crate::server::ids::{ClientId, ServerId, SyncId};
+use crate::server::server_api::ServerApiProvider;
+use crate::server::sync_queue::SyncQueue;
 use crate::settings::PrivacySettings;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
 use crate::terminal::view::init_environment::mode_selector::EnvironmentSetupModeSelector;
 use crate::test_util::settings::initialize_settings_for_tests;
+use crate::workspaces::team_tester::TeamTesterStatus;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 fn make_test_environment(
     name: &str,
@@ -651,6 +658,8 @@ fn test_render_list_page_with_environments_shows_list() {
             let object = CloudAmbientAgentEnvironment::new(
                 sync_id,
                 CloudAmbientAgentEnvironmentModel::new(environment),
+                crate::cloud_object::CloudObjectMetadata::mock(),
+                crate::cloud_object::CloudObjectPermissions::mock_personal(),
             );
 
             CloudModel::handle(ctx).update(ctx, |model, ctx| {
@@ -682,7 +691,7 @@ fn test_render_list_page_with_personal_and_team_environments_shows_section_heade
 
         app.update(|ctx| {
             // Ensure UserWorkspaces has a current team name so the "Team" section renders with the
-            // shared header copy ("Shared by Octomus and <team>").
+            // shared header copy ("Shared by Warp and <team>").
             UserWorkspaces::handle(ctx).update(ctx, |user_workspaces, ctx| {
                 user_workspaces.setup_test_workspace(ctx);
                 user_workspaces.update_current_workspace(
@@ -715,15 +724,19 @@ fn test_render_list_page_with_personal_and_team_environments_shows_section_heade
             let personal_object = CloudAmbientAgentEnvironment::new(
                 personal_id,
                 CloudAmbientAgentEnvironmentModel::new(personal_env),
+                crate::cloud_object::CloudObjectMetadata::mock(),
+                crate::cloud_object::CloudObjectPermissions::mock_personal(),
             );
 
             let team_id = SyncId::ClientId(ClientId::new());
+            let mut team_permissions = crate::cloud_object::CloudObjectPermissions::mock_personal();
             team_permissions.owner = Owner::Team {
                 team_uid: ServerId::from(789),
             };
             let team_object = CloudAmbientAgentEnvironment::new(
                 team_id,
                 CloudAmbientAgentEnvironmentModel::new(team_env),
+                crate::cloud_object::CloudObjectMetadata::mock(),
                 team_permissions,
             );
 
@@ -770,6 +783,8 @@ fn test_render_list_page_with_only_personal_environments_shows_personal_header()
             let personal_object = CloudAmbientAgentEnvironment::new(
                 personal_id,
                 CloudAmbientAgentEnvironmentModel::new(personal_env),
+                crate::cloud_object::CloudObjectMetadata::mock(),
+                crate::cloud_object::CloudObjectPermissions::mock_personal(),
             );
 
             CloudModel::handle(ctx).update(ctx, |model, ctx| {
@@ -1207,7 +1222,7 @@ fn test_environment_matches_search_query_empty_query_matches_all() {
 #[test]
 fn test_environment_matches_search_query_name_description_image_repos() {
     let mut environment = make_test_environment(
-        "Octomus Env",
+        "Warp Env",
         "node:20-alpine",
         vec![("warpdotdev".to_string(), "warp-internal".to_string())],
         vec![],
@@ -1240,7 +1255,7 @@ fn test_environment_matches_search_query_is_case_insensitive() {
     let mut environment = make_test_environment(
         "warp-env",
         "ubuntu:latest",
-        vec![("WarpDotDev".to_string(), "Octomus-Internal".to_string())],
+        vec![("WarpDotDev".to_string(), "Warp-Internal".to_string())],
         vec![],
     );
     environment.description = Some("Some Description".to_string());
@@ -1271,6 +1286,8 @@ fn test_toolbar_renders_search_editor_view() {
             let object = CloudAmbientAgentEnvironment::new(
                 sync_id,
                 CloudAmbientAgentEnvironmentModel::new(environment),
+                crate::cloud_object::CloudObjectMetadata::mock(),
+                crate::cloud_object::CloudObjectPermissions::mock_personal(),
             );
 
             CloudModel::handle(ctx).update(ctx, |model, ctx| {

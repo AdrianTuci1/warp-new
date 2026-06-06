@@ -29,13 +29,16 @@ use warpui::{
 use super::workflow::Workflow;
 use super::WorkflowSource;
 use crate::appearance::Appearance;
+use crate::cloud_object::model::persistence::CloudModel;
 use crate::editor::Event as EditorEvent;
 use crate::send_telemetry_from_ctx;
+use crate::server::telemetry::TelemetryEvent;
 use crate::themes::theme::{self, Blend, WarpTheme};
 use crate::user_config::{WarpConfig, WarpConfigUpdateEvent};
 use crate::util::bindings::CustomAction;
 use crate::voltron::{VoltronFeatureViewMeta, VoltronMetadata};
 use crate::workflows::WorkflowType;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 const SCROLLBAR_WIDTH: ScrollbarWidth = ScrollbarWidth::Auto;
 const DESCRIPTION_MARGIN: f32 = 24.;
@@ -760,7 +763,7 @@ impl CategoriesView {
                 .link(
                     "creating your own workflow".into(),
                     Some(
-                        "https://docs.localhost/knowledge-and-collaboration/warp-drive/workflows"
+                        "https://docs.localhost:8080/knowledge-and-collaboration/warp-drive/workflows"
                             .into(),
                     ),
                     None,

@@ -43,6 +43,7 @@ use crate::ai::local_harness_setup::{
     local_harness_setup_state, LocalHarnessSetupState,
 };
 use crate::appearance::Appearance;
+use crate::cloud_object::CloudObjectLookup as _;
 use crate::menu::{MenuItem, MenuItemFields};
 use crate::ui_components::blended_colors;
 use crate::ui_components::icons::Icon;
@@ -50,6 +51,7 @@ use crate::view_components::dropdown::{
     Dropdown, DropdownAction, DropdownItemAction, DropdownStyle,
 };
 use crate::view_components::FilterableDropdown;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::{report_if_error, LLMPreferences};
 
 /// Env var override for the workspace default host (developer testing).

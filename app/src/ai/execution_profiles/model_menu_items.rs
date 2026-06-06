@@ -42,6 +42,22 @@ fn with_cost_and_profile_info<A: Action + Clone>(
         label.push_str("Profile default");
     }
 
+    match llm.usage_metadata.credit_multiplier {
+        Some(mult) if mult != 1. => {
+            let mut formatted_cost = format!("~{mult:.1}")
+                .trim_end_matches('0')
+                .trim_end_matches('.')
+                .to_string();
+            formatted_cost.push('x');
+            if label.is_empty() {
+                label.push_str(&formatted_cost);
+            } else {
+                label.push_str(&format!(" ({formatted_cost})"));
+            }
+        }
+        _ => {}
+    }
+
     if label.is_empty() {
         item
     } else {
@@ -153,7 +169,7 @@ fn make_item_fields<A: Action + Clone>(
         }
     }
 
-    item
+    with_cost_and_profile_info(item, llm, model_id_to_add_profile_default_label_to).into_item()
 }
 
 pub fn available_model_menu_items<A: Action + Clone>(

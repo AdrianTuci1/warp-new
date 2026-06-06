@@ -27,10 +27,11 @@ use crate::modal::{Modal, ModalViewState};
 use crate::util::truncation::truncate_from_end;
 use crate::view_components::dropdown::{DROPDOWN_PADDING, TOP_MENU_BAR_HEIGHT};
 use crate::view_components::{Dropdown as DropdownView, DropdownItem};
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
-const OZ_AGENTS_URL: &str = "http://localhost:8080/agents?new=true";
+const OZ_AGENTS_URL: &str = "https://oz.localhost:8080/agents?new=true";
 const API_KEY_DOCS_URL: &str =
-    "http://localhost:8080/docs/reference/cli/api-keys/#personal-vs-agent-keys";
+    "https://docs.localhost:8080/reference/cli/api-keys/#personal-vs-agent-keys";
 
 const LABEL_FONT_SIZE: f32 = 14.;
 const INPUT_WIDTH: f32 = 428.; // 460px - (2 * 16px) padding
@@ -47,7 +48,7 @@ impl ApiKeyType {
     fn description(&self) -> &'static str {
         match self {
             ApiKeyType::Personal => {
-                "This API key is tied to your user and can make requests against your Octomus account."
+                "This API key is tied to your user and can make requests against your Warp account."
             }
             ApiKeyType::Team => {
                 "This API key is tied to your team and can make requests on behalf of your team."
@@ -161,7 +162,7 @@ impl CreateApiKeyModal {
                 ..Default::default()
             };
             let mut editor = EditorView::single_line(options, ctx);
-            editor.set_placeholder_text("Octomus API Key", ctx);
+            editor.set_placeholder_text("Warp API Key", ctx);
             editor
         });
 
@@ -280,6 +281,7 @@ impl CreateApiKeyModal {
         ctx.notify();
 
         let auth_client =
+            crate::server::server_api::ServerApiProvider::as_ref(ctx).get_auth_client();
         ctx.spawn(
             async move { auth_client.list_agent_identities().await },
             |me, res, ctx| {
@@ -326,7 +328,7 @@ impl CreateApiKeyModal {
         let name = self.name_editor.as_ref(ctx).buffer_text(ctx);
 
         let final_name = if name.trim().is_empty() {
-            "Octomus API Key".to_string()
+            "Warp API Key".to_string()
         } else {
             name.trim().to_string()
         };
@@ -380,6 +382,7 @@ impl CreateApiKeyModal {
         };
 
         let auth_client =
+            crate::server::server_api::ServerApiProvider::as_ref(ctx).get_auth_client();
         ctx.spawn(
             async move { auth_client.create_api_key(final_name, team_id, agent_uid, expires_at).await },
             |me, res, ctx| {

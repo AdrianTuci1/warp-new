@@ -34,18 +34,27 @@ use super::zero_state::{CommandSearchZeroStateEvent, CommandSearchZeroStateView}
 use crate::ai_assistant::execution_context::WarpAiExecutionContext;
 use crate::ai_assistant::GenerateCommandsFromNaturalLanguageError;
 use crate::appearance::Appearance;
+use crate::auth::auth_manager::AuthManager;
+use crate::auth::auth_state::AuthState;
+use crate::auth::auth_view_modal::AuthViewVariant;
+use crate::auth::{AuthStateProvider, UserUid};
 use crate::completer::SessionContext;
+use crate::drive::settings::WarpDriveSettings;
 use crate::search::command_search::searcher::{CommandSearchItemAction, CommandSearchMixer};
 use crate::search::mixer::AddAsyncSourceOptions;
 use crate::search::result_renderer::{QueryResultRenderer, QueryResultRendererStyles};
 use crate::search::search_bar::{SearchBar, SearchBarEvent, SearchBarState, SearchResultOrdering};
 use crate::search::QueryFilter;
 use crate::send_telemetry_from_ctx;
+use crate::server::ids::ServerId;
+use crate::server::server_api::ai::AIClient;
+use crate::server::telemetry::TelemetryEvent;
 use crate::settings::AISettings;
 use crate::terminal::input::MenuPositioning;
 use crate::terminal::model::session::SessionId;
 use crate::terminal::resizable_data::{ModalType, ResizableData, DEFAULT_UNIVERSAL_SEARCH_WIDTH};
 use crate::terminal::{History, HistoryEvent};
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 const DEFAULT_PLACEHOLDER_TEXT: &str = "Search your history, workflows, and more";
 const PANEL_POSITION_ID: &str = "CommandSearchViewPanel";
@@ -490,7 +499,7 @@ impl CommandSearchView {
                 AcceptHistory(_)
                 | AcceptWorkflow(_)
                 | AcceptNotebook(_)
-                | OpenWarpAI
+                | OpenOctomusAI
                 | AcceptEnvVarCollection(_)
                 | TranslateUsingWarpAI
                 | AcceptAIQuery(_) => false,

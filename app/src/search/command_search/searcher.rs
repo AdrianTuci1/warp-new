@@ -1,5 +1,6 @@
 use crate::env_vars::CloudEnvVarCollection;
 use crate::search::mixer::SearchMixer;
+use crate::server::ids::SyncId;
 use crate::terminal::history::LinkedWorkflowData;
 use crate::workflows::{WorkflowSource, WorkflowType};
 
@@ -59,10 +60,10 @@ pub enum CommandSearchItemAction {
     /// The user requested to run the AI query search item with this query text.
     RunAIQuery(String),
 
-    /// The user accepted the search item to open Warp AI.
-    OpenWarpAI,
+    /// The user accepted the search item to open Octomus AI.
+    OpenOctomusAI,
 
-    /// The user accepted the search item to translate the query to a command using Warp AI.
+    /// The user accepted the search item to translate the query to a command using Octomus AI.
     TranslateUsingWarpAI,
 }
 

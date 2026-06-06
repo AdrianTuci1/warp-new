@@ -5,6 +5,7 @@ pub(crate) mod async_snapshot_data_source;
 pub mod binding_source;
 pub mod command_palette;
 pub mod command_search;
+mod env_var_collections;
 pub mod external_secrets;
 pub mod files;
 mod filter_chip_renderer;
@@ -14,6 +15,7 @@ mod palette_styles;
 mod search_bar;
 pub mod search_results_menu;
 pub mod slash_command_menu;
+pub mod welcome_palette;
 mod workflows;
 
 pub use data_source::QueryFilter;

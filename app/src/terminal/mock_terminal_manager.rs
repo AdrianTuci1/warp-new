@@ -136,6 +136,7 @@ mod testing {
     use warpui::{App, Element, SingletonEntity};
 
     use super::*;
+    use crate::server::server_api::ServerApiProvider;
     use crate::terminal::shell::{ShellName, ShellType};
     use crate::terminal::ShellLaunchState;
 

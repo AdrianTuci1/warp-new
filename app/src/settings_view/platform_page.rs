@@ -27,18 +27,20 @@ use super::settings_page::{
 };
 use super::SettingsSection;
 use crate::appearance::Appearance;
+use crate::auth::AuthStateProvider;
 use crate::editor::{
     EditorView, Event as EditorEvent, PropagateAndNoOpNavigationKeys, SingleLineEditorOptions,
     TextOptions,
 };
 use crate::modal::{Modal, ModalEvent, ModalViewState};
 use crate::search_bar::SearchBar;
+use crate::server::ids::ApiKeyUid;
 use crate::ui_components::icons::Icon;
 use crate::util::time_format::format_approx_duration_from_now_utc;
 
 const MODAL_WIDTH: f32 = 460.;
 const MODAL_HEIGHT: f32 = 320.;
-const API_KEY_DOCS_URL: &str = "http://localhost:8080/docs/reference/cli/api-keys";
+const API_KEY_DOCS_URL: &str = "https://docs.localhost:8080/reference/cli/api-keys";
 const API_KEY_NAME_COLUMN_DEFAULT_WIDTH: f32 = 220.;
 const API_KEY_NAME_COLUMN_MIN_WIDTH: f32 = 120.;
 const API_KEY_KEY_COLUMN_WIDTH: f32 = 120.;
@@ -124,6 +126,7 @@ impl PlatformPageView {
 
         // Build and send the GraphQL query
         let auth_client =
+            crate::server::server_api::ServerApiProvider::as_ref(ctx).get_auth_client();
 
         ctx.spawn(
             async move { auth_client.list_api_keys().await },
@@ -486,7 +489,7 @@ impl PlatformPageWidget {
         appearance: &Appearance,
     ) -> Box<dyn Element> {
         let text = vec![
-            FormattedTextFragment::plain_text("Create and manage API keys to allow other Oz cloud agents to access your Octomus account.\nFor more information, visit the "),
+            FormattedTextFragment::plain_text("Create and manage API keys to allow other Oz cloud agents to access your Warp account.\nFor more information, visit the "),
             FormattedTextFragment::hyperlink("Documentation.", API_KEY_DOCS_URL),
         ];
 
@@ -868,7 +871,7 @@ impl PlatformPageWidget {
                     .with_child(
                         Container::new(
                             Text::new(
-                                "Create a key to manage external access to Octomus",
+                                "Create a key to manage external access to Warp",
                                 appearance.ui_font_family(),
                                 CONTENT_FONT_SIZE,
                             )

@@ -8,6 +8,8 @@ use warp_completer::completer::{CommandExitStatus, CommandOutput};
 use warp_core::command::ExitCode;
 use warp_core::SessionId;
 
+use crate::remote_server::client::RemoteServerClient;
+use crate::remote_server::proto::{run_command_response, RunCommandErrorCode};
 use crate::terminal::model::session::command_executor::{CommandExecutor, ExecuteCommandOptions};
 use crate::terminal::shell::Shell;
 

@@ -30,6 +30,8 @@ use crate::ai::blocklist::orchestration_event_streamer::{
     OrchestrationEventStreamer, OrchestrationEventStreamerEvent,
 };
 use crate::ai::blocklist::BlocklistAIHistoryModel;
+use crate::server::server_api::ai::TaskListFilter;
+use crate::server::server_api::ServerApiProvider;
 use crate::terminal::{Event as TerminalViewEvent, TerminalView};
 
 /// Max child runs per legacy `?ancestor_run_id=` page (polling path).

@@ -2,8 +2,12 @@ pub use cloud_object_models::{CloudPreference, CloudPreferenceModel, Platform, P
 use settings::macros::define_settings_group;
 use settings::{RespectUserSyncSetting, SupportedPlatforms, SyncToCloud};
 
+use crate::cloud_object::model::generic_string_model::StringModel;
+use crate::cloud_object::model::json_model::JsonModel;
+use crate::cloud_object::{
     GenericStringObjectFormat, GenericStringObjectUniqueKey, JsonObjectType, Revision, UniquePer,
 };
+use crate::server::sync_queue::QueueItem;
 define_settings_group!(CloudPreferencesSettings, settings: [
    settings_sync_enabled: IsSettingsSyncEnabled {
        type: bool,

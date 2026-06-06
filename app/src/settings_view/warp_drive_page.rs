@@ -22,6 +22,8 @@ use super::{
     SettingsAction, SettingsSection, ToggleSettingActionPair, ToggleState,
 };
 use crate::appearance::Appearance;
+use crate::auth::AuthStateProvider;
+use crate::drive::settings::WarpDriveSettings;
 
 #[derive(Debug, Clone)]
 pub enum WarpDriveSettingsPageAction {
@@ -37,7 +39,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
 ) {
     ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
         vec![ToggleSettingActionPair::custom(
-            SettingActionPairDescriptions::new("Enable Local Storage", "Disable Local Storage"),
+            SettingActionPairDescriptions::new("Enable Octomus Drive", "Disable Octomus Drive"),
             builder(SettingsAction::WarpDrive(
                 WarpDriveSettingsPageAction::ToggleShowWarpDrive,
             )),
@@ -47,7 +49,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             ),
             None,
         )
-        .with_enabled(|| FeatureFlag::OpenWarpNewSettingsModes.is_enabled())],
+        .with_enabled(|| FeatureFlag::OpenOctomusNewSettingsModes.is_enabled())],
         app,
     );
 }
@@ -115,7 +117,7 @@ impl SettingsPageMeta for WarpDriveSettingsPageView {
     }
 
     fn should_render(&self, _ctx: &AppContext) -> bool {
-        FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
+        FeatureFlag::OpenOctomusNewSettingsModes.is_enabled()
     }
 
     fn update_filter(&mut self, query: &str, ctx: &mut ViewContext<Self>) -> MatchData {
@@ -166,7 +168,7 @@ impl SettingsWidget for WarpDriveHeaderWidget {
 
         let message = Container::new(
             Text::new_inline(
-                "To use Local Storage, please create an account.".to_string(),
+                "To use Octomus Drive, please create an account.".to_string(),
                 appearance.ui_font_family(),
                 14.,
             )
@@ -245,11 +247,11 @@ impl SettingsWidget for WarpDriveToggleWidget {
                 .is_anonymous_or_logged_out();
 
         render_body_item::<WarpDriveSettingsPageAction>(
-            "Local Storage".into(),
+            "Octomus Drive".into(),
             Some(AdditionalInfo {
                 mouse_state: self.info_icon_mouse_state.clone(),
                 on_click_action: Some(WarpDriveSettingsPageAction::OpenUrl(
-                    "http://localhost:8080/docs/knowledge-and-collaboration/warp-drive".to_string(),
+                    "https://docs.localhost:8080/knowledge-and-collaboration/warp-drive".to_string(),
                 )),
                 secondary_text: None,
                 tooltip_override_text: None,
@@ -275,7 +277,7 @@ impl SettingsWidget for WarpDriveToggleWidget {
                     }
                 })
                 .finish(),
-            Some("Local Storage is a workspace in your terminal where you can save Workflows, Notebooks, Prompts, and Environment Variables for personal use or to share with a team.".into()),
+            Some("Octomus Drive is a workspace in your terminal where you can save Workflows, Notebooks, Prompts, and Environment Variables for personal use or to share with a team.".into()),
         )
     }
 }

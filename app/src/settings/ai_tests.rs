@@ -4,7 +4,9 @@ use warpui::{App, SingletonEntity};
 
 use super::*;
 use crate::ai::request_usage_model::{RequestLimitInfo, RequestLimitRefreshDuration};
+use crate::auth::AuthStateProvider;
 use crate::test_util::settings::initialize_settings_for_tests;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 fn create_test_request_limit_info(
     limit: usize,

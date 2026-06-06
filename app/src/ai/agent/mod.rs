@@ -49,6 +49,7 @@ use crate::code_review::comments::{
     AttachedReviewComment as CodeReviewComment, ReviewCommentBatch,
 };
 use crate::search::slash_command_menu::static_commands::commands;
+use crate::server::server_api::AIApiError;
 use crate::terminal::model::block::BlockId;
 use crate::terminal::shell::ShellType;
 use crate::terminal::view::block_onboarding::onboarding_agentic_suggestions_block::OnboardingChipType;
@@ -692,9 +693,9 @@ impl Display for RenderableAIError {
                 }
             }
             Self::ServerOverloaded => {
-                write!(f, "Octomus is currently overloaded. Please try again later.")
+                write!(f, "Warp is currently overloaded. Please try again later.")
             }
-            Self::InternalWarpError => write!(f, "Internal Octomus error."),
+            Self::InternalWarpError => write!(f, "Internal Warp error."),
             Self::ContextWindowExceeded(message) => {
                 write!(f, "Context window exceeded: {message}")
             }

@@ -22,6 +22,8 @@ use super::{
     DiffStateModelEvent, DiffStats, FileDiffAndContent, GitDiffData, GitDiffWithBaseContent,
 };
 use crate::code_review::telemetry_event::CodeReviewTelemetryEvent;
+use crate::remote_server::diff_state_proto::{try_decode_file_delta, try_decode_snapshot};
+use crate::remote_server::proto;
 use crate::util::git::{BranchEntry, Commit};
 
 // ── Internal state ────────────────────────────────────────────────

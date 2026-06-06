@@ -12,6 +12,7 @@ use crate::app_state::get_app_state;
 use crate::network::NetworkStatus;
 use crate::persistence::ModelEvent;
 use crate::root_view::OpenPath;
+use crate::server::server_api::ServerApiProvider;
 use crate::terminal::alt_screen_reporting::AltScreenReporting;
 use crate::terminal::general_settings::GeneralSettings;
 use crate::undo_close::UndoCloseStack;

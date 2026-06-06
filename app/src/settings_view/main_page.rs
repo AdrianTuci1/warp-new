@@ -32,14 +32,23 @@ use super::settings_page::{
 };
 use super::{flags, SettingsAction, SettingsSection, ToggleSettingActionPair};
 use crate::appearance::Appearance;
+use crate::auth::auth_manager::{AuthManager, LoginGatedFeature};
+use crate::auth::auth_state::AuthState;
+use crate::auth::auth_view_modal::AuthViewVariant;
+use crate::auth::{AuthStateProvider, UserUid};
 use crate::autoupdate::{self, AutoupdateStage, AutoupdateState};
 #[cfg(not(target_family = "wasm"))]
+use crate::server::iap::{IapCredentialsState, IapManager, IapManagerEvent};
+use crate::server::ids::ServerId;
 use crate::settings::cloud_preferences::CloudPreferencesSettings;
 use crate::workspace::WorkspaceAction;
+use crate::workspaces::update_manager::TeamUpdateManager;
+use crate::workspaces::user_workspaces::UserWorkspaces;
+use crate::workspaces::workspace::CustomerType;
 use crate::{report_if_error, send_telemetry_from_ctx, TelemetryEvent};
 
 const PHOTO_SIZE: f32 = 40.;
-const REFERRAL_CTA: &str = "Earn rewards by sharing Octomus with friends & colleagues";
+const REFERRAL_CTA: &str = "Earn rewards by sharing Warp with friends & colleagues";
 const REGULAR_TEXT_FONT_SIZE: f32 = 12.;
 const VERTICAL_MARGIN: f32 = 24.;
 const LOG_OUT_TEXT: &str = "Log out";
@@ -145,7 +154,7 @@ impl From<&MainPageAction> for LoginGatedFeature {
 pub enum MainSettingsPageEvent {
     CheckForUpdate,
     #[allow(dead_code)]
-    OpenWarpDrive,
+    OpenOctomusDrive,
     SignupAnonymousUser,
 }
 
@@ -502,7 +511,7 @@ impl AccountWidget {
                             .ui_builder()
                             .link(
                                 "Contact support".into(),
-                                Some("mailto:support@localhost".into()),
+                                Some("mailto:support@localhost:8080".into()),
                                 None,
                                 self.ui_state_handles.enterprise_contact_us_link.clone(),
                             )
@@ -697,7 +706,7 @@ impl SettingsWidget for SettingsSyncWidget {
         let label_info = AdditionalInfo {
             mouse_state: self.tooltip_state.clone(),
             on_click_action: Some(MainPageAction::OpenUrl(
-                "http://localhost:8080/docs/terminal/more-features/settings-sync".into(),
+                "https://docs.localhost:8080/terminal/more-features/settings-sync".into(),
             )),
             secondary_text: None,
             tooltip_override_text: None,
@@ -866,7 +875,7 @@ impl VersionInfoWidget {
                             color: ansi_red,
                         }),
                         Some(CallToActionContent {
-                            text: "Relaunch Octomus",
+                            text: "Relaunch Warp",
                             action: MainPageAction::Relaunch,
                         }),
                     ),
@@ -883,28 +892,28 @@ impl VersionInfoWidget {
                             color: faded_text_color,
                         }),
                         Some(CallToActionContent {
-                            text: "Relaunch Octomus",
+                            text: "Relaunch Warp",
                             action: MainPageAction::Relaunch,
                         }),
                     ),
                     AutoupdateStage::UnableToUpdateToNewVersion { .. } => (
                         Some(StatusContent {
-                            text: "A new version of Octomus is available but can't be installed",
+                            text: "A new version of Warp is available but can't be installed",
                             color: ansi_red,
                         }),
                         Some(CallToActionContent {
-                            text: "Update Octomus manually",
+                            text: "Update Warp manually",
                             // note: the handler for this action is a no-op
                             action: MainPageAction::DownloadUpdate,
                         }),
                     ),
                     AutoupdateStage::UnableToLaunchNewVersion { .. } => (
                         Some(StatusContent {
-                            text: "A new version of Octomus is installed but can't be launched.",
+                            text: "A new version of Warp is installed but can't be launched.",
                             color: ansi_red,
                         }),
                         Some(CallToActionContent {
-                            text: "Update Octomus manually",
+                            text: "Update Warp manually",
                             // note: the handler for this action is a no-op
                             action: MainPageAction::DownloadUpdate,
                         }),

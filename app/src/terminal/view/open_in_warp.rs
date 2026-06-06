@@ -29,8 +29,8 @@ use crate::util::openable_file_type::{is_file_openable_in_warp, OpenableFileType
 mod tests;
 
 const LEARN_MORE_MARKDOWN_URL: &str =
-    "http://localhost:8080/docs/terminal/more-features/markdown-viewer";
-const LEARN_MORE_CODE_URL: &str = "http://localhost:8080/docs/code/overview#built-in-code-editor";
+    "https://docs.localhost:8080/terminal/more-features/markdown-viewer";
+const LEARN_MORE_CODE_URL: &str = "https://docs.localhost:8080/code/overview#built-in-code-editor";
 
 /// A path to a file that can be opened in Warp, along with its type.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -86,7 +86,7 @@ impl TerminalView {
         }
     }
 
-    /// Whether or not the "Open in Octomus" banner is open.
+    /// Whether or not the "Open in Warp" banner is open.
     #[cfg(feature = "integration_tests")]
     pub fn is_open_in_warp_banner_open(&self) -> bool {
         self.inline_banners_state.open_in_warp_banner.is_some()
@@ -224,7 +224,7 @@ impl TerminalView {
                 match &self.inline_banners_state.open_in_warp_banner {
                     Some(banner_state) => {
                         ActionAccessibilityContent::Custom(AccessibilityContent::new_without_help(
-                            format!("Open {} in Octomus", banner_state.target.path.display()),
+                            format!("Open {} in Warp", banner_state.target.path.display()),
                             WarpA11yRole::UserAction,
                         ))
                     }
@@ -233,14 +233,14 @@ impl TerminalView {
             }
             OpenInWarpBannerAction::Close => {
                 ActionAccessibilityContent::Custom(AccessibilityContent::new_without_help(
-                    "Close View in Octomus banner",
+                    "Close View in Warp banner",
                     WarpA11yRole::UserAction,
                 ))
             }
             OpenInWarpBannerAction::LearnMore => {
                 ActionAccessibilityContent::Custom(AccessibilityContent::new(
                     "Learn more",
-                    "Learn more about opening Markdown files in Octomus",
+                    "Learn more about opening Markdown files in Warp",
                     WarpA11yRole::UserAction,
                 ))
             }

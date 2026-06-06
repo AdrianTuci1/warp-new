@@ -109,7 +109,7 @@ pub fn render_inline_notifications_discovery_banner(
                         learn_more_button,
                     ),
                     RequestPermissionsOutcome::PermissionsDenied => (
-                        "Octomus was denied permissions to send you notifications.",
+                        "Warp was denied permissions to send you notifications.",
                         troubleshoot_button,
                     ),
                     RequestPermissionsOutcome::OtherError { .. } => (

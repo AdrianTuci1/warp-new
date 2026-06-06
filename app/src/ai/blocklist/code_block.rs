@@ -255,7 +255,7 @@ fn render_linked_code_block_internal(
             let open_button = render_button(
                 appearance,
                 Icon::LinkExternal,
-                "Open in Octomus",
+                "Open in Warp",
                 mouse_handles.open_button,
                 code_clone.clone(),
                 on_open,

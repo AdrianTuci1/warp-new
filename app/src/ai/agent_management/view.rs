@@ -55,6 +55,7 @@ use crate::ai::agent_management::telemetry::{
 };
 use crate::ai::ambient_agents::{cancel_task_with_toast, AgentSource};
 use crate::ai::artifacts::{Artifact, ArtifactButtonsRow, ArtifactButtonsRowEvent};
+use crate::ai::blocklist::format_credits;
 use crate::ai::conversation_details_panel::{
     ConversationDetailsData, ConversationDetailsPanel, ConversationDetailsPanelEvent,
 };
@@ -62,11 +63,13 @@ use crate::ai::harness_availability::HarnessAvailabilityModel;
 use crate::ai::harness_display;
 use crate::app_state::PersistedAgentManagementFilters;
 use crate::appearance::Appearance;
+use crate::auth::AuthStateProvider;
 use crate::editor::{
     EditorView, Event as EditorEvent, PropagateAndNoOpNavigationKeys,
     PropagateHorizontalNavigationKeys, SingleLineEditorOptions, TextOptions,
 };
 use crate::menu::{MenuItem, MenuItemFields};
+use crate::notebooks::NotebookId;
 use crate::settings::ai::AISettings;
 use crate::ui_components::agent_icon::agent_conversation_entry_icon_variant;
 use crate::ui_components::avatar::{Avatar, AvatarContent};
@@ -86,6 +89,7 @@ use crate::workflows::WorkflowType;
 use crate::workspace::{
     ForkedConversationDestination, RestoreConversationLayout, ToastStack, WorkspaceAction,
 };
+use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::{send_telemetry_from_ctx, AgentModeEntrypoint};
 
 lazy_static! {
@@ -1819,6 +1823,10 @@ impl AgentManagementView {
 
         if let Some(run_time) = &entry.display.run_time {
             metadata_parts.push(format!("Run time: {run_time}"));
+        }
+
+        if let Some(usage) = entry.display.request_usage.map(format_credits) {
+            metadata_parts.push(format!("Credits used: {usage}"));
         }
 
         Text::new(metadata_parts.join(" • "), font_family, font_size)

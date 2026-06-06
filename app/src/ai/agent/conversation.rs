@@ -60,16 +60,19 @@ use crate::ai::blocklist::{
 use crate::ai::llms::LLMPreferences;
 use crate::ai::skills::SkillDescriptor;
 use crate::code_review::CodeReviewTelemetryEvent;
+use crate::notebooks::NotebookId;
 use crate::persistence::model::{
     AgentConversationData, ConversationUsageMetadata, ModelTokenUsage, PersistedAutoexecuteMode,
     ToolUsageMetadata,
 };
 use crate::persistence::ModelEvent;
+use crate::server::ids::ServerId;
 use crate::terminal::general_settings::GeneralSettings;
 use crate::terminal::model::block::{
     AgentInteractionMetadata, AgentViewVisibility, BlockId, SerializedAIMetadata, SerializedBlock,
 };
 use crate::ui_components::icons::Icon;
+use crate::workspaces::user_profiles::UserProfileWithUID;
 use crate::{BlocklistAIHistoryModel, GlobalResourceHandlesProvider};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -1509,7 +1512,7 @@ impl AIConversation {
         });
     }
 
-    /// Updates the notebook_uid for a plan artifact when it's synced to Warp Drive.
+    /// Updates the notebook_uid for a plan artifact when it's synced to Octomus Drive.
     pub fn update_plan_notebook_uid(
         &mut self,
         document_uid: AIDocumentId,

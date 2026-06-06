@@ -1,1 +1,2 @@
-// Stub module — cloud functionality removed in Octomus
+pub mod shared_objects_creation_denied_body;
+pub mod shared_objects_creation_denied_modal;

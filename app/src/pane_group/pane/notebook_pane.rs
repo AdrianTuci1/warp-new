@@ -11,7 +11,15 @@ use super::{
     ShareableLinkError,
 };
 use crate::app_state::{LeafContents, NotebookPaneSnapshot};
+use crate::cloud_object::Space;
+use crate::drive::items::WarpDriveItemId;
+use crate::drive::{CloudObjectTypeAndId, OpenOctomusDriveObjectSettings};
+use crate::notebooks::link::{LinkEvent, NotebookLinks};
+use crate::notebooks::manager::{NotebookManager, NotebookSource};
+use crate::notebooks::notebook::{NotebookEvent, NotebookView};
+use crate::server::ids::SyncId;
 use crate::workflows::{WorkflowSelectionSource, WorkflowSource, WorkflowType};
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 pub struct NotebookPane {
     view: ViewHandle<PaneView<NotebookView>>,
@@ -35,7 +43,7 @@ impl NotebookPane {
     /// Restore a notebook pane given its cloud notebook ID.
     pub fn restore(
         notebook_id: Option<SyncId>,
-        settings: &OpenWarpDriveObjectSettings,
+        settings: &OpenOctomusDriveObjectSettings,
         ctx: &mut ViewContext<PaneGroup>,
     ) -> anyhow::Result<Self> {
         let window_id = ctx.window_id();
@@ -69,7 +77,7 @@ impl PaneContent for NotebookPane {
         let notebook_id = self.notebook_view(app).as_ref(app).notebook_id(app);
         LeafContents::Notebook(NotebookPaneSnapshot::CloudNotebook {
             notebook_id,
-            settings: OpenWarpDriveObjectSettings::default(),
+            settings: OpenOctomusDriveObjectSettings::default(),
         })
     }
 
@@ -171,9 +179,9 @@ pub(super) fn subscribe_to_link_model(
                 session: session.clone(),
             })
         }
-        LinkEvent::OpenWarpDriveLink {
+        LinkEvent::OpenOctomusDriveLink {
             open_warp_drive_args,
-        } => ctx.emit(crate::pane_group::Event::OpenWarpDriveLink {
+        } => ctx.emit(crate::pane_group::Event::OpenOctomusDriveLink {
             open_warp_drive_args: open_warp_drive_args.clone(),
         }),
         LinkEvent::StartLocalSession { path } => {

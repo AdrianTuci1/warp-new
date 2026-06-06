@@ -41,18 +41,40 @@ use crate::ai::llms::{LLMPreferences, LLMPreferencesEvent};
 use crate::ai::onboarding::{build_onboarding_models, current_onboarding_auth_state};
 use crate::app_state::{AppState, PaneUuid, WindowSnapshot};
 use crate::appearance::Appearance;
+use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};
+use crate::auth::auth_override_warning_modal::{
     AuthOverrideWarningModal, AuthOverrideWarningModalEvent, AuthOverrideWarningModalVariant,
 };
+use crate::auth::auth_state::AuthState;
+use crate::auth::auth_view_modal::{AuthRedirectPayload, AuthView, AuthViewVariant};
+use crate::auth::login_slide::{LoginSlideEvent, LoginSlideSource, LoginSlideView};
+use crate::auth::needs_sso_link_view::NeedsSsoLinkView;
+use crate::auth::paste_auth_token_modal::{PasteAuthTokenModalEvent, PasteAuthTokenModalView};
 #[cfg(target_family = "wasm")]
+use crate::auth::web_handoff::{WebHandoffEvent, WebHandoffView};
+use crate::auth::{AuthStateProvider, LoginFailureReason};
 use crate::autoupdate::{AutoupdateState, AutoupdateStateEvent, RequestType, UpdateReady};
 use crate::changelog_model::ChangelogRequestType;
+use crate::cloud_object::model::persistence::CloudModel;
+use crate::cloud_object::{GenericStringObjectFormat, JsonObjectType, ObjectType};
+use crate::drive::export::ExportManager;
+use crate::drive::items::WarpDriveItemId;
+use crate::drive::{CloudObjectTypeAndId, OpenOctomusDriveObjectArgs, OpenOctomusDriveObjectSettings};
 use crate::experiments::{BlockOnboarding, Experiment};
 use crate::features::FeatureFlag;
 use crate::interval_timer::IntervalTimer;
 use crate::launch_configs::launch_config;
 use crate::linear::LinearIssueWork;
+use crate::notebooks::manager::NotebookSource;
 use crate::pane_group::{NewTerminalOptions, PanesLayout};
 use crate::persistence::ModelEvent;
+use crate::pricing::{PricingInfoModel, PricingInfoModelEvent};
+use crate::server::cloud_objects::update_manager::UpdateManager;
+use crate::server::experiments::is_free_user_no_ai_experiment_active;
+use crate::server::ids::SyncId;
+use crate::server::server_api::auth::UserAuthenticationError;
+use crate::server::server_api::{ServerApi, ServerApiProvider, ServerTime};
+use crate::server::telemetry::{LaunchConfigUiLocation, TelemetryEvent};
 use crate::settings::cloud_preferences_syncer::{
     CloudPreferencesSyncer, CloudPreferencesSyncerEvent,
 };
@@ -75,12 +97,15 @@ use crate::workspace::hoa_onboarding::mark_hoa_onboarding_completed;
 use crate::workspace::tab_settings::TabSettings;
 use crate::workspace::view::OnboardingTutorial;
 use crate::workspace::{PaneViewLocator, Workspace, WorkspaceAction, WorkspaceRegistry};
+use crate::workspaces::team_tester::TeamTesterStatus;
+use crate::workspaces::update_manager::TeamUpdateManager;
+use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
 use crate::{
     report_if_error, send_telemetry_from_app_ctx, send_telemetry_from_ctx, ChannelState,
     GlobalResourceHandles, GlobalResourceHandlesProvider, UpdateQuakeModeEventArg,
 };
 
-const WINDOW_TITLE: &str = "Octomus";
+const WINDOW_TITLE: &str = "Warp";
 
 lazy_static! {
     static ref FALLBACK_WINDOW_SIZE: Vector2F = vec2f(800.0, 600.0);
@@ -181,6 +206,7 @@ pub struct OpenLaunchConfigArg {
 
     /// Tries to open the launch config into the active window, if any.
     ///
+    /// Currently, this is only supported by single-window launch configs
     /// and will open the window tabs into the existing window when true.
     pub open_in_active_window: bool,
 }
@@ -241,8 +267,11 @@ pub fn init(app: &mut AppContext) {
         let _ = open_new_from_path(arg, ctx);
     });
     app.add_global_action(
+        "root_view:open_new_tab_insert_subshell_command_and_bootstrap_if_supported",
+        open_new_tab_insert_subshell_command_and_bootstrap_if_supported,
     );
     app.add_global_action("root_view:open_launch_config", open_launch_config);
+    app.add_global_action("root_view:send_feedback", send_feedback);
     app.add_global_action(
         "root_view:toggle_quake_mode_window",
         toggle_quake_mode_window,
@@ -528,17 +557,20 @@ fn open_launch_config(arg: &OpenLaunchConfigArg, ctx: &mut AppContext) {
 
     send_telemetry_from_app_ctx!(
         TelemetryEvent::OpenLaunchConfig {
+            ui_location: crate::server::telemetry::LaunchConfigUiLocation::Uri,
             open_in_active_window: arg.open_in_active_window,
         },
         ctx
     );
 }
 
-fn open_launch_config_in_workspace(_arg: OpenLaunchConfigArg, ctx: &mut AppContext) {
+fn send_feedback(_: &(), ctx: &mut AppContext) {
     if let Some(workspace) = active_workspace(ctx) {
-        workspace.update(ctx, |_workspace, _ctx| {
-            // TODO: implement launch config opening
+        workspace.update(ctx, |workspace, ctx| {
+            workspace.handle_action(&WorkspaceAction::SendFeedback, ctx);
         });
+    } else {
+        ctx.open_url(&crate::util::links::feedback_form_url());
     }
 }
 
@@ -651,6 +683,7 @@ fn open_from_restored(arg: &OpenFromRestoredArg, ctx: &mut AppContext) {
                 // If this window is a quake window, hide it by default.
                 if window.quake_mode {
                     // If this is Windows, skip restoring the quake window. Creating a hidden window
+                    // is not supported on Windows. We can't have the quake window visible on
                     // startup or else it will get mistaken for a normal window.
                     if cfg!(windows) {
                         continue;
@@ -667,7 +700,7 @@ fn open_from_restored(arg: &OpenFromRestoredArg, ctx: &mut AppContext) {
                         AddWindowOptions {
                             window_style: WindowStyle::Pin,
                             window_bounds: WindowBounds::ExactPosition(frame_args.window_bounds),
-                            title: Some("Octomus".to_owned()),
+                            title: Some("Warp".to_owned()),
                             fullscreen_state: window.fullscreen_state,
                             background_blur_radius_pixels,
                             background_blur_texture,
@@ -710,7 +743,7 @@ fn open_from_restored(arg: &OpenFromRestoredArg, ctx: &mut AppContext) {
                         ctx.add_window(
                             AddWindowOptions {
                                 window_bounds: WindowBounds::new(window.bounds),
-                                title: Some("Octomus".to_owned()),
+                                title: Some("Warp".to_owned()),
                                 fullscreen_state: window.fullscreen_state,
                                 background_blur_radius_pixels,
                                 background_blur_texture,
@@ -762,7 +795,7 @@ fn open_from_restored(arg: &OpenFromRestoredArg, ctx: &mut AppContext) {
                 ctx.add_window(
                     AddWindowOptions {
                         window_bounds: WindowBounds::new(window.bounds),
-                        title: Some("Octomus".to_owned()),
+                        title: Some("Warp".to_owned()),
                         fullscreen_state: window.fullscreen_state,
                         background_blur_radius_pixels,
                         background_blur_texture,
@@ -1004,7 +1037,7 @@ fn open_linear_issue_work_in_new_window(args: &LinearIssueWork, ctx: &mut AppCon
     });
 }
 
-fn open_warp_drive_object(arg: &OpenWarpDriveObjectArgs, ctx: &mut AppContext) {
+fn open_warp_drive_object(arg: &OpenOctomusDriveObjectArgs, ctx: &mut AppContext) {
     match arg.object_type {
         ObjectType::Notebook => open_new_workspace_with_notebook_open(
             SyncId::ServerId(arg.server_id),
@@ -1016,6 +1049,7 @@ fn open_warp_drive_object(arg: &OpenWarpDriveObjectArgs, ctx: &mut AppContext) {
             arg.settings.clone(),
             ctx,
         ),
+        _ => log::info!("Open object type {:?} not yet supported", arg.object_type),
     }
 }
 
@@ -1028,7 +1062,7 @@ fn display_object_missing_error_in_window(window_id: WindowId, ctx: &mut AppCont
 
 fn open_new_workspace_with_notebook_open(
     notebook_id: SyncId,
-    settings: OpenWarpDriveObjectSettings,
+    settings: OpenOctomusDriveObjectSettings,
     ctx: &mut AppContext,
 ) {
     open_new_with_workspace_source(
@@ -1042,7 +1076,7 @@ fn open_new_workspace_with_notebook_open(
 
 fn open_new_workspace_with_workflow_open(
     workflow_id: SyncId,
-    settings: OpenWarpDriveObjectSettings,
+    settings: OpenOctomusDriveObjectSettings,
     ctx: &mut AppContext,
 ) {
     open_new_with_workspace_source(
@@ -1094,7 +1128,7 @@ fn open_new_with_shell(shell: &Option<AvailableShell>, ctx: &mut AppContext) {
 /// 2. Set the terminal input buffer to a command that should open a subshell
 /// 3. Set a flag that we should automatically bootstrap that subshell if its we can bootstrap its
 /// [`ShellType`].
-fn open_subshell_command(
+fn open_new_tab_insert_subshell_command_and_bootstrap_if_supported(
     arg: &SubshellCommandArg,
     ctx: &mut AppContext,
 ) {
@@ -1120,6 +1154,7 @@ fn open_subshell_command(
     };
 
     root_view_handle.update(ctx, |root_view, ctx| {
+        root_view.insert_subshell_command_and_bootstrap_if_supported(arg, ctx);
     });
 }
 
@@ -1132,7 +1167,7 @@ fn default_window_options(window_settings: &WindowSettings, ctx: &AppContext) ->
     AddWindowOptions {
         window_style,
         window_bounds: next_bounds,
-        title: Some("Octomus".to_owned()),
+        title: Some("Warp".to_owned()),
         background_blur_radius_pixels: Some(*window_settings.background_blur_radius),
         background_blur_texture: *window_settings.background_blur_texture,
         on_gpu_driver_selected: on_gpu_driver_selected_callback(),
@@ -1317,7 +1352,7 @@ fn toggle_quake_mode_window(global_resource_handles: &GlobalResourceHandles, ctx
                 AddWindowOptions {
                     window_style: WindowStyle::Pin,
                     window_bounds: WindowBounds::ExactPosition(config.window_bounds),
-                    title: Some("Octomus".to_owned()),
+                    title: Some("Warp".to_owned()),
                     background_blur_radius_pixels: Some(*window_settings.background_blur_radius),
                     background_blur_texture: *window_settings.background_blur_texture,
                     // Ignore the quake window for positioning the next window
@@ -1452,11 +1487,11 @@ pub enum NewWorkspaceSource {
     },
     NotebookById {
         id: SyncId,
-        settings: OpenWarpDriveObjectSettings,
+        settings: OpenOctomusDriveObjectSettings,
     },
     WorkflowById {
         id: SyncId,
-        settings: OpenWarpDriveObjectSettings,
+        settings: OpenOctomusDriveObjectSettings,
     },
     AgentSession {
         options: Box<NewTerminalOptions>,
@@ -1633,11 +1668,11 @@ impl RootView {
                 if #[cfg(target_family = "wasm")] {
                     AuthOnboardingState::WebImport(AuthOnboardingTarget::Workspace(workspace_args.into()))
                 } else {
-                    // When OpenWarpNewSettingsModes is enabled, show onboarding before login for
+                    // When OpenOctomusNewSettingsModes is enabled, show onboarding before login for
                     // users who haven't completed it yet (tracked via a local UserPreferences key).
-                    let has_completed_local_onboarding = FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
+                    let has_completed_local_onboarding = FeatureFlag::OpenOctomusNewSettingsModes.is_enabled()
                         && has_completed_local_onboarding(ctx);
-                    let should_show_pre_login_onboarding = FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
+                    let should_show_pre_login_onboarding = FeatureFlag::OpenOctomusNewSettingsModes.is_enabled()
                         && FeatureFlag::AgentOnboarding.is_enabled()
                         && !has_completed_local_onboarding;
                     if FeatureFlag::ForceLogin.is_enabled() {
@@ -2125,13 +2160,13 @@ impl RootView {
 
                 let is_logged_in = AuthStateProvider::as_ref(ctx).get().is_logged_in();
                 // If the user isn't logged in, only require login if the applied
-                // settings need an account (AI or Warp Drive enabled).
+                // settings need an account (AI or Octomus Drive enabled).
                 let ai_enabled = selected_settings.is_ai_enabled();
                 let warp_drive_enabled = selected_settings.is_warp_drive_enabled();
                 // With old onboarding, we ask user to log in before onboarding, so don't do it after onboarding completes.
                 let requires_login = !is_logged_in
                     && (ai_enabled || warp_drive_enabled)
-                    && FeatureFlag::OpenWarpNewSettingsModes.is_enabled();
+                    && FeatureFlag::OpenOctomusNewSettingsModes.is_enabled();
 
                 if requires_login {
                     let tutorial = OnboardingTutorial::from(selected_settings.clone());
@@ -2489,7 +2524,7 @@ impl RootView {
 
     pub fn open_warp_drive_object_in_existing_window(
         &mut self,
-        arg: &OpenWarpDriveObjectArgs,
+        arg: &OpenOctomusDriveObjectArgs,
         ctx: &mut ViewContext<Self>,
     ) -> bool {
         if let AuthOnboardingState::Terminal(handle) = &self.auth_onboarding_state {
@@ -2563,7 +2598,10 @@ impl RootView {
                     });
                 }
                 _ => {
-                    log::info!("{}", arg.object_type)
+                    log::info!(
+                        "Object type {:?} not support yet for opening via link",
+                        arg.object_type
+                    )
                 }
             }
 
@@ -2716,9 +2754,10 @@ impl RootView {
         true
     }
 
+    /// Insert a command that should create a subshell. If we support bootstrapping AKA
     /// "warpifying" its [`ShellType`], set a flag to automatically bootstrap it when the command's
     /// block receives the [`AfterBlockStarted`] event.
-    fn open_subshell_command_in_workspace(
+    pub fn insert_subshell_command_and_bootstrap_if_supported(
         &mut self,
         arg: &SubshellCommandArg,
         ctx: &mut ViewContext<Self>,
@@ -2726,7 +2765,11 @@ impl RootView {
         let window_id = ctx.window_id();
         if let AuthOnboardingState::Terminal(handle) = &self.auth_onboarding_state {
             handle.update(ctx, |workspace, ctx| {
-                workspace.open_subshell_command(arg, ctx);
+                workspace.insert_subshell_command_and_bootstrap_if_supported(
+                    &arg.command,
+                    arg.shell_type,
+                    ctx,
+                );
                 ctx.windows().show_window_and_focus_app(window_id);
             })
         } else {
@@ -2744,7 +2787,7 @@ impl RootView {
             ctx.dispatch_typed_action_for_view(
                 window_id,
                 handle.id(),
-                &WorkspaceAction::OpenWarpDrive,
+                &WorkspaceAction::OpenOctomusDrive,
             );
             ctx.windows().show_window_and_focus_app(window_id);
         } else {
@@ -3047,7 +3090,8 @@ impl RootView {
         ctx: &mut ViewContext<Self>,
     ) {
         match event {
-            WebHandoffEvent::Unavailable => {
+            WebHandoffEvent::Unsupported => {
+                log::warn!("Web auth handoff is unavailable");
                 if let AuthOnboardingState::WebImport(target) = &self.auth_onboarding_state {
                     self.auth_onboarding_state = match target {
                         AuthOnboardingTarget::Workspace(args) => {
@@ -3186,7 +3230,7 @@ impl RootView {
             return;
         };
 
-        if FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
+        if FeatureFlag::OpenOctomusNewSettingsModes.is_enabled()
             && FeatureFlag::TabConfigs.is_enabled()
         {
             let intention = tutorial.intention();
@@ -3512,6 +3556,7 @@ impl AuthOnboardingState {
             }
             #[cfg(target_family = "wasm")]
             AuthOnboardingState::WebImport(_) => {
+                // TODO(ben): Eventually, we could support logout here by logging out of the JS
                 // Firebase client.
             }
             AuthOnboardingState::NeedsSsoLink(needs_sso_link_mode) => match needs_sso_link_mode {

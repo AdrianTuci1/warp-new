@@ -4,10 +4,15 @@ use warp_editor::render::model::BlockItem;
 use warpui::integration::{AssertionCallback, AssertionOutcome, AssertionWithDataCallback};
 use warpui::{async_assert, async_assert_eq, App, ViewHandle};
 
+use crate::cloud_object::model::generic_string_model::GenericStringObjectId;
+use crate::cloud_object::model::persistence::CloudModel;
 use crate::integration_testing::cloud_object::assert_metadata_revision;
 use crate::integration_testing::terminal::util::ExpectedOutput;
 use crate::integration_testing::view_getters::{notebook_view, terminal_view};
+use crate::notebooks::notebook::NotebookView;
+use crate::notebooks::{CloudNotebookModel, NotebookId};
 use crate::pane_group::PaneGroup;
+use crate::server::ids::SyncId;
 use crate::settings::{CloudPreferenceModel, Preference};
 
 /// Asserts that the notebook in the given pane has the expected Markdown content.
@@ -147,7 +152,7 @@ pub fn assert_open_in_warp_banner_open(tab_index: usize, pane_index: usize) -> A
         terminal.read(app, |view, _ctx| {
             async_assert!(
                 view.is_open_in_warp_banner_open(),
-                "Expected the 'Open in Octomus' banner to be open"
+                "Expected the 'Open in Warp' banner to be open"
             )
         })
     })

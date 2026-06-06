@@ -22,10 +22,17 @@ use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::AIAgentExchangeId;
 use crate::ai::ambient_agents::AmbientAgentTaskId;
 use crate::ai::document::ai_document_model::{AIDocumentId, AIDocumentVersion};
+use crate::auth::auth_manager::LoginGatedFeature;
+use crate::drive::items::WarpDriveItemId;
+use crate::drive::CloudObjectTypeAndId;
 use crate::palette::PaletteMode;
 use crate::pane_group::PaneGroup;
 use crate::prompt::editor_modal::OpenSource as PromptEditorOpenSource;
 use crate::search;
+use crate::server::ids::SyncId;
+use crate::server::telemetry::{
+    AddTabWithShellSource, AgentModeEntrypoint, PaletteSource, SharingDialogSource,
+};
 use crate::settings_view::{SettingsAction as SettingsTabAction, SettingsSection};
 use crate::tab::{NewSessionMenuItem, SelectedTabColor};
 use crate::tab_configs::TabConfig;
@@ -302,15 +309,15 @@ pub enum WorkspaceAction {
         position: RectF,
     },
     DropGroup,
-    /// Toggles the left panel. In Code Mode V1 this toggles Warp Drive.
+    /// Toggles the left panel. In Code Mode V1 this toggles Octomus Drive.
     /// In Code Mode V2 this toggles the left panel which contains both the project explorer and
-    /// Warp Drive. This happens as explicit action from the user.
+    /// Octomus Drive. This happens as explicit action from the user.
     ToggleLeftPanel,
-    /// Toggles directly to the Warp Drive tab of the left panel in Code Mode V2
+    /// Toggles directly to the Octomus Drive tab of the left panel in Code Mode V2
     ToggleWarpDrive,
-    /// Unconditionally opens Warp Drive. This is used in the case of user lifecycle
+    /// Unconditionally opens Octomus Drive. This is used in the case of user lifecycle
     /// events like new user onboarding or when the user joins a team.
-    OpenWarpDrive,
+    OpenOctomusDrive,
     /// Toggles the right panel. This happens as an explicit action from the user.
     ToggleRightPanel,
     /// Opens the code review panel (right panel) without toggling. If already open,
@@ -549,6 +556,7 @@ pub enum WorkspaceAction {
         launch: Option<crate::ai::blocklist::handoff::PendingCloudLaunch>,
         #[cfg(not(all(feature = "local_fs", not(target_family = "wasm"))))]
         launch: Option<()>,
+        environment_id: Option<crate::server::ids::SyncId>,
         entry_point: crate::ai::ambient_agents::telemetry::HandoffEntryPoint,
     },
     /// Automatically hand off the active running local agent conversation in the
@@ -630,12 +638,12 @@ pub enum WorkspaceAction {
     /// Reset the Oz launch modal dismissed state (for debugging)
     #[cfg(debug_assertions)]
     ResetOzLaunchModalState,
-    /// Open the OpenWarp Launch Modal (for debugging)
+    /// Open the OpenOctomus Launch Modal (for debugging)
     #[cfg(debug_assertions)]
-    OpenOpenWarpLaunchModal,
-    /// Reset the OpenWarp launch modal dismissed state (for debugging)
+    OpenOpenOctomusLaunchModal,
+    /// Reset the OpenOctomus launch modal dismissed state (for debugging)
     #[cfg(debug_assertions)]
-    ResetOpenWarpLaunchModalState,
+    ResetOpenOctomusLaunchModalState,
     /// Open the Orchestration Launch Modal (for debugging)
     #[cfg(debug_assertions)]
     OpenOrchestrationLaunchModal,
@@ -929,7 +937,7 @@ impl WorkspaceAction {
             | StartGroupDrag(_)
             | ToggleLeftPanel
             | ToggleWarpDrive
-            | OpenWarpDrive
+            | OpenOctomusDrive
             | ClosePanel
             | ToggleRightPanel
             | OpenCodeReviewPanel(..)
@@ -1052,8 +1060,8 @@ impl WorkspaceAction {
             | DebugResetAwsBedrockLoginBannerDismissed
             | OpenOzLaunchModal
             | ResetOzLaunchModalState
-            | OpenOpenWarpLaunchModal
-            | ResetOpenWarpLaunchModalState
+            | OpenOpenOctomusLaunchModal
+            | ResetOpenOctomusLaunchModalState
             | OpenOrchestrationLaunchModal
             | ResetOrchestrationLaunchModalState
             | InstallOpenCodeWarpPlugin

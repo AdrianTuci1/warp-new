@@ -22,6 +22,8 @@ use crate::code_review::git_dialog::{
 use crate::code_review::telemetry_event::{
     CodeReviewTelemetryEvent, GitDialogStatus, GitOperationKind,
 };
+use crate::server::server_api::ai::AIClient;
+use crate::server::server_api::ServerApiProvider;
 use crate::ui_components::icons::Icon;
 use crate::util::git::{
     create_pr, get_branch_commit_messages, get_branch_diff_entries, get_diff_for_pr,

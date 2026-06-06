@@ -15,7 +15,14 @@ use super::{
 use crate::ai::llms::{LLMId, LLMPreferences};
 use crate::ai::mcp::templatable_manager::TemplatableMCPServerManagerEvent;
 use crate::ai::mcp::TemplatableMCPServerManager;
+use crate::cloud_object::model::generic_string_model::GenericStringObjectId;
+use crate::cloud_object::model::persistence::{CloudModelEvent, UpdateSource};
+use crate::cloud_object::{GenericStringObjectFormat, JsonObjectType};
+use crate::drive::CloudObjectTypeAndId;
+use crate::server::cloud_objects::update_manager::UpdateManager;
+use crate::server::ids::{ClientId, SyncId};
 use crate::settings::AgentModeCommandExecutionPredicate;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::{send_telemetry_from_ctx, CloudModel, LaunchMode, TelemetryEvent};
 
 /// ExecutionProfileId is the identifier that users of the AIExecutionProfilesModel use
@@ -51,7 +58,7 @@ impl AIExecutionProfileInfo {
         &self.id
     }
 
-    /// The Warp Drive sync ID of this profile, if it has been synced.
+    /// The Octomus Drive sync ID of this profile, if it has been synced.
     #[cfg_attr(target_family = "wasm", allow(dead_code))]
     pub fn sync_id(&self) -> Option<SyncId> {
         self.sync_id

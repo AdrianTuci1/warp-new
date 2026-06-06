@@ -8,9 +8,14 @@ use warp_core::features::FeatureFlag;
 use warpui::{AppContext, SingletonEntity};
 
 use super::llms::{LLMContextWindow, LLMInfo, LLMPreferences, LLMProvider};
+use crate::cloud_object::model::generic_string_model::StringModel;
+use crate::cloud_object::model::json_model::JsonModel;
+use crate::cloud_object::{
     GenericStringObjectFormat, GenericStringObjectUniqueKey, JsonObjectType, Revision, UniquePer,
 };
+use crate::server::sync_queue::QueueItem;
 use crate::settings::AISettings;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 /// This threshold currently only applies to GPT 5.4 and GPT 5.5 models
 pub const LONG_CONTEXT_WARNING_THRESHOLD: u32 = 272_000;
 pub(crate) const LONG_CONTEXT_PRICING_WARNING_URL: &str =

@@ -45,6 +45,7 @@ use crate::code::{EditorTabBarDropTargetData, ImmediateSaveError, SaveOutcome, S
 use crate::editor::InteractionState;
 use crate::input::Vector2F;
 use crate::menu::{MenuItem, MenuItemFields};
+use crate::notebooks::file::{is_markdown_file, MarkdownDisplayMode};
 use crate::pane_group::focus_state::PaneFocusHandle;
 use crate::pane_group::pane::view::header::components::{
     render_pane_header_buttons, render_pane_header_title_text, render_three_column_header,
@@ -59,6 +60,7 @@ use crate::pane_group::{
 use crate::quit_warning::UnsavedStateSummary;
 use crate::search::files::icon::icon_from_file_path;
 use crate::search::ItemHighlightState;
+use crate::server::telemetry::CodeContextDestination;
 use crate::tab::TAB_BAR_BORDER_HEIGHT;
 use crate::terminal::cli_agent::{
     build_selection_line_range_prompt, build_selection_substring_prompt,

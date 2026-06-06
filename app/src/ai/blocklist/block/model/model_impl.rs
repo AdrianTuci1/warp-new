@@ -213,7 +213,9 @@ where
                     }
                 }
                 BlocklistAIHistoryEvent::ConversationUsageMetadataUpdated { .. } => {
+                    // Cross-pane orchestration credit rollup: the collapsed
                     // footer pill on an orchestrator's AIBlock derives its
+                    // headline number from descendant credits, which the
                     // existing exchange-scoped notify path above doesn't
                     // cover. Trigger a re-render on any usage metadata
                     // change so the pill stays live. Filtering to only

@@ -42,7 +42,10 @@ use {
     session_sharing_protocol::sharer::{InitPayload, Lifetime},
 };
 
+use crate::auth::{AuthStateProvider, UserUid};
 use crate::editor::{CrdtOperation, ReplicaId};
+use crate::server::iap::IapManager;
+use crate::server::server_api::ServerApiProvider;
 use crate::terminal::model::block::BlockId;
 use crate::terminal::shared_session::network::heartbeat::{Event as HeartbeatEvent, Heartbeat};
 use crate::terminal::shared_session::{
@@ -1386,7 +1389,7 @@ pub fn failed_to_add_guests_user_error(reason: &FailedToAddGuestsReason) -> Stri
     match reason {
         FailedToAddGuestsReason::Invalid => "Something went wrong. Please try again.",
         FailedToAddGuestsReason::NotWarpUsers => {
-            "One or more emails were not associated with Octomus accounts."
+            "One or more emails were not associated with Warp accounts."
         }
         FailedToAddGuestsReason::GuestAlreadyAdded => {
             "One or more emails have already been added to the session."

@@ -12,6 +12,7 @@ use crate::ai::artifacts::Artifact;
 use crate::ai::blocklist::BlocklistAIHistoryModel;
 use crate::ai::document::ai_document_model::{AIDocumentModel, AIDocumentVersion};
 use crate::ai::execution_profiles::profiles::AIExecutionProfilesModel;
+use crate::notebooks::editor::model::FileLinkResolutionContext;
 use crate::terminal::model::session::active_session::ActiveSession;
 
 pub struct CreateDocumentsExecutor {
@@ -111,7 +112,7 @@ impl CreateDocumentsExecutor {
                 // Add plan artifact to the conversation.
                 let artifact = Artifact::Plan {
                     document_uid: id.to_string(),
-                    notebook_uid: None, // Will be updated when synced to Warp Drive
+                    notebook_uid: None, // Will be updated when synced to Octomus Drive
                     title: Some(document.title.clone()),
                 };
                 let terminal_view_id = self.terminal_view_id;

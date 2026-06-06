@@ -33,6 +33,7 @@ use crate::terminal::view::ambient_agent::auth_secret_ftux_dropdown::{
 use crate::ui_components::icons::Icon as UiIcon;
 use crate::view_components::DismissibleToast;
 use crate::workspace::ToastStack;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 const DESCRIPTION_FONT_SIZE: f32 = 14.;
 
@@ -766,7 +767,7 @@ impl AuthSecretFtuxView {
             .map(|info| info.learn_more_url)
             .unwrap_or_else(|| learn_more_url_for_harness(self.harness));
         let learn_more_label =
-            format!("Learn more about authentication for {harness_name} in Octomus.");
+            format!("Learn more about authentication for {harness_name} in Warp.");
         let learn_more = Hoverable::new(self.learn_more_mouse_state.clone(), move |state| {
             let color = if state.is_hovered() {
                 accent_color

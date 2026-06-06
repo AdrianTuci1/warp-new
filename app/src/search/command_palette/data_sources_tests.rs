@@ -6,14 +6,30 @@ use settings::manager::SettingsManager;
 use warpui::{App, SingletonEntity};
 
 use super::*;
+use crate::auth::AuthStateProvider;
+use crate::cloud_object::model::persistence::CloudModel;
+use crate::cloud_object::model::view::CloudViewModel;
+use crate::cloud_object::{
     Owner, Revision, ServerMetadata, ServerNotebook, ServerPermissions, ServerWorkflow,
 };
 use crate::network::NetworkStatus;
+use crate::notebooks::manager::NotebookManager;
+use crate::notebooks::{CloudNotebookModel, NotebookId};
 use crate::search::data_source::Query;
+use crate::server::cloud_objects::update_manager::UpdateManager;
+use crate::server::ids::ServerId;
+use crate::server::ids::SyncId::{self};
+use crate::server::server_api::team::MockTeamClient;
+use crate::server::server_api::workspace::MockWorkspaceClient;
+use crate::server::server_api::ServerApiProvider;
+use crate::server::sync_queue::SyncQueue;
 use crate::settings::AISettings;
 use crate::system::SystemStats;
 use crate::workflows::workflow::Workflow;
 use crate::workflows::{CloudWorkflowModel, WorkflowId};
+use crate::workspaces::team_tester::TeamTesterStatus;
+use crate::workspaces::user_profiles::UserProfiles;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 fn mock_server_metadata() -> ServerMetadata {
     ServerMetadata {

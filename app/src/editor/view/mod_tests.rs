@@ -10,14 +10,18 @@ use warpui::windowing::WindowManager;
 use warpui::{AddSingletonModel, App, UpdateModel, UpdateView};
 
 use super::*;
+use crate::auth::AuthStateProvider;
 use crate::editor::soft_wrap::FrameLayouts;
 use crate::editor::tests::sample_text;
 use crate::editor::EditorView;
 use crate::report_if_error;
+use crate::server::server_api::team::MockTeamClient;
+use crate::server::server_api::workspace::MockWorkspaceClient;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
 use crate::test_util::settings::initialize_settings_for_tests;
 use crate::workspace::sync_inputs::SyncedInputState;
 use crate::workspace::ToastStack;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 impl EditorView {
     fn selected_ranges(&self, app: &AppContext) -> Vec<Range<DisplayPoint>> {
@@ -523,7 +527,7 @@ fn test_smart_select_with_drag() {
 
         app.add_window(WindowStyle::NotStealFocus, |ctx| {
             let mut editor = EditorView::new_with_base_text(
-                "word ~/.warp/themes/foo-bar.yaml andy@warp.dev",
+                "word ~/.warp/themes/foo-bar.yaml andy@localhost:8080",
                 Default::default(),
                 ctx,
             );

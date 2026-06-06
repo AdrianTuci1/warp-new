@@ -80,6 +80,7 @@ use crate::menu::{Event as MenuEvent, Menu, MenuItemFields, MenuVariant};
 use crate::pane_group::focus_state::PaneFocusHandle;
 use crate::pane_group::pane::{view, PaneId};
 use crate::pane_group::{BackingView, PaneEvent};
+use crate::server::telemetry::{
     AgentModeCodeFileNavigationSource, ToggleCodeSuggestionsSettingSource,
 };
 use crate::settings::AISettings;

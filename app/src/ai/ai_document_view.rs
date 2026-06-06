@@ -29,8 +29,15 @@ use crate::ai::document::ai_document_model::{
 };
 use crate::ai::document::orchestration_config_block::OrchestrationConfigBlockView;
 use crate::appearance::Appearance;
+use crate::drive::items::WarpDriveItemId;
+use crate::drive::sharing::ShareableObject;
+use crate::drive::CloudObjectTypeAndId;
 use crate::editor::InteractionState;
 use crate::menu::{Menu, MenuItem, MenuItemFields};
+use crate::notebooks::editor::model::NotebooksEditorModel;
+use crate::notebooks::editor::rich_text_styles;
+use crate::notebooks::editor::view::{EditorViewEvent, RichTextEditorConfig, RichTextEditorView};
+use crate::notebooks::link::{NotebookLinks, SessionSource};
 use crate::pane_group::focus_state::PaneFocusHandle;
 use crate::pane_group::pane::view;
 use crate::pane_group::pane::view::header::components::{
@@ -39,6 +46,7 @@ use crate::pane_group::pane::view::header::components::{
 };
 use crate::pane_group::pane::view::header::{toolbelt_button_position_id, PaneHeaderAction};
 use crate::pane_group::{BackingView, PaneConfiguration, PaneEvent};
+use crate::server::telemetry::TelemetryEvent;
 use crate::settings::FontSettings;
 use crate::terminal::input::MenuPositioning;
 use crate::terminal::view::TerminalView;
@@ -78,6 +86,7 @@ use warp_util::path::LineAndColumnArg;
 use crate::code::editor_management::CodeSource;
 // Import keybinding constants from code view to ensure consistency
 use crate::code::view::{SAVE_FILE_BINDING_DESCRIPTION, SAVE_FILE_BINDING_NAME};
+use crate::notebooks::file::MarkdownDisplayMode;
 #[cfg(feature = "local_fs")]
 use crate::util::file::external_editor::settings::EditorLayout;
 #[cfg(feature = "local_fs")]
@@ -385,7 +394,7 @@ impl AIDocumentView {
             pane_config.refresh_pane_header_overflow_menu_items(ctx)
         });
 
-        // Create sync button mouse state (for Warp Drive syncing)
+        // Create sync button mouse state (for Octomus Drive syncing)
         let sync_button_mouse_state = MouseStateHandle::default();
 
         // Create Update Agent button
@@ -651,7 +660,7 @@ impl AIDocumentView {
                 let appearance = Appearance::as_ref(app);
                 let ui_builder = appearance.ui_builder().clone();
                 let tooltip = ui_builder
-                    .tool_tip("Save and auto-sync this plan to your Local Storage".to_string())
+                    .tool_tip("Save and auto-sync this plan to your Octomus Drive".to_string())
                     .build()
                     .finish();
                 let sync_button_mouse_state = self.sync_button_mouse_state.clone();
@@ -704,7 +713,7 @@ impl AIDocumentView {
                 let color = theme.nonactive_ui_detail().into_solid();
                 let ui_builder = appearance.ui_builder().clone();
                 let tooltip_text =
-                    "This plan is synced to your Local Storage and will auto save any edits you make."
+                    "This plan is synced to your Octomus Drive and will auto save any edits you make."
                         .to_string();
                 let synced_status_mouse_state = self.synced_status_mouse_state.clone();
                 Container::new(
@@ -992,7 +1001,7 @@ impl AIDocumentView {
             model.sync_to_warp_drive(self.document_id, ctx)
         });
         if !success {
-            log::error!("Failed to create Local Storage notebook");
+            log::error!("Failed to create Octomus Drive notebook");
         }
     }
 
@@ -1001,6 +1010,7 @@ impl AIDocumentView {
     fn export(&self, ctx: &mut ViewContext<Self>) {
         use warpui::platform::SaveFilePickerConfiguration;
 
+        use crate::drive::export::safe_filename;
         let markdown = self.editor.as_ref(ctx).markdown_unescaped(ctx);
 
         // Get the document title from the model
@@ -1292,7 +1302,7 @@ impl BackingView for AIDocumentView {
     ) -> Vec<MenuItem<Self::PaneHeaderOverflowMenuAction>> {
         let mut menu_items = vec![];
 
-        // Only show shareable link when the document is synced to Warp Drive
+        // Only show shareable link when the document is synced to Octomus Drive
         if let Some(link) =
             AIDocumentModel::as_ref(ctx).get_document_warp_drive_object_link(&self.document_id, ctx)
         {
@@ -1303,7 +1313,7 @@ impl BackingView for AIDocumentView {
                     .into_item(),
             );
             menu_items.push(
-                MenuItemFields::new("Show in Local Storage")
+                MenuItemFields::new("Show in Octomus Drive")
                     .with_on_select_action(AIDocumentAction::ShowInWarpDrive)
                     .with_icon(Icon::WarpDrive)
                     .into_item(),

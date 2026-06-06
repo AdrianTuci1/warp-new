@@ -20,7 +20,7 @@ pub fn main() -> Result<()> {
                 "dev",
                 "warp",
                 if cfg!(target_os = "macos") {
-                    "Octomus-Integration"
+                    "Warp-Integration"
                 } else {
                     "WarpIntegration"
                 },

@@ -51,6 +51,8 @@ use crate::ai::blocklist::{
     BlocklistAIHistoryEvent, BlocklistAIHistoryModel, InputConfig, SerializedBlockListItem,
 };
 use crate::ai::llms::{LLMPreferences, LLMPreferencesEvent};
+use crate::auth::auth_state::AuthState;
+use crate::auth::AuthStateProvider;
 use crate::banner::BannerState;
 use crate::context_chips::current_prompt::CurrentPrompt;
 use crate::context_chips::prompt_snapshot::PromptSnapshot;
@@ -60,6 +62,7 @@ use crate::features::FeatureFlag;
 use crate::network::{NetworkStatusEvent, NetworkStatusKind};
 use crate::pane_group::TerminalViewResources;
 use crate::persistence::ModelEvent;
+use crate::server::telemetry::{TelemetryAgentViewEntryOrigin, TelemetryEvent};
 use crate::settings::{DebugSettings, PrivacySettings, SshSettings};
 use crate::terminal::available_shells::{AvailableShell, AvailableShells};
 use crate::terminal::cli_agent_sessions::{

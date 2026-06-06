@@ -7,10 +7,13 @@ use warpui::fonts::FamilyId;
 use warpui::{AppContext, SingletonEntity};
 
 use super::{AcceptSlashCommandOrSavedPrompt, InlineItem};
+use crate::cloud_object::model::persistence::CloudModel;
+use crate::cloud_object::CloudObject;
 use crate::search::async_snapshot_data_source::AsyncSnapshotDataSource;
 use crate::search::data_source::{Query, QueryResult};
 use crate::search::mixer::{BoxFuture, DataSourceRunErrorWrapper};
 use crate::search::FuzzyMatchWorkflowResult;
+use crate::server::ids::SyncId;
 use crate::settings::AISettings;
 use crate::workflows::CloudWorkflowModel;
 

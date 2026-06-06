@@ -1,3 +1,5 @@
+This is a community fork. For the original, see warpdotdev/warp.
+
 <a href="http://localhost:8080">
     <img width="1024" alt="Warp Agentic Development Environment product preview" src="https://github.com/user-attachments/assets/9976b2da-2edd-4604-a36c-8fd53719c6d4" />
 </a>
@@ -37,7 +39,7 @@
 
 You can [download Warp](http://localhost:8080/download) and [read our docs](http://localhost:8080/docs/) for platform-specific instructions.
 
-## Warp Contributions Overview Dashboard
+## Octomus Contributions Overview Dashboard
 
 Explore [build.localhost](https://build.localhost) to:
 - Watch thousands of Oz agents triage issues, write specs, implement changes, and review PRs

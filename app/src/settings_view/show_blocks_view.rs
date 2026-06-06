@@ -26,15 +26,18 @@ use super::settings_page::{
 };
 use super::SettingsSection;
 use crate::appearance::Appearance;
+use crate::auth::AuthStateProvider;
 use crate::channel::{Channel, ChannelState};
 use crate::menu::{Event as MenuEvent, Event, Menu, MenuItem, MenuItemFields};
+use crate::server::block::Block;
+use crate::server::server_api::block::BlockClient;
 use crate::view_components::ToastFlavor;
 
 const SCROLLBAR_WIDTH: ScrollbarWidth = ScrollbarWidth::Auto;
 
 const UNSHARE_BLOCK_CONFIRMATION_DIALOG_TEXT: &str =
     "Are you sure you want to unshare this block?\n\
-\nIt will no longer be accessible by link and will be permanently deleted from Octomus servers.";
+\nIt will no longer be accessible by link and will be permanently deleted from Warp servers.";
 
 #[derive(Clone, Debug)]
 struct UserOwnedBlock {

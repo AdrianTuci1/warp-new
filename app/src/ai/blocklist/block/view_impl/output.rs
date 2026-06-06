@@ -97,6 +97,7 @@ use crate::ai::blocklist::inline_action::web_search::WebSearchView;
 use crate::ai::blocklist::keyboard_navigable_buttons::KeyboardNavigableButtons;
 use crate::ai::blocklist::secret_redaction::SecretRedactionState;
 use crate::ai::blocklist::usage::rollup::compute_orchestration_rollup;
+use crate::ai::blocklist::view_util::format_credits;
 use crate::ai::blocklist::{AIBlockResponseRating, BlocklistAIActionModel, SuggestionChipView};
 use crate::ai::paths::shell_native_absolute_path;
 use crate::ai::skills::{
@@ -1115,7 +1116,7 @@ pub(super) fn render(props: Props, app: &AppContext) -> Box<dyn Element> {
                             output_items.add_child(
                                 render_informational_footer(
                                     app,
-                                    "Sorry you had a bad experience with this interaction. We appreciate your feedback!"
+                                    "Sorry you had a bad experience with this interaction. We've refunded you 1 credit. We appreciate your feedback!"
                                         .to_string(),
                                 )
                                 .with_agent_output_item_spacing(app)
@@ -1127,7 +1128,7 @@ pub(super) fn render(props: Props, app: &AppContext) -> Box<dyn Element> {
                                 render_informational_footer(
                                     app,
                                     format!(
-                                        "Sorry you had a bad experience with this interaction. We appreciate your feedback!"
+                                        "Sorry you had a bad experience with this interaction. We've refunded you {request_refunded_count} credits. We appreciate your feedback!"
                                     ),
                                 )
                                 .with_agent_output_item_spacing(app)
@@ -3269,8 +3270,225 @@ fn render_response_footer(props: Props, app: &AppContext) -> Option<Box<dyn Elem
 }
 
 /// Renders the usage button that, on click, will expand & collapse the usage summary footer.
-fn render_usage_button(_props: Props, _app: &AppContext) -> Box<dyn Element> {
-    Empty::new().finish()
+fn render_usage_button(props: Props, app: &AppContext) -> Box<dyn Element> {
+    let Some(conversation) = props.model.conversation(app) else {
+        return Empty::new().finish();
+    };
+
+    // Optional orchestration credit rollup. When the conversation has at
+    // least one locally-loaded descendant with credits spent, the pill's
+    // headline number and "has any usage" suppression check both switch
+    // over to the orchestration total (PRODUCT invariants 11, 11b). The
+    // `(+N)` last-block annotation below stays bound to the
+    // orchestrator's own credits. The rollup helper returns `None` for
+    // conversations with no descendants, so callers that aren't
+    // orchestrators pay only the cost of one descendant-index probe.
+    let rollup =
+        compute_orchestration_rollup(conversation.id(), BlocklistAIHistoryModel::as_ref(app));
+
+    // If this conversation has no usage metadata (e.g. a forked conversation from
+    // mid-way through a prior conversation where the server did not send
+    // ConversationUsageMetadata), avoid rendering the usage button entirely.
+    let headline_credits = rollup
+        .as_ref()
+        .map(|r| r.total_credits)
+        .unwrap_or_else(|| conversation.credits_spent());
+    let has_any_usage = headline_credits > 0.0
+        || conversation.credits_spent_for_last_block().is_some()
+        || !conversation.token_usage().is_empty()
+        || conversation.tool_usage_metadata().total_tool_calls() > 0;
+    if !has_any_usage {
+        return Empty::new().finish();
+    }
+
+    let appearance = Appearance::as_ref(app);
+    let ui_builder = appearance.ui_builder().clone();
+
+    let expansion_icon = if props.is_usage_footer_expanded {
+        Icon::ChevronDown
+    } else {
+        Icon::ChevronRight
+    };
+
+    let total_credits_spent = headline_credits;
+    let mut credit_usage_text = format_credits(total_credits_spent);
+    if let Some(credits_spent_for_last_block) = conversation.credits_spent_for_last_block() {
+        // Only show the credits spent for the last block if it is different from the total credits spent
+        // and we spent a non-zero amount of credits for the last block.
+        // Avoid showing the credits spent for the last block if the request failed, as we refund user
+        // credits in that case (so no credits were in fact spent).
+        if credits_spent_for_last_block > 0.0
+            && total_credits_spent != credits_spent_for_last_block
+            && props.model.status(app).error().is_none()
+        {
+            // If the first part of the decimal is 0, we just display the whole number.
+            if credits_spent_for_last_block.fract() < 0.1 {
+                credit_usage_text = format!(
+                    "{credit_usage_text} (+{})",
+                    credits_spent_for_last_block.trunc() as i32
+                );
+            } else {
+                credit_usage_text =
+                    format!("{credit_usage_text} (+{credits_spent_for_last_block:.1})");
+            }
+        }
+    }
+
+    let icon_size = icon_size(app);
+    let button_row = Flex::row()
+        .with_cross_axis_alignment(CrossAxisAlignment::Center)
+        .with_main_axis_size(MainAxisSize::Min)
+        .with_child(
+            Container::new(
+                Text::new_inline(
+                    credit_usage_text,
+                    appearance.ui_font_family(),
+                    appearance.monospace_font_size(),
+                )
+                .with_color(
+                    appearance
+                        .theme()
+                        .sub_text_color(appearance.theme().background())
+                        .into(),
+                )
+                .with_selectable(false)
+                .finish(),
+            )
+            .with_padding_top(2.)
+            .with_margin_left(4.)
+            .finish(),
+        )
+        .with_child(
+            Container::new(
+                // Expansion icon
+                ConstrainedBox::new(
+                    expansion_icon
+                        .to_warpui_icon(
+                            appearance
+                                .theme()
+                                .sub_text_color(appearance.theme().background()),
+                        )
+                        .finish(),
+                )
+                .with_width(icon_size)
+                .with_height(icon_size)
+                .finish(),
+            )
+            .with_margin_top(1.)
+            .finish(),
+        );
+
+    Hoverable::new(
+        props.state_handles.usage_button_handle.clone(),
+        |mouse_state| {
+            let mut content = Container::new(button_row.finish());
+
+            if mouse_state.is_hovered() || mouse_state.is_clicked() {
+                let background = if mouse_state.is_clicked() {
+                    appearance.theme().background()
+                } else {
+                    blended_colors::neutral_4(appearance.theme()).into()
+                };
+
+                content = content
+                    .with_background(background)
+                    .with_corner_radius(CornerRadius::with_all(Radius::Pixels(4.)));
+
+                // Show tooltip on hover or while clicked
+                let mut stack = Stack::new().with_child(content.finish());
+                let tooltip = ui_builder
+                    .tool_tip("Show credit usage details".to_string())
+                    .build()
+                    .finish();
+                stack.add_positioned_overlay_child(
+                    tooltip,
+                    OffsetPositioning::offset_from_parent(
+                        vec2f(0., 8.),
+                        ParentOffsetBounds::WindowByPosition,
+                        ParentAnchor::BottomMiddle,
+                        ChildAnchor::TopMiddle,
+                    ),
+                );
+
+                stack.finish()
+            } else {
+                content.finish()
+            }
+        },
+    )
+    .on_click(|ctx, _, _| {
+        ctx.dispatch_typed_action(AIBlockAction::ToggleIsUsageFooterExpanded);
+    })
+    .with_cursor(Cursor::PointingHand)
+    .finish()
+}
+
+pub fn action_icon<V: View>(
+    action_id: &AIAgentActionId,
+    action_model: &ModelHandle<BlocklistAIActionModel>,
+    ai_block_model: &dyn AIBlockModel<View = V>,
+    app: &AppContext,
+) -> warpui::elements::Icon {
+    let appearance = Appearance::as_ref(app);
+    let status = action_model.as_ref(app).get_action_status(action_id);
+    match status {
+        Some(status) => match status {
+            AIActionStatus::Preprocessing => icons::gray_circle_icon(appearance),
+            AIActionStatus::Queued => icons::gray_stop_icon(appearance),
+            AIActionStatus::Blocked => icons::yellow_stop_icon(appearance),
+            AIActionStatus::RunningAsync => icons::yellow_running_icon(appearance),
+            AIActionStatus::Finished(result) => {
+                if matches!(
+                    result.result,
+                    AIAgentActionResultType::RequestCommandOutput(
+                        RequestCommandOutputResult::LongRunningCommandSnapshot { .. }
+                    )
+                ) {
+                    return icons::yellow_running_icon(appearance);
+                }
+
+                if result.result.is_successful() {
+                    inline_action_icons::green_check_icon(appearance)
+                } else if result.result.is_cancelled() {
+                    inline_action_icons::cancelled_icon(appearance)
+                } else {
+                    inline_action_icons::red_x_icon(appearance)
+                }
+            }
+        },
+        None => {
+            if ai_block_model.status(app).is_streaming() {
+                if ai_block_model.is_first_action_in_output(action_id, app) {
+                    icons::yellow_running_icon(appearance)
+                } else {
+                    icons::gray_circle_icon(appearance)
+                }
+            } else {
+                inline_action_icons::cancelled_icon(appearance)
+            }
+        }
+    }
+}
+
+pub(super) fn blocked_action_header<V: View>(
+    action_id: AIAgentActionId,
+    text: &str,
+    accept_button: CompactibleActionButton,
+    cancel_button: CompactibleActionButton,
+    action_model: &ModelHandle<BlocklistAIActionModel>,
+    block_model: &dyn AIBlockModel<View = V>,
+    app: &AppContext,
+) -> HeaderConfig {
+    let action_buttons: Vec<Rc<dyn RenderCompactibleActionButton>> = vec![
+        Rc::new(cancel_button.clone()),
+        Rc::new(accept_button.clone()),
+    ];
+    HeaderConfig::new(text.to_owned(), app)
+        .with_icon(action_icon(&action_id, action_model, block_model, app))
+        .with_interaction_mode(InteractionMode::ActionButtons {
+            action_buttons,
+            size_switch_threshold: SMALL_SIZE_SWITCH_THRESHOLD,
+        })
 }
 
 fn render_collapsible_header(

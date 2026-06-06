@@ -134,11 +134,11 @@ impl CliAgentPluginManager for CodexPluginManager {
     }
 
     fn install_success_message(&self) -> &'static str {
-        "Octomus plugin installed. Please restart Codex to activate."
+        "Warp plugin installed. Please restart Codex to activate."
     }
 
     fn update_success_message(&self) -> &'static str {
-        "Octomus plugin updated. Please restart Codex to activate."
+        "Warp plugin updated. Please restart Codex to activate."
     }
 
     fn install_instructions(&self) -> &'static PluginInstructions {
@@ -179,17 +179,17 @@ impl CliAgentPluginManager for CodexPluginManager {
 
 static PLUGIN_INSTALL_INSTRUCTIONS: LazyLock<PluginInstructions> =
     LazyLock::new(|| PluginInstructions {
-        title: "Install Octomus Plugin for Codex",
+        title: "Install Warp Plugin for Codex",
         subtitle: "Run the following commands, then restart Codex.",
         steps: &[
             PluginInstructionStep {
-                description: "Add the Octomus plugin marketplace repository",
+                description: "Add the Warp plugin marketplace repository",
                 command: "codex plugin marketplace add warpdotdev/codex-warp",
                 executable: true,
                 link: None,
             },
             PluginInstructionStep {
-                description: "Install the Octomus plugin",
+                description: "Install the Warp plugin",
                 command: "codex plugin add warp@codex-warp",
                 executable: true,
                 link: None,
@@ -200,8 +200,8 @@ static PLUGIN_INSTALL_INSTRUCTIONS: LazyLock<PluginInstructions> =
 
 static NATIVE_INSTALL_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| {
     PluginInstructions {
-        title: "Enable Octomus Notifications for Codex",
-        subtitle: "Update Codex to the latest version, then enable in-focus notifications so Octomus can display them while you work.",
+        title: "Enable Warp Notifications for Codex",
+        subtitle: "Update Codex to the latest version, then enable in-focus notifications so Warp can display them while you work.",
         steps: &[
             PluginInstructionStep {
                 description: "Update Codex to the latest version.",
@@ -229,7 +229,7 @@ static EMPTY_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| Plugi
 
 static PLUGIN_UPDATE_INSTRUCTIONS: LazyLock<PluginInstructions> =
     LazyLock::new(|| PluginInstructions {
-        title: "Update Octomus Plugin for Codex",
+        title: "Update Warp Plugin for Codex",
         subtitle: "Run the following commands, then restart Codex.",
         steps: &[
             PluginInstructionStep {
@@ -239,7 +239,7 @@ static PLUGIN_UPDATE_INSTRUCTIONS: LazyLock<PluginInstructions> =
                 link: None,
             },
             PluginInstructionStep {
-                description: "Reinstall the Octomus plugin",
+                description: "Reinstall the Warp plugin",
                 command: "codex plugin add warp@codex-warp",
                 executable: true,
                 link: None,

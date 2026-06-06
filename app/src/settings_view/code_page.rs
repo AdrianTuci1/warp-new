@@ -55,6 +55,7 @@ use crate::appearance::Appearance;
 use crate::code::buffer_location::LocalOrRemotePath;
 use crate::code::lsp_telemetry::{LspControlActionType, LspEnablementSource, LspTelemetryEvent};
 #[cfg(not(target_family = "wasm"))]
+use crate::remote_server::codebase_index_model::{
     RemoteCodebaseIndexModel, RemoteCodebaseIndexModelEvent, RemoteCodebaseIndexSettingsEntry,
 };
 use crate::settings::{AISettings, CodeSettings};
@@ -66,6 +67,9 @@ use crate::view_components::action_button::{ActionButton, SecondaryTheme};
 use crate::view_components::DismissibleToast;
 use crate::workspace::tab_settings::TabSettings;
 use crate::workspace::ToastStack;
+use crate::workspaces::update_manager::TeamUpdateManager;
+use crate::workspaces::user_workspaces::UserWorkspaces;
+use crate::workspaces::workspace::AdminEnablementSetting;
 use crate::{send_telemetry_from_ctx, TelemetryEvent};
 
 const MAIN_SECTION_MARGIN: f32 = 12.;
@@ -76,10 +80,10 @@ const LSP_STATUS_INDICATOR_SIZE: f32 = 8.;
 const CODE_FEATURE_NAME: &str = "Code";
 const INITIALIZATION_SETTINGS_HEADER: &str = "Initialization Settings";
 const CODEBASE_INDEXING_LABEL: &str = "Codebase indexing";
-const CODEBASE_INDEX_DESCRIPTION: &str = "Octomus can automatically index code repositories as you navigate them, helping agents quickly understand context and provide solutions. Code is never stored on the server. If a codebase is unable to be indexed, Octomus can still navigate your codebase and gain insights via grep and find tool calling.";
+const CODEBASE_INDEX_DESCRIPTION: &str = "Warp can automatically index code repositories as you navigate them, helping agents quickly understand context and provide solutions. Code is never stored on the server. If a codebase is unable to be indexed, Warp can still navigate your codebase and gain insights via grep and find tool calling.";
 const WARP_INDEXING_IGNORE_DESCRIPTION: &str = "To exclude specific files or directories from indexing, add them to the .warpindexingignore file in your repository directory. These files will still be accessible to AI features, but they won't be included in codebase embeddings.";
 const AUTO_INDEX_FEATURE_NAME: &str = "Index new folders by default";
-const AUTO_INDEX_DESCRIPTION: &str = "When set to true, Octomus will automatically index code repositories as you navigate them - helping agents quickly understand context and provide targeted solutions.";
+const AUTO_INDEX_DESCRIPTION: &str = "When set to true, Warp will automatically index code repositories as you navigate them - helping agents quickly understand context and provide targeted solutions.";
 const INDEXING_DISABLED_ADMIN_TEXT: &str = "Team admins have disabled codebase indexing.";
 const INDEXING_WORKSPACE_ENABLED_ADMIN_TEXT: &str = "Team admins have enabled codebase indexing.";
 const INDEXING_DISABLED_GLOBAL_AI_TEXT: &str =
@@ -342,7 +346,7 @@ impl CodeSettingsPageView {
 
         #[cfg(feature = "local_fs")]
         let external_editor_view;
-        let page = if FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
+        let page = if FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
             #[cfg(feature = "local_fs")]
             {
                 external_editor_view = Some(ctx.add_typed_action_view(ExternalEditorView::new));
@@ -467,7 +471,7 @@ impl CodeSettingsPageView {
     /// Builds the full categorized page with all Code widgets.
     /// Used for the default/legacy view and when resetting to all-widgets mode for search.
     fn build_full_page(ctx: &mut ViewContext<Self>) -> PageType<Self> {
-        if FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
+        if FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
             let manual_add_directory_button = ctx.add_typed_action_view(|_| {
                 ActionButton::new("Index new folder", SecondaryTheme)
                     .with_icon(Icon::FindAll)
@@ -929,7 +933,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
         );
     }
 
-    if FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
+    if FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
         ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
             vec![
                 ToggleSettingActionPair::new(
@@ -2649,7 +2653,7 @@ impl SettingsPageMeta for CodeSettingsPageView {
 
     fn should_render(&self, _ctx: &AppContext) -> bool {
         FeatureFlag::FullSourceCodeEmbedding.is_enabled()
-            || FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
+            || FeatureFlag::OpenOctomusNewSettingsModes.is_enabled()
     }
 
     fn on_page_selected(&mut self, _: bool, ctx: &mut ViewContext<Self>) {

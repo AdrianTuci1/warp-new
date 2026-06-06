@@ -28,6 +28,7 @@ use super::utils::{
     is_skill_file, read_local_project_skills_from_filesystem, read_skills_from_directories,
     read_skills_from_files, update_might_affect_project_skills,
 };
+use crate::remote_server::manager::RemoteServerManager;
 use crate::warp_managed_paths_watcher::{
     filter_repository_update_by_prefix, warp_managed_skill_dirs, WarpManagedPathsWatcher,
     WarpManagedPathsWatcherEvent,

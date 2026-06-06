@@ -22,6 +22,7 @@ use crate::context_chips::renderer::Renderer as ContextChipRenderer;
 use crate::context_chips::{
     available_chips, ChipAvailability, ChipRuntimeCapabilities, ContextChipKind,
 };
+use crate::server::telemetry::{PromptChoice, TelemetryEvent};
 use crate::settings::{FontSettings, WarpPromptSeparator};
 use crate::terminal::blockgrid_element::BlockGridElement;
 use crate::terminal::model::blockgrid::BlockGrid;
@@ -51,7 +52,7 @@ const MODAL_CONTENT_FONT_SIZE: f32 = 14.;
 const CHECKBOX_SIZE: f32 = 16.;
 
 const MODAL_TITLE: &str = "Edit prompt";
-const WARP_PROMPT_SECTION_HEADER: &str = "Octomus terminal prompt";
+const WARP_PROMPT_SECTION_HEADER: &str = "Warp terminal prompt";
 const SHELL_PROMPT_SECTION_HEADER: &str = "Shell prompt (PS1)";
 const RESTORE_DEFAULT_BUTTON: &str = "Restore default";
 
@@ -169,7 +170,7 @@ impl EditorModal {
 
         let warp_prompt_separator = match SessionSettings::as_ref(ctx).saved_prompt.value() {
             PromptSelection::CustomChipSelection(config) => config.separator(),
-            // If the "default Octomus prompt" i.e. no context chips, is selected, then default to no Warp prompt separator.
+            // If the "default Warp prompt" i.e. no context chips, is selected, then default to no Warp prompt separator.
             _ => WarpPromptSeparator::None,
         };
         let warp_prompt_separator_label = warp_prompt_separator.dropdown_item_label().to_owned();

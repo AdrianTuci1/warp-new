@@ -10,6 +10,7 @@ use crate::ai_assistant::test_util::{
 use crate::ai_assistant::utils::{CodeBlockIndex, TranscriptPart, TranscriptPartSubType};
 use crate::appearance;
 use crate::test_util::settings::initialize_settings_for_tests;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 // Mocked data to make it easy to test.
 lazy_static::lazy_static! {

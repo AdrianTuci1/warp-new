@@ -1,4 +1,5 @@
 use super::*;
+use crate::workspaces::workspace::{BillingMetadata, CustomerType};
 
 fn workspace_with_customer_type(customer_type: CustomerType) -> Workspace {
     Workspace {

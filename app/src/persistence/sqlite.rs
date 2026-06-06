@@ -76,13 +76,26 @@ use crate::app_state::{
     RightPanelSnapshot, SettingsPaneSnapshot, SplitDirection, TabSnapshot, TerminalPaneSnapshot,
     WindowSnapshot, WorkflowPaneSnapshot,
 };
+use crate::auth::auth_manager::PersistedCurrentUserInformation;
+use crate::auth::auth_state::AuthStateProvider;
+use crate::auth::UserUid;
+use crate::cloud_object::model::actions::{
+    object_action_from_persisted, ObjectAction, ObjectActionSubtype,
+};
+use crate::cloud_object::model::generic_string_model::{CloudStringObject, GenericStringObjectId};
+use crate::cloud_object::{CloudObject, ObjectIdType};
 use crate::code::editor_management::CodeSource;
+use crate::drive::OpenOctomusDriveObjectSettings;
+use crate::notebooks::NotebookId;
 use crate::persistence::agent::read_agent_conversations;
 use crate::persistence::block_list::{get_all_restored_blocks, read_ai_queries};
 use crate::persistence::model::{
     NewPersistedObjectAction, NewTeamSettings, ProjectRules, UserProfile, CODE_REVIEW_PANE_KIND,
     GET_STARTED_PANE_KIND,
 };
+use crate::server::experiments::ServerExperiment;
+use crate::server::ids::{ClientId, HashableId, ServerId, SyncId};
+use crate::server::telemetry::TelemetryEvent;
 use crate::settings_view::SettingsSection;
 use crate::suggestions::ignored_suggestions_model::SuggestionType;
 use crate::tab::SelectedTabColor;
@@ -90,6 +103,9 @@ use crate::terminal::history::PersistedCommand;
 use crate::terminal::ShellLaunchData;
 use crate::themes::theme::AnsiColorIdentifier;
 use crate::workflows::WorkflowId;
+use crate::workspaces::team::Team as TeamMetadata;
+use crate::workspaces::user_profiles::{user_profile_from_persistence, UserProfileWithUID};
+use crate::workspaces::workspace::{Workspace as WorkspaceMetadata, WorkspaceUid};
 use crate::{report_error, report_if_error, safe_info, send_telemetry_from_app_ctx};
 
 diesel::define_sql_function! {
@@ -2152,7 +2168,7 @@ fn read_node(conn: &mut SqliteConnection, node: model::PaneNode) -> Result<PaneN
                         Some(path) => NotebookPaneSnapshot::LocalFileNotebook { path: Some(path) },
                         None => NotebookPaneSnapshot::CloudNotebook {
                             notebook_id,
-                            settings: OpenWarpDriveObjectSettings::default(),
+                            settings: OpenOctomusDriveObjectSettings::default(),
                         },
                     })
                 }
@@ -2170,7 +2186,7 @@ fn read_node(conn: &mut SqliteConnection, node: model::PaneNode) -> Result<PaneN
 
                     LeafContents::Workflow(WorkflowPaneSnapshot::CloudWorkflow {
                         workflow_id,
-                        settings: OpenWarpDriveObjectSettings::default(),
+                        settings: OpenOctomusDriveObjectSettings::default(),
                     })
                 }
                 CODE_PANE_KIND => {
@@ -2556,17 +2572,19 @@ fn read_sqlite_data(
 
     let team_member_rows: Vec<model::TeamMemberRow> =
         schema::team_members::dsl::team_members.load(conn)?;
-    let members_by_team_id: HashMap<i32, Vec<model::TeamMember>> = team_member_rows
-        .into_iter()
-        .fold(HashMap::new(), |mut acc, row| {
-            let member = model::TeamMember {
-                uid: UserUid::new(&row.user_uid),
-                email: row.email,
-                role: serde_json::from_str(&row.role).unwrap_or_default(),
-            };
-            acc.entry(row.team_id).or_default().push(member);
-            acc
-        });
+    let members_by_team_id: HashMap<i32, Vec<crate::workspaces::team::TeamMember>> =
+        team_member_rows
+            .into_iter()
+            .fold(HashMap::new(), |mut acc, row| {
+                let member = crate::workspaces::team::TeamMember {
+                    uid: UserUid::new(&row.user_uid),
+                    email: row.email,
+                    role: serde_json::from_str(&row.role)
+                        .unwrap_or(crate::workspaces::team::MembershipRole::User),
+                };
+                acc.entry(row.team_id).or_default().push(member);
+                acc
+            });
 
     let team_settings_rows: Vec<model::TeamSetting> =
         schema::team_settings::dsl::team_settings.load(conn)?;

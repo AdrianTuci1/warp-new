@@ -7,6 +7,9 @@ use super::TemplatableMCPServerManager;
 use crate::ai::mcp::templatable::{CloudTemplatableMCPServer, TemplatableMCPServer};
 use crate::ai::mcp::templatable_installation::{TemplatableMCPServerInstallation, VariableValue};
 use crate::ai::mcp::MCPServerUpdate;
+use crate::cloud_object::Space;
+use crate::server::cloud_objects::update_manager::InitiatedBy;
+use crate::server::ids::ServerId;
 
 impl TemplatableMCPServerManager {
     /// Creates a new [`TemplatableMCPServerManager`] instance.
@@ -40,7 +43,7 @@ impl TemplatableMCPServerManager {
         None
     }
 
-    /// Updates a TemplatableMCPServer in Warp Drive.
+    /// Updates a TemplatableMCPServer in Octomus Drive.
     ///
     /// This is a no-op in WASM, as MCP servers are not supported in WASM.
     pub fn update_templatable_mcp_server(
@@ -51,7 +54,7 @@ impl TemplatableMCPServerManager {
         log::warn!("Templatable MCP server update not supported in WASM");
     }
 
-    /// Gets all TemplatableMCPServers currently in Warp Drive.
+    /// Gets all TemplatableMCPServers currently in Octomus Drive.
     ///
     /// This is a no-op in WASM, as MCP servers are not supported in WASM.
     pub fn get_all_templatable_mcp_servers(&self) -> Vec<&TemplatableMCPServer> {
@@ -68,7 +71,7 @@ impl TemplatableMCPServerManager {
         None
     }
 
-    /// Creates a new TemplatableMCPServer in Warp Drive.
+    /// Creates a new TemplatableMCPServer in Octomus Drive.
     ///
     /// This is a no-op in WASM, as MCP servers are not supported in WASM.
     pub fn create_templatable_mcp_server(
@@ -81,7 +84,7 @@ impl TemplatableMCPServerManager {
         log::warn!("Creating a TemplatableMCPServer is not supported in WASM");
     }
 
-    /// Deletes a TemplatableMCPServer from Warp Drive.
+    /// Deletes a TemplatableMCPServer from Octomus Drive.
     ///
     /// This is a no-op in WASM, as MCP servers are not supported in WASM.
     pub fn delete_templatable_mcp_server(&mut self, _uuid: Uuid, _ctx: &mut ModelContext<Self>) {

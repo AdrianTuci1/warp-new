@@ -24,17 +24,28 @@ use crate::ai::ai_document_view::DEFAULT_PLANNING_DOCUMENT_TITLE;
 use crate::ai::blocklist::{BlocklistAIHistoryEvent, BlocklistAIHistoryModel};
 use crate::ai::execution_profiles::profiles::AIExecutionProfilesModel;
 use crate::appearance::Appearance;
+use crate::auth::auth_state::AuthStateProvider;
+use crate::cloud_object::model::persistence::CloudModel;
+use crate::cloud_object::{CloudObject, CloudObjectEventEntrypoint, Owner};
+use crate::drive::folders::CloudFolder;
 use crate::global_resource_handles::GlobalResourceHandlesProvider;
+use crate::notebooks::editor::model::{
     FileLinkResolutionContext, NotebooksEditorModel, RichTextEditorModelEvent,
 };
+use crate::notebooks::editor::rich_text_styles;
+use crate::notebooks::file::MarkdownDisplayMode;
+use crate::notebooks::{CloudNotebookModel, NotebookId};
 use crate::persistence::ModelEvent;
+use crate::server::cloud_objects::update_manager::{
     InitiatedBy, ObjectOperation, OperationSuccessType, UpdateManager, UpdateManagerEvent,
 };
+use crate::server::ids::{ClientId, ServerId, SyncId};
 use crate::settings::FontSettings;
 use crate::terminal::model::session::active_session::ActiveSession;
 use crate::terminal::model::session::Session;
 use crate::terminal::TerminalView;
 use crate::throttle::throttle;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 /// The frequency at which we check for modifications and save the AI document to the server.
 /// Uses the same 2-second period as notebooks for consistency.
@@ -44,13 +55,13 @@ struct AIDocumentSaveRequest {
     document_id: AIDocumentId,
 }
 
-/// The status of saving an AI Document to Warp Drive
+/// The status of saving an AI Document to Octomus Drive
 pub enum AIDocumentSaveStatus {
-    /// Not being synced with Warp Drive at all
+    /// Not being synced with Octomus Drive at all
     NotSaved,
-    /// Is being saved to Warp Drive, but has not finished yet
+    /// Is being saved to Octomus Drive, but has not finished yet
     Saving,
-    /// Has been saved to Warp Drive
+    /// Has been saved to Octomus Drive
     Saved,
 }
 
@@ -78,7 +89,7 @@ impl AIDocumentUserEditStatus {
 
 const PLAN_FOLDER_NAME: &str = "Plans";
 
-/// Represents a document queued for creation in Warp Drive.
+/// Represents a document queued for creation in Octomus Drive.
 #[derive(Debug, Clone)]
 struct PendingDocument {
     id: AIDocumentId,
@@ -98,7 +109,7 @@ pub struct AIDocumentEarlierVersion {
 #[derive(Debug, Clone)]
 pub struct AIDocument {
     /// ID to sync with a cloud model with the server.
-    /// Set when a document is saved to Warp Drive.
+    /// Set when a document is saved to Octomus Drive.
     pub sync_id: Option<SyncId>,
     pub title: String,
     pub version: AIDocumentVersion,
@@ -240,7 +251,7 @@ impl AIDocumentModel {
         let content = document.editor.as_ref(ctx).markdown(ctx);
 
         let Some(owner) = Self::get_plan_owner(ctx) else {
-            log::warn!("Failed to get owner while saving AI Document to Local Storage. Skipping");
+            log::warn!("Failed to get owner while saving AI Document to Octomus Drive. Skipping");
             return false;
         };
 
@@ -295,7 +306,7 @@ impl AIDocumentModel {
         // If we're waiting on a Plans folder to complete creation, ensure the Plans folder exists
         // (creating it if needed) and if it has a ServerId, process the pending document queue.
         //
-        // NOTE: this handler runs for *all* Warp Drive object creations, so we must only create the
+        // NOTE: this handler runs for *all* Octomus Drive object creations, so we must only create the
         // Plans folder when we actually have a plan notebook waiting to be created.
         if !self.pending_document_queue.is_empty() {
             if let Some(owner) = Self::get_plan_owner(ctx) {
@@ -371,7 +382,7 @@ impl AIDocumentModel {
         id
     }
 
-    /// Create a document from an existing Warp Drive notebook.
+    /// Create a document from an existing Octomus Drive notebook.
     pub fn create_document_from_notebook(
         &mut self,
         ai_document_id: AIDocumentId,
@@ -902,7 +913,7 @@ impl AIDocumentModel {
             ctx,
         );
 
-        // Update the sync status of a document by checking if it exists in Warp Drive.
+        // Update the sync status of a document by checking if it exists in Octomus Drive.
         let Some(doc) = self.documents.get(&id) else {
             return;
         };

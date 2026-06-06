@@ -26,6 +26,8 @@ use crate::ai::agent::task::Task;
 #[cfg(feature = "local_fs")]
 use crate::persistence::agent::read_agent_conversation_by_id;
 use crate::persistence::model::{AgentConversation, AgentConversationData};
+use crate::server::server_api::ai::AIClient;
+use crate::server::server_api::ServerApiProvider;
 use crate::terminal::model::block::SerializedBlock;
 
 /// A conversation transcript from a CLI agent harness (e.g. Claude Code).

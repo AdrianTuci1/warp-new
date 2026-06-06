@@ -9,11 +9,13 @@ use warpui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlign
 use warpui::ui_components::components::{UiComponent, UiComponentStyles};
 use warpui::{AppContext, Element, Entity, SingletonEntity, View, ViewContext};
 
+use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
+use crate::drive::CloudObjectTypeAndId;
 use crate::terminal::view::telemetry::SharingDialogSource;
 use crate::ui_components::icons::Icon;
 use crate::workspace::WorkspaceAction;
 
-/// A rich onboarding block that prompts the user to share a newly-created personal Warp Drive
+/// A rich onboarding block that prompts the user to share a newly-created personal Octomus Drive
 /// object.
 pub struct OnboardingDriveSharingBlock {
     object_id: CloudObjectTypeAndId,
@@ -42,9 +44,9 @@ impl Entity for OnboardingDriveSharingBlock {
     type Event = ();
 }
 
-const TITLE_TEXT: &str = "Sharing in Local Storage";
+const TITLE_TEXT: &str = "Sharing in Octomus Drive";
 const BODY_TEXT: &[&str] = &[
-    "You can now share drive objects, in Octomus or on the web, with anyone - Octomus user or not. Click Share in the Local Storage menu or the pane header to share via link or email.",
+    "You can now share drive objects, in Warp or on the web, with anyone - Warp user or not. Click Share in the Octomus Drive menu or the pane header to share via link or email.",
     "You’ll be able to modify the access permissions any time.",
 ];
 

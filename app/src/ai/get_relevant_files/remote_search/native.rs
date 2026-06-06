@@ -27,8 +27,10 @@ use crate::ai::codebase_auto_indexing::{
     should_use_codebase_indexing, CodebaseAutoIndexingSurface,
 };
 use crate::ai::get_relevant_files::controller::GetRelevantFilesController;
+use crate::remote_server::codebase_index_model::{
     RemoteCodebaseIndexModel, RemoteCodebaseSearchAvailability, RemoteCodebaseSearchContext,
 };
+use crate::server::server_api::{ServerApi, ServerApiProvider};
 
 pub(super) enum RemoteSearchRequest {
     Pending(futures_util::stream::AbortHandle),

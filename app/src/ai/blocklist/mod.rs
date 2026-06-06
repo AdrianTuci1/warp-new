@@ -25,6 +25,8 @@ pub mod suggested_rule_modal;
 mod suggestion_chip_view;
 pub mod summarization_cancel_dialog;
 pub(crate) mod telemetry;
+pub mod usage;
+
 pub(crate) mod codebase_index_speedbump_banner;
 pub(crate) mod telemetry_banner;
 pub(super) mod view_util;
@@ -75,6 +77,7 @@ pub(crate) use queued_query::{
 pub use suggestion_chip_view::*;
 pub use view_util::error_color;
 pub(crate) use view_util::{
+    ai_brand_color, ai_indicator_height, format_credits,
     get_ai_block_overflow_menu_element_position_id, get_attached_blocks_chip_element_position_id,
     render_ai_agent_mode_icon, render_ai_follow_up_icon, ATTACH_AS_AGENT_MODE_CONTEXT_TEXT,
     CLAUDE_ORANGE, NEW_AGENT_PANE_LABEL,

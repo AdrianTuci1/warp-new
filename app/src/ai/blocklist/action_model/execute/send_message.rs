@@ -26,6 +26,8 @@ use crate::ai::blocklist::telemetry::{
     TeamAgentCommunicationFailureReason, TeamAgentCommunicationKind,
     TeamAgentCommunicationTransport, TeamAgentOrchestrationVersion,
 };
+use crate::server::server_api::ai::{SendAgentMessageRequest, SendAgentMessageResponse};
+use crate::server::server_api::ServerApiProvider;
 
 #[cfg(not(target_family = "wasm"))]
 const SEND_AGENT_MESSAGE_TIMEOUT: Duration = Duration::from_secs(15);

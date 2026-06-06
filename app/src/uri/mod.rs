@@ -22,6 +22,8 @@ use self::docker::open_docker_container;
 use crate::ai::active_agent_views_model::{ActiveAgentViewsModel, ConversationOrTaskId};
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::ambient_agents::github_auth_notifier::GitHubAuthNotifier;
+use crate::cloud_object::ObjectType;
+use crate::drive::{OpenOctomusDriveObjectArgs, OpenOctomusDriveObjectSettings};
 use crate::features::FeatureFlag;
 use crate::launch_configs::launch_config::LaunchConfig;
 use crate::linear::{LinearAction, LinearIssueWork};
@@ -29,6 +31,8 @@ use crate::root_view::{
     open_new_window_get_handles, open_new_with_workspace_source, NewWorkspaceSource,
     OpenLaunchConfigArg,
 };
+use crate::server::ids::ServerId;
+use crate::server::telemetry::{LaunchConfigUiLocation, TelemetryEvent};
 use crate::settings_view::{OpenTeamsSettingsModalArgs, SettingsSection};
 use crate::tab_configs::TabConfig;
 use crate::user_config::{load_launch_configs, load_tab_configs, tab_configs_dir};
@@ -296,10 +300,10 @@ impl UriHost {
                         ctx.root_view_id(window_id)
                             .map(|view_id| (window_id, view_id))
                     });
-                    let args = OpenWarpDriveObjectArgs {
+                    let args = OpenOctomusDriveObjectArgs {
                         object_type,
                         server_id,
-                        settings: OpenWarpDriveObjectSettings {
+                        settings: OpenOctomusDriveObjectSettings {
                             focused_folder_id,
                             invitee_email,
                         },
@@ -1142,7 +1146,7 @@ impl Action {
             | Self::AutoHandoffToCloud { .. } => W::default(),
             Self::NewTab => W::ShowPrimaryWindow(WindowActivationFallbackBehavior::Notify {
                 title: "New tab created".to_owned(),
-                description: "Go to Octomus to see your new tab.".to_owned(),
+                description: "Go to Warp to see your new tab.".to_owned(),
             }),
             Self::NewWindow => W::Nothing,
         }

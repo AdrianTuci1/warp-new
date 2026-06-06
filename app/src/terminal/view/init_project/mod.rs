@@ -31,12 +31,16 @@ use crate::ai::blocklist::inline_action::requested_action::RenderableAction;
 use crate::ai::persisted_workspace::PersistedWorkspace;
 use crate::appearance::Appearance;
 use crate::code::lsp_telemetry::{LspEnablementSource, LspTelemetryEvent};
+use crate::server::telemetry::{
+    AgentModeSetupCodebaseContextActionType, AgentModeSetupCreateEnvironmentActionType,
+    AgentModeSetupProjectScopedRulesActionType,
+};
 use crate::ui_components::icons::Icon;
 use crate::view_components::DismissibleToast;
 use crate::workspace::ToastStack;
 use crate::{send_telemetry_from_ctx, TelemetryEvent};
 
-const ONBOARDING_TEXT: &str = "Great - let's begin setting up this project! Would you like to give me permission to index this codebase? It allows me to quickly understand context and provide more targeted solutions when working in this codebase. No code is stored on Octomus servers.";
+const ONBOARDING_TEXT: &str = "Great - let's begin setting up this project! Would you like to give me permission to index this codebase? It allows me to quickly understand context and provide more targeted solutions when working in this codebase. No code is stored on Warp servers.";
 const ALREADY_SETUP_TEXT: &str = "It looks like this project has already been initialized. You can re-generate the AGENTS.md for this codebase by clicking the button below.";
 // Native Warp rules file format.
 pub const FILES_TO_CHECK: [&str; 2] = ["AGENTS.md", "WARP.md"];
@@ -823,7 +827,7 @@ impl InitStepBlock {
                 };
                 Self::render_ready_with_buttons(
                     action_view,
-                    "Would you like to create an AGENTS.md file? Octomus can create one for you with project specific rules, context, and conventions inferred from your codebase. The agent will use this context as it codes.",
+                    "Would you like to create an AGENTS.md file? Warp can create one for you with project specific rules, context, and conventions inferred from your codebase. The agent will use this context as it codes.",
                     app,
                 )
             }
@@ -961,6 +965,7 @@ impl InitStepBlock {
         let window_id = ctx.window_id();
         let executor = lsp::CommandBuilder::new(path_env_var);
         let http_client =
+            crate::server::server_api::ServerApiProvider::as_ref(ctx).get_http_client();
 
         ctx.spawn(
             async move {

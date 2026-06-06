@@ -1,5 +1,5 @@
 // Hard coded constants to divide keybindings into their respective categories/sections.
-// This should always align with documentation: http://localhost:8080/docs/getting-started/keyboard-shortcuts
+// This should always align with documentation: https://docs.localhost:8080/getting-started/keyboard-shortcuts
 
 use warpui::keymap::Keystroke;
 
@@ -124,7 +124,7 @@ pub fn get_additional_keybindings() -> Vec<CommandBinding> {
         ),
         CommandBinding::new(
             "workspace:hide_warp".into(),
-            "Hide Octomus".into(),
+            "Hide Warp".into(),
             Some(Keystroke::parse("cmd-h").expect("Valid keystroke")),
         ),
         CommandBinding::new(
@@ -134,7 +134,7 @@ pub fn get_additional_keybindings() -> Vec<CommandBinding> {
         ),
         CommandBinding::new(
             "workspace:quit_warp".into(),
-            "Quit Octomus".into(),
+            "Quit Warp".into(),
             Some(Keystroke::parse("cmd-q").expect("Valid keystroke")),
         ),
         CommandBinding::new(

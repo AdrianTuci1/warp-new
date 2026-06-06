@@ -32,9 +32,23 @@ use crate::ai::execution_profiles::{
 };
 use crate::ai::harness_availability::HarnessAvailabilityModel;
 use crate::ai::llms::{LLMId, LLMPreferences};
+use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
+use crate::cloud_object::CloudObjectLookup as _;
+use crate::server::cloud_objects::update_manager::UpdateManager;
+use crate::server::ids::{ServerId, SyncId};
+#[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
+use crate::server::server_api::ai::InitialSnapshotToken;
+use crate::server::server_api::ai::{
+    AgentConfigSnapshot, AmbientAgentTaskState, AttachmentInput, SpawnAgentRequest,
+};
+use crate::server::server_api::{
+    AIApiError, ClientError, CloudAgentCapacityError, ServerApiProvider,
+};
 use crate::settings::PrivacySettings;
 use crate::terminal::view::ambient_agent::{SetupCommandGroupId, SetupCommandState};
 use crate::terminal::CLIAgent;
+use crate::workspaces::user_workspaces::UserWorkspaces;
+use crate::workspaces::workspace::AdminEnablementSetting;
 
 /// Wire prompt substituted for an empty-prompt handoff against an active source
 /// conversation that also carries uploaded snapshot content.
@@ -284,7 +298,7 @@ impl AmbientAgentViewModel {
             }
         });
 
-        // Validate the default environment once Warp Drive sync completes.
+        // Validate the default environment once Octomus Drive sync completes.
         // The environment ID may be restored from settings before environments are synced,
         // so we need to validate it once the initial load is complete.
         let initial_load_complete = UpdateManager::as_ref(ctx).initial_load_complete();
@@ -426,7 +440,7 @@ impl AmbientAgentViewModel {
         }
     }
 
-    /// Validates the environment ID after Warp Drive initial load completes.
+    /// Validates the environment ID after Octomus Drive initial load completes.
     /// If the environment no longer exists, clears the selection.
     fn validate_environment_after_initial_load(&mut self, ctx: &mut ModelContext<Self>) {
         if let Some(id) = &self.environment_id {
@@ -977,7 +991,7 @@ impl AmbientAgentViewModel {
 
     /// Applies the run configuration for an existing shared ambient session.
     ///
-    /// Viewed sessions can join before Warp Drive has loaded the referenced environment object,
+    /// Viewed sessions can join before Octomus Drive has loaded the referenced environment object,
     /// especially on web. Preserve the server-provided environment ID anyway so the selector does
     /// not fall back to an unrelated default while waiting for the environment object to arrive.
     fn apply_viewed_task_config_snapshot(

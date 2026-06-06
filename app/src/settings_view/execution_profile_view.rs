@@ -20,6 +20,7 @@ use crate::ai::execution_profiles::{
 };
 use crate::ai::llms::LLMPreferences;
 use crate::appearance::Appearance;
+use crate::cloud_object::model::generic_string_model::StringModel;
 use crate::settings::AISettings;
 use crate::ui_components::icons::Icon;
 use crate::view_components::action_button::{ActionButton, ButtonSize, SecondaryTheme};
@@ -371,7 +372,7 @@ impl View for ExecutionProfileView {
                         permissions_column.add_child(with_standard_vertical_margin(
                             render_bool_permission_line_with_icon(
                                 Icon::Compass,
-                                "Auto-sync plans to Local Storage:",
+                                "Auto-sync plans to Octomus Drive:",
                                 profile.autosync_plans_to_warp_drive,
                                 appearance,
                                 is_any_ai_enabled,

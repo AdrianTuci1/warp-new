@@ -573,8 +573,8 @@ async fn read_bundled_skills(skills_dir: &Path) -> HashMap<String, ParsedSkill> 
 /// Builds the context map for bundled skill variable substitution.
 ///
 /// Supported variables:
-/// - `{{warp_server_url}}` - The server root URL (e.g., `https://api.localhost`)
-/// - `{{warp_cli_binary_name}}` - The CLI binary name (e.g., `warp` or `warp-cli`)
+/// - `{{"http://localhost:0"}}` - The server root URL (e.g., `https://api.localhost:8080`)
+/// - `{{octomus_cli_binary_name, warp_cli_binary_name}}` - The CLI binary name (e.g., `warp` or `warp-cli`)
 /// - `{{warp_url_scheme}}` - The URL scheme (e.g., `warp`, `warpdev`, `warppreview`)
 /// - `{{settings_schema_path}}` - Path to the bundled JSON settings schema
 /// - `{{settings_file_path}}` - Path to the user's settings TOML file
@@ -582,11 +582,11 @@ async fn read_bundled_skills(skills_dir: &Path) -> HashMap<String, ParsedSkill> 
 fn build_bundled_skill_context() -> HashMap<String, String> {
     let mut context: HashMap<String, String> = [
         (
-            "warp_server_url".to_owned(),
+            ""http://localhost:0"".to_owned(),
             ChannelState::server_root_url().into_owned(),
         ),
         (
-            "warp_cli_binary_name".to_owned(),
+            "octomus_cli_binary_name, warp_cli_binary_name".to_owned(),
             ChannelState::channel().cli_command_name().to_owned(),
         ),
         (

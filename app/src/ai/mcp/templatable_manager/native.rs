@@ -41,17 +41,25 @@ use crate::ai::mcp::{
     MCPServerExt, MCPServerUpdate, ParsedTemplatableMCPServerResult, StaticEnvVar,
     TemplatableMCPServer, TemplatableMCPServerInstallation, TransportType,
 };
+use crate::auth::AuthStateProvider;
+use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
+use crate::cloud_object::{
     CloudObject, CloudObjectLocation, CloudObjectLookup as _, CloudObjectMetadataExt,
     CloudObjectUuidLookup as _, GenericStringObjectFormat, JsonObjectType, Space,
 };
+use crate::drive::CloudObjectTypeAndId;
 use crate::persistence::{
     database_file_path_for_scope, establish_ro_connection, ModelEvent, PersistenceScope,
 };
+use crate::server::cloud_objects::update_manager::{InitiatedBy, UpdateManager};
+use crate::server::ids::{ClientId, ServerId, SyncId};
+use crate::server::telemetry::{
     MCPServerModel, MCPServerTelemetryTransportType, MCPTemplateCreationSource, TelemetryEvent,
 };
 use crate::settings::AISettings;
 use crate::view_components::DismissibleToast;
 use crate::workspace::ToastStack;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::{send_telemetry_from_ctx, GlobalResourceHandlesProvider};
 
 /// Controls the behavior of `spawn_server_impl`.
@@ -1790,7 +1798,7 @@ async fn spawn_server(
                 if err.kind() == std::io::ErrorKind::NotFound {
                     let cwd_display = cwd_for_log
                         .as_deref()
-                        .unwrap_or("<inherited from Octomus's process cwd>");
+                        .unwrap_or("<inherited from Warp's process cwd>");
                     logger.log(format!(
                         "[error] MCP: Failed to spawn '{server_name}': command '{command_for_log}' \
                          not found (cwd: {cwd_display}). If your MCP server depends on a specific \

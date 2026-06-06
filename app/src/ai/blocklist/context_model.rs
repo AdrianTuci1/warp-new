@@ -35,6 +35,7 @@ use crate::terminal::model::session::Sessions;
 use crate::terminal::model_events::{ModelEvent, ModelEventDispatcher};
 use crate::terminal::TerminalModel;
 use crate::util::git::{PrInfo, RepositoryInfo};
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 /// A non-image file picked via the "attach file" button, stored until query submission.
 #[derive(Clone, Debug, PartialEq, Eq)]

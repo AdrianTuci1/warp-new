@@ -23,6 +23,7 @@ use crate::search::mixer::{
 };
 use crate::search::result_renderer::ItemHighlightState;
 use crate::search::workflows::fuzzy_match::FuzzyMatchWorkflowResult;
+use crate::server::server_api::ai::AIClient;
 use crate::themes::theme::Blend;
 use crate::ui_components::icons::Icon as UIIcon;
 use crate::util::color::{ContrastingColor, MinimumAllowedContrast};
@@ -57,7 +58,7 @@ impl SearchItem for WarpAISearchItem {
         highlight_state: ItemHighlightState,
         appearance: &Appearance,
     ) -> Box<dyn Element> {
-        // Since the Warp AI logo color is hardcoded, let's find the best
+        // Since the Octomus AI logo color is hardcoded, let's find the best
         // contrasting color depending on the user's theme and the item's selected state.
         let command_search_background = appearance.theme().surface_1();
         let item_background_color = match highlight_state.container_background_fill(appearance) {
@@ -120,14 +121,14 @@ impl SearchItem for WarpAISearchItem {
     fn accept_result(&self) -> CommandSearchItemAction {
         match self {
             WarpAISearchItem::Translate => CommandSearchItemAction::TranslateUsingWarpAI,
-            WarpAISearchItem::Open => CommandSearchItemAction::OpenWarpAI,
+            WarpAISearchItem::Open => CommandSearchItemAction::OpenOctomusAI,
         }
     }
 
     fn execute_result(&self) -> CommandSearchItemAction {
         match self {
             WarpAISearchItem::Translate => CommandSearchItemAction::TranslateUsingWarpAI,
-            WarpAISearchItem::Open => CommandSearchItemAction::OpenWarpAI,
+            WarpAISearchItem::Open => CommandSearchItemAction::OpenOctomusAI,
         }
     }
 
@@ -136,9 +137,9 @@ impl SearchItem for WarpAISearchItem {
     }
 }
 
-/// The Warp AI data source provides two different types of results:
+/// The Octomus AI data source provides two different types of results:
 /// - synchronous: the synchronous result provided by this data source is a
-///   single item that opens/translates using Warp AI when selected.
+///   single item that opens/translates using Octomus AI when selected.
 /// - asynchronous: the asynchronous results are AI generated workflows
 /// In most cases, the data source should be registered _twice_: once as a sync source
 /// and once as an async source. That way, the mixer will treat these as two separate

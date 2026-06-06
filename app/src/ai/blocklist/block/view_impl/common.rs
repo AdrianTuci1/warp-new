@@ -79,8 +79,10 @@ use crate::ai::blocklist::secret_redaction::{redact_secrets_in_element, SecretRe
 use crate::ai::blocklist::view_util::error_color;
 use crate::ai::blocklist::{BlocklistAIActionModel, ShellCommandExecutor, TextLocation};
 use crate::ai::loading::shimmering_warp_loading_text;
+use crate::ai::AIRequestUsageModel;
 use crate::code::editor::view::CodeEditorView;
 use crate::code::editor_management::CodeSource;
+use crate::notebooks::editor::{markdown_table_appearance, rich_text_styles};
 use crate::search::slash_command_menu::static_commands::commands;
 use crate::settings::{FontSettings, InputSettings};
 use crate::settings_view::SettingsSection;
@@ -95,6 +97,8 @@ use crate::ui_components::buttons::icon_button;
 use crate::ui_components::icons::Icon;
 use crate::util::link_detection::{add_link_detection_mouse_interactions, DetectedLinksState};
 use crate::workspace::WorkspaceAction;
+use crate::workspaces::user_workspaces::UserWorkspaces;
+use crate::workspaces::workspace::CustomerType;
 
 pub const STATUS_ICON_SIZE_DELTA: f32 = 4.;
 pub const STATUS_FOOTER_VERTICAL_PADDING: f32 = 4.;
@@ -102,7 +106,7 @@ pub const WAITING_FOR_USER_INPUT_MESSAGE: &str = "Agent waiting for instructions
 const IMAGE_SOURCE_LINK_LINE_INDEX: usize = 1;
 
 const ERROR_APOLOGY_TEXT: &str = "I'm sorry, I couldn't complete that request.";
-const INTERNAL_WARP_ERROR: &str = "Internal Octomus error.";
+const INTERNAL_WARP_ERROR: &str = "Internal Warp error.";
 
 pub const LOAD_OUTPUT_MESSAGE: &str = "Warping...";
 pub const LOAD_OUTPUT_MESSAGE_FOR_ADJUSTING: &str = "Adjusting tasks...";
@@ -2989,11 +2993,19 @@ pub fn render_failed_output(props: FailedOutputProps, app: &AppContext) -> Box<d
             if let Some(message) = user_display_message {
                 format!("{ERROR_APOLOGY_TEXT}\n\n{message}")
             } else {
-                format!("{ERROR_APOLOGY_TEXT}\n\nYou've reached your credit limit.")
+                let ai_request_usage_model = AIRequestUsageModel::as_ref(app);
+                let formatted_next_refresh_time = ai_request_usage_model
+                    .next_refresh_time()
+                    .format("%B %d")
+                    .to_string();
+
+                format!(
+                    "{ERROR_APOLOGY_TEXT}\n\nYou've reached your credit limit. Your credit limit resets on {formatted_next_refresh_time}.",
+                )
             }
         }
         RenderableAIError::ServerOverloaded => {
-            "Octomus is currently overloaded. Please try again later.".to_string()
+            "Warp is currently overloaded. Please try again later.".to_string()
         }
         RenderableAIError::InternalWarpError => {
             format!("{ERROR_APOLOGY_TEXT}\n\n{INTERNAL_WARP_ERROR}")

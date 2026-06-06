@@ -9,6 +9,7 @@ use warpui::ui_components::switch::SwitchStateHandle;
 use warpui::{Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
 
 use crate::appearance::Appearance;
+use crate::server::telemetry::TelemetryEvent;
 use crate::settings_view::settings_page::{
     render_body_item, render_dropdown_item, AdditionalInfo, LocalOnlyIconState, ToggleState,
 };
@@ -149,7 +150,7 @@ impl ExternalEditorView {
 
         let mut items = vec![default_app];
 
-        items.push(DropdownItem::new("Octomus", make_action(EditorChoice::Warp)));
+        items.push(DropdownItem::new("Warp", make_action(EditorChoice::Warp)));
         if FeatureFlag::AllowOpeningFileLinksUsingEditorEnv.is_enabled() {
             items.push(DropdownItem::new(
                 "$EDITOR",
@@ -171,7 +172,7 @@ impl ExternalEditorView {
             EditorChoice::ExternalEditor(editor) => {
                 dropdown.set_selected_by_name(format!("{editor}"), ctx)
             }
-            EditorChoice::Warp => dropdown.set_selected_by_name("Octomus", ctx),
+            EditorChoice::Warp => dropdown.set_selected_by_name("Warp", ctx),
             EditorChoice::EnvEditor => dropdown.set_selected_by_name("$EDITOR", ctx),
             EditorChoice::SystemDefault => dropdown.set_selected_by_name(default_option_text, ctx),
         };
@@ -305,7 +306,7 @@ impl View for ExternalEditorView {
 
         let default_layout = render_dropdown_item(
             appearance,
-            "Choose a layout to open files in Octomus",
+            "Choose a layout to open files in Warp",
             None,
             None,
             LocalOnlyIconState::for_setting(
@@ -353,11 +354,11 @@ impl View for ExternalEditorView {
         }
 
         column.add_child(render_body_item::<ExternalEditorAction>(
-            "Open Markdown files in Octomus's Markdown Viewer by default".to_string(),
+            "Open Markdown files in Warp's Markdown Viewer by default".to_string(),
             Some(AdditionalInfo {
                 mouse_state: self.markdown_viewer_mouse_state.clone(),
                 on_click_action: Some(ExternalEditorAction::OpenUrl(
-                    "http://localhost:8080/docs/terminal/more-features/markdown-viewer".to_string(),
+                    "https://docs.localhost:8080/terminal/more-features/markdown-viewer".to_string(),
                 )),
                 secondary_text: None,
                 tooltip_override_text: None,

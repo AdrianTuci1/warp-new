@@ -12,8 +12,10 @@ use watcher::HomeDirectoryWatcher;
 
 use super::{CloudEnvMcpScanServer, FileBasedMCPManager, FileBasedMCPManagerEvent, MCPProvider};
 use crate::ai::mcp::{FileMCPWatcher, ParsedTemplatableMCPServerResult};
+use crate::auth::AuthStateProvider;
 use crate::settings::{AISettings, FocusedTerminalInfo};
 use crate::warp_managed_paths_watcher::{warp_managed_mcp_config_path, WarpManagedPathsWatcher};
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 // Helper to initialize dependencies and return FileBasedMCPManager handle
 fn setup_app(app: &mut App) -> warpui::ModelHandle<FileBasedMCPManager> {
@@ -302,7 +304,7 @@ fn test_global_warp_server_from_managed_home_root_always_spawns() {
             assert_eq!(
                 e.spawned_uuids.len(),
                 1,
-                "Managed Octomus MCP config should auto-spawn regardless of toggle"
+                "Managed Warp MCP config should auto-spawn regardless of toggle"
             );
         });
 
@@ -313,7 +315,7 @@ fn test_global_warp_server_from_managed_home_root_always_spawns() {
         events.update(&mut app, |e, _| {
             assert!(
                 e.despawned_uuids.is_empty(),
-                "Managed Octomus MCP config should never be despawned by toggle changes, got: {:?}",
+                "Managed Warp MCP config should never be despawned by toggle changes, got: {:?}",
                 e.despawned_uuids
             );
         });
@@ -341,7 +343,7 @@ fn test_global_non_warp_server_respects_toggle() {
         events.update(&mut app, |e, _| {
             assert!(
                 e.spawned_uuids.is_empty(),
-                "Global non-Octomus server must not auto-spawn while toggle is off, got: {:?}",
+                "Global non-Warp server must not auto-spawn while toggle is off, got: {:?}",
                 e.spawned_uuids
             );
         });
@@ -358,7 +360,7 @@ fn test_global_non_warp_server_respects_toggle() {
             assert_eq!(
                 e.spawned_uuids,
                 vec![installation_uuid],
-                "Global non-Octomus server should spawn when toggle flips on"
+                "Global non-Warp server should spawn when toggle flips on"
             );
         });
 
@@ -368,7 +370,7 @@ fn test_global_non_warp_server_respects_toggle() {
             assert_eq!(
                 e.despawned_uuids,
                 vec![installation_uuid],
-                "Global non-Octomus server should despawn when toggle flips off"
+                "Global non-Warp server should despawn when toggle flips off"
             );
         });
     });
@@ -495,7 +497,7 @@ fn test_auto_started_cloud_scan_uuids_are_in_wait_set() {
             assert_eq!(scan.wait_server_uuids, e.spawned_uuids);
             assert!(
                 scan.detected_servers[0].auto_start_eligible,
-                "Global Octomus server should be auto-start eligible"
+                "Global Warp server should be auto-start eligible"
             );
         });
     });

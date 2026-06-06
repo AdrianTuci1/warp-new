@@ -39,13 +39,25 @@ use crate::ai::persisted_workspace::PersistedWorkspace;
 use crate::ai::restored_conversations::RestoredAgentConversations;
 use crate::ai::skills::SkillManager;
 use crate::ai::AIRequestUsageModel;
+use crate::cloud_object::model::persistence::CloudModel;
+use crate::cloud_object::model::view::CloudViewModel;
 use crate::context_chips::prompt::Prompt;
 use crate::editor::Event;
 use crate::gpu_state::GPUState;
 use crate::network::NetworkStatus;
+use crate::notebooks::editor::keys::NotebookKeybindings;
+use crate::notebooks::notebook::NotebookView;
 use crate::pane_group::{Direction, PaneGroupAction, PaneId};
+use crate::pricing::PricingInfoModel;
 #[cfg(not(target_family = "wasm"))]
+use crate::remote_server::codebase_index_model::RemoteCodebaseIndexModel;
 use crate::resource_center::Tip;
+use crate::server::cloud_objects::listener::Listener;
+use crate::server::cloud_objects::update_manager::UpdateManager;
+use crate::server::experiments::ServerExperiments;
+use crate::server::server_api::ServerApiProvider;
+use crate::server::sync_queue::SyncQueue;
+use crate::server::telemetry::context_provider::AppTelemetryContextProvider;
 use crate::settings::cloud_preferences_syncer::CloudPreferencesSyncer;
 use crate::settings::PrivacySettings;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
@@ -68,6 +80,10 @@ use crate::user_config::tab_configs_dir;
 use crate::util::traffic_lights::windows::RendererState;
 use crate::warp_managed_paths_watcher::WarpManagedPathsWatcher;
 use crate::workflows::local_workflows::LocalWorkflows;
+use crate::workspaces::team_tester::TeamTesterStatus;
+use crate::workspaces::update_manager::TeamUpdateManager;
+use crate::workspaces::user_profiles::UserProfiles;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::{
     experiments, workspace, AgentNotificationsModel, GlobalResourceHandlesProvider, ObjectActions,
 };
@@ -157,6 +173,7 @@ fn initialize_app(app: &mut App) {
     // Register IapManager in a disabled state (no IapState). The settings
     // page's `IapManager::as_ref(ctx).is_enabled()` check panics if the
     // singleton isn't registered, even though it's a no-op on production.
+    app.add_singleton_model(|ctx| crate::server::iap::IapManager::new(None, ctx));
     app.add_singleton_model(|_| RestoredAgentConversations::new(vec![]));
     app.add_singleton_model(OneTimeModalModel::new);
     // Register GlobalResourceHandlesProvider before ServerExperiments which depends on it
@@ -1512,7 +1529,7 @@ fn test_notebook_pane_tracking() {
                     owner: Owner::mock_current_user(),
                     initial_folder_id: None,
                 },
-                &OpenWarpDriveObjectSettings::default(),
+                &OpenOctomusDriveObjectSettings::default(),
                 ctx,
                 true,
             );
@@ -1552,7 +1569,7 @@ fn test_notebook_pane_tracking() {
             // Re-opening the notebook should not create a new view.
             workspace.open_notebook(
                 &NotebookSource::Existing(notebook_id),
-                &OpenWarpDriveObjectSettings::default(),
+                &OpenOctomusDriveObjectSettings::default(),
                 ctx,
                 true,
             );
@@ -1669,7 +1686,7 @@ fn test_open_or_toggle_warp_drive() {
 
         let workspace = mock_workspace(&mut app);
         workspace.update(&mut app, |workspace, ctx| {
-            // First, unconditionally open Warp Drive as a system action. WD should be open and welcome tips should not have opening warp drive.
+            // First, unconditionally open Octomus Drive as a system action. WD should be open and welcome tips should not have opening warp drive.
             workspace.open_or_toggle_warp_drive(
                 false, /* toggle */
                 false, /* explicit_user_action */
@@ -1677,15 +1694,15 @@ fn test_open_or_toggle_warp_drive() {
             );
             assert!(
                 workspace.current_workspace_state.is_warp_drive_open,
-                "Local Storage should be open"
+                "Octomus Drive should be open"
             );
             assert!(
                 !workspace
                     .tips_completed
                     .as_ref(ctx)
                     .features_used
-                    .contains(&Tip::Action(TipAction::OpenWarpDrive)),
-                "Octomus drive welcome tip should not be completed"
+                    .contains(&Tip::Action(TipAction::OpenOctomusDrive)),
+                "Warp drive welcome tip should not be completed"
             );
 
             // Next, toggle warp drive as a user action. WD should be closed and tip should not be filled out.
@@ -1696,15 +1713,15 @@ fn test_open_or_toggle_warp_drive() {
             );
             assert!(
                 !workspace.current_workspace_state.is_warp_drive_open,
-                "Local Storage should be closed"
+                "Octomus Drive should be closed"
             );
             assert!(
                 !workspace
                     .tips_completed
                     .as_ref(ctx)
                     .features_used
-                    .contains(&Tip::Action(TipAction::OpenWarpDrive)),
-                "Octomus drive welcome tip should not be completed"
+                    .contains(&Tip::Action(TipAction::OpenOctomusDrive)),
+                "Warp drive welcome tip should not be completed"
             );
 
             // Finally, toggle warp drive again as a user action. WD should be open and tip filled out.
@@ -1715,15 +1732,15 @@ fn test_open_or_toggle_warp_drive() {
             );
             assert!(
                 workspace.current_workspace_state.is_warp_drive_open,
-                "Local Storage should be open"
+                "Octomus Drive should be open"
             );
             assert!(
                 workspace
                     .tips_completed
                     .as_ref(ctx)
                     .features_used
-                    .contains(&Tip::Action(TipAction::OpenWarpDrive)),
-                "Octomus drive welcome tip should not be completed"
+                    .contains(&Tip::Action(TipAction::OpenOctomusDrive)),
+                "Warp drive welcome tip should not be completed"
             );
         });
     });
@@ -1956,7 +1973,7 @@ fn test_switch_focus_panels() {
         workspace.update(&mut app, |view, ctx| {
             assert!(
                 view.left_panel_view.is_self_or_child_focused(ctx),
-                "Expected Local Storage panel to be focused"
+                "Expected Octomus Drive panel to be focused"
             );
         });
 

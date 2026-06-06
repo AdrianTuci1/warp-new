@@ -293,11 +293,18 @@ use crate::ai::predict::prompt_suggestions::{
 use crate::ai_assistant::{AskAIType, ASK_AI_ASSISTANT_TEXT};
 use crate::antivirus::AntivirusInfo;
 use crate::appearance::{Appearance, AppearanceEvent};
+use crate::auth::auth_manager::AuthManager;
+use crate::auth::auth_state::AuthState;
+use crate::auth::auth_view_modal::AuthViewVariant;
+use crate::auth::{AuthStateProvider, UserUid};
 use crate::autoupdate::{self, get_update_state, AutoupdateStage};
 use crate::banner::{
     Banner, BannerAction, BannerEvent, BannerState, BannerTextButton, BannerTextContent,
     DismissalType,
 };
+use crate::cloud_object::model::actions::ObjectActionType;
+use crate::cloud_object::model::persistence::CloudModel;
+use crate::cloud_object::{CloudObject, GenericStringObjectFormat, JsonObjectType};
 #[cfg(feature = "local_fs")]
 use crate::code::editor_management::CodeSource;
 use crate::code_review::comments::{
@@ -323,6 +330,9 @@ use crate::context_chips::prompt::Prompt;
 use crate::context_chips::prompt::PromptSelection;
 use crate::context_chips::prompt_type::PromptType;
 use crate::context_chips::ContextChipKind;
+use crate::drive::settings::WarpDriveSettings;
+use crate::drive::sharing::ShareableObject;
+use crate::drive::CloudObjectTypeAndId;
 use crate::editor::{AutosuggestionType, CrdtOperation, EditorAction};
 use crate::env_vars::env_var_collection_block::{
     EnvVarCollectionBlock, EnvVarCollectionBlockEvent,
@@ -337,12 +347,24 @@ use crate::pane_group::{
 };
 use crate::persistence::{self, FinishedCommandMetadata};
 use crate::projects::ProjectManagementModel;
+use crate::remote_server::manager::{
     RemoteServerInitPhase, RemoteServerManager, RemoteServerManagerEvent,
 };
 use crate::resource_center::{
     mark_feature_used_and_write_to_user_defaults, Tip, TipHint, TipsCompleted,
 };
 use crate::search::slash_command_menu::static_commands::commands;
+use crate::server::cloud_objects::update_manager::UpdateManager;
+use crate::server::ids::{ObjectUid, SyncId};
+use crate::server::server_api::ServerApi;
+use crate::server::telemetry::{
+    self, AgentModeAttachContextMethod, AgentModeEntrypoint, AgentModeRewindEntrypoint,
+    AnonymousUserSignupEntrypoint, BlockLatencyInfo, BootstrappingInfo,
+    CommandCorrectionAcceptedType, CommandCorrectionEvent, InteractionSource, LinkOpenMethod,
+    NotificationAgentVariant, NotificationsTurnedOnSource, PaletteSource, PromptSuggestionViewType,
+    SaveAsWorkflowModalSource, SecretInteraction, SharingDialogSource, SlowBootstrapInfo,
+    TelemetryEvent, ToggleBlockFilterSource, WorkflowTelemetryMetadata,
+};
 use crate::session_management::{CommandContext, SessionNavigationPromptElements};
 use crate::settings::ai::FocusedTerminalInfo;
 #[cfg(feature = "local_fs")]
@@ -521,6 +543,8 @@ use crate::workspace::{
     CommandSearchOptions, ForkAIConversationParams, ForkFromExchange,
     ForkedConversationDestination, OneTimeModalModel, ToastStack, WorkspaceAction,
 };
+use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
+use crate::workspaces::workspace::CustomerType;
 use crate::{
     report_if_error, safe_error, safe_warn, send_telemetry_from_ctx, send_telemetry_on_executor,
     send_telemetry_sync_from_ctx, AIAgentActionResultType, AIRequestUsageModel,
@@ -617,15 +641,15 @@ const BOOTSTRAP_FAILED_DURATION: Duration = Duration::from_secs(7);
 /// during the bootstrap period.
 const ENV_VAR_BOOTSTRAP_FAILED_DURATION: Duration = Duration::from_secs(60);
 const KNOWN_ISSUES_URL: &str =
-    "http://localhost:8080/docs/support-and-community/troubleshooting-and-support/known-issues";
+    "https://docs.localhost:8080/support-and-community/troubleshooting-and-support/known-issues";
 
 /// Link to supported custom prompts.
 const PROMPT_COMPATIBILITY_URL: &str =
-    "http://localhost:8080/docs/terminal/appearance/prompt#custom-prompt-compatibility-table";
+    "https://docs.localhost:8080/terminal/appearance/prompt#custom-prompt-compatibility-table";
 
 /// Link to troubleshooting steps for ControlMaster errors.
 const CONTROLMASTER_ISSUES_URL: &str =
-    "http://localhost:8080/docs/terminal/warpify/ssh-legacy#troubleshooting";
+    "https://docs.localhost:8080/terminal/warpify/ssh-legacy#troubleshooting";
 
 /// Link to instructions on how to update p10k.
 const P10K_UPDATE_INSTRUCTIONS_URL: &str =
@@ -641,9 +665,9 @@ const MIN_DELTA_FOR_TEXT_SELECTION: f32 = 0.5;
 /// Notifications-specific info
 /// TODO (suraj): add documentation for notifications in gitbook
 const NOTIFICATIONS_LEARN_MORE_URL: &str =
-    "http://localhost:8080/docs/terminal/more-features/notifications";
+    "https://docs.localhost:8080/terminal/more-features/notifications";
 pub const NOTIFICATIONS_TROUBLESHOOT_URL: &str =
-    "http://localhost:8080/docs/terminal/more-features/notifications#troubleshooting-notifications";
+    "https://docs.localhost:8080/terminal/more-features/notifications#troubleshooting-notifications";
 
 const DEBOUNCE_PERIOD: Duration = Duration::from_millis(40);
 
@@ -754,16 +778,16 @@ impl NotificationsTrigger {
     pub fn discovery_banner_copy(&self) -> &'static str {
         match self {
             NotificationsTrigger::LongRunningCommand(..) => {
-                "Octomus can notify you when long-running commands finish."
+                "Warp can notify you when long-running commands finish."
             }
             NotificationsTrigger::AgentTaskCompleted(..) => {
-                "Octomus can notify you when an agent finishes responding."
+                "Warp can notify you when an agent finishes responding."
             }
             NotificationsTrigger::NeedsAttention => {
-                "Octomus can notify you when a command or agent needs your attention."
+                "Warp can notify you when a command or agent needs your attention."
             }
             NotificationsTrigger::PasswordPrompt => {
-                "Octomus can notify you when you're prompted to enter a password."
+                "Warp can notify you when you're prompted to enter a password."
             }
         }
     }
@@ -1637,7 +1661,7 @@ pub enum Event {
     OpenWorkflowModalWithCloudWorkflow(SyncId),
     // Tell the pane group to open the workflow modal with an unsaved workflow.
     OpenWorkflowModalWithTemporary(Box<Workflow>),
-    OpenWarpDriveObjectInPane(ObjectUid),
+    OpenOctomusDriveObjectInPane(ObjectUid),
     OpenSuggestedAgentModeWorkflowModal {
         workflow_and_id: SuggestedAgentModeWorkflowAndId,
     },
@@ -2371,7 +2395,7 @@ impl Default for TerminalViewStateChange {
 }
 
 /// Whether or not this is the active terminal session. The active session for a pane group
-/// is the one used for executing workflows, Warp AI suggestions, etc.
+/// is the one used for executing workflows, Octomus AI suggestions, etc.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ActiveSessionState {
     Active,
@@ -4133,7 +4157,7 @@ impl TerminalView {
                 ConversationDetailsPanelEvent::OpenPlanNotebook { notebook_uid } => {
                     // Convert NotebookId -> SyncId -> ObjectUid (String)
                     let object_uid = SyncId::from(*notebook_uid).uid();
-                    ctx.emit(Event::OpenWarpDriveObjectInPane(object_uid));
+                    ctx.emit(Event::OpenOctomusDriveObjectInPane(object_uid));
                 }
             }
         });
@@ -4890,7 +4914,7 @@ impl TerminalView {
             return true;
         }
 
-        // Terminal prompt path: the Octomus prompt is active when honor_ps1 is
+        // Terminal prompt path: the Warp prompt is active when honor_ps1 is
         // off, or when UDI overrides PS1. The prompt must include a chip backed
         // by git status.
         let is_using_warp_prompt = !*SessionSettings::as_ref(ctx).honor_ps1
@@ -9636,7 +9660,7 @@ impl TerminalView {
         ctx: &mut ViewContext<Self>,
     ) {
         match event {
-            WarpifySuccessBlockEvent::OpenWarpifySettings => {
+            WarpifySuccessBlockEvent::OpenOctomusifySettings => {
                 ctx.emit(Event::OpenSettings(SettingsSection::Warpify));
             }
         }
@@ -10822,7 +10846,7 @@ impl TerminalView {
         reset_focus
     }
 
-    /// Recomputes the chip values for the Octomus prompt (i.e. _not_ PS1).
+    /// Recomputes the chip values for the Warp prompt (i.e. _not_ PS1).
     fn refresh_warp_prompt(&mut self, ctx: &mut ViewContext<Self>) {
         // Ask the per-repo sub-model to re-fetch metadata so the chip values
         // reflect the latest git state (branch, diff stats, etc.).
@@ -11955,7 +11979,7 @@ impl TerminalView {
                         );
 
                         // On dogfood only, we're interested in the block commands, durations,
-                        // and exit codes to trial Octomus Analytics.
+                        // and exit codes to trial Warp Analytics.
                         if ChannelState::channel().is_dogfood() {
                             send_telemetry_from_ctx!(
                                 TelemetryEvent::BlockCompletedOnDogfoodOnly {
@@ -12329,7 +12353,7 @@ impl TerminalView {
                     BlockMetadataUpdateSource::Osc7,
                     ctx,
                 );
-                // Recompute Octomus-prompt chip values (notably the
+                // Recompute Warp-prompt chip values (notably the
                 // `WorkingDirectory` chip text that feeds the vertical-tab
                 // subtitle via `display_working_directory`). The chip
                 // generator reads from `CurrentPrompt::latest_context`, which
@@ -12658,6 +12682,7 @@ impl TerminalView {
                 // ssh can exit cleanly instead of hanging.
                 #[cfg(not(target_family = "wasm"))]
                 if FeatureFlag::SshRemoteServer.is_enabled() {
+                    use crate::remote_server::manager::RemoteServerManager;
                     RemoteServerManager::handle(ctx).update(
                         ctx,
                         |mgr: &mut RemoteServerManager, ctx| {
@@ -12708,7 +12733,7 @@ impl TerminalView {
                 me.remove_ssh_remote_server_choice_block(session_id, ctx);
                 ctx.emit(Event::RemoteServerSkipRequested { session_id });
             }
-            SshRemoteServerChoiceViewEvent::OpenWarpifySettings => {
+            SshRemoteServerChoiceViewEvent::OpenOctomusifySettings => {
                 ctx.emit(Event::OpenSettings(SettingsSection::Warpify));
             }
         });
@@ -13268,7 +13293,7 @@ impl TerminalView {
         self.hide_slow_bootstrap_banner(ctx);
 
         if self.auth_state.is_anonymous_or_logged_out()
-            && !FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
+            && !FeatureFlag::OpenOctomusNewSettingsModes.is_enabled()
         {
             self.insert_anonymous_user_ai_sign_up_banner(ctx);
         }
@@ -15693,7 +15718,7 @@ impl TerminalView {
     }
 
     /// Shared logic for sending a desktop notification (or showing a discovery banner)
-    /// for any agent status change (both Octomus's agent and any CLI agent).
+    /// for any agent status change (both Warp's agent and any CLI agent).
     fn send_agent_desktop_notification_or_show_banner(
         &mut self,
         trigger: NotificationsTrigger,
@@ -16424,7 +16449,7 @@ impl TerminalView {
                                         .with_on_select_action(TerminalAction::OpenFileInWarp(path))
                                         .into_item(),
                                 );
-                                // Because the default for cmd-click is to open in Octomus, we also
+                                // Because the default for cmd-click is to open in Warp, we also
                                 // have an open-in-editor option.
                                 items.push(
                                     MenuItemFields::new("Open in editor")
@@ -16638,7 +16663,7 @@ impl TerminalView {
                     } else {
                         items.extend([
                             MenuItem::Separator,
-                            MenuItemFields::new("Ask Warp AI")
+                            MenuItemFields::new("Ask Octomus AI")
                                 .with_on_select_action(TerminalAction::ContextMenu(
                                     ContextMenuAction::AskAI(AskAISource::SelectedBlockOrText),
                                 ))
@@ -17305,7 +17330,7 @@ impl TerminalView {
 
             if !selected_input_text.is_empty() && !FeatureFlag::AgentMode.is_enabled() {
                 items.push(
-                    MenuItemFields::new("Ask Warp AI")
+                    MenuItemFields::new("Ask Octomus AI")
                         .with_on_select_action(TerminalAction::InputContextMenuItem(
                             InputContextMenuAction::AskWarpAI,
                         ))
@@ -18237,7 +18262,7 @@ impl TerminalView {
         self.paste(true, ctx);
     }
 
-    /// Tell the pane group to open a file within Octomus.
+    /// Tell the pane group to open a file within Warp.
     fn open_file_in_warp(&mut self, path: PathBuf, ctx: &mut ViewContext<Self>) {
         if let Some(session) = self
             .active_block_session_id()
@@ -20007,10 +20032,10 @@ impl TerminalView {
             }
             AIBlockEvent::OpenCitation(citation) => match citation {
                 AIAgentCitation::WarpDriveObject { uid } => {
-                    ctx.emit(Event::OpenWarpDriveObjectInPane(uid.clone()));
+                    ctx.emit(Event::OpenOctomusDriveObjectInPane(uid.clone()));
                 }
                 AIAgentCitation::WarpDocumentation { path } => {
-                    ctx.open_url(&format!("http://localhost:8080/docs/{path}"));
+                    ctx.open_url(&format!("https://docs.localhost:8080/{path}"));
                 }
                 AIAgentCitation::WebPage { url } => {
                     ctx.open_url(url);
@@ -20021,7 +20046,7 @@ impl TerminalView {
             }
             AIBlockEvent::OpenWorkflow { sync_id } => {
                 if let Some(object) = CloudModel::as_ref(ctx).get_workflow(sync_id) {
-                    ctx.emit(Event::OpenWarpDriveObjectInPane(object.uid()));
+                    ctx.emit(Event::OpenOctomusDriveObjectInPane(object.uid()));
                 }
             }
             AIBlockEvent::OpenSuggestedAgentModeWorkflowModal { workflow_and_id } => {
@@ -22546,7 +22571,7 @@ impl TerminalView {
                     self.update_incompatible_configuration_banner(session.shell().plugins(), ctx)
                 }
 
-                // honor_ps1 affects whether the Octomus prompt is active, which
+                // honor_ps1 affects whether the Warp prompt is active, which
                 // determines if we need git status updates.
                 self.update_git_status_subscription(ctx);
             }
@@ -24658,7 +24683,7 @@ impl TerminalView {
 
         match action {
             LearnMore => {
-                ctx.open_url("http://localhost:8080/docs/terminal/warpify/ssh-legacy#implementation");
+                ctx.open_url("https://docs.localhost:8080/terminal/warpify/ssh-legacy#implementation");
             }
             Settings => {
                 if FeatureFlag::SSHTmuxWrapper.is_enabled() {
@@ -25475,8 +25500,10 @@ impl TerminalView {
 
     pub(super) fn toggle_file_tree(
         &mut self,
+        cli_agent: Option<crate::server::telemetry::CLIAgentType>,
         ctx: &mut ViewContext<Self>,
     ) {
+        use crate::server::telemetry::{FileTreeSource, TelemetryEvent};
 
         self.toggle_left_panel_file_tree(false, ctx);
         send_telemetry_from_ctx!(

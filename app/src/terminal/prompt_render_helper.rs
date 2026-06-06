@@ -251,12 +251,12 @@ impl PromptRenderHelper {
                     RemoteServerSetupState::Checking => "Starting shell...".to_string(),
                     RemoteServerSetupState::Installing {
                         progress_percent: Some(p),
-                    } => format!("Installing Octomus SSH Extension... ({p}%)"),
+                    } => format!("Installing Warp SSH Extension... ({p}%)"),
                     RemoteServerSetupState::Installing {
                         progress_percent: None,
-                    } => "Installing Octomus SSH Extension...".to_string(),
+                    } => "Installing Warp SSH Extension...".to_string(),
                     RemoteServerSetupState::Updating => {
-                        "Updating Octomus SSH Extension...".to_string()
+                        "Updating Warp SSH Extension...".to_string()
                     }
                     RemoteServerSetupState::Initializing => "Initializing...".to_string(),
                     RemoteServerSetupState::Ready => "Starting shell...".to_string(),

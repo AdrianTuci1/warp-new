@@ -4,6 +4,8 @@ use warpui::{Entity, ModelContext, SingletonEntity, WindowId};
 
 use super::hoa_onboarding;
 use crate::ai::blocklist::agent_view::toolbar_item::AgentToolbarItemKind;
+use crate::auth::auth_manager::AuthManagerEvent;
+use crate::auth::AuthManager;
 use crate::channel::{Channel, ChannelState};
 use crate::settings::cloud_preferences_syncer::{
     CloudPreferencesSyncer, CloudPreferencesSyncerEvent,
@@ -22,7 +24,7 @@ pub struct OneTimeModalModel {
     is_build_plan_migration_modal_open: bool,
     /// Whether the Oz launch modal is currently being shown.
     is_oz_launch_modal_open: bool,
-    /// Whether the OpenWarp launch modal is currently being shown.
+    /// Whether the OpenOctomus launch modal is currently being shown.
     is_openwarp_launch_modal_open: bool,
     is_orchestration_launch_modal_open: bool,
     /// Whether the HOA onboarding flow is currently being shown.
@@ -36,7 +38,9 @@ impl OneTimeModalModel {
     pub fn new(ctx: &mut ModelContext<Self>) -> Self {
         // Subscribe to UserWorkspaces to detect when sunsetted_to_build_ts changes
         ctx.subscribe_to_model(
+            &crate::workspaces::user_workspaces::UserWorkspaces::handle(ctx),
             |me, event, ctx| {
+                use crate::workspaces::user_workspaces::UserWorkspacesEvent;
                 if let UserWorkspacesEvent::SunsettedToBuildDataUpdated = event {
                     // When sunsetted_to_build_ts is updated, check if we should show the modal
                     me.check_and_trigger_build_plan_migration_modal(ctx);
@@ -85,7 +89,7 @@ impl OneTimeModalModel {
                         .did_check_to_trigger_openwarp_launch_modal
                         .set_value(true, ctx)
                     {
-                        log::warn!("Failed to mark OpenWarp launch modal as dismissed: {e}");
+                        log::warn!("Failed to mark OpenOctomus launch modal as dismissed: {e}");
                     }
                 });
             }
@@ -115,7 +119,7 @@ impl OneTimeModalModel {
         self.set_oz_launch_modal_open(false, ctx);
     }
 
-    /// Returns whether the OpenWarp launch modal is currently open.
+    /// Returns whether the OpenOctomus launch modal is currently open.
     pub fn is_openwarp_launch_modal_open(&self) -> bool {
         self.is_openwarp_launch_modal_open && self.target_window_id.is_some()
     }
@@ -227,7 +231,7 @@ impl OneTimeModalModel {
             }
         });
 
-        // The OpenWarp launch modal takes priority over the Oz launch modal
+        // The OpenOctomus launch modal takes priority over the Oz launch modal
         // when both are enabled.
         if self.check_and_trigger_openwarp_launch_modal(ctx) {
             return;
@@ -307,7 +311,7 @@ impl OneTimeModalModel {
 
     fn check_and_trigger_openwarp_launch_modal(&mut self, ctx: &mut ModelContext<Self>) -> bool {
         // Only show if the feature flag is enabled.
-        if !FeatureFlag::OpenWarpLaunchModal.is_enabled() {
+        if !FeatureFlag::OpenOctomusLaunchModal.is_enabled() {
             return false;
         }
 
@@ -325,7 +329,7 @@ impl OneTimeModalModel {
                 .did_check_to_trigger_openwarp_launch_modal
                 .set_value(true, ctx)
             {
-                log::warn!("Failed to mark OpenWarp launch modal as dismissed: {e}");
+                log::warn!("Failed to mark OpenOctomus launch modal as dismissed: {e}");
             }
         });
 
@@ -391,6 +395,7 @@ impl OneTimeModalModel {
         &mut self,
         ctx: &mut ModelContext<Self>,
     ) -> bool {
+        use crate::workspaces::user_workspaces::UserWorkspaces;
 
         // Check if already dismissed
         let general_settings = GeneralSettings::as_ref(ctx);

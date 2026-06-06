@@ -18,6 +18,7 @@ use warpui::image_cache::ImageType;
 use warpui::r#async::SpawnedFutureHandle;
 use warpui::{AppContext, Entity, ModelContext, SingletonEntity};
 
+use crate::auth::UserUid;
 use crate::editor::{CursorColors, PeerSelectionData};
 use crate::terminal::model::block::BlockId;
 use crate::terminal::model::blocks::BlockList;

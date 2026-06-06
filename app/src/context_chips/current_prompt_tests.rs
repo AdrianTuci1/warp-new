@@ -14,6 +14,8 @@ use warpui::{App, SingletonEntity};
 use warpui_extras::user_preferences;
 
 use super::{ChipUpdateStatus, CurrentPrompt, PromptContext};
+use crate::auth::auth_manager::AuthManager;
+use crate::auth::AuthStateProvider;
 #[cfg(feature = "local_fs")]
 use crate::code_review::diff_state::DiffStats;
 #[cfg(feature = "local_fs")]
@@ -23,6 +25,8 @@ use crate::context_chips::prompt::Prompt;
 use crate::context_chips::{ChipAvailability, ChipDisabledReason, ContextChipKind};
 use crate::features::FeatureFlag;
 use crate::menu::MenuItem;
+use crate::server::server_api::ServerApiProvider;
+use crate::server::telemetry::context_provider::AppTelemetryContextProvider;
 use crate::settings::WarpPromptSeparator;
 #[cfg(windows)]
 use crate::system::SystemInfo;
@@ -243,6 +247,7 @@ fn test_shell_chip_is_disabled_when_required_executable_is_missing() {
         app.add_singleton_model(|_| crate::settings::manager::SettingsManager::default());
         crate::settings::InputSettings::register(&mut app);
         app.update(crate::settings::AISettings::register_and_subscribe_to_events);
+        app.add_singleton_model(crate::workspaces::user_workspaces::UserWorkspaces::default_mock);
         #[cfg(windows)]
         app.add_singleton_model(SystemInfo::new);
 
@@ -394,6 +399,7 @@ fn test_disabling_chips() {
         app.add_singleton_model(|_| crate::settings::manager::SettingsManager::default());
         crate::settings::InputSettings::register(&mut app);
         app.update(crate::settings::AISettings::register_and_subscribe_to_events);
+        app.add_singleton_model(crate::workspaces::user_workspaces::UserWorkspaces::default_mock);
         #[cfg(windows)]
         app.add_singleton_model(SystemInfo::new);
 

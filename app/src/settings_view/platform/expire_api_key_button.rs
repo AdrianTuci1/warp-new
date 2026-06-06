@@ -3,6 +3,7 @@ use warpui::elements::MouseStateHandle;
 use warpui::ui_components::components::UiComponent;
 use warpui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
 
+use crate::server::ids::ApiKeyUid;
 use crate::ui_components::buttons::icon_button;
 use crate::ui_components::icons::Icon;
 
@@ -44,6 +45,8 @@ impl ExpireApiKeyButton {
         self.request_state = RequestState::Pending;
         ctx.notify();
 
+        let auth_client =
+            crate::server::server_api::ServerApiProvider::as_ref(ctx).get_auth_client();
         let uid_for_req = self.key_uid.clone();
         ctx.spawn(
             async move { auth_client.expire_api_key(&uid_for_req).await },

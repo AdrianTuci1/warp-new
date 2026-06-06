@@ -10,6 +10,7 @@ use warpui::App;
 use super::*;
 use crate::ai::agent::{AIIdentifiers, FileEdit};
 use crate::ai::blocklist::SessionContext;
+use crate::auth::auth_state::AuthState;
 
 fn update_deltas(diff: &AIRequestedCodeDiff) -> &[DiffDelta] {
     match &diff.diff_type {

@@ -6,6 +6,7 @@ use warpui::{Entity, ModelContext, SingletonEntity};
 use crate::ai::mcp::templatable::{
     GalleryData, JsonTemplate, TemplatableMCPServer, TemplateVariable,
 };
+use crate::server::cloud_objects::update_manager::{UpdateManager, UpdateManagerEvent};
 
 #[derive(Clone, Debug)]
 pub struct GalleryMCPServer {

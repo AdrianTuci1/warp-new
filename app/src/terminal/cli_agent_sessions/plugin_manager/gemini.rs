@@ -106,11 +106,11 @@ impl CliAgentPluginManager for GeminiPluginManager {
     }
 
     fn install_success_message(&self) -> &'static str {
-        "Octomus plugin installed. Please restart Gemini CLI to activate."
+        "Warp plugin installed. Please restart Gemini CLI to activate."
     }
 
     fn update_success_message(&self) -> &'static str {
-        "Octomus plugin updated. Please restart Gemini CLI to activate."
+        "Warp plugin updated. Please restart Gemini CLI to activate."
     }
 
     fn install_instructions(&self) -> &'static PluginInstructions {
@@ -123,10 +123,10 @@ impl CliAgentPluginManager for GeminiPluginManager {
 }
 
 static INSTALL_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| PluginInstructions {
-    title: "Install Octomus Plugin for Gemini CLI",
+    title: "Install Warp Plugin for Gemini CLI",
     subtitle: "Run the following command, then restart Gemini CLI.",
     steps: &[PluginInstructionStep {
-        description: "Install the Octomus extension",
+        description: "Install the Warp extension",
         command:
             "gemini extensions install https://github.com/warpdotdev/gemini-cli-warp --consent",
         executable: true,
@@ -136,10 +136,10 @@ static INSTALL_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| Plu
 });
 
 static UPDATE_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| PluginInstructions {
-    title: "Update Octomus Plugin for Gemini CLI",
+    title: "Update Warp Plugin for Gemini CLI",
     subtitle: "Run the following command, then restart Gemini CLI.",
     steps: &[PluginInstructionStep {
-        description: "Update the Octomus extension",
+        description: "Update the Warp extension",
         command: "gemini extensions update gemini-warp",
         executable: true,
         link: None,

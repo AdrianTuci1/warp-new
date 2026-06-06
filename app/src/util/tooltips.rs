@@ -201,7 +201,7 @@ where
             .with_child(
                 appearance
                     .ui_builder()
-                    .span("*Secrets are not sent to Octomus's server.")
+                    .span("*Secrets are not sent to Warp's server.")
                     .with_style(UiComponentStyles {
                         font_size: Some(12.),
                         margin: Some(Coords::default().top(4.)),
@@ -234,7 +234,7 @@ where
         .finish()
 }
 
-/// Returns whether "Open in Octomus" should be offered for the given file path.
+/// Returns whether "Open in Warp" should be offered for the given file path.
 ///
 /// This checks:
 /// - Whether Warp is already the default editor (skip if so)
@@ -245,6 +245,7 @@ pub fn should_show_open_in_warp_link(path: &Path, app: &AppContext) -> bool {
     use warpui::SingletonEntity;
 
     use crate::code::view::is_binary_file;
+    use crate::notebooks::file::is_markdown_file;
     use crate::util::file::external_editor::settings::EditorChoice;
     use crate::util::file::external_editor::EditorSettings;
 

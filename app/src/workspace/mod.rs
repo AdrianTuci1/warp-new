@@ -1,6 +1,7 @@
 mod action;
 mod active_session;
 pub(crate) mod auto_handoff;
+pub mod bonus_grant_notification_model;
 #[cfg(target_os = "macos")]
 mod cli_install;
 mod close_session_confirmation_dialog;
@@ -33,6 +34,10 @@ pub use global_actions::{
 };
 use serde::{Deserialize, Serialize};
 pub use util::{active_terminal_in_window, PaneViewLocator, TabMovement};
+pub use view::{
+    Workspace, NEW_SESSION_MENU_BUTTON_POSITION_ID, NEW_TAB_BUTTON_POSITION_ID,
+    PANEL_HEADER_HEIGHT, TAB_BAR_HEIGHT, TOTAL_TAB_BAR_HEIGHT, WORKSPACE_PADDING,
+};
 use warp_core::context_flag::ContextFlag;
 use warpui::accessibility::AccessibilityVerbosity;
 use warpui::elements::DropTargetData;
@@ -44,6 +49,7 @@ use crate::channel::{Channel, ChannelState};
 use crate::features::FeatureFlag;
 use crate::palette::PaletteMode;
 use crate::pane_group::TabBarHoverIndex;
+use crate::server::telemetry::{AgentModeEntrypoint, PaletteSource};
 use crate::settings_view::{self, flags, SettingsSection};
 use crate::tab::uses_vertical_tabs;
 use crate::util::bindings::{self, cmd_or_ctrl_shift, is_binding_pty_compliant, CustomAction};
@@ -57,6 +63,17 @@ pub fn panel_header_corner_radius() -> warpui::elements::CornerRadius {
 pub use one_time_modal_model::OneTimeModalModel;
 pub use registry::WorkspaceRegistry;
 pub use toast_stack::ToastStack;
+
+use crate::workspace::view::{
+    LEFT_PANEL_AGENT_CONVERSATIONS_BINDING_NAME, LEFT_PANEL_GLOBAL_SEARCH_BINDING_NAME,
+    LEFT_PANEL_PROJECT_EXPLORER_BINDING_NAME, LEFT_PANEL_WARP_DRIVE_BINDING_NAME,
+    NEW_AGENT_TAB_BINDING_NAME, NEW_AMBIENT_AGENT_TAB_BINDING_NAME, NEW_TAB_BINDING_NAME,
+    NEW_TERMINAL_TAB_BINDING_NAME, OPEN_GLOBAL_SEARCH_BINDING_NAME,
+    TOGGLE_CONVERSATION_LIST_VIEW_BINDING_NAME, TOGGLE_NOTIFICATION_MAILBOX_BINDING_NAME,
+    TOGGLE_PROJECT_EXPLORER_BINDING_NAME, TOGGLE_RIGHT_PANEL_BINDING_NAME,
+    TOGGLE_TAB_CONFIGS_MENU_BINDING_NAME, TOGGLE_VERTICAL_TABS_PANEL_BINDING_NAME,
+    TOGGLE_WARP_DRIVE_BINDING_NAME,
+};
 
 pub fn init(app: &mut AppContext) {
     app.add_singleton_model(|_| WorkspaceRegistry::new());
@@ -72,7 +89,16 @@ pub fn init(app: &mut AppContext) {
     crate::tab_configs::remove_confirmation_dialog::init(app);
     hoa_onboarding::init(app);
     tab_configs::session_config_modal::init(app);
+    view::launch_modal::oz_launch::init(app);
+    view::openwarp_launch_modal::init(app);
+    view::orchestration_launch_modal::init(app);
+    view::cloud_agent_capacity_modal::init(app);
+    view::codex_modal::init(app);
+    view::free_tier_limit_hit_modal::init(app);
+    view::global_search::view::GlobalSearchView::init(app);
+    view::right_panel::RightPanelView::init(app);
     header_toolbar_editor::init(app);
+    view::conversation_list::view::register_conversation_list_view_bindings(app);
 
     settings_view::init_actions_from_parent_view(app, &id!("Workspace"), |settings_action| {
         WorkspaceAction::DispatchToSettingsTab(settings_action)
@@ -170,14 +196,14 @@ pub fn init(app: &mut AppContext) {
                 .with_context_predicate(id!("Workspace")),
                 EditableBinding::new(
                     "workspace:open_openwarp_launch_modal",
-                    "[Debug] Open OpenWarp Launch Modal",
-                    WorkspaceAction::OpenOpenWarpLaunchModal,
+                    "[Debug] Open OpenOctomus Launch Modal",
+                    WorkspaceAction::OpenOpenOctomusLaunchModal,
                 )
                 .with_context_predicate(id!("Workspace")),
                 EditableBinding::new(
                     "workspace:reset_openwarp_launch_modal_state",
-                    "[Debug] Reset OpenWarp Launch Modal State",
-                    WorkspaceAction::ResetOpenWarpLaunchModalState,
+                    "[Debug] Reset OpenOctomus Launch Modal State",
+                    WorkspaceAction::ResetOpenOctomusLaunchModalState,
                 )
                 .with_context_predicate(id!("Workspace")),
                 EditableBinding::new(
@@ -194,13 +220,13 @@ pub fn init(app: &mut AppContext) {
                 .with_context_predicate(id!("Workspace")),
                 EditableBinding::new(
                     "workspace:install_opencode_warp_plugin",
-                    "[Debug] Install OpenCode Octomus plugin",
+                    "[Debug] Install OpenCode Warp plugin",
                     WorkspaceAction::InstallOpenCodeWarpPlugin,
                 )
                 .with_context_predicate(id!("Workspace")),
                 EditableBinding::new(
                     "workspace:use_local_opencode_warp_plugin",
-                    "[Debug] Use local OpenCode Octomus plugin (testing only)",
+                    "[Debug] Use local OpenCode Warp plugin (testing only)",
                     WorkspaceAction::UseLocalOpenCodeWarpPlugin,
                 )
                 .with_context_predicate(id!("Workspace")),
@@ -721,7 +747,7 @@ pub fn init(app: &mut AppContext) {
         .with_custom_action(CustomAction::ToggleGlobalSearch),
         EditableBinding::new(
             LEFT_PANEL_WARP_DRIVE_BINDING_NAME,
-            BindingDescription::new("Left Panel: Local Storage"),
+            BindingDescription::new("Left Panel: Octomus Drive"),
             WorkspaceAction::ToggleWarpDrive,
         )
         .with_group(bindings::BindingGroup::Navigation.as_str())
@@ -747,8 +773,8 @@ pub fn init(app: &mut AppContext) {
         .with_linux_or_windows_key_binding("alt-shift-F"),
         EditableBinding::new(
             TOGGLE_WARP_DRIVE_BINDING_NAME,
-            BindingDescription::new("Toggle Local Storage")
-                .with_custom_description(bindings::MAC_MENUS_CONTEXT, "Local Storage"),
+            BindingDescription::new("Toggle Octomus Drive")
+                .with_custom_description(bindings::MAC_MENUS_CONTEXT, "Octomus Drive"),
             WorkspaceAction::ToggleWarpDrive,
         )
         .with_context_predicate(id!("Workspace") & id!(flags::ENABLE_WARP_DRIVE)),
@@ -886,7 +912,7 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "workspace:terminate_app",
-            "Quit Octomus",
+            "Quit Warp",
             WorkspaceAction::TerminateApp,
         )
         .with_context_predicate(id!("Workspace"))
@@ -991,7 +1017,7 @@ pub fn init(app: &mut AppContext) {
         EditableBinding::new(
             // If you rename this name, please update the name in command_palette/action/data_source.rs
             "workspace:search_drive",
-            "Search Local Storage",
+            "Search Octomus Drive",
             WorkspaceAction::OpenPalette {
                 mode: PaletteMode::WarpDrive,
                 source: PaletteSource::Keybinding,
@@ -1046,7 +1072,7 @@ pub fn init(app: &mut AppContext) {
     if cfg!(not(target_family = "wasm")) {
         app.register_editable_bindings([EditableBinding::new(
             "workspace:export_all_warp_drive_objects",
-            "Export all Local Storage objects",
+            "Export all Octomus Drive objects",
             WorkspaceAction::ExportAllWarpDriveObjects,
         )
         .with_group(bindings::BindingGroup::Settings.as_str())
@@ -1126,7 +1152,7 @@ pub fn init(app: &mut AppContext) {
         .with_context_predicate(id!("Workspace") & id!(flags::IS_ANY_AI_ENABLED))
         .with_group(bindings::BindingGroup::WarpAi.as_str())
         // We use the same custom action as AM so that we don't have
-        // two mac menu items for AM vs Warp AI since they are mutually exclusive.
+        // two mac menu items for AM vs Octomus AI since they are mutually exclusive.
         .with_custom_action(CustomAction::NewAgentModePane),
     ]);
 
@@ -1484,7 +1510,7 @@ fn add_overflow_menu_items_as_editable_binding(app: &mut AppContext) {
         #[cfg(not(target_family = "wasm"))]
         EditableBinding::new(
             "workspace:view_logs",
-            "View Octomus logs",
+            "View Warp logs",
             WorkspaceAction::ViewLogs,
         )
         .with_context_predicate(id!("Workspace")),

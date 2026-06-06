@@ -26,6 +26,7 @@ use warp_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
 use warpui::image_cache::{resize_dimensions, FitType};
 
 use super::{AbsolutePoint, FullGridClearBehavior, GridHandler, PerformResetGridChecks, TermMode};
+use crate::server::telemetry::ImageProtocol;
 use crate::terminal::event::Event;
 use crate::terminal::event_listener::ChannelEventListener;
 use crate::terminal::model::ansi::{
@@ -428,7 +429,7 @@ impl ansi::Handler for GridHandler {
     fn report_xtversion<W: std::io::Write>(&mut self, writer: &mut W) {
         log::trace!("Reporting xtversion");
         let version = ChannelState::app_version().unwrap_or("");
-        let _ = writer.write_all(format!("\x1bP>|Octomus({version})\x1b\\").as_bytes());
+        let _ = writer.write_all(format!("\x1bP>|Warp({version})\x1b\\").as_bytes());
     }
 
     fn device_status<W: std::io::Write>(&mut self, writer: &mut W, arg: usize) {

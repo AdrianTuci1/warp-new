@@ -8,7 +8,14 @@ use warpui::{App, Element, Entity, TypedActionView, View, ViewHandle, WindowId};
 
 use super::{create_editable_comment_markdown_editor, create_readonly_comment_markdown_editor};
 use crate::appearance::Appearance;
+use crate::auth::AuthStateProvider;
+use crate::cloud_object::model::persistence::CloudModel;
+use crate::notebooks::editor::keys::NotebookKeybindings;
+use crate::notebooks::editor::view::RichTextEditorView;
+use crate::notebooks::link::{NotebookLinks, SessionSource};
 use crate::search::files::model::FileSearchModel;
+use crate::server::server_api::team::MockTeamClient;
+use crate::server::server_api::workspace::MockWorkspaceClient;
 use crate::settings_view::keybindings::KeybindingChangedNotifier;
 use crate::terminal::keys::TerminalKeybindings;
 use crate::test_util::settings::initialize_settings_for_tests;

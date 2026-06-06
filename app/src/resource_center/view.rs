@@ -332,7 +332,7 @@ impl ResourceCenterView {
                 if FeatureFlag::AvatarInTabBar.is_enabled() {
                     String::new()
                 } else {
-                    "Octomus Essentials".to_string()
+                    "Warp Essentials".to_string()
                 }
             }
         };

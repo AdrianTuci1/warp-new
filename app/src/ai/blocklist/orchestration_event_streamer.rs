@@ -27,6 +27,9 @@ use crate::ai::agent_events::{
     ServerApiAgentEventSource,
 };
 use crate::ai::ambient_agents::AmbientAgentTaskId;
+use crate::server::retry_strategies::is_transient_http_error;
+use crate::server::server_api::ai::{AIClient, AgentRunEvent, TaskListFilter};
+use crate::server::server_api::{ServerApi, ServerApiProvider};
 
 /// Backoff schedule (seconds) for the post-restore
 /// `get_ambient_agent_task` retry on transient errors: 1s, 2s, 5s, then 10s max.

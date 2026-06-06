@@ -24,6 +24,7 @@ pub use login_layer::{AuthFlowInstructions, LOGIN_LAYER};
 use warp_core::user_preferences::GetUserPreferences as _;
 use warpui::{AppContext, SingletonEntity};
 
+use crate::auth::auth_state::AuthStateProvider;
 use crate::channel::{Channel, ChannelState};
 use crate::send_telemetry_sync_from_app_ctx;
 
@@ -321,7 +322,7 @@ pub trait Experiment<T: Experiment<T>>: FromStr {
                 let group_assignment = group.variant();
                 // Send synchronously since this we rely on this event to collect experiment data.
                 send_telemetry_sync_from_app_ctx!(
-                    TelemetryEvent::ExperimentAssignment {
+                    crate::server::telemetry::TelemetryEvent::ExperimentTriggered {
                         experiment: Self::name(),
                         layer: Self::layer().name(),
                         group_assignment,

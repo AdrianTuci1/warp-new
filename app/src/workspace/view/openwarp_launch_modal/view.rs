@@ -27,7 +27,7 @@ const HERO_HEIGHT: f32 = 92.;
 const HERO_IMAGE_PATH: &str = "async/png/onboarding/openwarp_launch_banner.png";
 const REPO_URL: &str = "https://github.com/warpdotdev/warp";
 const CONTRIBUTING_URL: &str = "https://github.com/warpdotdev/warp/blob/master/CONTRIBUTING.md";
-const OZ_URL: &str = "http://localhost:8080";
+const OZ_URL: &str = "https://oz.localhost:8080";
 
 struct InlineLink {
     text: &'static str,
@@ -46,7 +46,7 @@ const FEATURE_ITEMS: &[FeatureItem] = &[
     FeatureItem {
         icon: Icon::HeartHand,
         title: "Contribute",
-        description: "Octomus's client code is now open source. Get started by using the /feedback skill to open an issue, and follow the contribution guidelines here.",
+        description: "Warp's client code is now open source. Get started by using the /feedback skill to open an issue, and follow the contribution guidelines here.",
         inline_link: Some(InlineLink {
             text: "here",
             url: CONTRIBUTING_URL,
@@ -55,7 +55,7 @@ const FEATURE_ITEMS: &[FeatureItem] = &[
     FeatureItem {
         icon: Icon::Oz,
         title: "Open Automated Development",
-        description: "The Octomus repo is managed by an agent-first workflow powered by Oz, our cloud agent orchestration platform.",
+        description: "The Warp repo is managed by an agent-first workflow powered by Oz, our cloud agent orchestration platform.",
         inline_link: Some(InlineLink {
             text: "Oz",
             url: OZ_URL,
@@ -74,19 +74,19 @@ pub fn init(app: &mut AppContext) {
 
     app.register_fixed_bindings([FixedBinding::new(
         "escape",
-        OpenWarpLaunchModalAction::Close,
-        id!(OpenWarpLaunchModal::ui_name()),
+        OpenOctomusLaunchModalAction::Close,
+        id!(OpenOctomusLaunchModal::ui_name()),
     )]);
 }
 
 #[derive(Clone, Debug)]
-pub enum OpenWarpLaunchModalAction {
+pub enum OpenOctomusLaunchModalAction {
     Close,
     VisitRepo,
 }
 
 #[derive(Clone, Debug)]
-pub enum OpenWarpLaunchModalEvent {
+pub enum OpenOctomusLaunchModalEvent {
     Close,
 }
 
@@ -128,24 +128,24 @@ impl ActionButtonTheme for CtaButtonTheme {
     }
 }
 
-pub struct OpenWarpLaunchModal {
+pub struct OpenOctomusLaunchModal {
     close_button: ViewHandle<ActionButton>,
     cta_button: ViewHandle<ActionButton>,
 }
 
-impl OpenWarpLaunchModal {
+impl OpenOctomusLaunchModal {
     pub fn new(ctx: &mut ViewContext<Self>) -> Self {
         let close_button = ctx.add_view(|_ctx| {
             ActionButton::new("", CloseButtonTheme)
                 .with_icon(Icon::X)
                 .with_size(ButtonSize::Small)
-                .on_click(|ctx| ctx.dispatch_typed_action(OpenWarpLaunchModalAction::Close))
+                .on_click(|ctx| ctx.dispatch_typed_action(OpenOctomusLaunchModalAction::Close))
         });
 
         let cta_button = ctx.add_view(|_ctx| {
             ActionButton::new("Visit the repo", CtaButtonTheme)
                 .with_full_width(true)
-                .on_click(|ctx| ctx.dispatch_typed_action(OpenWarpLaunchModalAction::VisitRepo))
+                .on_click(|ctx| ctx.dispatch_typed_action(OpenOctomusLaunchModalAction::VisitRepo))
         });
 
         Self {
@@ -212,7 +212,7 @@ impl OpenWarpLaunchModal {
     }
 
     fn render_title(appearance: &Appearance) -> Box<dyn Element> {
-        Text::new("Octomus is now open-source", appearance.ui_font_family(), 20.)
+        Text::new("Warp is now open-source", appearance.ui_font_family(), 20.)
             .with_color(PhenomenonStyle::modal_title_text())
             .with_style(Properties::default().weight(Weight::Semibold))
             .finish()
@@ -220,7 +220,7 @@ impl OpenWarpLaunchModal {
 
     fn render_description(appearance: &Appearance) -> Box<dyn Element> {
         Text::new(
-            "You, our community, can participate in building Octomus using an agent-first workflow.",
+            "You, our community, can participate in building Warp using an agent-first workflow.",
             appearance.ui_font_family(),
             14.,
         )
@@ -370,13 +370,13 @@ impl OpenWarpLaunchModal {
     }
 }
 
-impl Entity for OpenWarpLaunchModal {
-    type Event = OpenWarpLaunchModalEvent;
+impl Entity for OpenOctomusLaunchModal {
+    type Event = OpenOctomusLaunchModalEvent;
 }
 
-impl View for OpenWarpLaunchModal {
+impl View for OpenOctomusLaunchModal {
     fn ui_name() -> &'static str {
-        "OpenWarpLaunchModal"
+        "OpenOctomusLaunchModal"
     }
 
     fn on_focus(&mut self, _focus_ctx: &warpui::FocusContext, ctx: &mut ViewContext<Self>) {
@@ -408,17 +408,17 @@ impl View for OpenWarpLaunchModal {
     }
 }
 
-impl TypedActionView for OpenWarpLaunchModal {
-    type Action = OpenWarpLaunchModalAction;
+impl TypedActionView for OpenOctomusLaunchModal {
+    type Action = OpenOctomusLaunchModalAction;
 
     fn handle_action(&mut self, action: &Self::Action, ctx: &mut ViewContext<Self>) {
         match action {
-            OpenWarpLaunchModalAction::Close => {
-                ctx.emit(OpenWarpLaunchModalEvent::Close);
+            OpenOctomusLaunchModalAction::Close => {
+                ctx.emit(OpenOctomusLaunchModalEvent::Close);
             }
-            OpenWarpLaunchModalAction::VisitRepo => {
+            OpenOctomusLaunchModalAction::VisitRepo => {
                 ctx.open_url(REPO_URL);
-                ctx.emit(OpenWarpLaunchModalEvent::Close);
+                ctx.emit(OpenOctomusLaunchModalEvent::Close);
             }
         }
     }

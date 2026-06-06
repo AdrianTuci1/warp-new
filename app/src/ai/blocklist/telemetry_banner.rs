@@ -11,12 +11,14 @@ use crate::settings_view::SettingsSection;
 use crate::terminal::view::TerminalAction;
 use crate::ui_components::buttons::icon_button;
 use crate::ui_components::icons::Icon;
+use crate::workspaces::user_workspaces::UserWorkspaces;
+use crate::workspaces::workspace::UgcCollectionEnablementSetting;
 use crate::{Appearance, FeatureFlag, WorkspaceAction};
 
 const TITLE_EXISTING_USERS: &str = "We've updated our telemetry policy.";
-const TITLE_NEW_USERS: &str = "Help improve Octomus.";
-const DESCRIPTION: &str = "We may collect certain console interactions to improve Octomus's AI capabilities. You can opt out any time.";
-const PRIVACY_URL: &str = "https://localhost/privacy";
+const TITLE_NEW_USERS: &str = "Help improve Warp.";
+const DESCRIPTION: &str = "We may collect certain console interactions to improve Warp's AI capabilities. You can opt out any time.";
+const PRIVACY_URL: &str = "https://localhost:8080/privacy";
 
 #[derive(Default, Debug, Clone)]
 pub struct TelemetryBanner {

@@ -70,6 +70,7 @@ use crate::ai::blocklist::history_model::BlocklistAIHistoryModel;
 use crate::ai::blocklist::inline_action::inline_action_icons::icon_size;
 use crate::ai::blocklist::model::AIBlockModelHelper;
 use crate::appearance::Appearance;
+use crate::cloud_object::model::persistence::CloudModel;
 use crate::settings::{AISettings, InputModeSettings, InputSettings};
 use crate::settings_view::SettingsSection;
 use crate::terminal::block_list_element::BlockListMenuSource;
@@ -667,7 +668,7 @@ pub fn render_citation(
         }
         AIAgentCitation::WarpDocumentation { .. } => {
             let icon = Icon::Warp.to_warpui_icon(theme.foreground()).finish();
-            let name = String::from("Octomus Docs");
+            let name = String::from("Warp Docs");
             (Some(icon), name)
         }
         AIAgentCitation::WebPage { url } => {

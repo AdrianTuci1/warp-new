@@ -47,6 +47,7 @@ use crate::ai::agent::{
     AIAgentContext, AIAgentExchangeId, AIAgentInput, AIAgentOutputStatus, AIIdentifiers,
     CancellationReason, DocumentContentAttachmentSource, EntrypointType, FileContext,
     FinishedAIAgentOutput, PassiveSuggestionResultType, PassiveSuggestionTrigger,
+    PassiveSuggestionTriggerType, RenderableAIError, RequestCost, RequestMetadata, RunningCommand,
     StaticQueryType, UserQueryMode,
 };
 use crate::ai::agent_events::AgentMessageEventMetadata;
@@ -57,12 +58,18 @@ use crate::ai::document::ai_document_model::{
     AIDocumentId, AIDocumentModel, AIDocumentUserEditStatus,
 };
 use crate::ai::llms::{LLMId, LLMPreferences};
+use crate::ai::AIRequestUsageModel;
+use crate::cloud_object::model::persistence::CloudModel;
 use crate::features::FeatureFlag;
 use crate::global_resource_handles::GlobalResourceHandlesProvider;
 use crate::network::NetworkStatus;
+use crate::notebooks::editor::model::FileLinkResolutionContext;
 use crate::persistence::ModelEvent;
 use crate::send_telemetry_from_ctx;
+use crate::server::server_api::AIApiError;
 #[cfg(not(target_family = "wasm"))]
+use crate::server::server_api::ServerApiProvider;
+use crate::server::telemetry::TelemetryEvent;
 use crate::terminal::model::block::{
     formatted_terminal_contents_for_input, BlockId, CURSOR_MARKER,
 };
@@ -71,6 +78,8 @@ use crate::terminal::model::session::SessionType;
 use crate::terminal::model::terminal_model::TerminalModel;
 use crate::terminal::view::inline_banner::ZeroStatePromptSuggestionType;
 use crate::terminal::ShellLaunchData;
+use crate::workspaces::update_manager::TeamUpdateManager;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 #[derive(Debug, Clone)]
 pub struct SessionContext {
@@ -2661,6 +2670,9 @@ impl BlocklistAIController {
                                     );
                                 },
                             );
+                            AIRequestUsageModel::handle(ctx).update(ctx, |model, ctx| {
+                                model.enable_buy_credits_banner(ctx);
+                            });
                         }
 
                         let mut renderable_error: RenderableAIError = e.as_ref().into();
@@ -2842,6 +2854,9 @@ impl BlocklistAIController {
                     stream_id,
                     conversation_id,
                 });
+                AIRequestUsageModel::handle(ctx).update(ctx, |request_usage_model, ctx| {
+                    request_usage_model.refresh_request_usage_async(ctx);
+                });
 
                 self.maybe_refresh_ai_overages(ctx);
             }
@@ -2880,6 +2895,7 @@ impl BlocklistAIController {
 
         // If a user is below their personal limits, then we know that they won't eat into overages,
         // so we don't need to refresh.
+        let has_no_requests_remaining = !AIRequestUsageModel::as_ref(ctx).has_requests_remaining();
         // If overages aren't enabled, we're not going to reap the benefit of refreshing at all anyway.
         let are_overages_enabled = workspace.are_overages_enabled();
 
@@ -2906,6 +2922,21 @@ impl BlocklistAIController {
         ctx: &mut ModelContext<Self>,
     ) {
         let history_model = BlocklistAIHistoryModel::handle(ctx);
+        history_model.update(ctx, |history_model, ctx| {
+            // Update conversation cost and usage information before updating and
+            // persisting the conversation.
+            history_model.update_conversation_cost_and_usage_for_request(
+                conversation_id,
+                finished_event.request_cost.map(|cost| {
+                    // Total credits charged for this request = inference (`exact`) + platform.
+                    RequestCost::new(f64::from(cost.exact) + f64::from(cost.platform_credits))
+                }),
+                finished_event.token_usage,
+                finished_event.conversation_usage_metadata.take(),
+                did_request_contain_user_query,
+                ctx,
+            );
+        });
 
         let history_model = BlocklistAIHistoryModel::handle(ctx);
         match finished_event.reason {

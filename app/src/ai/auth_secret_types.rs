@@ -36,11 +36,11 @@ pub fn learn_more_url_for_harness(harness: Harness) -> &'static str {
 }
 
 const DEFAULT_LEARN_MORE_URL: &str =
-    "http://localhost:8080/docs/agent-platform/cloud-agents/harnesses/authentication/";
+    "https://docs.localhost:8080/agent-platform/cloud-agents/harnesses/authentication/";
 const CODEX_LEARN_MORE_URL: &str =
-    "http://localhost:8080/docs/agent-platform/cloud-agents/harnesses/authentication/#connecting-codex-credentials";
+    "https://docs.localhost:8080/agent-platform/cloud-agents/harnesses/authentication/#connecting-codex-credentials";
 const CLAUDE_LEARN_MORE_URL: &str =
-    "http://localhost:8080/docs/agent-platform/cloud-agents/harnesses/authentication/#connecting-claude-code-credentials";
+    "https://docs.localhost:8080/agent-platform/cloud-agents/harnesses/authentication/#connecting-claude-code-credentials";
 
 pub fn build_managed_secret_value(
     info: &AuthSecretTypeInfo,

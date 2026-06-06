@@ -28,6 +28,7 @@ use crate::editor::{
     EditorOptions, EditorView, Event as EditorEvent, InteractionState,
     PropagateAndNoOpNavigationKeys, TextOptions,
 };
+use crate::server::server_api::ServerApiProvider;
 use crate::ui_components::icons::Icon;
 use crate::util::git::{
     create_pr, get_diff_for_commit_message, get_file_change_entries, run_commit, run_push,

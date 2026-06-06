@@ -1,4 +1,4 @@
-//! Support for pane contents that are shareable, like sessions and Warp Drive objects.
+//! Support for pane contents that are shareable, like sessions and Octomus Drive objects.
 //!
 //! This is tightly coupled to the pane header so that different overlays (context menus, the
 //! sharing dialog, and so on) are correctly displayed.
@@ -12,7 +12,10 @@ use warpui::ui_components::components::UiComponent;
 use warpui::{AppContext, Element, ViewContext, ViewHandle};
 
 use super::{Event, OpenOverlay, PaneHeader, PaneHeaderAction};
+use crate::drive::sharing::dialog::{SharingDialog, SharingDialogEvent};
+use crate::drive::sharing::{ContentEditability, ShareableObject};
 use crate::pane_group::BackingView;
+use crate::server::telemetry::SharingDialogSource;
 use crate::ui_components::buttons::{icon_button, icon_button_with_color};
 use crate::ui_components::icons::Icon;
 

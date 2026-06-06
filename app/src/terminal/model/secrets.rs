@@ -628,7 +628,7 @@ pub mod regexes {
         },
         DefaultRegex {
             pattern: WARP_API_KEY,
-            name: "Octomus API Key",
+            name: "Warp API Key",
         },
     ];
 }

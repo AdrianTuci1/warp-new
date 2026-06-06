@@ -7,7 +7,7 @@ description: Reference the Warp tab config schema, validation rules, and example
 
 This skill is the canonical reference for Warp tab config TOML files.
 
-Tab configs live under `~/.warp/tab_configs/` for standard Warp builds. Non-stable builds (e.g. Preview or pre-release channels) use a channel-specific variant such as `~/.warp-<channel>/tab_configs/`. Do NOT use `~/Library/Application Support/` — that is the wrong location.
+Tab configs live under `~/.octomus/tab_configs/` for standard Warp builds. Non-stable builds (e.g. Preview or pre-release channels) use a channel-specific variant such as `~/.warp-<channel>/tab_configs/`. Do NOT use `~/Library/Application Support/` — that is the wrong location.
 
 To find the active data directory, inspect which `~/.warp*` directories exist on the user's machine. Each `.toml` file defines a single tab layout that appears in the `+` menu. When the user selects one, Warp opens a new tab with the configured pane layout and runs any specified commands.
 

@@ -42,6 +42,7 @@ use crate::util::git::{Commit, FileChangeEntry};
 use crate::view_components::action_button::{ActionButton, ButtonSize, NakedTheme, SecondaryTheme};
 use crate::view_components::DismissibleToast;
 use crate::workspace::ToastStack;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 pub(crate) mod commit;
 pub(crate) mod pr;

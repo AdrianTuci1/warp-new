@@ -196,6 +196,46 @@ macro_rules! send_telemetry_from_app_ctx {
     };
 }
 
+/// Sends telemetry `track` event synchronously from an AppContext.
+#[macro_export]
+macro_rules! send_telemetry_sync_from_app_ctx {
+    ($event:expr, $app_ctx:expr) => {
+        let event = $event;
+        if event.enablement_state().is_enabled() {
+            $crate::warpui_core::record_telemetry_on_executor!(
+                None::<String>,
+                "anonymous".to_string(),
+                event.name().into(),
+                event.payload(),
+                event.contains_ugc(),
+                $app_ctx.background_executor()
+            );
+        }
+    };
+}
+
+/// Sends telemetry `track` event on a background executor.
+#[macro_export]
+macro_rules! send_telemetry_on_executor {
+    ($auth_state:expr, $event:expr, $executor:expr) => {
+        {
+            #[allow(unused_imports)]
+            use warp_core::telemetry::TelemetryEvent as _;
+            let event = $event;
+            if event.enablement_state().is_enabled() {
+                $crate::warpui_core::record_telemetry_on_executor!(
+                    None::<String>,
+                    "anonymous".to_string(),
+                    event.name().into(),
+                    event.payload(),
+                    event.contains_ugc(),
+                    $executor
+                );
+            }
+        }
+    };
+}
+
 /// Gives information about when a telemetry event is enabled.
 #[derive(Debug)]
 pub enum EnablementState {

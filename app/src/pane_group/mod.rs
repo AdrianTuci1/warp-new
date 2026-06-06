@@ -74,8 +74,12 @@ use crate::app_state::{
     TerminalPaneSnapshot, WorkflowPaneSnapshot,
 };
 use crate::appearance::Appearance;
+use crate::auth::auth_manager::AuthManager;
+use crate::auth::auth_view_modal::AuthViewVariant;
+use crate::auth::AuthStateProvider;
 use crate::banner::{Banner, BannerEvent, BannerState, BannerTextContent, DismissalType};
 use crate::channel::{Channel, ChannelState};
+use crate::cloud_object::Space;
 use crate::code::active_file::ActiveFileModel;
 use crate::code::buffer_location::LocalOrRemotePath;
 #[cfg(feature = "local_fs")]
@@ -83,9 +87,12 @@ use crate::code::editor_management::CodeSource;
 use crate::code::view::{CodeView, CodeViewAction};
 use crate::code_review::comments::{AttachedReviewComment, PendingImportedReviewComment};
 use crate::code_review::diff_state::DiffMode;
+use crate::drive::items::WarpDriveItemId;
+use crate::drive::{CloudObjectTypeAndId, OpenOctomusDriveObjectArgs};
 use crate::env_vars::EnvVarCollectionType;
 use crate::features::FeatureFlag;
 use crate::launch_configs::launch_config::{self, PaneMode, PaneTemplateType};
+use crate::notebooks::file::FileNotebookView;
 use crate::palette::PaletteMode;
 use crate::pane_group::focus_state::PaneGroupFocusEvent;
 use crate::pane_group::pane::get_started_pane::GetStartedPane;
@@ -101,6 +108,12 @@ use crate::resource_center::{
     mark_feature_used_and_write_to_user_defaults, Tip, TipAction, TipsCompleted,
 };
 #[cfg(target_family = "wasm")]
+use crate::server::cloud_objects::update_manager::UpdateManager;
+use crate::server::ids::{ObjectUid, SyncId};
+use crate::server::server_api::{ServerApi, ServerApiProvider};
+use crate::server::telemetry::{
+    AnonymousUserSignupEntrypoint, PaletteSource, SharingDialogSource, TelemetryEvent,
+};
 use crate::session_management::SessionNavigationData;
 use crate::settings::{AISettings, DefaultSessionMode, PaneSettings};
 use crate::settings_view::mcp_servers_page::MCPServersSettingsPage;
@@ -169,7 +182,7 @@ pub use pane::ai_document_pane::AIDocumentPane;
 pub use pane::ai_fact_pane::AIFactPane;
 pub use pane::code_diff_pane::CodeDiffPane;
 pub use pane::code_pane::CodePane;
-
+pub use pane::env_var_collection_pane::EnvVarCollectionPane;
 pub use pane::environment_management_pane::EnvironmentManagementPane;
 pub use pane::execution_profile_editor_pane::ExecutionProfileEditorPane;
 pub use pane::file_pane::FilePane;
@@ -253,7 +266,7 @@ fn resolve_tab_config_shell(name: &str, ctx: &AppContext) -> Option<AvailableShe
     AvailableShell::try_from(name).ok()
 }
 const WARP_SHELL_COMPATIBILITY_DOCS: &str =
-    "http://localhost:8080/docs/getting-started/supported-shells";
+    "https://docs.localhost:8080/getting-started/supported-shells";
 // Default minimum width for a newly created Agent Mode pane so that it is legible. Called "default"
 // because this value may be too large for small windows. In that case, we fall back to 50% of the
 // window width.
@@ -528,8 +541,8 @@ pub enum Event {
         /// The session that the path was opened from.
         session: Arc<Session>,
     },
-    OpenWarpDriveLink {
-        open_warp_drive_args: OpenWarpDriveObjectArgs,
+    OpenOctomusDriveLink {
+        open_warp_drive_args: OpenOctomusDriveObjectArgs,
     },
     #[cfg(feature = "local_fs")]
     OpenCodeInWarp {
@@ -603,7 +616,7 @@ pub enum Event {
     },
     /// Clears the hovered tab index so it no longer appears as highlighted drop target
     ClearHoveredTabIndex,
-    OpenWarpDriveObjectInPane(ObjectUid),
+    OpenOctomusDriveObjectInPane(ObjectUid),
     /// Tell the workspace to open the given child agent conversation in a
     /// fresh tab. Bubbled up by `TerminalView::Event::OpenChildAgentInNewTab`
     /// from the orchestration pill bar's 3-dot menu.
@@ -3064,7 +3077,7 @@ impl PaneGroup {
             Banner::<PaneGroupAction>::new_permanently_dismissible(
                 BannerTextContent::formatted_text(vec![
                     FormattedTextFragment::plain_text(
-                        "Octomus doesn't currently support your default shell, falling back to zsh.  ",
+                        "Warp doesn't currently support your default shell, falling back to zsh.  ",
                     ),
                     FormattedTextFragment::hyperlink("Learn more", WARP_SHELL_COMPATIBILITY_DOCS),
                 ]),

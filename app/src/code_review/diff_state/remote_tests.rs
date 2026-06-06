@@ -4,12 +4,14 @@ use remote_server::manager::RemoteServerManagerEvent;
 use warp_util::remote_path::RemotePath;
 
 use super::InternalRemoteDiffState;
+use crate::auth::AuthStateProvider;
 use crate::code_review::diff_size_limits::DiffSize;
 use crate::code_review::diff_state::{
     DiffHunk, DiffLine, DiffLineType, DiffMetadata, DiffMetadataAgainstBase, DiffMode, DiffState,
     DiffStateModelEvent, DiffStats, FileDiff, FileDiffAndContent, GitDiffData,
     GitDiffWithBaseContent, GitFileStatus, RemoteDiffStateModel,
 };
+use crate::server::telemetry::context_provider::AppTelemetryContextProvider;
 use crate::util::git::{Commit, PrInfo};
 
 impl RemoteDiffStateModel {

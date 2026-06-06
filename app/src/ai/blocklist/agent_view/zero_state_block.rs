@@ -46,7 +46,7 @@ use crate::terminal::view::TerminalAction;
 use crate::terminal::{self, prompt, TerminalModel};
 use crate::util::time_format::format_approx_duration_from_now_utc;
 
-const CLOUD_AGENT_DOCS_URL: &str = "https://docs.localhost/agent-platform/cloud-agents/overview";
+const CLOUD_AGENT_DOCS_URL: &str = "https://docs.localhost:8080/agent-platform/cloud-agents/overview";
 const OZ_UPDATES_SECTION_HEADER: &str = "What's new in Oz";
 
 // The maximum number of Oz updates from the changelog rendered in-line in the 'What's new in Oz section'.
@@ -1133,7 +1133,7 @@ fn render_oz_updates(props: OzUpdatesProps<'_>, app: &AppContext) -> Option<Box<
                         })
                         .with_reset_cursor_after_click()
                         .on_click(|_, app, _| {
-                            const CHANGELOG_URL: &str = "https://docs.localhost/changelog";
+                            const CHANGELOG_URL: &str = "https://docs.localhost:8080/changelog";
                             app.open_url(CHANGELOG_URL);
                         })
                         .with_cursor(Cursor::PointingHand)
@@ -1209,6 +1209,33 @@ fn render_oz_updates(props: OzUpdatesProps<'_>, app: &AppContext) -> Option<Box<
         })
         .finish(),
     )
+}
+
+/// Renders the ambient credits banner showing free cloud credits.
+/// If `link_mouse_state` is provided, a "Launch cloud agent" link is shown.
+pub fn render_ambient_credits_banner(credits: i32, app: &AppContext) -> Box<dyn Element> {
+    let appearance = Appearance::as_ref(app);
+    let theme = appearance.theme();
+    let font_family = appearance.ui_font_family();
+    let font_size = styles::CREDITS_BANNER_FONT_SIZE;
+
+    // Use ANSI terminal colors for the pill styling.
+    let text_color = theme.terminal_colors().normal.blue;
+
+    let credits_text = format!("{credits} free cloud agent credits");
+    let text = Text::new(credits_text, font_family, font_size)
+        .with_color(text_color.into())
+        .with_style(Properties::default().weight(Weight::Semibold))
+        .soft_wrap(false)
+        .finish();
+
+    Container::new(text)
+        .with_border(Border::all(1.).with_border_color(text_color.into()))
+        .with_corner_radius(CornerRadius::with_all(Radius::Percentage(50.)))
+        .with_vertical_padding(2.)
+        .with_horizontal_padding(6.)
+        .with_margin_left(8.)
+        .finish()
 }
 
 mod styles {

@@ -27,8 +27,11 @@ use crate::pane_group::TerminalViewResources;
 #[cfg(feature = "local_tty")]
 use crate::persistence::ModelEvent;
 #[cfg(not(target_family = "wasm"))]
+use crate::server::cloud_objects::update_manager::UpdateManager;
 #[cfg(not(target_family = "wasm"))]
+use crate::server::ids::{ServerId, SyncId};
 #[cfg(any(feature = "local_tty", not(target_family = "wasm")))]
+use crate::server::server_api::ServerApiProvider;
 #[cfg(feature = "local_tty")]
 use crate::terminal::local_tty::docker_sandbox::resolve_sbx_path_from_user_shell;
 #[cfg(not(target_family = "wasm"))]
@@ -213,14 +216,14 @@ impl TerminalView {
         let sync_future = UpdateManager::as_ref(ctx).initial_load_complete();
         ctx.spawn(
             async move {
-                // Wait for Warp Drive initial sync so environment lookup succeeds.
+                // Wait for Octomus Drive initial sync so environment lookup succeeds.
 
                 if sync_future
                     .with_timeout(WARP_DRIVE_SYNC_TIMEOUT)
                     .await
                     .is_err()
                 {
-                    return Err("Timed out waiting for Local Storage to sync for docker sandbox");
+                    return Err("Timed out waiting for Octomus Drive to sync for docker sandbox");
                 }
 
                 // Wait for the terminal session to bootstrap.
@@ -237,6 +240,7 @@ impl TerminalView {
                 // Look up the environment by hardcoded ID.
                 let environment = spawner
                     .spawn(|_, ctx| {
+                        use crate::cloud_object::CloudObjectLookup as _;
 
                         let server_id = ServerId::try_from("SVhg783GBFQHk1OfdPfFU9").ok()?;
                         let sync_id = SyncId::ServerId(server_id);

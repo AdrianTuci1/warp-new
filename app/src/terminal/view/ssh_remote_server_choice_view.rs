@@ -8,7 +8,7 @@
 //!
 //! The view owns:
 //! - a child [`KeyboardNavigableButtons`] handle for the two selectable
-//!   cards ("Install Octomus's SSH extension" / "Continue without installing"),
+//!   cards ("Install Warp's SSH extension" / "Continue without installing"),
 //! - the [`SessionId`] this prompt is scoped to (used for event forwarding),
 //! - the current "Don't ask me this again" checked state (purely local to
 //!   this prompt instance; persisted to `ssh_extension_install_mode` only
@@ -35,6 +35,7 @@ use crate::ai::blocklist::block::keyboard_navigable_buttons::{
 use crate::ai::blocklist::inline_action::inline_action_header::{
     HeaderConfig, INLINE_ACTION_HORIZONTAL_PADDING,
 };
+use crate::server::telemetry::TelemetryEvent;
 use crate::terminal::model::session::SessionId;
 use crate::terminal::warpify::settings::{SshExtensionInstallMode, WarpifySettings};
 use crate::ui_components::blended_colors;
@@ -47,14 +48,14 @@ pub enum SshRemoteServerChoiceViewAction {
     Install,
     Skip,
     ToggleDoNotAskAgain,
-    OpenWarpifySettings,
+    OpenOctomusifySettings,
 }
 
 #[derive(Clone, Debug)]
 pub enum SshRemoteServerChoiceViewEvent {
     Install,
     Skip,
-    OpenWarpifySettings,
+    OpenOctomusifySettings,
 }
 
 /// Choice block prompting the user to install the remote-server binary on the remote host or skip.
@@ -73,9 +74,9 @@ impl SshRemoteServerChoiceView {
         let buttons = ctx.add_typed_action_view(|_| {
             KeyboardNavigableButtons::new(vec![
                 rich_navigation_button(
-                    "Install Octomus's SSH extension".to_string(),
+                    "Install Warp's SSH extension".to_string(),
                     Some(
-                        "Install Octomus's extension to enable agent features like file browsing, \
+                        "Install Warp's extension to enable agent features like file browsing, \
                          code review, and intelligent command completions in this session."
                             .to_string(),
                     ),
@@ -177,7 +178,7 @@ impl SshRemoteServerChoiceView {
                 "Manage Warpify settings".into(),
                 None,
                 Some(Box::new(|ctx| {
-                    ctx.dispatch_typed_action(SshRemoteServerChoiceViewAction::OpenWarpifySettings);
+                    ctx.dispatch_typed_action(SshRemoteServerChoiceViewAction::OpenOctomusifySettings);
                 })),
                 self.manage_settings_mouse_state.clone(),
             )
@@ -304,8 +305,8 @@ impl TypedActionView for SshRemoteServerChoiceView {
                 );
                 ctx.notify();
             }
-            SshRemoteServerChoiceViewAction::OpenWarpifySettings => {
-                ctx.emit(SshRemoteServerChoiceViewEvent::OpenWarpifySettings);
+            SshRemoteServerChoiceViewAction::OpenOctomusifySettings => {
+                ctx.emit(SshRemoteServerChoiceViewEvent::OpenOctomusifySettings);
             }
         }
     }

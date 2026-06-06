@@ -13,6 +13,7 @@ pub(super) mod ai_fact_pane;
 pub(super) mod code_diff_pane;
 pub(super) mod code_diff_pane_model;
 pub(super) mod code_pane;
+pub(super) mod env_var_collection_pane;
 pub(crate) mod environment_management_pane;
 pub(super) mod execution_profile_editor_pane;
 pub(super) mod file_pane;
@@ -52,10 +53,15 @@ use crate::ai::facts::AIFactView;
 #[cfg(feature = "local_fs")]
 use crate::code::buffer_location::LocalOrRemotePath;
 use crate::code::view::CodeView;
+use crate::drive::sharing::ShareableObject;
 use crate::env_vars::view::env_var_collection::EnvVarCollectionView;
 use crate::menu::MenuItem;
+use crate::notebooks::file::FileNotebookView;
+use crate::notebooks::notebook::NotebookView;
 use crate::pane_group::focus_state::PaneFocusHandle;
 use crate::pane_group::pane::get_started_view::GetStartedView;
+use crate::server::network_log_view::NetworkLogView;
+use crate::server::telemetry::SharingDialogSource;
 use crate::settings::PaneSettings;
 use crate::settings_view::environments_page::EnvironmentsPageView;
 use crate::settings_view::SettingsView;
@@ -427,7 +433,7 @@ impl PaneId {
         matches!(self.0.pane_type, IPaneType::EnvironmentManagement)
     }
 
-    /// Returns true if this pane contains a Warp Drive object (notebook, workflow, etc.).
+    /// Returns true if this pane contains a Octomus Drive object (notebook, workflow, etc.).
     pub fn is_warp_drive_object_pane(&self) -> bool {
         matches!(
             self.0.pane_type,

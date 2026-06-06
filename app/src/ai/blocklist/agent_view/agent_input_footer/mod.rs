@@ -59,6 +59,7 @@ use crate::ai::execution_profiles::profiles::AIExecutionProfilesModel;
 use crate::ai::harness_availability::HarnessAvailabilityModel;
 use crate::ai::AIRequestUsageModel;
 use crate::appearance::Appearance;
+use crate::auth::{AuthManager, AuthStateProvider};
 use crate::completer::SessionContext;
 use crate::context_chips::display_chip::{DisplayChip, DisplayChipConfig};
 use crate::context_chips::prompt_type::PromptType;
@@ -67,7 +68,10 @@ use crate::features::FeatureFlag;
 use crate::network::NetworkStatus;
 use crate::send_telemetry_from_ctx;
 #[cfg(feature = "voice_input")]
+use crate::server::server_api::TranscribeError;
 #[cfg(not(target_family = "wasm"))]
+use crate::server::telemetry::PluginChipTelemetryAction;
+use crate::server::telemetry::{PluginChipTelemetryKind, TelemetryEvent};
 use crate::settings::{
     AISettings, AISettingsChangedEvent, PrivacySettings, PrivacySettingsChangedEvent,
 };
@@ -110,6 +114,7 @@ use crate::workspace::view::TOGGLE_PROJECT_EXPLORER_BINDING_NAME;
 use crate::workspace::ToastStack;
 #[cfg(not(target_family = "wasm"))]
 use crate::workspace::WorkspaceAction;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 const ENABLE_NLD_TOOLTIP: &str = "Enable terminal command autodetection";
 const DISABLE_NLD_TOOLTIP: &str = "Disable terminal command autodetection";
@@ -422,7 +427,7 @@ impl AgentInputFooter {
             ActionButton::new("Enable notifications", InstallPluginButtonTheme)
                 .with_icon(Icon::Download)
                 .with_tooltip(
-                    "Install the Octomus plugin to enable rich agent notifications within Octomus",
+                    "Install the Warp plugin to enable rich agent notifications within Warp",
                 )
                 .with_size(cli_button_size)
                 .with_tooltip_alignment(TooltipAlignment::Left)
@@ -435,7 +440,7 @@ impl AgentInputFooter {
         let plugin_instructions_button = ctx.add_typed_action_view(|_ctx| {
             ActionButton::new("Notifications setup instructions", InstallPluginButtonTheme)
                 .with_icon(Icon::Info)
-                .with_tooltip("View instructions to install the Octomus plugin")
+                .with_tooltip("View instructions to install the Warp plugin")
                 .with_size(cli_button_size)
                 .with_tooltip_alignment(TooltipAlignment::Left)
                 .with_adjoined_side(AdjoinedSide::Right)
@@ -447,9 +452,9 @@ impl AgentInputFooter {
         });
 
         let update_plugin_button = ctx.add_typed_action_view(|_ctx| {
-            ActionButton::new("Update Octomus plugin", InstallPluginButtonTheme)
+            ActionButton::new("Update Warp plugin", InstallPluginButtonTheme)
                 .with_icon(Icon::Download)
-                .with_tooltip("A new version of the Octomus plugin is available")
+                .with_tooltip("A new version of the Warp plugin is available")
                 .with_size(cli_button_size)
                 .with_tooltip_alignment(TooltipAlignment::Left)
                 .with_adjoined_side(AdjoinedSide::Right)
@@ -461,7 +466,7 @@ impl AgentInputFooter {
         let update_instructions_button = ctx.add_typed_action_view(|_ctx| {
             ActionButton::new("Plugin update instructions", InstallPluginButtonTheme)
                 .with_icon(Icon::Info)
-                .with_tooltip("View instructions to update the Octomus plugin")
+                .with_tooltip("View instructions to update the Warp plugin")
                 .with_size(cli_button_size)
                 .with_tooltip_alignment(TooltipAlignment::Left)
                 .with_adjoined_side(AdjoinedSide::Right)
@@ -1371,10 +1376,10 @@ impl AgentInputFooter {
             .cli_agent(ctx)
             .and_then(plugin_manager_for)
             .map(|m| m.install_success_message())
-            .unwrap_or("Octomus plugin installed. Please restart the session to activate.");
+            .unwrap_or("Warp plugin installed. Please restart the session to activate.");
         self.handle_plugin_operation(
-            "Installing Octomus plugin...",
-            "Failed to install Octomus plugin",
+            "Installing Warp plugin...",
+            "Failed to install Warp plugin",
             success_msg,
             PluginChipTelemetryKind::Install,
             |manager| async move { manager.install().await },
@@ -1388,10 +1393,10 @@ impl AgentInputFooter {
             .cli_agent(ctx)
             .and_then(plugin_manager_for)
             .map(|m| m.update_success_message())
-            .unwrap_or("Octomus plugin updated. Please restart the session to activate.");
+            .unwrap_or("Warp plugin updated. Please restart the session to activate.");
         self.handle_plugin_operation(
-            "Updating Octomus plugin...",
-            "Failed to update Octomus plugin",
+            "Updating Warp plugin...",
+            "Failed to update Warp plugin",
             success_msg,
             PluginChipTelemetryKind::Update,
             |manager| async move { manager.update().await },
@@ -2781,7 +2786,7 @@ impl ActionButtonTheme for ActiveMicButtonTheme {
     }
 }
 
-/// Green-accented theme for the "Install Octomus plugin" chip.
+/// Green-accented theme for the "Install Warp plugin" chip.
 struct InstallPluginButtonTheme;
 
 impl ActionButtonTheme for InstallPluginButtonTheme {
@@ -2821,7 +2826,7 @@ async fn write_install_log(agent: CLIAgent, err: &PluginInstallError) -> Option<
     let log_path = env::temp_dir().join("warp-plugin-install.log");
     let now = chrono::Utc::now().format("%Y-%m-%d %H:%M:%S UTC");
     let contents = format!(
-        "Octomus plugin installation — {agent:?}\n\
+        "Warp plugin installation — {agent:?}\n\
          {now}\n\
          \n\
          {log}",

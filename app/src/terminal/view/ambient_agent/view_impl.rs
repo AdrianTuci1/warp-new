@@ -36,6 +36,7 @@ use crate::terminal::view::{
 };
 use crate::terminal::CLIAgent;
 use crate::workspace::view::cloud_agent_capacity_modal::CloudAgentCapacityModalVariant;
+use crate::workspaces::user_workspaces::UserWorkspaces;
 
 const CHILD_AGENT_GITHUB_AUTH_REQUIRED_BLOCKED_ACTION: &str =
     "GitHub authentication required before starting the child agent.";

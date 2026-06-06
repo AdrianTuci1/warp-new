@@ -41,9 +41,18 @@ use crate::ai::blocklist::{
 };
 use crate::ai::cloud_environments::CloudAmbientAgentEnvironment;
 use crate::ai::conversation_navigation::ConversationNavigationData;
+use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};
+use crate::auth::AuthStateProvider;
+use crate::cloud_object::CloudObjectLookup as _;
 use crate::network::{NetworkStatus, NetworkStatusEvent, NetworkStatusKind};
+use crate::server::cloud_objects::update_manager::{UpdateManager, UpdateManagerEvent};
+use crate::server::ids::{ServerId, SyncId};
+use crate::server::retry_strategies::{
     is_transient_http_error, OUT_OF_BAND_REQUEST_RETRY_STRATEGY, PERIODIC_POLL_RETRY_STRATEGY,
 };
+use crate::server::server_api::ai::TaskListFilter;
+use crate::server::server_api::presigned_upload::HttpStatusError;
+use crate::server::server_api::ServerApiProvider;
 use crate::settings::AISettings;
 use crate::ui_components::icons::Icon;
 use crate::workspace::{RestoreConversationLayout, WorkspaceAction};

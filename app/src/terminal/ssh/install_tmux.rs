@@ -26,7 +26,7 @@ use crate::ui_components::blended_colors;
 use crate::ui_components::icons::Icon as UiIcon;
 
 pub const WHY_INSTALL_TMUX_URL: &str =
-    "https://docs.localhost/terminal/warpify/ssh#why-do-i-need-tmux-on-the-remote-machine";
+    "https://docs.localhost:8080/terminal/warpify/ssh#why-do-i-need-tmux-on-the-remote-machine";
 
 #[derive(Debug, Clone)]
 pub struct TmuxInstallMethod {

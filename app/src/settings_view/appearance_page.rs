@@ -54,6 +54,7 @@ use crate::editor::{
 use crate::features::FeatureFlag;
 use crate::gpu_state::{GPUState, GPUStateEvent};
 use crate::prompt::editor_modal::OpenSource as PromptEditorOpenSource;
+use crate::server::telemetry::{InputUXChangeOrigin, TelemetryEvent};
 use crate::settings::app_icon::{AppIcon, AppIconSettings};
 use crate::settings::{
     active_theme_kind, respect_system_theme, AIFontName, AppEditorSettings, CursorBlink,
@@ -241,7 +242,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
 
     // Add command palette entry for toggling between Warp and Classic input modes
     app.register_fixed_bindings(vec![FixedBinding::empty(
-        "Toggle Input Mode (Octomus/Classic)".to_string(),
+        "Toggle Input Mode (Warp/Classic)".to_string(),
         builder(SettingsAction::AppearancePageToggle(
             AppearancePageAction::ToggleInputMode,
         )),
@@ -309,7 +310,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
         ),
     );
 
-    if !FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
+    if !FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
         toggle_binding_pairs.push(
             ToggleSettingActionPair::custom(
                 SettingActionPairDescriptions::new(
@@ -1440,7 +1441,7 @@ impl AppearanceSettingsPageView {
         let tab_settings = TabSettings::as_ref(ctx);
         let mut tab_settings_widgets: Vec<Box<dyn SettingsWidget<View = Self>>> =
             vec![Box::new(TabIndicatorWidget::default())];
-        if !FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
+        if !FeatureFlag::OpenOctomusNewSettingsModes.is_enabled() {
             tab_settings_widgets.push(Box::new(CodeReviewButtonWidget::default()));
         }
         if FeatureFlag::FullScreenZenMode.is_enabled()
@@ -1588,7 +1589,7 @@ impl AppearanceSettingsPageView {
 
     fn input_mode_dropdown_item_label(val: InputMode) -> &'static str {
         match val {
-            InputMode::PinnedToBottom => "Pin to the bottom (Octomus mode)",
+            InputMode::PinnedToBottom => "Pin to the bottom (Warp mode)",
             InputMode::PinnedToTop => "Pin to the top (Reverse mode)",
             InputMode::Waterfall => "Start at the top (Classic mode)",
         }
@@ -1612,7 +1613,7 @@ impl AppearanceSettingsPageView {
             AppIcon::Original => "Original",
             AppIcon::Starburst => "Starburst",
             AppIcon::Sticker => "Sticker",
-            AppIcon::WarpOne => "Octomus 1",
+            AppIcon::WarpOne => "Warp 1",
         }
     }
 
@@ -2674,7 +2675,7 @@ impl SettingsWidget for CreateCustomThemeWidget {
                 .ui_builder()
                 .link(
                     "Create your own custom theme".to_string(),
-                    Some("http://localhost:8080/docs/terminal/appearance/custom-themes".to_string()),
+                    Some("https://docs.localhost:8080/terminal/appearance/custom-themes".to_string()),
                     None,
                     self.mouse_state.clone(),
                 )
@@ -2933,7 +2934,7 @@ impl SettingsWidget for CustomAppIconWidget {
                         appearance
                             .ui_builder()
                             .wrappable_text(
-                                "You may need to restart Octomus for MacOS to apply the preferred icon style.",
+                                "You may need to restart Warp for MacOS to apply the preferred icon style.",
                                 true,
                             )
                             .with_style(UiComponentStyles {
@@ -3227,7 +3228,7 @@ impl SettingsWidget for WindowBlurWidget {
         let label_info = AdditionalInfo {
             mouse_state: self.info_button.clone(),
             on_click_action: Some(AppearancePageAction::OpenUrl(
-                "http://localhost:8080/docs/terminal/appearance/size-opacity-blurring".into(),
+                "https://docs.localhost:8080/terminal/appearance/size-opacity-blurring".into(),
             )),
             secondary_text: None,
             tooltip_override_text: None,
@@ -3411,7 +3412,7 @@ impl SettingsWidget for InputTypeWidget {
             .radio_buttons(
                 self.radio_buttons_states.clone(),
                 vec![
-                    RadioButtonItem::text("Octomus"),
+                    RadioButtonItem::text("Warp"),
                     RadioButtonItem::text("Shell (PS1)"),
                 ],
                 view.input_type_radio_state.clone(),
@@ -5088,7 +5089,7 @@ impl SettingsWidget for AltScreenPaddingWidget {
             Some(AdditionalInfo {
                 mouse_state: self.additional_info_mouse_state.clone(),
                 on_click_action: Some(AppearancePageAction::OpenUrl(
-                    "http://localhost:8080/docs/terminal/more-features/full-screen-apps#padding".into(),
+                    "https://docs.localhost:8080/terminal/more-features/full-screen-apps#padding".into(),
                 )),
                 secondary_text: None,
                 tooltip_override_text: None,

@@ -5,7 +5,10 @@ use std::str::FromStr;
 use about_page::AboutPageView;
 use ai_page::{AISettingsPageAction, AISettingsPageEvent, AISettingsPageView, AISubpage};
 use appearance_page::{AppearancePageAction, AppearanceSettingsPageView};
+use billing_and_usage_dispatch::BillingAndUsageDispatchView;
+use billing_and_usage_page::BillingAndUsagePageEvent;
 use code_page::{CodeSettingsPageAction, CodeSettingsPageEvent, CodeSubpage};
+use environments_page::EnvironmentsPageView;
 use features_page::{FeaturesPageView, FeaturesSettingsPageEvent};
 use itertools::Itertools as _;
 use keybindings::KeybindingsView;
@@ -21,6 +24,7 @@ use settings_page::{
     HEADER_PADDING,
 };
 use show_blocks_view::{ShowBlocksEvent, ShowBlocksView};
+use teams_page::{TeamsPageView, TeamsPageViewEvent};
 use warp_core::channel::ChannelState;
 use warp_core::context_flag::ContextFlag;
 use warp_core::features::FeatureFlag;
@@ -54,6 +58,8 @@ use crate::menu::{self, Menu, MenuItem, MenuItemFields};
 use crate::pane_group::focus_state::PaneFocusHandle;
 use crate::pane_group::pane::view;
 use crate::pane_group::{BackingView, Direction, PaneConfiguration, PaneEvent, SplitPaneState};
+use crate::server::server_api::ServerApiProvider;
+use crate::server::telemetry::MCPServerCollectionPaneEntrypoint;
 use crate::settings::{AISettings, BlockVisibilitySettings, SettingsFileError};
 use crate::settings_view::mcp_servers_page::{MCPServersSettingsPage, MCPServersSettingsPageEvent};
 use crate::terminal::model::blockgrid::BlockGrid;
@@ -66,14 +72,22 @@ use crate::{GlobalResourceHandlesProvider, TelemetryEvent};
 
 mod about_page;
 mod admin_actions;
+mod agent_assisted_environment_modal;
 mod ai_page;
 mod appearance_page;
+mod billing_and_usage;
+mod billing_and_usage_dispatch;
+mod billing_and_usage_page;
+mod billing_and_usage_page_v2;
 mod code_page;
 mod custom_inference_modal;
+mod delete_environment_confirmation_dialog;
 mod directory_color_add_picker;
+pub(crate) mod environments_page;
 mod execution_profile_view;
 mod features;
 mod features_page;
+pub(crate) mod handoff_environment_creation_modal;
 pub mod keybindings;
 mod main_page;
 pub mod mcp_servers;
@@ -90,6 +104,7 @@ mod settings_file_footer;
 pub(crate) mod settings_page;
 mod show_blocks_view;
 mod tab_menu;
+mod teams_page;
 mod telemetry;
 mod transfer_ownership_confirmation_modal;
 pub mod update_environment_form;
@@ -98,6 +113,7 @@ mod warpify_page;
 
 #[cfg(not(target_family = "wasm"))]
 pub(crate) use ai_page::cli_agent_settings_widget_id;
+pub use billing_and_usage_page::create_discount_badge;
 pub use code_page::CodeSettingsPageView;
 pub use features_page::FeaturesPageAction;
 pub use main_page::handle_experiment_change;
@@ -106,6 +122,7 @@ pub use settings_page::{
     render_body_item_label, render_info_icon, render_input_list, render_separator, AdditionalInfo,
     InputListItem, LocalOnlyIconState, ToggleState,
 };
+pub use teams_page::{OpenTeamsSettingsModalArgs, TeamsInviteOption};
 
 /// Original sidebar width used when the settings-file footer is not
 /// enabled. Preserved for Preview/Stable until `FeatureFlag::SettingsFile`
@@ -199,7 +216,7 @@ pub enum SettingsViewEvent {
     StartResize,
     CheckForUpdate,
     LaunchNetworkLogging,
-    OpenWarpDrive,
+    OpenOctomusDrive,
     SignupAnonymousUser,
     ShowToast {
         message: String,
@@ -268,14 +285,16 @@ impl Display for SettingsSection {
             SettingsSection::Keybindings => write!(f, "Keyboard shortcuts"),
             SettingsSection::SharedBlocks => write!(f, "Shared blocks"),
             SettingsSection::MCPServers => write!(f, "MCP Servers"),
-            SettingsSection::WarpDrive => write!(f, "Local Storage"),
-            SettingsSection::WarpAgent => write!(f, "Octomus Agent"),
+            SettingsSection::WarpDrive => write!(f, "Octomus Drive"),
+            SettingsSection::WarpAgent => write!(f, "Warp Agent"),
             SettingsSection::AgentProfiles => write!(f, "Profiles"),
             SettingsSection::AgentMCPServers => write!(f, "MCP servers"),
             SettingsSection::Knowledge => write!(f, "Knowledge"),
             SettingsSection::ThirdPartyCLIAgents => write!(f, "Third party CLI agents"),
             SettingsSection::CodeIndexing => write!(f, "Indexing and projects"),
             SettingsSection::EditorAndCodeReview => write!(f, "Editor and Code Review"),
+            SettingsSection::CloudEnvironments => write!(f, "Environments"),
+            SettingsSection::OzCloudAPIKeys => write!(f, "Oz Cloud API Keys"),
             _ => write!(f, "{self:?}"),
         }
     }
@@ -304,6 +323,10 @@ impl SettingsSection {
         matches!(self, Self::CodeIndexing | Self::EditorAndCodeReview)
     }
 
+    /// Returns true if this section is a subpage under the "Cloud platform" umbrella.
+    pub fn is_cloud_platform_subpage(&self) -> bool {
+        matches!(self, Self::CloudEnvironments | Self::OzCloudAPIKeys)
+    }
 
     /// Maps subpage sections back to their parent page section for page lookup.
     /// Non-subpage sections return themselves.
@@ -337,6 +360,10 @@ impl SettingsSection {
         &[Self::CodeIndexing, Self::EditorAndCodeReview]
     }
 
+    /// The ordered list of Cloud platform subpage sections.
+    pub fn cloud_platform_subpages() -> &'static [Self] {
+        &[Self::CloudEnvironments, Self::OzCloudAPIKeys]
+    }
 }
 
 impl FromStr for SettingsSection {
@@ -358,15 +385,17 @@ impl FromStr for SettingsSection {
             "Shared blocks" => Ok(Self::SharedBlocks),
             "Teams" => Ok(Self::Teams),
             "Warpify" => Ok(Self::Warpify),
-            "WarpDrive" | "Local Storage" => Ok(Self::WarpDrive),
+            "WarpDrive" | "Octomus Drive" => Ok(Self::WarpDrive),
             // This page was called "Oz" at one point, keep for backward compatibility.
-            "Oz" | "Octomus Agent" => Ok(Self::WarpAgent),
+            "Oz" | "Warp Agent" => Ok(Self::WarpAgent),
             "Profiles" | "AgentProfiles" => Ok(Self::AgentProfiles),
             "MCP servers" | "AgentMCPServers" => Ok(Self::AgentMCPServers),
             "Knowledge" => Ok(Self::Knowledge),
             "Third party CLI agents" | "ThirdPartyCLIAgents" => Ok(Self::ThirdPartyCLIAgents),
             "Indexing and projects" | "CodeIndexing" => Ok(Self::CodeIndexing),
             "Editor and Code Review" | "EditorAndCodeReview" => Ok(Self::EditorAndCodeReview),
+            "CloudEnvironments" => Ok(Self::CloudEnvironments),
+            "Oz Cloud API Keys" | "OzCloudAPIKeys" => Ok(Self::OzCloudAPIKeys),
             _ => Err(()),
         }
     }
@@ -1024,8 +1053,12 @@ macro_rules! update_page {
             SettingsPageViewHandle::Keybindings(handle) => $ctx.update_view(handle, $update),
             SettingsPageViewHandle::Teams(handle) => $ctx.update_view(handle, $update),
             SettingsPageViewHandle::Warpify(handle) => $ctx.update_view(handle, $update),
+            SettingsPageViewHandle::OzCloudAPIKeys(handle) => $ctx.update_view(handle, $update),
+            SettingsPageViewHandle::Privacy(handle) => $ctx.update_view(handle, $update),
             SettingsPageViewHandle::Referrals(handle) => $ctx.update_view(handle, $update),
             SettingsPageViewHandle::AI(handle) => $ctx.update_view(handle, $update),
+            SettingsPageViewHandle::CloudEnvironments(handle) => $ctx.update_view(handle, $update),
+            SettingsPageViewHandle::About(handle) => $ctx.update_view(handle, $update),
             SettingsPageViewHandle::Code(handle) => $ctx.update_view(handle, $update),
             SettingsPageViewHandle::BillingAndUsage(handle) => $ctx.update_view(handle, $update),
             SettingsPageViewHandle::MCPServers(handle) => $ctx.update_view(handle, $update),
@@ -1044,6 +1077,7 @@ pub struct SettingsView {
     clipped_scroll_state: ClippedScrollStateHandle,
     context_menu: ViewHandle<Menu<SettingsAction>>,
     context_menu_state: Option<Vector2F>,
+    environments_page_handle: ViewHandle<EnvironmentsPageView>,
     /// Sidebar navigation items (pages + umbrellas).
     nav_items: Vec<SettingsNavItem>,
     /// Handle to the AI settings page, used to switch subpage modes.
@@ -1117,6 +1151,10 @@ impl SettingsView {
         });
 
         // Environments page
+        let environments_page_handle = ctx.add_typed_action_view(EnvironmentsPageView::new);
+        ctx.subscribe_to_view(&environments_page_handle, |me, _, event, ctx| {
+            me.handle_environments_page_event(event, ctx);
+        });
 
         // Billing & Usage page (internally, this routes to the v1 or v2 version. Depending on FFs and current plan).
         let billing_and_usage_handle = ctx.add_view(BillingAndUsageDispatchView::new);
@@ -1140,7 +1178,7 @@ impl SettingsView {
         let teams_page_handle = ctx.add_typed_action_view(TeamsPageView::new);
         ctx.subscribe_to_view(&teams_page_handle, |_, _, event, ctx| match event {
             TeamsPageViewEvent::TeamsChanged => ctx.notify(),
-            TeamsPageViewEvent::OpenWarpDrive => ctx.emit(SettingsViewEvent::OpenWarpDrive),
+            TeamsPageViewEvent::OpenOctomusDrive => ctx.emit(SettingsViewEvent::OpenOctomusDrive),
             TeamsPageViewEvent::ShowToast { message, flavor } => {
                 ctx.emit(SettingsViewEvent::ShowToast {
                     message: message.clone(),
@@ -1167,7 +1205,7 @@ impl SettingsView {
             me.handle_referrals_page_event(event, ctx);
         });
 
-        // Warp Drive page
+        // Octomus Drive page
         let warp_drive_page_handle =
             ctx.add_typed_action_view(warp_drive_page::WarpDriveSettingsPageView::new);
         ctx.subscribe_to_view(&warp_drive_page_handle, |me, _, event, ctx| {
@@ -1231,6 +1269,7 @@ impl SettingsView {
 
         settings_pages.extend(vec![
             SettingsPage::new(mcp_servers_page_handle),
+            SettingsPage::new(environments_page_handle.clone()),
             SettingsPage::new(privacy_page_handle),
             SettingsPage::new(about_page_handle),
         ]);
@@ -1254,6 +1293,8 @@ impl SettingsView {
             SettingsNavItem::Umbrella(SettingsUmbrella::new(
                 "Cloud platform",
                 vec![
+                    SettingsSection::CloudEnvironments,
+                    SettingsSection::OzCloudAPIKeys,
                 ],
             )),
             SettingsNavItem::Page(SettingsSection::Teams),
@@ -1300,6 +1341,7 @@ impl SettingsView {
             clipped_scroll_state: Default::default(),
             context_menu,
             context_menu_state: Default::default(),
+            environments_page_handle,
             nav_items,
             ai_page_handle: ai_page_handle_for_nav,
             code_page_handle: code_page_handle_for_nav,
@@ -1684,6 +1726,23 @@ impl SettingsView {
         }
     }
 
+    fn handle_environments_page_event(
+        &mut self,
+        event: &SettingsPageEvent,
+        ctx: &mut ViewContext<Self>,
+    ) {
+        match event {
+            SettingsPageEvent::FocusModal => ctx.focus(&self.search_editor),
+            SettingsPageEvent::EnvironmentSetupModeSelectorToggled { .. }
+            | SettingsPageEvent::AgentAssistedEnvironmentModalToggled { .. } => {
+                // Re-render so the modal overlay is shown/hidden.
+                ctx.notify();
+            }
+            SettingsPageEvent::Pane(_) => {
+                // Not applicable in standalone settings view.
+            }
+        }
+    }
 
     fn handle_features_page_event(
         &mut self,
@@ -1917,10 +1976,48 @@ impl SettingsView {
             self.clear_search_query(ctx);
         }
         self.current_settings_page = section;
+        if previous_section != section && section == SettingsSection::CloudEnvironments {
+            send_telemetry_from_ctx!(SettingsTelemetryEvent::EnvironmentsPageOpened, ctx);
+        }
 
-        if let Some(page) = self.current_settings_page() {
+        // When navigating to a subpage, update the backing page's active subpage mode
+        // and auto-expand the umbrella containing it.
+        if section.is_subpage() {
+            // AI subpages: update the AI page's subpage mode.
+            if section.is_ai_subpage() && section != SettingsSection::AgentMCPServers {
+                let subpage = AISubpage::from_section(section);
+                self.ai_page_handle.update(ctx, |view, ctx| {
+                    view.set_active_subpage(subpage, ctx);
+                });
+            }
+            // Code subpages: update the Code page's subpage mode.
+            if section.is_code_subpage() {
+                let subpage = CodeSubpage::from_section(section);
+                self.code_page_handle.update(ctx, |view, ctx| {
+                    view.set_active_subpage(subpage, ctx);
+                });
+            }
+            // Cloud platform subpages render their backing pages directly
+            // (no subpage mode switch needed — the full page is shown).
+
+            // Auto-expand the umbrella containing this subpage.
+            for item in &mut self.nav_items {
+                if let SettingsNavItem::Umbrella(umbrella) = item {
+                    if umbrella.contains(section) {
+                        umbrella.expanded = true;
+                    }
+                }
+            }
+        }
+
+        #[cfg(feature = "crash_reporting")]
+        {
+            crate::crash_reporting::set_tag("warp.settings_page", section.to_string());
+        }
+
+        if let Some(settings_page) = self.current_settings_page() {
             update_page!(
-                &page.view_handle,
+                &settings_page.view_handle,
                 |view, ctx| {
                     view.on_page_selected(allow_steal_focus, ctx);
                 },
@@ -1954,9 +2051,13 @@ impl SettingsView {
             SettingsPageViewHandle::Appearance(v) => v.as_ref(app).should_render(app),
             SettingsPageViewHandle::BillingAndUsage(v) => v.as_ref(app).should_render(app),
             SettingsPageViewHandle::About(v) => v.as_ref(app).should_render(app),
+            SettingsPageViewHandle::OzCloudAPIKeys(v) => v.as_ref(app).should_render(app),
+            SettingsPageViewHandle::Privacy(v) => v.as_ref(app).should_render(app),
             SettingsPageViewHandle::Warpify(v) => v.as_ref(app).should_render(app),
             SettingsPageViewHandle::Referrals(v) => v.as_ref(app).should_render(app),
             SettingsPageViewHandle::AI(v) => v.as_ref(app).should_render(app),
+            SettingsPageViewHandle::CloudEnvironments(v) => v.as_ref(app).should_render(app),
+            SettingsPageViewHandle::MCPServers(v) => v.as_ref(app).should_render(app),
             SettingsPageViewHandle::Code(v) => v.as_ref(app).should_render(app),
             SettingsPageViewHandle::WarpDrive(v) => v.as_ref(app).should_render(app),
         }
@@ -2170,6 +2271,9 @@ impl SettingsView {
                 view.read(app, |view, _| view.get_modal_content(app))
             }
             SettingsPageViewHandle::Privacy(view) => {
+                view.read(app, |view, _| view.get_modal_content())
+            }
+            SettingsPageViewHandle::OzCloudAPIKeys(view) => {
                 view.read(app, |view, _| view.get_modal_content())
             }
             SettingsPageViewHandle::MCPServers(view) => {
@@ -2477,6 +2581,7 @@ impl View for SettingsView {
 
         // Render environment setup mode selector overlay when open.
         if let Some(selector_handle) = self
+            .environments_page_handle
             .as_ref(app)
             .environment_setup_mode_selector_handle()
         {
@@ -2485,6 +2590,7 @@ impl View for SettingsView {
 
         // Render agent-assisted environment modal overlay when open.
         if let Some(modal_handle) = self
+            .environments_page_handle
             .as_ref(app)
             .agent_assisted_environment_modal_handle(app)
         {

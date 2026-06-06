@@ -28,13 +28,13 @@ const VERTICAL_TEXT_MARGIN: f32 = 16.;
 
 #[derive(Debug, Clone)]
 pub enum WarpifySuccessBlockEvent {
-    OpenWarpifySettings,
+    OpenOctomusifySettings,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum WarpifySuccessBlockAction {
     ClearAutoWarpifySnippet,
-    OpenWarpifySettings,
+    OpenOctomusifySettings,
     OpenUrl(String),
 }
 
@@ -115,7 +115,7 @@ impl WarpifySuccessBlock {
                 description: (if !output_grid.is_empty() {
                     "Run the following to automatically Warpify in the future:"
                 } else {
-                    "In remote subshells, Octomus runs commands in the background to power completions, syntax highlighting, and other features."
+                    "In remote subshells, Warp runs commands in the background to power completions, syntax highlighting, and other features."
                 }).into(),
                 output_grid: output_grid.into(),
                 selection_handle: Default::default(),
@@ -343,8 +343,8 @@ impl TypedActionView for WarpifySuccessBlock {
 
     fn handle_action(&mut self, action: &Self::Action, ctx: &mut ViewContext<Self>) {
         match action {
-            WarpifySuccessBlockAction::OpenWarpifySettings => {
-                ctx.emit(WarpifySuccessBlockEvent::OpenWarpifySettings);
+            WarpifySuccessBlockAction::OpenOctomusifySettings => {
+                ctx.emit(WarpifySuccessBlockEvent::OpenOctomusifySettings);
             }
             WarpifySuccessBlockAction::OpenUrl(url) => {
                 ctx.open_url(url);

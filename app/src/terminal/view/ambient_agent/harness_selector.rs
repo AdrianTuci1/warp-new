@@ -225,7 +225,7 @@ impl HarnessSelector {
             button.set_disabled(is_locked_to_oz, ctx);
             button.set_tooltip(
                 Some(if is_locked_to_oz {
-                    "This conversation is with the Octomus Agent, so the cloud handoff will also use Octomus"
+                    "This conversation is with the Warp Agent, so the cloud handoff will also use Warp"
                 } else {
                     BUTTON_TOOLTIP
                 }),

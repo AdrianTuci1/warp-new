@@ -24,11 +24,13 @@ use super::{
     FeatureSectionData, FeatureSectionView, Section, TipsCompleted,
 };
 use crate::appearance::Appearance;
+use crate::auth::AuthStateProvider;
 use crate::changelog_model::ChangelogModel;
 use crate::channel::ChannelState;
 use crate::features::FeatureFlag;
 use crate::resource_center::skip_tips_and_write_to_user_defaults;
 use crate::send_telemetry_from_ctx;
+use crate::server::telemetry::TelemetryEvent;
 use crate::settings::Settings;
 use crate::themes::theme::{Blend, Fill as FillTheme};
 use crate::workspace::WorkspaceAction;
@@ -388,7 +390,7 @@ impl ResourceCenterMainView {
                 .with_text_and_icon_label(
                     TextAndIcon::new(
                         TextAndIconAlignment::IconFirst,
-                        "Invite a friend to Octomus",
+                        "Invite a friend to Warp",
                         Icon::new(SEND_SVG_PATH, appearance.theme().accent()),
                         MainAxisSize::Max,
                         MainAxisAlignment::Center,

@@ -200,6 +200,11 @@ use crate::ai::AIRequestUsageModel;
 use crate::ai_assistant::execution_context::WarpAiExecutionContext;
 use crate::appearance::{Appearance, AppearanceEvent};
 use crate::channel::{Channel, ChannelState};
+use crate::cloud_object::model::actions::ObjectActionType;
+use crate::cloud_object::model::generic_string_model::StringModel;
+use crate::cloud_object::model::persistence::CloudModel;
+use crate::cloud_object::model::view::CloudViewModel;
+use crate::cloud_object::{CloudObject, CloudObjectLookup as _, Space};
 #[cfg(feature = "local_fs")]
 use crate::code::editor_management::CodeSource;
 use crate::code_review::diff_state::DiffMode;
@@ -239,6 +244,18 @@ use crate::search::ai_context_menu::search::is_valid_search_query;
 use crate::search::ai_context_menu::view::AIContextMenuAction;
 use crate::search::slash_command_menu::static_commands::commands::{self, COMMAND_REGISTRY};
 use crate::search::QueryFilter;
+use crate::server::cloud_objects::update_manager::UpdateManager;
+use crate::server::ids::SyncId;
+use crate::server::server_api::ai::AttachmentFileInfo;
+#[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
+use crate::server::server_api::ai::AttachmentInput;
+use crate::server::server_api::ServerApi;
+use crate::server::telemetry::{
+    AICommandSearchEntrypoint, AgentModeAutoDetectionFalsePositivePayload,
+    AgentModeAutoDetectionSettingOrigin, AnonymousUserSignupEntrypoint, CommandXRayTrigger,
+    EnvVarTelemetryMetadata, PaletteSource, SlashCommandAcceptedDetails, SlashMenuSource,
+    TelemetryEvent, WorkflowTelemetryMetadata,
+};
 use crate::session_management::SessionNavigationPromptElements;
 use crate::settings::{
     AISettings, AISettingsChangedEvent, AliasExpansionSettings, AppEditorSettings,
@@ -321,6 +338,7 @@ use crate::workspace::{
     CommandSearchOptions, ForkFromExchange, ForkedConversationDestination, InitContent,
     RestoreConversationLayout, ToastStack, WorkspaceAction,
 };
+use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
 #[allow(unused_imports)]
 use crate::ASSETS;
 #[allow(unused_imports)]
@@ -388,26 +406,26 @@ const AGENT_MODE_AI_DISABLED_AUTODETECTION_DISABLED_HINT_TEXT: &str = "Run comma
 
 // Rotating hint text options for new Agent Mode conversations
 const AGENT_MODE_HINT_OPTIONS: &[&str] = &[
-    "Octomus anything e.g. Deploy my React app to Vercel and set up environment variables",
-    "Octomus anything e.g. Help me debug why my Python tests are failing in CI",
-    "Octomus anything e.g. Set up a new microservice with Docker and create the deployment pipeline",
-    "Octomus anything e.g. Find and fix the memory leak in my Node.js application",
-    "Octomus anything e.g. Create a backup script for my PostgreSQL database and schedule it",
-    "Octomus anything e.g. Help me migrate my data from MySQL to PostgreSQL",
-    "Octomus anything e.g. Set up monitoring and alerts for my AWS infrastructure",
-    "Octomus anything e.g. Build a REST API for my mobile app using FastAPI",
-    "Octomus anything e.g. Help me optimize my SQL queries that are running slowly",
-    "Octomus anything e.g. Create a GitHub Actions workflow to automatically deploy on merge",
-    "Octomus anything e.g. Set up Redis caching for my web application",
-    "Octomus anything e.g. Help me troubleshoot why my Kubernetes pods keep crashing",
-    "Octomus anything e.g. Build a data pipeline to process CSV files and load them into BigQuery",
-    "Octomus anything e.g. Set up SSL certificates and configure HTTPS for my domain",
-    "Octomus anything e.g. Help me refactor this legacy code to use modern design patterns",
-    "Octomus anything e.g. Create unit tests for my authentication service",
-    "Octomus anything e.g. Set up log aggregation with ELK stack for my distributed system",
-    "Octomus anything e.g. Help me implement OAuth2 authentication in my Express.js app",
-    "Octomus anything e.g. Optimize my Docker images to reduce build times and size",
-    "Octomus anything e.g. Set up A/B testing infrastructure for my web application",
+    "Warp anything e.g. Deploy my React app to Vercel and set up environment variables",
+    "Warp anything e.g. Help me debug why my Python tests are failing in CI",
+    "Warp anything e.g. Set up a new microservice with Docker and create the deployment pipeline",
+    "Warp anything e.g. Find and fix the memory leak in my Node.js application",
+    "Warp anything e.g. Create a backup script for my PostgreSQL database and schedule it",
+    "Warp anything e.g. Help me migrate my data from MySQL to PostgreSQL",
+    "Warp anything e.g. Set up monitoring and alerts for my AWS infrastructure",
+    "Warp anything e.g. Build a REST API for my mobile app using FastAPI",
+    "Warp anything e.g. Help me optimize my SQL queries that are running slowly",
+    "Warp anything e.g. Create a GitHub Actions workflow to automatically deploy on merge",
+    "Warp anything e.g. Set up Redis caching for my web application",
+    "Warp anything e.g. Help me troubleshoot why my Kubernetes pods keep crashing",
+    "Warp anything e.g. Build a data pipeline to process CSV files and load them into BigQuery",
+    "Warp anything e.g. Set up SSL certificates and configure HTTPS for my domain",
+    "Warp anything e.g. Help me refactor this legacy code to use modern design patterns",
+    "Warp anything e.g. Create unit tests for my authentication service",
+    "Warp anything e.g. Set up log aggregation with ELK stack for my distributed system",
+    "Warp anything e.g. Help me implement OAuth2 authentication in my Express.js app",
+    "Warp anything e.g. Optimize my Docker images to reduce build times and size",
+    "Warp anything e.g. Set up A/B testing infrastructure for my web application",
 ];
 
 fn get_agent_mode_new_conversation_hint_text() -> &'static str {
@@ -837,7 +855,7 @@ struct ViewerCommandExecutionRequest {
 /// Where a command execution request originates from.
 #[derive(Clone)]
 pub enum CommandExecutionSource {
-    /// A non-shared command execution request from Warp AI++.
+    /// A non-shared command execution request from Octomus AI++.
     /// Shared commands use the SharedSession variant instead.
     AI {
         /// Metadata associated with the execution.
@@ -1782,7 +1800,7 @@ pub fn init(app: &mut AppContext) {
 
     app.register_editable_bindings([EditableBinding::new(
         "input:insert_network_logging_workflow",
-        "Show Octomus network log",
+        "Show Warp network log",
         WorkspaceAction::OpenNetworkLogPane,
     )
     .with_enabled(|| ContextFlag::NetworkLogConsole.is_enabled())]);
@@ -3868,6 +3886,7 @@ impl Input {
                     .flatten()
             },
             move |_input, touched_repo, ctx| {
+                use crate::cloud_object::CloudObjectLookup as _;
 
                 let Some(touched_repo) = touched_repo else {
                     return;
@@ -4086,6 +4105,7 @@ impl Input {
 
     #[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
     fn maybe_launch_cloud_handoff_request(&mut self, ctx: &mut ViewContext<Self>) -> bool {
+        use crate::cloud_object::CloudObjectLookup as _;
 
         if !FeatureFlag::OzHandoff.is_enabled()
             || !FeatureFlag::HandoffLocalCloud.is_enabled()
@@ -5938,7 +5958,7 @@ impl Input {
             }
             (InputType::AI, _) => {
                 // Follow the `agent_indicator` pattern (see `app/src/tab.rs`):
-                //  * `None` (no conversation, empty, passive, or untitled) => new conversation => "Octomus anything"
+                //  * `None` (no conversation, empty, passive, or untitled) => new conversation => "Warp anything"
                 //  * `InProgress`                                           => agent running    => "Steer"
                 //  * Any other status                                       => finished         => "Ask a follow up"
                 match self

@@ -33,7 +33,7 @@ const UNSUPPORTED_SHELL_ERROR: &str =
 const TMUX_INSTALL_FAILED_ERROR: &str =
     "The tmux install hit an unexpected error. Please install tmux manually and try again.";
 
-const SSH_GITHUB_ISSUE_URL: &str = "https://github.com/warpdotdev/Octomus/issues/new?assignees=&labels=Bugs,SSH-tmux&projects=&template=03_ssh_tmux.yml";
+const SSH_GITHUB_ISSUE_URL: &str = "https://github.com/warpdotdev/Warp/issues/new?assignees=&labels=Bugs,SSH-tmux&projects=&template=03_ssh_tmux.yml";
 
 fn get_ssh_github_issue_url(title: &str) -> String {
     let url = if let Some(version) = ChannelState::app_version() {
@@ -229,7 +229,7 @@ impl View for SshErrorBlock {
 
         if self.should_show_report_to_warp_button() {
             let report_issue_text = build_description_row(FormattedText::new([FormattedTextLine::Line(vec![
-                    FormattedTextFragment::plain_text("We are actively working on improving the stability of SSH in Octomus. Please consider "),
+                    FormattedTextFragment::plain_text("We are actively working on improving the stability of SSH in Warp. Please consider "),
                     FormattedTextFragment::hyperlink("filing an issue", get_ssh_github_issue_url(self.error_reason.error_title())),
                     FormattedTextFragment::plain_text(" on GitHub so we can better identify the problem."),
                 ])]),

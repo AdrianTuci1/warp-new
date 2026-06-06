@@ -20,7 +20,7 @@ use crate::view_components::action_button::{ActionButton, ActionButtonTheme, But
 const MODAL_WIDTH: f32 = 420.;
 const HERO_HEIGHT: f32 = 92.;
 const HERO_IMAGE_PATH: &str = "async/png/onboarding/orchestration_launch_banner.png";
-const LEARN_MORE_URL: &str = "http://localhost:8080/blog/multi-harness-cloud-agent-orchestration";
+const LEARN_MORE_URL: &str = "https://www.localhost:8080/blog/multi-harness-cloud-agent-orchestration";
 fn modal_background(appearance: &Appearance) -> Fill {
     appearance.theme().surface_3()
 }
@@ -73,7 +73,7 @@ const FEATURE_ITEMS: &[FeatureItem] = &[
     FeatureItem {
         icon: Icon::Atom,
         title: "Multi-agent orchestration",
-        description: "Octomus Agents will now orchestrate swarms of subagents, allowing you to parallelize tasks.",
+        description: "Warp Agents will now orchestrate swarms of subagents, allowing you to parallelize tasks.",
         badge: None,
     },
     FeatureItem {
@@ -280,7 +280,7 @@ impl OrchestrationLaunchModal {
 
     fn render_description(appearance: &Appearance) -> Box<dyn Element> {
         Text::new(
-            "We've made major improvements to Octomus's cloud agent orchestration platform, Oz.",
+            "We've made major improvements to Warp's cloud agent orchestration platform, Oz.",
             appearance.ui_font_family(),
             14.,
         )

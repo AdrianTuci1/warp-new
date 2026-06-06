@@ -19,6 +19,7 @@ use crate::ai::ambient_agents::task::{
 };
 use crate::ai::ambient_agents::{AgentConfigSnapshot, AmbientAgentTaskId};
 use crate::ai::local_harness_setup::local_harness_product_disabled_message;
+use crate::server::server_api::ai::AIClient;
 use crate::terminal::cli_agent_sessions::plugin_manager::{
     plugin_manager_for, CliAgentPluginManager,
 };
@@ -82,7 +83,7 @@ pub(super) fn validate_local_harness_shell(shell_type: Option<ShellType>) -> Res
     }
 }
 
-const LOCAL_CLAUDE_CHILD_ORCHESTRATION_INSTRUCTIONS: &str = r#"You are a local Claude Code child agent launched by a lead agent in Octomus.
+const LOCAL_CLAUDE_CHILD_ORCHESTRATION_INSTRUCTIONS: &str = r#"You are a local Claude Code child agent launched by a lead agent in Warp.
 
 Coordinate with the lead agent through the Oz CLI messaging environment:
 - Your run id is in OZ_RUN_ID.

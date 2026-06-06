@@ -38,6 +38,28 @@ use super::{CloudWorkflowModel, WorkflowSource, WorkflowType, WorkflowViewMode};
 use crate::ai::blocklist::secret_redaction::find_secrets_in_text;
 use crate::ai::AIRequestUsageModel;
 use crate::appearance::Appearance;
+use crate::auth::auth_state::AuthState;
+use crate::auth::{AuthStateProvider, UserUid};
+use crate::cloud_object::breadcrumbs::ContainingObject;
+use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
+use crate::cloud_object::model::view::CloudViewModel;
+use crate::cloud_object::{
+    CloudObject, CloudObjectEventEntrypoint, ObjectType, Owner, Revision, Space,
+};
+use crate::drive::cloud_object_styling::warp_drive_icon_color;
+use crate::drive::drive_helpers::has_feature_gated_anonymous_user_reached_workflow_limit;
+use crate::drive::items::WarpDriveItemId;
+use crate::drive::sharing::{ContentEditability, ShareableObject, SharingAccessLevel};
+use crate::drive::workflows::ai_assist::GeneratedCommandMetadataError;
+use crate::drive::workflows::arguments::ArgumentsState;
+use crate::drive::workflows::enum_creation_dialog::{
+    EnumCreationDialog, EnumCreationDialogEvent, WorkflowEnumData,
+};
+use crate::drive::workflows::workflow_arg_selector::{
+    WorkflowArgSelector, WorkflowArgSelectorEvent,
+};
+use crate::drive::workflows::workflow_arg_type_helpers::{self, ArgumentEditorRowIndex};
+use crate::drive::{CloudObjectTypeAndId, DriveObjectType, OpenOctomusDriveObjectSettings};
 use crate::editor::{
     EditorOptions, EditorView, EnterAction, EnterSettings, Event as EditorEvent, InteractionState,
     PlainTextEditorViewAction as EditorAction, PropagateAndNoOpNavigationKeys,
@@ -48,6 +70,16 @@ use crate::network::NetworkStatus;
 use crate::pane_group::focus_state::PaneFocusHandle;
 use crate::pane_group::pane::view;
 use crate::pane_group::{BackingView, PaneConfiguration, PaneEvent};
+use crate::server::cloud_objects::update_manager::{
+    FetchSingleObjectOption, ObjectOperation, OperationSuccessType, UpdateManager,
+    UpdateManagerEvent,
+};
+use crate::server::ids::{ClientId, ServerId, SyncId};
+use crate::server::server_api::ai::AIClient;
+use crate::server::server_api::ServerApiProvider;
+use crate::server::telemetry::{
+    CloudObjectTelemetryMetadata, SharingDialogSource, TelemetryCloudObjectType, TelemetryEvent,
+};
 use crate::settings::app_installation_detection::{
     UserAppInstallDetectionSettings, UserAppInstallStatus,
 };
@@ -137,7 +169,7 @@ const AI_ASSIST_LOADING_TEXT: &str = "Loading";
 
 const ALIAS_HELP_TEXT: &str = "Aliases allow you to create short strings to execute workflows. Each alias can have different argument values and environment variables, and aliases are personal to you.";
 
-const RUN_ON_DESKTOP_BUTTON_TEXT: &str = "Run in Octomus";
+const RUN_ON_DESKTOP_BUTTON_TEXT: &str = "Run in Warp";
 const RUN_ON_DESKTOP_BUTTON_WIDTH: f32 = 108.;
 
 const UNSAVED_CHANGES_TEXT: &str = "You have unsaved changes.";
@@ -544,7 +576,7 @@ impl WorkflowView {
                 {
                     self.load(
                         workflow.clone(),
-                        &OpenWarpDriveObjectSettings::default(),
+                        &OpenOctomusDriveObjectSettings::default(),
                         self.workflow_view_mode,
                         ctx,
                     );
@@ -564,7 +596,7 @@ impl WorkflowView {
                 {
                     self.load(
                         workflow,
-                        &OpenWarpDriveObjectSettings::default(),
+                        &OpenOctomusDriveObjectSettings::default(),
                         self.workflow_view_mode,
                         ctx,
                     );
@@ -582,7 +614,7 @@ impl WorkflowView {
         if let Some(workflow) = cloud_workflow {
             self.load(
                 workflow,
-                &OpenWarpDriveObjectSettings::default(),
+                &OpenOctomusDriveObjectSettings::default(),
                 self.workflow_view_mode,
                 ctx,
             );
@@ -592,7 +624,7 @@ impl WorkflowView {
     pub fn wait_for_initial_load_then_load(
         &mut self,
         workflow_id: SyncId,
-        settings: &OpenWarpDriveObjectSettings,
+        settings: &OpenOctomusDriveObjectSettings,
         mode: WorkflowViewMode,
         window_id: WindowId,
         ctx: &mut ViewContext<Self>,
@@ -633,7 +665,7 @@ impl WorkflowView {
     fn fetch_and_load_workflow(
         &mut self,
         workflow_id: ServerId,
-        settings: &OpenWarpDriveObjectSettings,
+        settings: &OpenOctomusDriveObjectSettings,
         mode: WorkflowViewMode,
         window_id: WindowId,
         ctx: &mut ViewContext<Self>,
@@ -671,7 +703,7 @@ impl WorkflowView {
     pub fn load(
         &mut self,
         workflow: CloudWorkflow,
-        settings: &OpenWarpDriveObjectSettings,
+        settings: &OpenOctomusDriveObjectSettings,
         mode: WorkflowViewMode,
         ctx: &mut ViewContext<Self>,
     ) {
@@ -1533,7 +1565,7 @@ impl WorkflowView {
     }
 
     /// Save the workflow and associated state. This makes a best-effort attempt to not
-    /// unnecessarily modify the backing Warp Drive object.
+    /// unnecessarily modify the backing Octomus Drive object.
     fn save(&mut self, ctx: &mut ViewContext<Self>) {
         if FeatureFlag::WorkflowAliases.is_enabled() && self.are_aliases_dirty(ctx) {
             self.save_aliases(ctx);
