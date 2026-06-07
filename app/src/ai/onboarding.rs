@@ -39,10 +39,6 @@ pub fn build_onboarding_models(
 }
 
 pub fn current_onboarding_auth_state(ctx: &AppContext) -> OnboardingAuthState {
-    let auth_state = AuthStateProvider::as_ref(ctx).get();
-    if auth_state.is_anonymous_or_logged_out() {
-        return OnboardingAuthState::LoggedOut;
-    }
     let is_on_paid_plan = UserWorkspaces::as_ref(ctx)
         .current_workspace()
         .map(|w| w.billing_metadata.is_user_on_paid_plan())

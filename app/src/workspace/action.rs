@@ -777,17 +777,8 @@ impl From<&WorkspaceAction> for LoginGatedFeature {
 
 impl WorkspaceAction {
     pub fn blocked_for_anonymous_user(&self) -> bool {
-        use WorkspaceAction::*;
-        matches!(
-            self,
-            ImportToTeamDrive
-                | CreateTeamNotebook
-                | CreateTeamWorkflow
-                | CreateTeamFolder
-                | CreateTeamEnvVarCollection
-                | CreateTeamAIPrompt
-                | OpenShareSessionModal(_)
-        )
+        // Allow all actions for anonymous users
+        false
     }
 
     /// Matches what actions require the app state to be saved, and which don't. We match all

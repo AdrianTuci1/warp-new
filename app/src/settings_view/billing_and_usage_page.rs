@@ -1061,11 +1061,8 @@ pub enum BillingAndUsagePageAction {
 
 impl BillingAndUsagePageAction {
     fn blocked_for_anonymous_user(&self) -> bool {
-        use BillingAndUsagePageAction::*;
-        matches!(
-            self,
-            Upgrade { .. } | GenerateStripeBillingPortalLink { .. },
-        )
+        // Allow all billing actions for anonymous users
+        false
     }
 }
 

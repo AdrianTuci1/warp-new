@@ -19,11 +19,8 @@ use warp_graphql::mcp_gallery_template::MCPGalleryTemplate;
 use warp_graphql::object_permissions::AccessLevel;
 use warp_graphql::scalars::time::ServerTimestamp;
 use warp_util::sync::Condition;
-use warpui::r#async::{FutureId, Timer};
-use warpui::{
-    duration_with_jitter, AppContext, Entity, ModelContext, RequestState, RetryOption,
-    SingletonEntity,
-};
+use warpui::r#async::FutureId;
+use warpui::{AppContext, Entity, ModelContext, RequestState, RetryOption, SingletonEntity};
 
 use super::listener::ObjectUpdateMessage;
 use crate::ai::agent::conversation::AIConversationId;
@@ -38,7 +35,6 @@ use crate::ai::execution_profiles::{AIExecutionProfile, CloudAIExecutionProfileM
 use crate::ai::facts::{AIFact, CloudAIFactModel};
 #[cfg(not(target_family = "wasm"))]
 use crate::ai::mcp::templatable::{CloudTemplatableMCPServerModel, TemplatableMCPServer};
-use crate::auth::auth_manager::AuthManager;
 use crate::auth::AuthStateProvider;
 use crate::cloud_object::model::actions::{
     ObjectAction, ObjectActionHistory, ObjectActionType, ObjectActions,
@@ -75,9 +71,7 @@ use crate::server::ids::{
     parse_sqlite_id_to_uid, ClientId, HashableId, HashedSqliteId, ObjectUid, ServerId, SyncId,
     ToServerId,
 };
-use crate::server::retry_strategies::{
-    OUT_OF_BAND_REQUEST_RETRY_STRATEGY, PERIODIC_POLL, PERIODIC_POLL_RETRY_STRATEGY,
-};
+use crate::server::retry_strategies::OUT_OF_BAND_REQUEST_RETRY_STRATEGY;
 use crate::server::server_api::object::{GuestIdentifier, ObjectClient};
 use crate::server::sync_queue::{
     CreationFailureReason, GenericStringObjectToCreate, QueueItem, SyncQueue, SyncQueueEvent,
@@ -622,42 +616,13 @@ impl UpdateManager {
         });
     }
 
-    pub fn start_polling_for_updated_objects(&mut self, ctx: &mut ModelContext<Self>) {
-        let is_online = NetworkStatus::as_ref(ctx).is_online();
-
-        if !self.should_poll_for_updated_objects && is_online {
-            self.should_poll_for_updated_objects = true;
-            self.poll_for_updated_objects(ctx);
-        }
+    pub fn start_polling_for_updated_objects(&mut self, _ctx: &mut ModelContext<Self>) {
+        // Cloud sync disabled - no polling for server updates
     }
 
     /// Out-of-band (from the regular poll) refresh of updated objects.
-    pub fn refresh_updated_objects(&mut self, ctx: &mut ModelContext<Self>) {
-        let object_client = self.object_client.clone();
-        let cloud_model = CloudModel::as_ref(ctx);
-        let versions_for_all_objects = cloud_model.get_versions_for_all_objects(ctx);
-        let spawned_handle = ctx.spawn_with_retry_on_error(
-            move || {
-                let object_client = object_client.clone();
-                let cloned_objects_to_update = versions_for_all_objects.clone();
-                async move {
-                    object_client
-                        .fetch_changed_objects(
-                            cloned_objects_to_update,
-                            false, /* force_refresh */
-                        )
-                        .await
-                }
-            },
-            OUT_OF_BAND_REQUEST_RETRY_STRATEGY,
-            |update_manager, res, ctx| {
-                update_manager.handle_fetch_changed_objects_with_request_state(
-                    res, false, /* force_refresh */
-                    ctx,
-                );
-            },
-        );
-        self.spawned_futures.push(spawned_handle.future_id());
+    pub fn refresh_updated_objects(&mut self, _ctx: &mut ModelContext<Self>) {
+        // Cloud sync disabled - no refresh from server
     }
 
     pub fn stop_polling_for_updated_objects(&mut self) {
@@ -675,67 +640,8 @@ impl UpdateManager {
         }
     }
 
-    fn poll_for_updated_objects(&mut self, ctx: &mut ModelContext<Self>) {
-        self.abort_existing_poll();
-
-        if !self.should_poll_for_updated_objects {
-            return;
-        }
-
-        // Don't poll when the user is logged out to avoid spamming auth errors in the logs.
-        // Polling will be restarted when the user logs in via `initiate_data_pollers`.
-        if !AuthStateProvider::as_ref(ctx).get().is_logged_in() {
-            self.should_poll_for_updated_objects = false;
-            return;
-        }
-
-        let object_client = self.object_client.clone();
-        let cloud_model = CloudModel::as_ref(ctx);
-        let versions_for_all_objects = cloud_model.get_versions_for_all_objects(ctx);
-
-        // If there's a force refresh for cloud objects pending, we'll execute the refresh now
-        let force_refresh = cloud_model.cloud_objects_force_refresh_pending();
-        // We retry a few times here in case there are any transient network errors.
-        let spawned_handle = ctx.spawn_with_retry_on_error(
-            move || {
-                let object_client = object_client.clone();
-                let cloned_objects_to_update = versions_for_all_objects.clone();
-                async move {
-                    object_client
-                        .fetch_changed_objects(cloned_objects_to_update, force_refresh)
-                        .await
-                }
-            },
-            PERIODIC_POLL_RETRY_STRATEGY,
-            move |update_manager, res, ctx| {
-                // Only poll if `spawn_with_retry_on_error` is not going to retry again so we don't end up with multiple
-                // polls running simultaneously.
-                let should_poll_again = !res.has_pending_retries();
-                update_manager.handle_fetch_changed_objects_with_request_state(
-                    res,
-                    force_refresh,
-                    ctx,
-                );
-
-                if should_poll_again {
-                    let next_poll_handle = ctx.spawn(
-                        async move {
-                            Timer::after(duration_with_jitter(
-                                PERIODIC_POLL,
-                                0.2, /* max_jitter_multiplier */
-                            ))
-                            .await
-                        },
-                        |update_manager, _, ctx| {
-                            update_manager.poll_for_updated_objects(ctx);
-                        },
-                    );
-                    update_manager.next_poll_abort_handle = Some(next_poll_handle.abort_handle());
-                }
-            },
-        );
-
-        self.in_flight_request_abort_handle = Some(spawned_handle.abort_handle());
+    fn poll_for_updated_objects(&mut self, _ctx: &mut ModelContext<Self>) {
+        // Cloud sync disabled - no polling for server updates
     }
 
     fn handle_network_status_changed(
@@ -1472,90 +1378,14 @@ impl UpdateManager {
     /// This receiver can be used to wait for the fetch operation to complete before proceeding.
     pub fn fetch_single_cloud_object(
         &mut self,
-        server_id: &ServerId,
-        fetch_single_object_option: FetchSingleObjectOption,
-        ctx: &mut ModelContext<Self>,
+        _server_id: &ServerId,
+        _fetch_single_object_option: FetchSingleObjectOption,
+        _ctx: &mut ModelContext<Self>,
     ) -> Receiver<()> {
-        let object_client = self.object_client.clone();
-        let server_id_copy = *server_id;
-        let (fetch_cloud_object_tx, fetch_cloud_object_rx) = oneshot::channel::<()>();
-        let future = ctx.spawn(
-            async move {
-                object_client
-                    .fetch_single_cloud_object(server_id_copy)
-                    .await
-            },
-            move |me, cloud_object_result, ctx| match cloud_object_result {
-                Ok(result) => {
-                    // First, upsert the object and any of its descendents
-                    let mut objects = vec![result.object];
-                    objects.extend(result.descendants);
-                    CloudModel::handle(ctx).update(ctx, |cloud_model, ctx| {
-                        for object in objects {
-                            let uid = object.uid();
-                            let object_is_some = cloud_model.get_by_uid(&uid).is_some();
-                            let should_skip = matches!(
-                                fetch_single_object_option,
-                                FetchSingleObjectOption::IgnoreIfExists
-                            ) && object_is_some;
-
-                            if should_skip {
-                                continue;
-                            }
-
-                            cloud_model.upsert_from_server_cloud_object(object.clone(), ctx);
-
-                            if matches!(
-                                fetch_single_object_option,
-                                FetchSingleObjectOption::ForceOverwrite
-                            ) {
-                                if let Some(object) = cloud_model.get_mut_by_uid(&uid) {
-                                    let had_conflict = object.has_conflicting_changes();
-                                    object.replace_object_with_conflict();
-                                    // If there was a conflict, `upsert_from_server_cloud_object` won't
-                                    // have emitted an update event. Do it here instead.
-                                    if had_conflict {
-                                        ctx.emit(CloudModelEvent::ObjectUpdated {
-                                            type_and_id: object.cloud_object_type_and_id(),
-                                            source: UpdateSource::Server,
-                                        });
-                                    }
-                                }
-                            }
-
-                            Self::save_in_memory_object_to_sqlite(
-                                me,
-                                cloud_model,
-                                &server_id_copy.uid(),
-                            );
-                        }
-                        let _ = fetch_cloud_object_tx.send(());
-                    });
-
-                    // Second, insert the actions for the object
-                    let mut ids_with_new_action_histories: Vec<&HashedSqliteId> = Vec::new();
-                    for history in &result.action_histories {
-                        me.maybe_overwrite_object_action_history(history, ctx);
-                        ids_with_new_action_histories.push(&history.hashed_sqlite_id);
-                    }
-                    me.sync_actions_for_objects_to_sqlite(
-                        ids_with_new_action_histories
-                            .iter()
-                            .filter_map(|hashed_id| {
-                                parse_sqlite_id_to_uid(hashed_id.to_string()).ok()
-                            })
-                            .collect::<Vec<_>>()
-                            .iter()
-                            .collect(),
-                        ctx,
-                    );
-                }
-                Err(err) => log::error!("error getting cloud object: {err:?}"),
-            },
-        );
-
-        self.spawned_futures.push(future.future_id());
-        fetch_cloud_object_rx
+        // Cloud sync disabled - return immediately
+        let (tx, rx) = oneshot::channel::<()>();
+        let _ = tx.send(());
+        rx
     }
 
     // Only process the permissions message if the timestamp is newer than the one we have in-memory or we don't
@@ -2364,75 +2194,34 @@ impl UpdateManager {
             return;
         }
 
-        let object_client = self.object_client.clone();
+        // Cloud sync disabled - remove object locally only
+        let deleted_objects =
+            CloudModel::handle(ctx).update(ctx, |cloud_model, ctx| {
+                cloud_model.delete_object_and_descendants(server_id.uid(), ctx)
+            });
 
-        // Make the request.
-        let future = ctx.spawn_with_retry_on_error(
-            move || {
-                let object_client = object_client.clone();
-                async move { object_client.leave_object(server_id).await }
+        // Show a confirmation toast.
+        ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
+            result: ObjectOperationResult {
+                success_type: OperationSuccessType::Success,
+                operation: ObjectOperation::Leave,
+                client_id: None,
+                server_id: Some(server_id),
+                num_objects: Some(deleted_objects.len() as i32),
             },
-            *ONLINE_ONLY_OPERATION_RETRY_STRATEGY,
-            move |me, res, ctx| match res {
-                RequestState::RequestSucceeded(ObjectDeleteResult::Success { .. }) => {
-                    // Remove the object and contents.
-                    let deleted_objects =
-                        CloudModel::handle(ctx).update(ctx, |cloud_model, ctx| {
-                            cloud_model.delete_object_and_descendants(server_id.uid(), ctx)
-                        });
+        });
 
-                    // Show a confirmation toast.
-                    ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                        result: ObjectOperationResult {
-                            success_type: OperationSuccessType::Success,
-                            operation: ObjectOperation::Leave,
-                            client_id: None,
-                            server_id: Some(server_id),
-                            num_objects: Some(deleted_objects.len() as i32),
-                        },
-                    });
+        // Delete object actions as well.
+        ObjectActions::handle(ctx).update(ctx, |object_actions, ctx| {
+            for (id, _) in deleted_objects.iter() {
+                object_actions.delete_actions_for_object(&id.uid(), ctx);
+            }
+        });
 
-                    // Delete object actions as well.
-                    ObjectActions::handle(ctx).update(ctx, |object_actions, ctx| {
-                        for (id, _) in deleted_objects.iter() {
-                            object_actions.delete_actions_for_object(&id.uid(), ctx);
-                        }
-                    });
-
-                    // Delete objects and their actions from SQLite.
-                    me.save_to_db([ModelEvent::DeleteObjects {
-                        ids: deleted_objects,
-                    }]);
-                }
-                RequestState::RequestFailedRetryPending(e) => {
-                    log::warn!("Failed to leave object: {e}. Retrying.");
-                }
-                RequestState::RequestFailed(e) => {
-                    log::warn!("Failed to leave object: {e}. Not retrying.");
-                    ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                        result: ObjectOperationResult {
-                            success_type: OperationSuccessType::Failure,
-                            operation: ObjectOperation::Leave,
-                            client_id: None,
-                            server_id: Some(server_id),
-                            num_objects: None,
-                        },
-                    })
-                }
-                RequestState::RequestSucceeded(ObjectDeleteResult::Failure) => {
-                    ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                        result: ObjectOperationResult {
-                            success_type: OperationSuccessType::Failure,
-                            operation: ObjectOperation::Leave,
-                            client_id: None,
-                            server_id: Some(server_id),
-                            num_objects: None,
-                        },
-                    })
-                }
-            },
-        );
-        self.spawned_futures.push(future.future_id());
+        // Delete objects and their actions from SQLite.
+        self.save_to_db([ModelEvent::DeleteObjects {
+            ids: deleted_objects,
+        }]);
     }
 
     /// Sets or removes link sharing permissions for a cloud object.
@@ -3337,23 +3126,6 @@ impl UpdateManager {
         force_expand: bool,
         ctx: &mut ModelContext<Self>,
     ) {
-        let count = CloudModel::handle(ctx).read(ctx, |model, ctx| {
-            model
-                .active_non_welcome_notebooks_in_space(Space::Personal, ctx)
-                .count()
-        });
-        if AuthStateProvider::handle(ctx).read(ctx, |auth_state_provider, _ctx| {
-            is_feature_gated_anonymous_user_past_notebook_limit(
-                auth_state_provider.get(),
-                count + 1,
-            )
-        }) {
-            AuthManager::handle(ctx).update(ctx, |auth_manager: &mut AuthManager, ctx| {
-                auth_manager.anonymous_user_hit_drive_object_limit(ctx);
-            });
-            return;
-        };
-
         self.create_object(
             model,
             owner,
@@ -3408,23 +3180,6 @@ impl UpdateManager {
         force_expand: bool,
         ctx: &mut ModelContext<Self>,
     ) {
-        let count = CloudModel::handle(ctx).read(ctx, |model, ctx| {
-            model
-                .active_non_welcome_workflows_in_space(Space::Personal, ctx)
-                .count()
-        });
-        if AuthStateProvider::handle(ctx).read(ctx, |auth_state_provider, _ctx| {
-            is_feature_gated_anonymous_user_past_workflow_limit(
-                auth_state_provider.get(),
-                count + 1,
-            )
-        }) {
-            AuthManager::handle(ctx).update(ctx, |auth_manager: &mut AuthManager, ctx| {
-                auth_manager.anonymous_user_hit_drive_object_limit(ctx);
-            });
-            return;
-        };
-
         self.create_object(
             CloudWorkflowModel::new(workflow),
             owner,
@@ -3474,20 +3229,6 @@ impl UpdateManager {
         force_expand: bool,
         ctx: &mut ModelContext<Self>,
     ) {
-        let count = CloudModel::handle(ctx).read(ctx, |model, ctx| {
-            model
-                .active_non_welcome_env_var_collections_in_space(Space::Personal, ctx)
-                .count()
-        });
-        if AuthStateProvider::handle(ctx).read(ctx, |auth_state_provider, _ctx| {
-            is_feature_gated_anonymous_user_past_env_var_limit(auth_state_provider.get(), count + 1)
-        }) {
-            AuthManager::handle(ctx).update(ctx, |auth_manager: &mut AuthManager, ctx| {
-                auth_manager.anonymous_user_hit_drive_object_limit(ctx);
-            });
-            return;
-        };
-
         self.create_object(
             model,
             owner,
@@ -4255,92 +3996,35 @@ impl UpdateManager {
         let (metadata_ts, _trashed_ts) =
             self.mark_object_trashed_and_return_timestamps(&hashed_id, ctx);
 
-        let object_client = self.object_client.clone();
+        // Cloud sync disabled - mark as completed locally only
+        CloudModel::handle(ctx).update(ctx, |cloud_model, _| {
+            if let Some(object) = cloud_model.get_mut_by_uid(&hashed_id) {
+                object
+                    .metadata_mut()
+                    .pending_changes_statuses
+                    .has_pending_metadata_change = false;
+            }
 
-        // Make the request.
-        let future = ctx.spawn_with_retry_on_error(
-            move || {
-                let object_client = object_client.clone();
-                async move { object_client.trash_object(server_id).await }
+            // Persist changes in sqlite.
+            let hashed_sqlite_id =
+                server_id.sqlite_type_and_uid_hash(id.object_id_type());
+            self.save_in_memory_object_metadata_to_sqlite(
+                cloud_model,
+                &hashed_id,
+                &hashed_sqlite_id,
+            );
+        });
+
+        ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
+            result: ObjectOperationResult {
+                success_type: OperationSuccessType::Success,
+                operation: ObjectOperation::Trash,
+                client_id: None,
+                server_id: Some(ServerId::from_string_lossy(&hashed_id)),
+                num_objects: None,
             },
-            *ONLINE_ONLY_OPERATION_RETRY_STRATEGY,
-            move |me, res, ctx| match res {
-                RequestState::RequestSucceeded(_) => {
-                    // Mark change as completed.
-                    CloudModel::handle(ctx).update(ctx, |cloud_model, _| {
-                        if let Some(object) = cloud_model.get_mut_by_uid(&hashed_id) {
-                            object
-                                .metadata_mut()
-                                .pending_changes_statuses
-                                .has_pending_metadata_change = false;
-                        }
-
-                        // Persist changes in sqlite.
-                        let hashed_sqlite_id =
-                            server_id.sqlite_type_and_uid_hash(id.object_id_type());
-                        me.save_in_memory_object_metadata_to_sqlite(
-                            cloud_model,
-                            &hashed_id,
-                            &hashed_sqlite_id,
-                        );
-                    });
-
-                    ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                        result: ObjectOperationResult {
-                            success_type: OperationSuccessType::Success,
-                            operation: ObjectOperation::Trash,
-                            client_id: None,
-                            server_id: Some(ServerId::from_string_lossy(&hashed_id)),
-                            num_objects: None,
-                        },
-                    });
-                    ctx.notify();
-                }
-                RequestState::RequestFailedRetryPending(e) => {
-                    log::warn!("Failed to trash object: {e}. Retrying");
-                }
-                RequestState::RequestFailed(e) => {
-                    log::warn!("Failed to trash object: {e}. Not retrying");
-                    // Since the trashing operation failed, let's return the object to its previous state.
-                    CloudModel::handle(ctx).update(ctx, |cloud_model, ctx| {
-                        if let Some(obj) = cloud_model.get_mut_by_uid(&hashed_id) {
-                            // Only revert the operation if the metadata hasn't changed in the meantime.
-                            // If it has (e.g. from an RTC message), that message would have updated the metadata to the latest
-                            // server state, so we shouldn't do any further updates here. Otherwise, revert the change we did.
-                            let metadata_ts_unchanged =
-                                obj.metadata().metadata_last_updated_ts == metadata_ts;
-                            if metadata_ts_unchanged {
-                                obj.metadata_mut().trashed_ts = None;
-                            }
-
-                            obj.metadata_mut()
-                                .pending_changes_statuses
-                                .has_pending_metadata_change = false;
-
-                            ctx.emit(CloudModelEvent::ObjectUntrashed {
-                                type_and_id: obj.cloud_object_type_and_id(),
-                                source: UpdateSource::Local,
-                            });
-                            ctx.notify();
-                        }
-                    });
-
-                    // Show an error toast to relay the failure to the user.
-                    ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                        result: ObjectOperationResult {
-                            success_type: OperationSuccessType::Failure,
-                            operation: ObjectOperation::Trash,
-                            client_id: None,
-                            server_id: Some(ServerId::from_string_lossy(&hashed_id)),
-                            num_objects: None,
-                        },
-                    });
-                    ctx.notify();
-                }
-            },
-        );
-
-        self.spawned_futures.push(future.future_id());
+        });
+        ctx.notify();
     }
 
     pub fn untrash_object(&mut self, id: CloudObjectTypeAndId, ctx: &mut ModelContext<Self>) {
@@ -4365,120 +4049,38 @@ impl UpdateManager {
             return;
         }
 
+        // Cloud sync disabled - mark as completed locally only
         CloudModel::handle(ctx).update(ctx, |cloud_model, _| {
             if let Some(object) = cloud_model.get_mut_by_uid(&hashed_id) {
                 object
                     .metadata_mut()
                     .pending_changes_statuses
-                    .pending_untrash = true;
+                    .pending_untrash = false;
+                object.metadata_mut().trashed_ts = None;
             }
         });
 
-        let object_client = self.object_client.clone();
+        CloudModel::handle(ctx).update(ctx, |cloud_model, ctx| {
+            if let Some(object) = cloud_model.get_by_uid(&hashed_id) {
+                ctx.emit(CloudModelEvent::ObjectUntrashed {
+                    type_and_id: object.cloud_object_type_and_id(),
+                    source: UpdateSource::Local,
+                });
+                ctx.notify();
+            }
+        });
 
-        // Make the request.
-        let future = ctx.spawn_with_retry_on_error(
-            move || {
-                let object_client = object_client.clone();
-                async move { object_client.untrash_object(server_id).await }
+        ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
+            result: ObjectOperationResult {
+                success_type: OperationSuccessType::Success,
+                operation: ObjectOperation::Untrash,
+                client_id: None,
+                server_id: Some(ServerId::from_string_lossy(&hashed_id)),
+                num_objects: None,
             },
-            *ONLINE_ONLY_OPERATION_RETRY_STRATEGY,
-            move |me, res, ctx| match res {
-                RequestState::RequestSucceeded(untrash_result) => {
-                    // Mark change as completed.
-                    match untrash_result {
-                        ObjectMetadataUpdateResult::Failure => {
-                            // Mark item as no longer pending.
-                            CloudModel::handle(ctx).update(ctx, |cloud_model, _| {
-                                if let Some(object) = cloud_model.get_mut_by_uid(&hashed_id) {
-                                    object
-                                        .metadata_mut()
-                                        .pending_changes_statuses
-                                        .pending_untrash = false;
-                                }
-                            });
+        });
 
-                            // Show an error toast to relay the failure to the user.
-                            ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                                result: ObjectOperationResult {
-                                    success_type: OperationSuccessType::Failure,
-                                    operation: ObjectOperation::Untrash,
-                                    client_id: None,
-                                    server_id: Some(ServerId::from_string_lossy(&hashed_id)),
-                                    num_objects: None,
-                                },
-                            });
-                        }
-                        ObjectMetadataUpdateResult::Success { metadata } => {
-                            me.store_metadata_update(server_id, *metadata, ctx, |object| {
-                                object
-                                    .metadata_mut()
-                                    .pending_changes_statuses
-                                    .pending_untrash = false;
-                            });
-
-                            // When untrashing an object, we do not optimistically clear its
-                            // trashed_ts. Instead, on success, it'll be cleared when the
-                            // store_metadata_update call above applies the new metadata from the
-                            // server. Once that's done, we can emit an event so callers re-check
-                            // trashed_ts.
-                            CloudModel::handle(ctx).update(ctx, |cloud_model, ctx| {
-                                if let Some(object) = cloud_model.get_by_uid(&hashed_id) {
-                                    ctx.emit(CloudModelEvent::ObjectUntrashed {
-                                        type_and_id: object.cloud_object_type_and_id(),
-                                        source: UpdateSource::Local,
-                                    });
-                                    ctx.notify();
-                                }
-                            });
-
-                            ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                                result: ObjectOperationResult {
-                                    success_type: OperationSuccessType::Success,
-                                    operation: ObjectOperation::Untrash,
-                                    client_id: None,
-                                    server_id: Some(ServerId::from_string_lossy(&hashed_id)),
-                                    num_objects: None,
-                                },
-                            });
-                        }
-                    }
-
-                    ctx.notify();
-                }
-                RequestState::RequestFailedRetryPending(e) => {
-                    log::warn!("Failed to restore object: {e}. Retrying");
-                }
-                RequestState::RequestFailed(e) => {
-                    log::warn!("Failed to restore object: {e}. Not retrying");
-
-                    // Mark item as no longer pending.
-                    CloudModel::handle(ctx).update(ctx, |cloud_model, _| {
-                        if let Some(object) = cloud_model.get_mut_by_uid(&hashed_id) {
-                            object
-                                .metadata_mut()
-                                .pending_changes_statuses
-                                .pending_untrash = false;
-                        }
-                    });
-
-                    // Show an error toast to relay the failure to the user.
-                    ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                        result: ObjectOperationResult {
-                            success_type: OperationSuccessType::Failure,
-                            operation: ObjectOperation::Untrash,
-                            client_id: None,
-                            server_id: Some(ServerId::from_string_lossy(&hashed_id)),
-                            num_objects: None,
-                        },
-                    });
-
-                    ctx.notify();
-                }
-            },
-        );
-
-        self.spawned_futures.push(future.future_id());
+        ctx.notify();
     }
 
     pub fn delete_object_by_user(
@@ -4519,8 +4121,7 @@ impl UpdateManager {
             return;
         }
 
-        let object_client = self.object_client.clone();
-
+        // Cloud sync disabled - delete locally only
         CloudModel::handle(ctx).update(ctx, |cloud_model, _| {
             if let Some(object) = cloud_model.get_mut_by_uid(&uid) {
                 // Mark the object as pending deletion.
@@ -4531,82 +4132,21 @@ impl UpdateManager {
             }
         });
 
-        // Make the request.
-        let future = ctx.spawn_with_retry_on_error(
-            move || {
-                let object_client = object_client.clone();
-                async move { object_client.delete_object(server_id).await }
+        let num_deleted_objects = self.on_object_delete_success(vec![SyncId::ServerId(server_id)], ctx);
+        ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
+            result: ObjectOperationResult {
+                success_type: OperationSuccessType::Success,
+                operation: ObjectOperation::Delete { initiated_by },
+                client_id: None,
+                server_id: Some(ServerId::from_string_lossy(&uid)),
+                num_objects: Some(num_deleted_objects),
             },
-            *ONLINE_ONLY_OPERATION_RETRY_STRATEGY,
-            move |me, res, ctx| match res {
-                RequestState::RequestSucceeded(delete_result) => {
-                    match delete_result {
-                        ObjectDeleteResult::Success { deleted_ids } => {
-                            let num_deleted_objects = me.on_object_delete_success(deleted_ids, ctx);
-                            ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                                result: ObjectOperationResult {
-                                    success_type: OperationSuccessType::Success,
-                                    operation: ObjectOperation::Delete { initiated_by },
-                                    client_id: None,
-                                    server_id: Some(ServerId::from_string_lossy(&uid)),
-                                    num_objects: Some(num_deleted_objects),
-                                },
-                            });
-                        }
-                        ObjectDeleteResult::Failure => {
-                            ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                                result: ObjectOperationResult {
-                                    success_type: OperationSuccessType::Failure,
-                                    operation: ObjectOperation::Delete { initiated_by },
-                                    client_id: None,
-                                    server_id: Some(ServerId::from_string_lossy(&uid)),
-                                    num_objects: None,
-                                },
-                            });
-                        }
-                    }
+        });
 
-                    ctx.notify();
-                }
-                RequestState::RequestFailedRetryPending(e) => {
-                    log::warn!("Failed to delete object: {e}. Retrying");
-                }
-                RequestState::RequestFailed(e) => {
-                    log::warn!("Failed to delete object: {e}. Not retrying");
-
-                    // Show an error toast to relay the failure to the user.
-                    ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                        result: ObjectOperationResult {
-                            success_type: OperationSuccessType::Failure,
-                            operation: ObjectOperation::Delete { initiated_by },
-                            client_id: None,
-                            server_id: Some(ServerId::from_string_lossy(&uid)),
-                            num_objects: None,
-                        },
-                    });
-
-                    // Reset the delete bit since the request failed.
-                    CloudModel::handle(ctx).update(ctx, |cloud_model, _| {
-                        if let Some(object) = cloud_model.get_mut_by_uid(&uid) {
-                            // Mark the object as pending deletion.
-                            object
-                                .metadata_mut()
-                                .pending_changes_statuses
-                                .pending_delete = false;
-                        }
-                    });
-
-                    ctx.notify();
-                }
-            },
-        );
-
-        self.spawned_futures.push(future.future_id());
+        ctx.notify();
     }
 
     pub fn empty_trash(&mut self, space: Space, ctx: &mut ModelContext<Self>) {
-        let object_client = self.object_client.clone();
-
         let owner = match UserWorkspaces::as_ref(ctx).space_to_owner(space, ctx) {
             Some(owner) => owner,
             None => {
@@ -4617,81 +4157,41 @@ impl UpdateManager {
             }
         };
 
-        // Make the request.
-        let future = ctx.spawn_with_retry_on_error(
-            move || {
-                let object_client = object_client.clone();
-                async move { object_client.empty_trash(owner).await }
-            },
-            *ONLINE_ONLY_OPERATION_RETRY_STRATEGY,
-            move |me, res, ctx| match res {
-                RequestState::RequestSucceeded(delete_result) => {
-                    match delete_result {
-                        ObjectDeleteResult::Success { deleted_ids } => {
-                            let num_deleted_objects = me.on_object_delete_success(deleted_ids, ctx);
+        // Cloud sync disabled - delete all trashed objects locally
+        let cloud_model = CloudModel::as_ref(ctx);
+        let trashed_objects: Vec<SyncId> = cloud_model
+            .all_cloud_objects_in_space(space, ctx)
+            .filter(|obj| obj.metadata().trashed_ts.is_some())
+            .map(|obj| obj.sync_id())
+            .collect();
 
-                            if num_deleted_objects == 0 {
-                                // Show rejection toast that states there are no objects in the Trash
-                                ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                                    result: ObjectOperationResult {
-                                        success_type: OperationSuccessType::Rejection,
-                                        operation: ObjectOperation::EmptyTrash,
-                                        client_id: None,
-                                        server_id: None,
-                                        num_objects: Some(num_deleted_objects),
-                                    },
-                                });
-                            } else {
-                                // Show success confirmation toast
-                                ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                                    result: ObjectOperationResult {
-                                        success_type: OperationSuccessType::Success,
-                                        operation: ObjectOperation::EmptyTrash,
-                                        client_id: None,
-                                        server_id: None,
-                                        num_objects: Some(num_deleted_objects),
-                                    },
-                                });
-                            }
-                        }
-                        ObjectDeleteResult::Failure => {
-                            // Show an error toast to relay the failure to the user.
-                            ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                                result: ObjectOperationResult {
-                                    success_type: OperationSuccessType::Failure,
-                                    operation: ObjectOperation::EmptyTrash,
-                                    client_id: None,
-                                    server_id: None,
-                                    num_objects: Some(0),
-                                },
-                            });
-                        }
-                    }
+        let num_deleted_objects = self.on_object_delete_success(trashed_objects, ctx);
 
-                    ctx.notify();
-                }
-                RequestState::RequestFailedRetryPending(e) => {
-                    log::warn!("Failed to empty trash: {e}. Retrying");
-                }
-                RequestState::RequestFailed(e) => {
-                    log::warn!("Failed to empty trash: {e}. Not retrying");
+        if num_deleted_objects == 0 {
+            // Show rejection toast that states there are no objects in the Trash
+            ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
+                result: ObjectOperationResult {
+                    success_type: OperationSuccessType::Rejection,
+                    operation: ObjectOperation::EmptyTrash,
+                    client_id: None,
+                    server_id: None,
+                    num_objects: Some(num_deleted_objects),
+                },
+            });
+        } else {
+            // Show success confirmation toast
+            ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
+                result: ObjectOperationResult {
+                    success_type: OperationSuccessType::Success,
+                    operation: ObjectOperation::EmptyTrash,
+                    client_id: None,
+                    server_id: None,
+                    num_objects: Some(num_deleted_objects),
+                },
+            });
+        }
 
-                    // Show an error toast to relay the failure to the user.
-                    ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
-                        result: ObjectOperationResult {
-                            success_type: OperationSuccessType::Failure,
-                            operation: ObjectOperation::EmptyTrash,
-                            client_id: None,
-                            server_id: None,
-                            num_objects: Some(0),
-                        },
-                    });
-                    ctx.notify();
-                }
-            },
-        );
-
-        self.spawned_futures.push(future.future_id());
+        ctx.notify();
     }
 
     pub fn on_object_delete_success(

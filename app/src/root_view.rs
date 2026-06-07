@@ -7,6 +7,7 @@ use anyhow::Result;
 use cfg_if::cfg_if;
 use itertools::Itertools;
 use lazy_static::lazy_static;
+use warp_core::channel::Channel;
 use onboarding::{
     AgentOnboardingEvent, AgentOnboardingView, OnboardingIntention, SelectedSettings,
 };
@@ -1668,32 +1669,42 @@ impl RootView {
                 if #[cfg(target_family = "wasm")] {
                     AuthOnboardingState::WebImport(AuthOnboardingTarget::Workspace(workspace_args.into()))
                 } else {
-                    // When OpenWarpNewSettingsModes is enabled, show onboarding before login for
-                    // users who haven't completed it yet (tracked via a local UserPreferences key).
-                    let has_completed_local_onboarding = FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
-                        && has_completed_local_onboarding(ctx);
-                    let should_show_pre_login_onboarding = FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
-                        && FeatureFlag::AgentOnboarding.is_enabled()
-                        && !has_completed_local_onboarding;
-                    if FeatureFlag::ForceLogin.is_enabled() {
-                        // ForceLogin is true for Preview
-                        AuthOnboardingState::Auth(workspace_args.into())
-                    } else if should_show_pre_login_onboarding {
-                        let workspace_args_box: Box<WorkspaceArgs> = workspace_args.into();
-                        let onboarding_view = Self::create_agent_onboarding_view(ctx);
-                        onboarding_view.update(ctx, |view, ctx| {
-                            view.start_onboarding(ctx);
-                        });
-                        AuthOnboardingState::Onboarding {
-                            onboarding_view,
-                            target: AuthOnboardingTarget::Workspace(workspace_args_box),
+                    // Only Stable and Preview have real production servers to authenticate against.
+                    // All other channels (Dev, Local, Integration, Oss) skip login/onboarding
+                    // entirely and go directly into the workspace.
+                    let channel = ChannelState::channel();
+                    if matches!(channel, Channel::Stable | Channel::Preview) {
+                        // Production channels — show auth/onboarding based on feature flags.
+                        // When OpenWarpNewSettingsModes is enabled, show onboarding before login for
+                        // users who haven't completed it yet (tracked via a local UserPreferences key).
+                        let has_completed_local_onboarding = FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
+                            && has_completed_local_onboarding(ctx);
+                        let should_show_pre_login_onboarding = FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
+                            && FeatureFlag::AgentOnboarding.is_enabled()
+                            && !has_completed_local_onboarding;
+                        if FeatureFlag::ForceLogin.is_enabled() {
+                            // ForceLogin is true for Preview
+                            AuthOnboardingState::Auth(workspace_args.into())
+                        } else if should_show_pre_login_onboarding {
+                            let workspace_args_box: Box<WorkspaceArgs> = workspace_args.into();
+                            let onboarding_view = Self::create_agent_onboarding_view(ctx);
+                            onboarding_view.update(ctx, |view, ctx| {
+                                view.start_onboarding(ctx);
+                            });
+                            AuthOnboardingState::Onboarding {
+                                onboarding_view,
+                                target: AuthOnboardingTarget::Workspace(workspace_args_box),
+                            }
+                        } else if FeatureFlag::SkipFirebaseAnonymousUser.is_enabled() {
+                            // When SkipFirebaseAnonymousUser is enabled, skip the login screen
+                            // entirely and go directly into the workspace.
+                            AuthOnboardingState::Terminal(workspace_args.create_workspace(ctx))
+                        } else {
+                            AuthOnboardingState::Auth(workspace_args.into())
                         }
-                    } else if FeatureFlag::SkipFirebaseAnonymousUser.is_enabled() {
-                        // When SkipFirebaseAnonymousUser is enabled, skip the login screen
-                        // entirely and go directly into the workspace.
-                        AuthOnboardingState::Terminal(workspace_args.create_workspace(ctx))
                     } else {
-                        AuthOnboardingState::Auth(workspace_args.into())
+                        // Dev/Local/Integration/Oss channels — no real server, skip auth entirely.
+                        AuthOnboardingState::Terminal(workspace_args.create_workspace(ctx))
                     }
                 }
             }

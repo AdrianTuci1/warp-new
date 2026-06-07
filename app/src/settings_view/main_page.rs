@@ -130,11 +130,8 @@ pub enum MainPageAction {
 
 impl MainPageAction {
     fn blocked_for_anonymous_user(&self) -> bool {
-        use MainPageAction::*;
-        matches!(
-            self,
-            Upgrade { .. } | GenerateStripeBillingPortalLink { .. } | ToggleSettingsSync,
-        )
+        // Allow all settings actions for anonymous users
+        false
     }
 }
 

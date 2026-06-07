@@ -574,7 +574,7 @@ impl AuthManager {
         referral_code: Option<String>,
         ctx: &mut ModelContext<Self>,
     ) {
-        let anonymous_user_type = AnonymousUserType::NativeClientAnonymousUserFeatureGated;
+        let anonymous_user_type = AnonymousUserType::NativeClientAnonymousUser;
 
         let auth_client = self.auth_client.clone();
         let _ = ctx.spawn(
@@ -633,26 +633,15 @@ impl AuthManager {
 
     pub fn attempt_login_gated_feature(
         &self,
-        feature: LoginGatedFeature,
-        auth_view_variant: AuthViewVariant,
-        ctx: &mut ModelContext<Self>,
+        _feature: LoginGatedFeature,
+        _auth_view_variant: AuthViewVariant,
+        _ctx: &mut ModelContext<Self>,
     ) {
-        if self.auth_state.is_anonymous_or_logged_out() {
-            send_telemetry_from_ctx!(
-                TelemetryEvent::AnonymousUserAttemptLoginGatedFeature { feature },
-                ctx
-            );
-            ctx.emit(AuthManagerEvent::AttemptedLoginGatedFeature { auth_view_variant });
-        };
+        // Allow all features without login
     }
 
-    pub fn anonymous_user_hit_drive_object_limit(&self, ctx: &mut ModelContext<Self>) {
-        if self.auth_state.is_anonymous_or_logged_out() {
-            send_telemetry_from_ctx!(TelemetryEvent::AnonymousUserHitCloudObjectLimit, ctx);
-            ctx.emit(AuthManagerEvent::AttemptedLoginGatedFeature {
-                auth_view_variant: AuthViewVariant::HitDriveObjectLimitCloseable,
-            });
-        };
+    pub fn anonymous_user_hit_drive_object_limit(&self, _ctx: &mut ModelContext<Self>) {
+        // Allow unlimited drive objects without login
     }
 
     pub fn initiate_anonymous_user_linking(

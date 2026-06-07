@@ -213,27 +213,8 @@ pub enum TeamsPageAction {
 
 impl TeamsPageAction {
     pub fn blocked_for_anonymous_user(&self) -> bool {
-        use TeamsPageAction::*;
-        matches!(
-            self,
-            LeaveTeam
-                | ShowLeaveTeamConfirmationDialog
-                | ShowDeleteTeamConfirmationDialog
-                | CreateTeam
-                | DeletePendingEmailInvitation { .. }
-                | RemoveUserFromTeam { .. }
-                | AddDomainRestrictions { .. }
-                | DeleteDomainRestriction { .. }
-                | SendEmailInvites { .. }
-                | GenerateUpgradeLink { .. }
-                | GenerateStripeBillingPortalLink { .. }
-                | OpenAdminPanel { .. }
-                | ContactSupport
-                | ContactSales
-                | ToggleTeamDiscoverabilityBeforeCreation
-                | ToggleTeamDiscoverability { .. }
-                | JoinTeamWithTeamDiscovery { .. }
-        )
+        // Allow all team actions for anonymous users
+        false
     }
 }
 
