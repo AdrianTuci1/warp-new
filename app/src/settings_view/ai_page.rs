@@ -7642,16 +7642,6 @@ impl SettingsWidget for ApiKeysWidget {
                         )]
                     }
                 }
-            } else if FeatureFlag::SoloUserByok.is_enabled()
-                && auth_state.is_anonymous_or_logged_out()
-            {
-                vec![
-                    FormattedTextFragment::hyperlink_action(
-                        "Create an account",
-                        AISettingsPageAction::SignupAnonymousUser,
-                    ),
-                    FormattedTextFragment::plain_text(" to use your own API keys."),
-                ]
             } else {
                 let user_id = auth_state.user_id().unwrap_or_default();
                 let upgrade_url = UserWorkspaces::upgrade_link(user_id);
