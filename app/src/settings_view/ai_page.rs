@@ -114,7 +114,7 @@ pub enum AISubpage {
 impl AISubpage {
     pub fn from_section(section: SettingsSection) -> Option<Self> {
         match section {
-            SettingsSection::WarpAgent => Some(Self::WarpAgent),
+            SettingsSection::OctomusAgent => Some(Self::WarpAgent),
             SettingsSection::AgentProfiles => Some(Self::Profiles),
             SettingsSection::Knowledge => Some(Self::Knowledge),
             SettingsSection::ThirdPartyCLIAgents => Some(Self::ThirdPartyCLIAgents),
@@ -3927,7 +3927,7 @@ impl SettingsWidget for GlobalAIWidget {
             .with_cross_axis_alignment(CrossAxisAlignment::Center)
             .with_child(
                 Text::new_inline(
-                    "Warp Agent",
+                    "Octomus Agent",
                     appearance.ui_font_family(),
                     PRIMARY_HEADER_FONT_SIZE,
                 )

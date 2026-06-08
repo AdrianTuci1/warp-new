@@ -3131,7 +3131,7 @@ impl Workspace {
                     ctx.notify();
                 }
                 SharedObjectsCreationDeniedModalEvent::TeamSettings => {
-                    me.show_settings_with_section(Some(SettingsSection::Teams), ctx);
+                    me.show_settings_with_section(Some(SettingsSection::Account), ctx);
                     me.current_workspace_state
                         .is_shared_objects_creation_denied_modal_open = false;
                     ctx.notify();
@@ -5854,7 +5854,7 @@ impl Workspace {
     fn handle_ai_fact_view_event(&mut self, event: &AIFactViewEvent, ctx: &mut ViewContext<Self>) {
         match event {
             AIFactViewEvent::OpenSettings => {
-                self.show_settings_with_section(Some(SettingsSection::WarpAgent), ctx);
+                self.show_settings_with_section(Some(SettingsSection::OctomusAgent), ctx);
             }
             #[allow(unused_variables)]
             AIFactViewEvent::OpenFile(path) => {
@@ -9173,7 +9173,7 @@ impl Workspace {
             items.push(
                 MenuItemFields::new("Billing and usage")
                     .with_on_select_action(WorkspaceAction::ShowSettingsPage(
-                        SettingsSection::BillingAndUsage,
+                        SettingsSection::Account,
                     ))
                     .into_item(),
             );
@@ -14057,7 +14057,7 @@ impl Workspace {
             SettingsViewEvent::LaunchNetworkLogging => {
                 self.open_network_log_pane(ctx);
             }
-            SettingsViewEvent::OpenWarpDrive => {
+            SettingsViewEvent::OpenOctomusDrive => {
                 self.close_all_overlays(ctx);
                 self.open_or_toggle_warp_drive(
                     false, /* toggle */
@@ -16591,7 +16591,7 @@ impl Workspace {
                 );
             }
             DrivePanelEvent::OpenTeamSettingsPage => {
-                self.show_settings_with_section(Some(SettingsSection::Teams), ctx);
+                self.show_settings_with_section(Some(SettingsSection::Account), ctx);
             }
             DrivePanelEvent::OpenImportModal {
                 owner,
@@ -17635,10 +17635,10 @@ impl Workspace {
         email_invite: Option<&String>,
         ctx: &mut ViewContext<Self>,
     ) {
-        self.show_settings_with_section(Some(SettingsSection::Teams), ctx);
+        self.show_settings_with_section(Some(SettingsSection::Account), ctx);
 
         self.settings_pane.update(ctx, |view, ctx| {
-            view.open_teams_page_email_invite(email_invite, ctx);
+            // view.open_teams_page_email_invite(email_invite, ctx);
         });
     }
 
@@ -18879,7 +18879,7 @@ impl Workspace {
                     {
                         ToolPanelView::ProjectExplorer => "Project explorer",
                         ToolPanelView::GlobalSearch { .. } => "Global search",
-                        ToolPanelView::WarpDrive => "Warp Drive",
+                        ToolPanelView::WarpDrive => "Octomus Drive",
                         ToolPanelView::ConversationListView => "Agent conversations",
                     }
                 } else {
@@ -18933,7 +18933,7 @@ impl Workspace {
             {
                 ToolPanelView::ProjectExplorer => "Project explorer",
                 ToolPanelView::GlobalSearch { .. } => "Global search",
-                ToolPanelView::WarpDrive => "Warp Drive",
+                ToolPanelView::WarpDrive => "Octomus Drive",
                 ToolPanelView::ConversationListView => "Agent conversations",
             }
         } else {
@@ -22630,7 +22630,7 @@ impl TypedActionView for Workspace {
                 ctx.open_url(&upgrade_url);
             }
             ShowReferralSettingsPage => {
-                self.show_settings_with_section(Some(SettingsSection::Referrals), ctx);
+                self.show_settings_with_section(Some(SettingsSection::Account), ctx);
             }
             JoinSlack => self.join_slack(ctx),
             ViewUserDocs => self.view_user_docs(ctx),

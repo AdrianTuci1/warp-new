@@ -81,7 +81,7 @@ use crate::settings::cloud_preferences_syncer::{
 };
 use crate::settings::{apply_onboarding_settings, AISettings, QuakeModeSettings, ThemeSettings};
 use crate::settings_view::mcp_servers_page::MCPServersSettingsPage;
-use crate::settings_view::{flags, OpenTeamsSettingsModalArgs, SettingsSection};
+use crate::settings_view::{flags, SettingsSection};
 use crate::terminal::available_shells::AvailableShell;
 use crate::terminal::general_settings::GeneralSettings;
 use crate::terminal::keys_settings::KeysSettings;
@@ -947,8 +947,13 @@ fn create_environment_and_run(arg: &CreateEnvironmentArg, ctx: &mut AppContext) 
 
     ctx.windows().show_window_and_focus_app(window_id);
 }
+#[derive(Clone, Default)]
+struct OpenTeamsSettingsModalArgs {
+    invite_email: Option<String>,
+}
+
 fn open_team_settings_with_email_invite_in_new_window(
-    arg: &OpenTeamsSettingsModalArgs,
+    _arg: &OpenTeamsSettingsModalArgs,
     ctx: &mut AppContext,
 ) {
     let root_handle = open_new_window_get_handles(None, ctx).1;
@@ -957,10 +962,9 @@ fn open_team_settings_with_email_invite_in_new_window(
             &root_view.auth_onboarding_state
         {
             let initial_load_complete = UpdateManager::as_ref(ctx).initial_load_complete();
-            let email_invite = arg.invite_email.clone();
             workspace_view_handle.update(ctx, |_, ctx| {
                 let _ = ctx.spawn(initial_load_complete, move |workspace, _, ctx| {
-                    workspace.show_team_settings_page_with_email_invite(email_invite.as_ref(), ctx)
+                    workspace.show_team_settings_page_with_email_invite(None, ctx)
                 });
             });
         }
@@ -2519,12 +2523,12 @@ impl RootView {
 
     pub fn open_team_settings_with_email_invite_in_existing_window(
         &mut self,
-        arg: &OpenTeamsSettingsModalArgs,
+        _arg: &OpenTeamsSettingsModalArgs,
         ctx: &mut ViewContext<Self>,
     ) -> bool {
         if let AuthOnboardingState::Terminal(handle) = &self.auth_onboarding_state {
             handle.update(ctx, |workspace, ctx| {
-                workspace.show_team_settings_page_with_email_invite(arg.invite_email.as_ref(), ctx)
+                workspace.show_team_settings_page_with_email_invite(None, ctx)
             });
             return true;
         } else {
@@ -2818,7 +2822,7 @@ impl RootView {
             ctx.dispatch_typed_action_for_view(
                 window_id,
                 handle.id(),
-                &WorkspaceAction::ShowSettingsPage(SettingsSection::Teams),
+                &WorkspaceAction::ShowSettingsPage(SettingsSection::Account),
             );
             ctx.windows().show_window_and_focus_app(window_id);
         } else {

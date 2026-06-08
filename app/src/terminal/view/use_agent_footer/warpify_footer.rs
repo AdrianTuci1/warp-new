@@ -16,7 +16,7 @@ use crate::view_components::action_button::{
 };
 
 /// Footer view rendered for detected subshell/SSH commands, offering both
-/// "Warpify" and "Use agent" buttons in a horizontal row.
+/// "Octofy" and "Use agent" buttons in a horizontal row.
 pub(super) struct WarpifyFooterView {
     terminal_model: Arc<FairMutex<TerminalModel>>,
     warpify_button: ViewHandle<ActionButton>,

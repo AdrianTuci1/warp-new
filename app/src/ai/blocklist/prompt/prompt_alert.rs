@@ -371,7 +371,7 @@ impl PromptAlertView {
                         "use your own API keys",
                         WorkspaceAction::ShowSettingsPageWithSearch {
                             search_query: "api".to_string(),
-                            section: Some(SettingsSection::WarpAgent),
+                            section: Some(SettingsSection::OctomusAgent),
                         },
                     ));
                 }
@@ -434,7 +434,7 @@ impl View for PromptAlertView {
             text_fragments.push(FormattedTextFragment::plain_text("  "));
             text_fragments.push(FormattedTextFragment::hyperlink_action(
                 "Add credits",
-                WorkspaceAction::ShowSettingsPage(SettingsSection::BillingAndUsage),
+                WorkspaceAction::ShowSettingsPage(SettingsSection::Account),
             ));
         } else {
             self.action_hyperlink(&state, &mut text_fragments, app);

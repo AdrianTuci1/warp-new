@@ -128,7 +128,7 @@ impl SettingsWidget for AboutPageWidget {
 
 impl SettingsPageMeta for AboutPageView {
     fn section() -> SettingsSection {
-        SettingsSection::About
+        SettingsSection::Account
     }
 
     fn should_render(&self, _ctx: &AppContext) -> bool {

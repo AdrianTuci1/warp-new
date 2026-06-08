@@ -28,6 +28,7 @@ mod crash_recovery;
 #[cfg(feature = "crash_reporting")]
 mod crash_reporting;
 mod debug_dump;
+pub mod profile;
 mod default_terminal;
 mod download_method;
 mod drive;
@@ -150,6 +151,7 @@ use auth::auth_state::{AuthState, AuthStateProvider};
 use code::editor_management::CodeManager;
 use code::opened_files::OpenedFilesModel;
 use code_review::GlobalCodeReviewModel;
+use profile::ProfileModel;
 use quit_warning::UnsavedStateSummary;
 #[cfg(feature = "local_fs")]
 use repo_metadata::{
@@ -1375,6 +1377,7 @@ pub(crate) fn initialize_app(
     ctx.add_singleton_model(|_| ExecutionProfileEditorManager::default());
     ctx.add_singleton_model(|_| NetworkLogPaneManager::default());
     ctx.add_singleton_model(|_| pricing::PricingInfoModel::new());
+    ctx.add_singleton_model(::ai::cloud_credentials::CloudCredentialsManager::new);
     ctx.add_singleton_model(|ctx| {
         // Not using the *Provider types isn't ideal, but it's worth it for the ability to move managed secrets to a separate crate.
         ManagedSecretManager::new(
@@ -1854,6 +1857,9 @@ pub(crate) fn initialize_app(
 
     // AgentConversationsModel subscribes to UpdateManager for RTC task updates.
     ctx.add_singleton_model(AgentConversationsModel::new);
+
+    // ProfileModel holds the user's display name and photo (no server auth required).
+    ctx.add_singleton_model(ProfileModel::new);
 
     // ByoLlmAuthBannerSessionState tracks dismissal of the BYO LLM auth banner (e.g., AWS Bedrock login).
     ctx.add_singleton_model(ByoLlmAuthBannerSessionState::new);

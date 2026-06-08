@@ -9661,7 +9661,7 @@ impl TerminalView {
     ) {
         match event {
             WarpifySuccessBlockEvent::OpenWarpifySettings => {
-                ctx.emit(Event::OpenSettings(SettingsSection::Warpify));
+                ctx.emit(Event::OpenSettings(SettingsSection::Features));
             }
         }
     }
@@ -12734,7 +12734,7 @@ impl TerminalView {
                 ctx.emit(Event::RemoteServerSkipRequested { session_id });
             }
             SshRemoteServerChoiceViewEvent::OpenWarpifySettings => {
-                ctx.emit(Event::OpenSettings(SettingsSection::Warpify));
+                ctx.emit(Event::OpenSettings(SettingsSection::Features));
             }
         });
 
@@ -20108,7 +20108,7 @@ impl TerminalView {
                 self.handle_usage_footer_toggled(block.id(), *conversation_id, *is_expanded, ctx);
             }
             AIBlockEvent::OpenSettings => {
-                ctx.emit(Event::OpenSettings(SettingsSection::WarpAgent));
+                ctx.emit(Event::OpenSettings(SettingsSection::OctomusAgent));
             }
             #[cfg(feature = "local_fs")]
             AIBlockEvent::OpenCodeInWarp { source, layout } => {
@@ -24665,7 +24665,7 @@ impl TerminalView {
             }
             Settings => {
                 if FeatureFlag::SSHTmuxWrapper.is_enabled() {
-                    ctx.emit(Event::OpenSettings(SettingsSection::Warpify));
+                    ctx.emit(Event::OpenSettings(SettingsSection::Features));
                 } else {
                     ctx.emit(Event::OpenSettings(SettingsSection::Features));
                 }
@@ -26463,7 +26463,7 @@ impl TypedActionView for TerminalView {
                 });
             }
             OpenTeamSettingsPage => {
-                ctx.emit(Event::OpenSettings(SettingsSection::Teams));
+                ctx.emit(Event::OpenSettings(SettingsSection::Account));
             }
             SetMarkedText {
                 marked_text,
@@ -26485,7 +26485,7 @@ impl TypedActionView for TerminalView {
             LoadAgentModeConversation => {
                 self.load_agent_mode_conversation(ctx);
             }
-            ShowWarpifySettings => ctx.emit(Event::OpenSettings(SettingsSection::Warpify)),
+            ShowWarpifySettings => ctx.emit(Event::OpenSettings(SettingsSection::Features)),
             DeleteAttachment { index } => {
                 self.ai_context_model.update(ctx, |context_model, ctx| {
                     context_model.remove_pending_attachment(*index, ctx);
@@ -26782,7 +26782,7 @@ impl TypedActionView for TerminalView {
                 });
             }
             OpenBillingAndUsagePane => {
-                ctx.emit(Event::OpenSettings(SettingsSection::BillingAndUsage));
+                ctx.emit(Event::OpenSettings(SettingsSection::Account));
             }
             OpenAddRulePane => {
                 ctx.emit(Event::OpenAddRulePane);

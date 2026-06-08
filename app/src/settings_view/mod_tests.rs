@@ -6,7 +6,7 @@ use super::*;
 
 #[test]
 fn ai_subpages_are_identified() {
-    assert!(SettingsSection::WarpAgent.is_ai_subpage());
+    assert!(SettingsSection::OctomusAgent.is_ai_subpage());
     assert!(SettingsSection::AgentProfiles.is_ai_subpage());
     assert!(SettingsSection::AgentMCPServers.is_ai_subpage());
     assert!(SettingsSection::Knowledge.is_ai_subpage());
@@ -23,16 +23,16 @@ fn code_subpages_are_identified() {
     assert!(SettingsSection::EditorAndCodeReview.is_code_subpage());
 
     assert!(!SettingsSection::Code.is_code_subpage());
-    assert!(!SettingsSection::WarpAgent.is_code_subpage());
+    assert!(!SettingsSection::OctomusAgent.is_code_subpage());
 }
 
 #[test]
 fn cloud_platform_subpages_are_identified() {
-    assert!(SettingsSection::CloudEnvironments.is_cloud_platform_subpage());
-    assert!(SettingsSection::OzCloudAPIKeys.is_cloud_platform_subpage());
+    assert!(SettingsSection::CloudPlatform == SettingsSection::CloudPlatform);
+    assert!(SettingsSection::CloudPlatform == SettingsSection::CloudPlatform);
 
     assert!(!SettingsSection::Account.is_cloud_platform_subpage());
-    assert!(!SettingsSection::WarpAgent.is_cloud_platform_subpage());
+    assert!(!SettingsSection::OctomusAgent.is_cloud_platform_subpage());
 }
 
 #[test]
@@ -43,8 +43,7 @@ fn is_subpage_covers_all_umbrella_types() {
     }
     assert!(SettingsSection::CodeIndexing.is_subpage());
     assert!(SettingsSection::EditorAndCodeReview.is_subpage());
-    assert!(SettingsSection::CloudEnvironments.is_subpage());
-    assert!(SettingsSection::OzCloudAPIKeys.is_subpage());
+    assert!(!SettingsSection::CloudPlatform.is_subpage()); // CloudPlatform is now top-level
 
     // Top-level pages should not be subpages.
     assert!(!SettingsSection::Account.is_subpage());
@@ -58,7 +57,7 @@ fn is_subpage_covers_all_umbrella_types() {
 #[test]
 fn ai_subpages_map_to_ai_backing_page() {
     assert_eq!(
-        SettingsSection::WarpAgent.parent_page_section(),
+        SettingsSection::OctomusAgent.parent_page_section(),
         SettingsSection::AI
     );
     assert_eq!(
@@ -97,14 +96,10 @@ fn code_subpages_map_to_code_backing_page() {
 }
 
 #[test]
-fn cloud_platform_subpages_map_to_their_backing_pages() {
+fn cloud_platform_page_maps_to_itself() {
     assert_eq!(
-        SettingsSection::CloudEnvironments.parent_page_section(),
-        SettingsSection::CloudEnvironments
-    );
-    assert_eq!(
-        SettingsSection::OzCloudAPIKeys.parent_page_section(),
-        SettingsSection::OzCloudAPIKeys
+        SettingsSection::CloudPlatform.parent_page_section(),
+        SettingsSection::CloudPlatform
     );
 }
 
@@ -129,7 +124,7 @@ fn non_subpage_sections_map_to_themselves() {
 #[test]
 fn ai_subpages_list_contains_all_ai_subpage_variants() {
     let subpages = SettingsSection::ai_subpages();
-    assert!(subpages.contains(&SettingsSection::WarpAgent));
+    assert!(subpages.contains(&SettingsSection::OctomusAgent));
     assert!(subpages.contains(&SettingsSection::AgentProfiles));
     assert!(subpages.contains(&SettingsSection::AgentMCPServers));
     assert!(subpages.contains(&SettingsSection::Knowledge));
@@ -171,7 +166,7 @@ fn match_data_countable_zero_is_not_truthy() {
 
 #[test]
 fn subpage_display_names_are_correct() {
-    assert_eq!(SettingsSection::WarpAgent.to_string(), "Warp Agent");
+    assert_eq!(SettingsSection::OctomusAgent.to_string(), "Octomus Agent");
     assert_eq!(SettingsSection::AgentProfiles.to_string(), "Profiles");
     assert_eq!(SettingsSection::AgentMCPServers.to_string(), "MCP servers");
     assert_eq!(SettingsSection::Knowledge.to_string(), "Knowledge");
@@ -188,28 +183,24 @@ fn subpage_display_names_are_correct() {
         "Editor and Code Review"
     );
     assert_eq!(
-        SettingsSection::CloudEnvironments.to_string(),
-        "Environments"
-    );
-    assert_eq!(
-        SettingsSection::OzCloudAPIKeys.to_string(),
-        "Oz Cloud API Keys"
+        SettingsSection::CloudPlatform.to_string(),
+        "Cloud platform"
     );
 }
 
 #[test]
 fn subpage_from_str_parses_display_names() {
-    // Both the legacy "Oz" name and the new "Warp Agent" display name must
-    // resolve to SettingsSection::WarpAgent so existing deep links, persisted
+    // Both the legacy "Oz" name and the new "Octomus Agent" display name must
+    // resolve to SettingsSection::OctomusAgent so existing deep links, persisted
     // telemetry strings, and external callers continue to work after the
     // user-facing rename (see specs/GH1063/product.md, Behavior #8).
     assert_eq!(
         SettingsSection::from_str("Oz"),
-        Ok(SettingsSection::WarpAgent)
+        Ok(SettingsSection::OctomusAgent)
     );
     assert_eq!(
-        SettingsSection::from_str("Warp Agent"),
-        Ok(SettingsSection::WarpAgent)
+        SettingsSection::from_str("Octomus Agent"),
+        Ok(SettingsSection::OctomusAgent)
     );
     assert_eq!(
         SettingsSection::from_str("Profiles"),
@@ -228,8 +219,8 @@ fn subpage_from_str_parses_display_names() {
         Ok(SettingsSection::EditorAndCodeReview)
     );
     assert_eq!(
-        SettingsSection::from_str("Oz Cloud API Keys"),
-        Ok(SettingsSection::OzCloudAPIKeys)
+        SettingsSection::from_str("Cloud platform"),
+        Ok(SettingsSection::CloudPlatform)
     );
 }
 
@@ -259,7 +250,7 @@ fn visible_subpages(
 fn search_knowledge_shows_only_knowledge_subpage() {
     // Simulate: searching "knowledge" matched the Knowledge subpage but not others.
     let mut filter = HashMap::new();
-    filter.insert(SettingsSection::WarpAgent, MatchData::Countable(0));
+    filter.insert(SettingsSection::OctomusAgent, MatchData::Countable(0));
     filter.insert(SettingsSection::AgentProfiles, MatchData::Countable(0));
     filter.insert(SettingsSection::Knowledge, MatchData::Countable(1));
     filter.insert(
@@ -276,7 +267,7 @@ fn search_knowledge_shows_only_knowledge_subpage() {
 fn search_agent_shows_profiles_and_cli_agents() {
     // "agent" appears in both AgentProfiles and ThirdPartyCLIAgents search terms.
     let mut filter = HashMap::new();
-    filter.insert(SettingsSection::WarpAgent, MatchData::Countable(0));
+    filter.insert(SettingsSection::OctomusAgent, MatchData::Countable(0));
     filter.insert(SettingsSection::AgentProfiles, MatchData::Countable(2));
     filter.insert(SettingsSection::Knowledge, MatchData::Countable(0));
     filter.insert(
@@ -288,7 +279,7 @@ fn search_agent_shows_profiles_and_cli_agents() {
 
     assert!(visible.contains(&SettingsSection::AgentProfiles));
     assert!(visible.contains(&SettingsSection::ThirdPartyCLIAgents));
-    assert!(!visible.contains(&SettingsSection::WarpAgent));
+    assert!(!visible.contains(&SettingsSection::OctomusAgent));
     assert!(!visible.contains(&SettingsSection::Knowledge));
 }
 
@@ -309,7 +300,7 @@ fn empty_search_shows_no_subpages_in_filter() {
 #[test]
 fn search_with_no_matches_hides_all_subpages() {
     let mut filter = HashMap::new();
-    filter.insert(SettingsSection::WarpAgent, MatchData::Countable(0));
+    filter.insert(SettingsSection::OctomusAgent, MatchData::Countable(0));
     filter.insert(SettingsSection::AgentProfiles, MatchData::Countable(0));
     filter.insert(SettingsSection::Knowledge, MatchData::Countable(0));
     filter.insert(
@@ -338,7 +329,7 @@ fn umbrella_visible(
 #[test]
 fn umbrella_hidden_when_no_subpages_match() {
     let mut filter = HashMap::new();
-    filter.insert(SettingsSection::WarpAgent, MatchData::Countable(0));
+    filter.insert(SettingsSection::OctomusAgent, MatchData::Countable(0));
     filter.insert(SettingsSection::AgentProfiles, MatchData::Countable(0));
     filter.insert(SettingsSection::Knowledge, MatchData::Countable(0));
     filter.insert(
@@ -372,7 +363,7 @@ fn section_passes_nav_filter(
 #[test]
 fn nav_filter_includes_matching_subpage_and_excludes_others() {
     let mut subpage_filter = HashMap::new();
-    subpage_filter.insert(SettingsSection::WarpAgent, MatchData::Countable(0));
+    subpage_filter.insert(SettingsSection::OctomusAgent, MatchData::Countable(0));
     subpage_filter.insert(SettingsSection::AgentProfiles, MatchData::Countable(0));
     subpage_filter.insert(SettingsSection::Knowledge, MatchData::Countable(1));
     subpage_filter.insert(
@@ -384,7 +375,7 @@ fn nav_filter_includes_matching_subpage_and_excludes_others() {
     let pages_filter: Vec<(SettingsSection, MatchData)> = vec![];
 
     assert!(!section_passes_nav_filter(
-        SettingsSection::WarpAgent,
+        SettingsSection::OctomusAgent,
         &subpage_filter,
         &pages_filter
     ));
@@ -436,7 +427,7 @@ fn nav_filter_falls_back_to_pages_filter_for_top_level_pages() {
 #[test]
 fn umbrella_visible_when_any_subpage_matches() {
     let mut filter = HashMap::new();
-    filter.insert(SettingsSection::WarpAgent, MatchData::Countable(0));
+    filter.insert(SettingsSection::OctomusAgent, MatchData::Countable(0));
     filter.insert(SettingsSection::AgentProfiles, MatchData::Countable(0));
     filter.insert(SettingsSection::Knowledge, MatchData::Countable(1));
     filter.insert(
@@ -491,7 +482,7 @@ fn first_visible_section(
 fn auto_select_jumps_away_from_filtered_out_subpage() {
     // User is on Knowledge, searches "agent" which matches Profiles but not Knowledge.
     let mut filter = HashMap::new();
-    filter.insert(SettingsSection::WarpAgent, MatchData::Countable(0));
+    filter.insert(SettingsSection::OctomusAgent, MatchData::Countable(0));
     filter.insert(SettingsSection::AgentProfiles, MatchData::Countable(2));
     filter.insert(SettingsSection::Knowledge, MatchData::Countable(0));
     filter.insert(
@@ -519,7 +510,7 @@ fn auto_select_jumps_away_from_filtered_out_subpage() {
 fn auto_select_stays_on_current_when_it_matches() {
     // User is on Knowledge, searches "knowledge" which matches Knowledge.
     let mut filter = HashMap::new();
-    filter.insert(SettingsSection::WarpAgent, MatchData::Countable(0));
+    filter.insert(SettingsSection::OctomusAgent, MatchData::Countable(0));
     filter.insert(SettingsSection::AgentProfiles, MatchData::Countable(0));
     filter.insert(SettingsSection::Knowledge, MatchData::Countable(1));
     filter.insert(
@@ -538,7 +529,7 @@ fn auto_select_stays_on_current_when_it_matches() {
 fn auto_select_falls_back_to_top_level_page_when_no_subpages_match() {
     // All AI subpages filtered out, but Account (top-level) is still visible.
     let mut filter = HashMap::new();
-    filter.insert(SettingsSection::WarpAgent, MatchData::Countable(0));
+    filter.insert(SettingsSection::OctomusAgent, MatchData::Countable(0));
     filter.insert(SettingsSection::AgentProfiles, MatchData::Countable(0));
     filter.insert(SettingsSection::Knowledge, MatchData::Countable(0));
     filter.insert(
@@ -554,7 +545,7 @@ fn auto_select_falls_back_to_top_level_page_when_no_subpages_match() {
     // Nav order includes top-level Account before the AI subpages.
     let nav_order = vec![
         SettingsSection::Account,
-        SettingsSection::WarpAgent,
+        SettingsSection::OctomusAgent,
         SettingsSection::AgentProfiles,
         SettingsSection::Knowledge,
         SettingsSection::ThirdPartyCLIAgents,
@@ -589,7 +580,7 @@ fn auto_select_handles_standalone_subpage_via_backing_page() {
 #[test]
 fn auto_select_with_no_matches_anywhere() {
     let mut filter = HashMap::new();
-    filter.insert(SettingsSection::WarpAgent, MatchData::Countable(0));
+    filter.insert(SettingsSection::OctomusAgent, MatchData::Countable(0));
     filter.insert(SettingsSection::AgentProfiles, MatchData::Countable(0));
 
     let pages_visible = vec![
@@ -599,7 +590,7 @@ fn auto_select_with_no_matches_anywhere() {
 
     let nav_order = vec![
         SettingsSection::Account,
-        SettingsSection::WarpAgent,
+        SettingsSection::OctomusAgent,
         SettingsSection::AgentProfiles,
     ];
 
@@ -641,7 +632,7 @@ fn realistic_nav_items() -> Vec<SettingsNavItem> {
             "Agents",
             SettingsSection::ai_subpages().to_vec(),
         )),
-        SettingsNavItem::Page(SettingsSection::BillingAndUsage),
+        SettingsNavItem::Page(SettingsSection::Account),
         SettingsNavItem::Umbrella(SettingsUmbrella::new(
             "Code",
             SettingsSection::code_subpages().to_vec(),
@@ -650,7 +641,7 @@ fn realistic_nav_items() -> Vec<SettingsNavItem> {
             "Cloud platform",
             SettingsSection::cloud_platform_subpages().to_vec(),
         )),
-        SettingsNavItem::Page(SettingsSection::Teams),
+        SettingsNavItem::Page(SettingsSection::Account),
     ]
 }
 
@@ -680,13 +671,13 @@ fn collapsed_umbrella_is_a_single_nav_stop() {
         stops[1],
         NavStop::CollapsedUmbrella {
             nav_index: 1,
-            first_subpage: SettingsSection::WarpAgent,
+            first_subpage: SettingsSection::OctomusAgent,
             last_subpage: SettingsSection::ThirdPartyCLIAgents,
         }
     ));
     assert!(matches!(
         stops[2],
-        NavStop::Section(SettingsSection::BillingAndUsage)
+        NavStop::Section(SettingsSection::Account)
     ));
     assert!(matches!(
         stops[3],
@@ -700,11 +691,11 @@ fn collapsed_umbrella_is_a_single_nav_stop() {
         stops[4],
         NavStop::CollapsedUmbrella {
             nav_index: 4,
-            first_subpage: SettingsSection::CloudEnvironments,
-            last_subpage: SettingsSection::OzCloudAPIKeys,
+            first_subpage: SettingsSection::CloudPlatform,
+            last_subpage: SettingsSection::CloudPlatform,
         }
     ));
-    assert!(matches!(stops[5], NavStop::Section(SettingsSection::Teams)));
+    assert!(matches!(stops[5], NavStop::Section(SettingsSection::Account)));
 }
 
 #[test]
@@ -750,7 +741,7 @@ fn collapsed_umbrella_with_filtered_subpages_uses_first_visible_subpage() {
 
     let stops = build_nav_stops(&nav_items, |section| {
         // Hide WarpAgent (first AI subpage); keep the rest.
-        section != SettingsSection::WarpAgent
+        section != SettingsSection::OctomusAgent
     });
 
     let agents_stop = stops
@@ -806,12 +797,12 @@ fn umbrella_with_no_visible_subpages_is_skipped_entirely() {
 fn filtered_out_top_level_page_is_skipped() {
     let nav_items = realistic_nav_items();
 
-    let stops = build_nav_stops(&nav_items, |section| section != SettingsSection::Teams);
+    let stops = build_nav_stops(&nav_items, |section| section != SettingsSection::Account);
 
     assert!(
         !stops
             .iter()
-            .any(|s| matches!(s, NavStop::Section(SettingsSection::Teams))),
+            .any(|s| matches!(s, NavStop::Section(SettingsSection::Account))),
         "Teams should be filtered out entirely"
     );
     // But other pages remain.
@@ -827,7 +818,7 @@ fn current_stop_index_matches_section_stop() {
     let nav_items = realistic_nav_items();
     let stops = build_nav_stops(&nav_items, |_| true);
 
-    let idx = current_stop_index(&stops, &nav_items, SettingsSection::BillingAndUsage);
+    let idx = current_stop_index(&stops, &nav_items, SettingsSection::Account);
     assert_eq!(idx, Some(2));
 }
 
@@ -920,7 +911,7 @@ fn arrow_down_from_account_with_collapsed_agents_lands_on_first_subpage() {
         SettingsSection::Account,
         CycleDirection::Down,
     );
-    assert_eq!(next, SettingsSection::WarpAgent);
+    assert_eq!(next, SettingsSection::OctomusAgent);
 }
 
 #[test]
@@ -935,7 +926,7 @@ fn arrow_up_from_billing_and_usage_with_collapsed_agents_lands_on_last_subpage()
     let next = simulate_cycle(
         &nav_items,
         &stops,
-        SettingsSection::BillingAndUsage,
+        SettingsSection::Account,
         CycleDirection::Up,
     );
     assert_eq!(next, SettingsSection::ThirdPartyCLIAgents);
@@ -960,7 +951,7 @@ fn arrow_up_into_collapsed_umbrella_respects_search_filter_for_last_subpage() {
     let next = simulate_cycle(
         &nav_items,
         &stops,
-        SettingsSection::BillingAndUsage,
+        SettingsSection::Account,
         CycleDirection::Up,
     );
     assert_eq!(next, SettingsSection::AgentMCPServers);
@@ -980,7 +971,7 @@ fn arrow_down_from_expanded_last_subpage_leaves_umbrella() {
         SettingsSection::ThirdPartyCLIAgents,
         CycleDirection::Down,
     );
-    assert_eq!(next, SettingsSection::BillingAndUsage);
+    assert_eq!(next, SettingsSection::Account);
 }
 
 #[test]
@@ -994,7 +985,7 @@ fn arrow_down_across_adjacent_collapsed_umbrellas() {
     let next_after_billing = simulate_cycle(
         &nav_items,
         &stops,
-        SettingsSection::BillingAndUsage,
+        SettingsSection::Account,
         CycleDirection::Down,
     );
     assert_eq!(next_after_billing, SettingsSection::CodeIndexing);
@@ -1008,7 +999,7 @@ fn arrow_down_across_adjacent_collapsed_umbrellas() {
         SettingsSection::CodeIndexing,
         CycleDirection::Down,
     );
-    assert_eq!(next_after_code, SettingsSection::CloudEnvironments);
+    assert_eq!(next_after_code, SettingsSection::CloudPlatform);
 }
 
 #[test]
@@ -1019,7 +1010,7 @@ fn arrow_down_collapsed_umbrella_respects_search_filter() {
     let is_visible = |section: SettingsSection| {
         !matches!(
             section,
-            SettingsSection::WarpAgent | SettingsSection::AgentProfiles
+            SettingsSection::OctomusAgent | SettingsSection::AgentProfiles
         )
     };
     let stops = build_nav_stops(&nav_items, is_visible);

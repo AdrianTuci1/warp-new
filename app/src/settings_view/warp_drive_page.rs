@@ -27,7 +27,7 @@ use crate::drive::settings::WarpDriveSettings;
 
 #[derive(Debug, Clone)]
 pub enum WarpDriveSettingsPageAction {
-    ToggleShowWarpDrive,
+    ToggleShowOctomusDrive,
     SignUp,
     OpenUrl(String),
 }
@@ -40,8 +40,8 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
     ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
         vec![ToggleSettingActionPair::custom(
             SettingActionPairDescriptions::new("Enable Warp Drive", "Disable Warp Drive"),
-            builder(SettingsAction::WarpDrive(
-                WarpDriveSettingsPageAction::ToggleShowWarpDrive,
+            builder(SettingsAction::OctomusDrive(
+                WarpDriveSettingsPageAction::ToggleShowOctomusDrive,
             )),
             SettingActionPairContexts::new(
                 context.clone() & !id!(flags::ENABLE_WARP_DRIVE) & !id!("IsAnonymousUser"),
@@ -67,8 +67,8 @@ impl WarpDriveSettingsPageView {
         Self {
             page: PageType::new_uncategorized(
                 vec![
-                    Box::new(WarpDriveHeaderWidget::default()),
-                    Box::new(WarpDriveToggleWidget::default()),
+                    Box::new(OctomusDriveHeaderWidget::default()),
+                    Box::new(OctomusDriveToggleWidget::default()),
                 ],
                 None,
             ),
@@ -85,7 +85,7 @@ impl TypedActionView for WarpDriveSettingsPageView {
 
     fn handle_action(&mut self, action: &Self::Action, ctx: &mut ViewContext<Self>) {
         match action {
-            WarpDriveSettingsPageAction::ToggleShowWarpDrive => {
+            WarpDriveSettingsPageAction::ToggleShowOctomusDrive => {
                 WarpDriveSettings::handle(ctx).update(ctx, |settings, ctx| {
                     report_if_error!(settings.enable_warp_drive.toggle_and_save_value(ctx));
                 });
@@ -103,7 +103,7 @@ impl TypedActionView for WarpDriveSettingsPageView {
 
 impl View for WarpDriveSettingsPageView {
     fn ui_name() -> &'static str {
-        "WarpDrivePage"
+        "OctomusDrivePage"
     }
 
     fn render(&self, app: &AppContext) -> Box<dyn Element> {
@@ -113,7 +113,7 @@ impl View for WarpDriveSettingsPageView {
 
 impl SettingsPageMeta for WarpDriveSettingsPageView {
     fn section() -> SettingsSection {
-        SettingsSection::WarpDrive
+        SettingsSection::OctomusDrive
     }
 
     fn should_render(&self, _ctx: &AppContext) -> bool {
@@ -135,16 +135,16 @@ impl SettingsPageMeta for WarpDriveSettingsPageView {
 
 impl From<ViewHandle<WarpDriveSettingsPageView>> for SettingsPageViewHandle {
     fn from(view_handle: ViewHandle<WarpDriveSettingsPageView>) -> Self {
-        SettingsPageViewHandle::WarpDrive(view_handle)
+        SettingsPageViewHandle::OctomusDrive(view_handle)
     }
 }
 
 #[derive(Default)]
-struct WarpDriveHeaderWidget {
+struct OctomusDriveHeaderWidget {
     sign_up_button: MouseStateHandle,
 }
 
-impl SettingsWidget for WarpDriveHeaderWidget {
+impl SettingsWidget for OctomusDriveHeaderWidget {
     type View = WarpDriveSettingsPageView;
 
     fn search_terms(&self) -> &str {
@@ -222,12 +222,12 @@ impl SettingsWidget for WarpDriveHeaderWidget {
 }
 
 #[derive(Default)]
-struct WarpDriveToggleWidget {
+struct OctomusDriveToggleWidget {
     switch_state: SwitchStateHandle,
     info_icon_mouse_state: MouseStateHandle,
 }
 
-impl SettingsWidget for WarpDriveToggleWidget {
+impl SettingsWidget for OctomusDriveToggleWidget {
     type View = WarpDriveSettingsPageView;
 
     fn search_terms(&self) -> &str {
@@ -247,7 +247,7 @@ impl SettingsWidget for WarpDriveToggleWidget {
                 .is_anonymous_or_logged_out();
 
         render_body_item::<WarpDriveSettingsPageAction>(
-            "Warp Drive".into(),
+            "Octomus Drive".into(),
             Some(AdditionalInfo {
                 mouse_state: self.info_icon_mouse_state.clone(),
                 on_click_action: Some(WarpDriveSettingsPageAction::OpenUrl(
@@ -272,7 +272,7 @@ impl SettingsWidget for WarpDriveToggleWidget {
                 .on_click(move |ctx, _, _| {
                     if !is_anonymous_or_logged_out {
                         ctx.dispatch_typed_action(
-                            WarpDriveSettingsPageAction::ToggleShowWarpDrive,
+                            WarpDriveSettingsPageAction::ToggleShowOctomusDrive,
                         );
                     }
                 })

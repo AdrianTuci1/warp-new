@@ -1,0 +1,179 @@
+Repo: AdrianTuci1/warp-new
+
+Ești AGENT UNIC pentru Octomus — STAGE 2a (Cleanup & Infrastructură). Rulezi LOCAL pe mașina utilizatorului.
+
+=== CONTEXT ===
+Stage 1 a produs branch-ul octomus/stage1 care trece cargo check.
+Stage 2a pleacă de pe octomus/stage1 și execută SEQUENTIAL: A8 + A9 + A10 + A15.
+Fiecare task se termină cu commit. La final: cargo check + push.
+
+=== PAS 1: CLONE + BRANCH ===
+
+[bash]
+if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q "AdrianTuci1/warp-new"; then
+  cd /tmp/repo && git fetch origin && git checkout octomus/stage1 && git pull origin octomus/stage1
+else
+  rm -rf /tmp/repo
+  git clone https://x-access-token:__GH_TOKEN__@github.com/AdrianTuci1/warp-new.git /tmp/repo
+  cd /tmp/repo
+  git fetch origin octomus/stage1 && git checkout octomus/stage1
+fi
+
+# Șterge branch local stage2a dacă există
+git branch -D octomus/stage2a 2>/dev/null || true
+git checkout -b octomus/stage2a
+
+# Git config
+git config --global user.email "octomus@agent.local"
+git config --global user.name "Octomus Agent"
+
+echo "Repo gata pe branch octomus/stage2a"
+[/bash]
+
+=== TASK A8: CI/CD workflows ===
+
+EDIT .github/workflows/ci.yml:
+- Remove Sentry-related steps (sentry-cli, upload debug symbols)
+- Remove GCS/GCP auth steps
+- Remove Apple notarization steps
+- Remove SSH test steps that require GCP VM tunnel
+- Remove self-hosted runner references (namespace-profile-mac-ci)
+- Keep basic: checkout, install Rust, cargo check, cargo clippy, cargo test (nextest)
+
+EDIT .github/workflows/create_release.yml:
+- Remove Sentry release creation steps
+- Remove GCS upload steps
+- Remove Apple codesign + notarization
+- Keep: build macOS arm64/x86_64, Linux, Windows binaries
+- GitHub Releases stays — upload raw binaries (no signing)
+- Remove secrets: WARP_DEVELOPER_ID_CERT, WARP_DEVELOPER_ID_CERT_PASSWORD, WARP_CODESIGN_KEYCHAIN_PASSWORD, SENTRY_RELEASE_TOKEN, GCP-related secrets
+
+Simplify or remove:
+- .github/workflows/populate_build_cache.yml — remove self-hosted runner refs
+- .github/workflows/warp_cleanup_fix_prs.yml — rename to octomus_cleanup_fix_prs.yml
+- .github/workflows/changelog_draft.yml — remove if it references warp.dev API
+- .github/workflows/docubot_reply_to_comment.yml — DELETE
+- .github/workflows/check_approvals.yml — DELETE if references Warp team
+
+EDIT script/macos/bundle:
+- Remove notarisation steps (--notarise, xcrun altool, etc.)
+- Remove codesign steps (codesign --deep, security unlock-keychain)
+- Keep: cargo bundle, create-dmg
+
+Replace "warp" with "octomus" in:
+- .github/ISSUE_TEMPLATE/ — issue templates
+- .github/pull_request_template.md
+- Any plist files, entitlements, Info.plist
+
+Remove sentry from app/Cargo.toml dependencies if not already done.
+
+Scan for warp.dev URLs:
+grep -r "warp\.dev" . --include="*.rs" --include="*.toml" --include="*.plist" --include="*.json" --include="*.md" 2>/dev/null | grep -v ".git/" | grep -v "target/"
+Replace each with localhost or remove.
+
+=== COMMIT A8 ===
+git add -A
+git commit -m "octomus: clean CI — remove codesign/notarize/Sentry/GCS/warp.dev URLs"
+
+=== TASK A9: Final scan — dead imports, tests, README ===
+
+Run EACH grep and fix ALL findings:
+
+grep -rn "AuthState::as_ref\|AuthState::handle\|AuthStateProvider\|AuthManager" app/src/ --include="*.rs" | grep -v "_tests.rs"
+grep -rn "ServerApiProvider\|IapManager\|IapState\|ExportManager" app/src/ --include="*.rs" | grep -v "_tests.rs"
+grep -rn "CloudModel\|CloudViewModel\|CloudNotebook\|CloudWorkflow" app/src/ --include="*.rs" | grep -v "_tests.rs"
+grep -rn "UserWorkspaces\|TeamTesterStatus\|TeamUpdateManager" app/src/ --include="*.rs" | grep -v "_tests.rs"
+grep -rn "ReferralThemeStatus\|ChangelogModel\|ResourceCenter" app/src/ --include="*.rs" | grep -v "_tests.rs"
+grep -rn "SharedSessionManager\|OrchestrationViewer\|OrchestrationLaunch" app/src/ --include="*.rs" | grep -v "_tests.rs"
+grep -rn "ServerExperiments\|TelemetryCollector\|AppTelemetryContext" app/src/ --include="*.rs" | grep -v "_tests.rs"
+grep -rn "NetworkLogModel\|NetworkLogPaneManager\|SyncQueue" app/src/ --include="*.rs" | grep -v "_tests.rs"
+grep -rn "ApiKeyManager\|ServerVoiceTranscriber\|Listener" app/src/ --include="*.rs" | grep -v "_tests.rs"
+grep -rn "UpdateManager\|AIDocumentModel\|cloud_object" app/src/ --include="*.rs" | grep -v "_tests.rs"
+
+For each finding: remove import + usage, or stub with no-op, or add #[allow(unused)].
+
+DELETE cloud integration tests:
+grep -rln "auth\|billing\|pricing\|server_api\|cloud_object\|drive\|workspaces\|shared_session\|remote_server\|telemetry\|iam\|sentry" app/src/ --include="*_tests.rs" | head -50
+Delete files that only test cloud features. Remove cloud test functions from mixed files.
+Same for: grep -rln "auth\|billing\|pricing\|server_api\|cloud_object\|drive\|workspaces\|shared_session\|remote_server\|sentry" crates/ --include="*_tests.rs" | grep -v warpui | head -50
+
+EDIT README.md:
+- Title: "Octomus" instead of "Warp"
+- Remove Warp Drive, Team features, Cloud sync references
+- Remove warp.dev, sign up, login references
+- Add "This is a community fork. For the original, see warpdotdev/warp."
+- Add build from source instructions
+
+EDIT onboarding: remove login/signup flows, keep basic setup.
+
+Replace "OpenWarp\|warp.dev\|Contact Support\|Warp Drive\|Warp AI\|About Warp\|Warp Help" in UI strings.
+
+=== COMMIT A9 ===
+git add -A
+git commit -m "octomus: final scan — dead imports, tests, README, UI strings"
+
+=== TASK A10: Telemetry redirect ===
+
+EDIT crates/warp_core/src/channel/state.rs:
+In init(), find `telemetry_config: None,` for Oss channel.
+Replace with a basic config pointing to Octomus endpoint:
+telemetry_config: Some(TelemetryConfig {
+    telemetry_file_name: "octomus_telemetry_events.json".into(),
+    rudderstack_config: Some(RudderStackConfig {
+        write_key: std::env::var("OCTOMUS_RUDDER_WRITE_KEY")
+            .unwrap_or_else(|_| "octomus_default_write_key".to_string()).into(),
+        root_url: std::env::var("OCTOMUS_RUDDER_DATA_PLANE_URL")
+            .unwrap_or_else(|_| "https://telemetry.octomus.dev".to_string()).into(),
+        ugc_write_key: "".into(),
+    }),
+}),
+Add RudderStackConfig + TelemetryConfig to imports.
+Change app_id from "WarpOss" to "Octomus".
+
+STRIP app/src/server/telemetry/mod.rs (events.rs) to ~110 lines with only 5 event types:
+AppOpened, AppClosed, AppActive, ModelUsed, FeatureUsed.
+Delete ALL other event types.
+
+EDIT app/src/server/telemetry/collector.rs:
+Remove AuthStateProvider import.
+In schedule_send_active_usage_event, replace auth_state references with anonymous defaults.
+
+EDIT app/src/server/telemetry/mod.rs (the main mod file):
+Remove UGC-split logic in send_batch_messages_to_rudder. Send everything to one destination.
+
+=== COMMIT A10 ===
+git add -A
+git commit -m "octomus: redirect telemetry — minimal events, Octomus RudderStack endpoint"
+
+=== TASK A15: Skills cleanup ===
+
+DELETE: resources/bundled/skills/oz-platform/SKILL.md and directory.
+
+EDIT app/src/ai/skills/skill_manager.rs:
+- build_bundled_skill_context(): replace warp_server_url with "http://localhost:0", add octomus_cli_binary_name, keep warp_cli_binary_name for backward compat, set warp_url_scheme to empty.
+- Update doc comments referencing Warp cloud.
+
+EDIT bundled skills (Warp→Octomus in paths + text):
+- resources/bundled/skills/add-mcp-server/SKILL.md: ~/.warp/ → ~/.octomus/
+- resources/bundled/skills/change-keybinding/SKILL.md: "Warp" → "Octomus" in text
+- resources/bundled/skills/modify-settings/SKILL.md: "Warp" → "Octomus"
+- resources/bundled/skills/tab-configs/SKILL.md: ~/.warp/tab_configs/ → ~/.octomus/tab_configs/
+- resources/bundled/skills/create-tab-config/SKILL.md: ~/.warp*/ → ~/.octomus*/, "Warp" → "Octomus"
+- resources/bundled/skills/update-tab-config/SKILL.md: "Warp" → "Octomus"
+
+=== COMMIT A15 ===
+git add -A
+git commit -m "octomus: clean skills — remove oz-platform, update paths, Octomus branding"
+
+=== CARGO CHECK FINAL ===
+cargo check 2>&1 | tail -80
+Fix any compilation errors. Re-run until clean (max 30 iterations).
+
+=== PUSH ===
+git push origin octomus/stage2a
+
+=== RAPORTEAZĂ ===
+- "✅ STAGE 2a COMPLETE — octomus/stage2a pushed, cargo check clean"
+- Câte task-uri ai executat (4: A8, A9, A10, A15)
+- Câte erori de compilare ai reparat
+- Dacă cargo check nu trece, spune exact ce erori au rămas
