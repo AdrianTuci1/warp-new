@@ -1419,7 +1419,8 @@ fn add_open_setting_pages_as_editable_binding(app: &mut AppContext) {
             "workspace:show_settings_warpify_page",
             BindingDescription::new("Open Settings: Warpify")
                 .with_custom_description(bindings::MAC_MENUS_CONTEXT, "Configure Warpify..."),
-                    )
+            WorkspaceAction::ShowSettingsPage(SettingsSection::Octofy),
+        )
         .with_group(bindings::BindingGroup::Settings.as_str())
         .with_context_predicate(id!("Workspace")),
         EditableBinding::new(
@@ -1454,7 +1455,8 @@ fn add_open_setting_pages_as_editable_binding(app: &mut AppContext) {
         EditableBinding::new(
             "workspace:show_settings_environments_page",
             BindingDescription::new("Open Settings: Environments"),
-                    )
+            WorkspaceAction::ShowSettingsPage(SettingsSection::CloudPlatform),
+        )
         .with_group(bindings::BindingGroup::Settings.as_str())
         .with_context_predicate(id!("Workspace")),
         EditableBinding::new(
