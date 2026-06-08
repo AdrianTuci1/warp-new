@@ -102,6 +102,7 @@ mod telemetry;
 mod transfer_ownership_confirmation_modal;
 pub mod update_environment_form;
 mod warp_drive_page;
+mod cloud_credential_modal;
 mod cloud_page;
 // mod warpify_page;
 

@@ -1,116 +1,65 @@
-use std::sync::Arc;
-
 use warp_core::report_if_error;
 use warpui::elements::{
-    Container, CornerRadius, Element, Flex, MainAxisAlignment, MouseStateHandle, ParentElement,
-    Radius, Shrinkable, Text,
+    Container, CrossAxisAlignment, Element, Flex, MainAxisAlignment, MainAxisSize,
+    MouseStateHandle, ParentElement, Text,
 };
 use warpui::fonts::{Properties, Weight};
-use warpui::ui_components::button::{Button, ButtonVariant};
+use warpui::ui_components::button::ButtonVariant;
 use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use warpui::{
-    Action, AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
+    id, Action, AppContext, Element as WarpuiElement, Entity, SingletonEntity, TypedActionView,
+    View, ViewContext, ViewHandle,
 };
 
+use super::cloud_credential_modal::{
+    CloudCredentialModal, CloudCredentialModalEvent, CloudCredentialModalViewState,
+};
 use super::settings_page::{
-    render_body_item, AdditionalInfo, MatchData, PageType, SettingsPageMeta,
-    SettingsPageViewHandle, SettingsWidget, ToggleState,
+    MatchData, PageType, SettingsPageMeta, SettingsPageViewHandle, SettingsWidget,
 };
-use super::{LocalOnlyIconState, SettingsAction, SettingsSection};
+use super::SettingsSection;
 use crate::appearance::Appearance;
-use crate::editor::{
-    EditorView, Event as EditorEvent, PropagateAndNoOpNavigationKeys, SingleLineEditorOptions,
-    TextOptions,
-};
-use crate::view_components::dropdown::{Dropdown, DropdownAction, DropdownItem};
+use crate::modal::{Modal, ModalEvent, ModalViewState};
 
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CloudSettingsPageAction {
     AddEntry,
-    RemoveEntry(String),
-    SaveEntry,
-    SelectPlatform(ai::cloud_credentials::CloudPlatform),
-}
-
-#[derive(Debug, Clone)]
-pub enum CloudSettingsPageEvent {
-    CredentialsUpdated,
+    RemoveEntry { index: usize },
+    CloseModal,
 }
 
 pub struct CloudSettingsPageView {
     page: PageType<Self>,
-    /// Editor for entry name/label
-    name_editor: ViewHandle<EditorView>,
-    /// Editor for host or API key
-    host_or_key_editor: ViewHandle<EditorView>,
-    /// Editor for VPS username
-    vps_username_editor: ViewHandle<EditorView>,
-    /// Editor for VPS SSH key
-    vps_ssh_key_editor: ViewHandle<EditorView>,
-    /// Currently selected platform for the "add" form
-    selected_platform: ai::cloud_credentials::CloudPlatform,
-    /// Whether the add form is visible
-    show_add_form: bool,
+    add_button_mouse_state: MouseStateHandle,
+    modal_state: CloudCredentialModalViewState,
 }
 
 impl CloudSettingsPageView {
     pub fn new(ctx: &mut ViewContext<Self>) -> Self {
-        let font_family = Appearance::as_ref(ctx).ui_font_family();
-
-        let create_editor = |ctx: &mut ViewContext<EditorView>, placeholder: &str| {
-            let options = SingleLineEditorOptions {
-                text: TextOptions {
-                    font_family_override: Some(font_family),
+        let modal_view = ctx.add_typed_action_view(CloudCredentialModal::new);
+        let modal_state = CloudCredentialModalViewState::new(ModalViewState::new(
+            ctx.add_typed_action_view(|ctx| {
+                Modal::new(
+                    Some("Add Cloud Credential".to_string()),
+                    modal_view.clone(),
+                    ctx,
+                )
+                .with_body_style(UiComponentStyles {
+                    height: Some(420.),
                     ..Default::default()
-                },
-                propagate_and_no_op_vertical_navigation_keys:
-                    PropagateAndNoOpNavigationKeys::Always,
-                ..Default::default()
-            };
-            let mut editor = EditorView::single_line(options, ctx);
-            editor.set_placeholder_text(placeholder, ctx);
-            editor
-        };
+                })
+            }),
+        ));
 
-        let name_editor = ctx.add_typed_action_view(|ctx| create_editor(ctx, "Name (e.g. Production VPS)"));
-        let host_or_key_editor =
-            ctx.add_typed_action_view(|ctx| create_editor(ctx, "Modal API key or VPS host"));
-        let vps_username_editor = ctx.add_typed_action_view(|ctx| create_editor(ctx, "VPS username"));
-        let vps_ssh_key_editor = ctx.add_typed_action_view(|ctx| create_editor(ctx, "VPS SSH private key"));
-
-        ctx.subscribe_to_view(&name_editor, |me, _, event, ctx| {
-            if let EditorEvent::Blurred = event {
-                me.handle_action(&CloudSettingsPageAction::SaveEntry, ctx);
-            }
-        });
-        ctx.subscribe_to_view(&host_or_key_editor, |me, _, event, ctx| {
-            if let EditorEvent::Blurred = event {
-                me.handle_action(&CloudSettingsPageAction::SaveEntry, ctx);
-            }
-        });
-        ctx.subscribe_to_view(&vps_username_editor, |me, _, event, ctx| {
-            if let EditorEvent::Blurred = event {
-                me.handle_action(&CloudSettingsPageAction::SaveEntry, ctx);
-            }
-        });
-        ctx.subscribe_to_view(&vps_ssh_key_editor, |me, _, event, ctx| {
-            if let EditorEvent::Blurred = event {
-                me.handle_action(&CloudSettingsPageAction::SaveEntry, ctx);
+        ctx.subscribe_to_view(&modal_state.view(), |me, _, event, ctx| {
+            if let ModalEvent::Close = event {
+                me.modal_state.close(ctx);
             }
         });
 
-        let mut view = Self {
-            page: PageType::new_uncategorized(
-                vec![Box::new(CloudCredentialsWidget::default())],
-                Some("Cloud"),
-            ),
-            name_editor,
-            host_or_key_editor,
-            vps_username_editor,
-            vps_ssh_key_editor,
-            selected_platform: ai::cloud_credentials::CloudPlatform::Modal,
-            show_add_form: false,
-        };
+        ctx.subscribe_to_view(&modal_view, |me, _, event, ctx| {
+            me.handle_modal_event(event, ctx);
+        });
 
         ctx.subscribe_to_model(
             &ai::cloud_credentials::CloudCredentialsManager::handle(ctx),
@@ -119,93 +68,84 @@ impl CloudSettingsPageView {
             },
         );
 
-        view
+        Self {
+            page: PageType::new_uncategorized(
+                vec![Box::new(CloudCredentialsListWidget::default())],
+                None,
+            ),
+            add_button_mouse_state: Default::default(),
+            modal_state,
+        }
     }
 
-    fn clear_form(&mut self, ctx: &mut ViewContext<Self>) {
-        self.name_editor.update(ctx, |editor, ctx| {
-            editor.clear_buffer(ctx);
-        });
-        self.host_or_key_editor.update(ctx, |editor, ctx| {
-            editor.clear_buffer(ctx);
-        });
-        self.vps_username_editor.update(ctx, |editor, ctx| {
-            editor.clear_buffer(ctx);
-        });
-        self.vps_ssh_key_editor.update(ctx, |editor, ctx| {
-            editor.clear_buffer(ctx);
-        });
-        self.selected_platform = ai::cloud_credentials::CloudPlatform::Modal;
-        self.show_add_form = false;
+    fn handle_modal_event(
+        &mut self,
+        event: &CloudCredentialModalEvent,
+        ctx: &mut ViewContext<Self>,
+    ) {
+        match event {
+            CloudCredentialModalEvent::Close => {
+                self.modal_state.close(ctx);
+            }
+            CloudCredentialModalEvent::AddEntry {
+                platform,
+                name,
+                host_or_key,
+                vps_username,
+                vps_ssh_key,
+            } => {
+                let manager = ai::cloud_credentials::CloudCredentialsManager::handle(ctx);
+                manager.update(ctx, |manager, ctx| {
+                    manager.add_entry(
+                        ai::cloud_credentials::CloudCredentialEntry {
+                            id: uuid::Uuid::new_v4().to_string(),
+                            platform: *platform,
+                            name: Some(name.clone()),
+                            host_or_key: Some(host_or_key.clone()),
+                            vps_username: vps_username.clone(),
+                            vps_ssh_key: vps_ssh_key.clone(),
+                        },
+                        ctx,
+                    );
+                });
+                self.modal_state.close(ctx);
+            }
+        }
     }
 
-    fn read_editor_text(&self, editor: &ViewHandle<EditorView>, ctx: &ViewContext<Self>) -> String {
-        editor.read(ctx, |editor, ctx| editor.buffer_text(ctx).to_string())
+    pub fn open_add_modal(&mut self, ctx: &mut ViewContext<Self>) {
+        self.modal_state.open(ctx);
     }
 }
 
 impl Entity for CloudSettingsPageView {
-    type Event = CloudSettingsPageEvent;
+    type Event = ();
 }
+
+impl SingletonEntity for CloudSettingsPageView {}
 
 impl TypedActionView for CloudSettingsPageView {
     type Action = CloudSettingsPageAction;
 
-    fn handle_action(&mut self, action: &Self::Action, ctx: &mut ViewContext<Self>) {
-        use ai::cloud_credentials::{
-            CloudCredentialEntry, CloudCredentialsManager, CloudPlatform,
-        };
+    fn handle_action(
+        &mut self, action: &Self::Action, ctx: &mut ViewContext<Self>,
+    ) {
         match action {
             CloudSettingsPageAction::AddEntry => {
-                self.show_add_form = true;
-                ctx.notify();
+                self.open_add_modal(ctx);
             }
-            CloudSettingsPageAction::RemoveEntry(id) => {
-                CloudCredentialsManager::handle(ctx).update(ctx, |manager, ctx| {
-                    manager.remove_entry(id, ctx);
-                });
-                ctx.notify();
-            }
-            CloudSettingsPageAction::SaveEntry => {
-                let name = self.read_editor_text(&self.name_editor, ctx);
-                let host_or_key = self.read_editor_text(&self.host_or_key_editor, ctx);
-                let vps_username = self.read_editor_text(&self.vps_username_editor, ctx);
-                let vps_ssh_key = self.read_editor_text(&self.vps_ssh_key_editor, ctx);
-
-                if host_or_key.trim().is_empty() {
-                    return;
+            CloudSettingsPageAction::RemoveEntry { index } => {
+                let manager = ai::cloud_credentials::CloudCredentialsManager::handle(ctx);
+                let credentials = manager.as_ref(ctx).credentials().clone();
+                if let Some(entry) = credentials.entries.get(*index) {
+                    let id = entry.id.clone();
+                    manager.update(ctx, |manager, ctx| {
+                        manager.remove_entry(&id, ctx);
+                    });
                 }
-
-                let entry = CloudCredentialEntry {
-                    id: format!("{}", uuid::Uuid::new_v4()),
-                    platform: self.selected_platform,
-                    name: if name.trim().is_empty() {
-                        None
-                    } else {
-                        Some(name)
-                    },
-                    host_or_key: Some(host_or_key),
-                    vps_username: if vps_username.trim().is_empty() {
-                        None
-                    } else {
-                        Some(vps_username)
-                    },
-                    vps_ssh_key: if vps_ssh_key.trim().is_empty() {
-                        None
-                    } else {
-                        Some(vps_ssh_key)
-                    },
-                };
-
-                CloudCredentialsManager::handle(ctx).update(ctx, |manager, ctx| {
-                    manager.add_entry(entry, ctx);
-                });
-                self.clear_form(ctx);
-                ctx.notify();
             }
-            CloudSettingsPageAction::SelectPlatform(platform) => {
-                self.selected_platform = *platform;
-                ctx.notify();
+            CloudSettingsPageAction::CloseModal => {
+                self.modal_state.close(ctx);
             }
         }
     }
@@ -213,11 +153,18 @@ impl TypedActionView for CloudSettingsPageView {
 
 impl View for CloudSettingsPageView {
     fn ui_name() -> &'static str {
-        "CloudSettingsPage"
+        "CloudSettingsPageView"
     }
 
-    fn render(&self, app: &AppContext) -> Box<dyn Element> {
-        self.page.render(self, app)
+    fn render(&self, app: &AppContext) -> Box<dyn WarpuiElement> {
+        let mut stack = warpui::elements::Stack::new();
+        stack.add_child(self.page.render(self, app));
+
+        if self.modal_state.is_open() {
+            stack.add_child(self.modal_state.render());
+        }
+
+        stack.finish()
     }
 }
 
@@ -250,17 +197,13 @@ impl From<ViewHandle<CloudSettingsPageView>> for SettingsPageViewHandle {
 }
 
 #[derive(Default)]
-struct CloudCredentialsWidget {
-    add_button_mouse_state: MouseStateHandle,
-    remove_button_mouse_states: Vec<(String, MouseStateHandle)>,
-    platform_dropdown: Option<ViewHandle<Dropdown>>,
-}
+struct CloudCredentialsListWidget;
 
-impl SettingsWidget for CloudCredentialsWidget {
+impl SettingsWidget for CloudCredentialsListWidget {
     type View = CloudSettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "cloud vps modal credentials ssh api key"
+        "cloud platform credential modal vps ssh api key"
     }
 
     fn render(
@@ -268,84 +211,88 @@ impl SettingsWidget for CloudCredentialsWidget {
         view: &Self::View,
         appearance: &Appearance,
         app: &AppContext,
-    ) -> Box<dyn Element> {
-        use ai::cloud_credentials::{CloudCredentialsManager, CloudPlatform};
+    ) -> Box<dyn WarpuiElement> {
+        let manager = ai::cloud_credentials::CloudCredentialsManager::as_ref(app);
+        let credentials = manager.credentials();
+
         let mut col = Flex::column();
 
-        // Description
-        col.add_child(
-            Container::new(
-                Text::new_inline(
-                    "Configure credentials to launch Cloud Agents or Subagents on your VPS or Modal.",
-                    appearance.ui_font_family(),
-                    12.,
-                )
-                .with_color(appearance.theme().nonactive_ui_text_color().into())
-                .finish(),
+        // Header with add button
+        let mut header = Flex::row()
+            .with_main_axis_size(MainAxisSize::Max)
+            .with_main_axis_alignment(MainAxisAlignment::SpaceBetween)
+            .with_cross_axis_alignment(CrossAxisAlignment::Center);
+
+        header.add_child(
+            Text::new_inline(
+                "Cloud Credentials",
+                appearance.ui_font_family(),
+                appearance.header_font_size(),
             )
-            .with_margin_bottom(16.)
+            .with_style(Properties::default().weight(Weight::Semibold))
+            .with_color(appearance.theme().active_ui_text_color().into())
             .finish(),
         );
 
-        // List existing entries
-        let manager = CloudCredentialsManager::as_ref(app);
-        let creds = manager.credentials();
-
-        if !creds.entries().is_empty() {
-            for entry in creds.entries() {
-                col.add_child(render_entry_row(appearance, entry));
-            }
-        }
-
-        // Add button
         let add_button = appearance
             .ui_builder()
-            .button(ButtonVariant::Accent, self.add_button_mouse_state.clone())
+            .button(ButtonVariant::Accent, view.add_button_mouse_state.clone())
             .with_text_label("+ Add credential".to_string())
             .build()
             .on_click(|ctx, _, _| {
                 ctx.dispatch_typed_action(CloudSettingsPageAction::AddEntry);
             })
             .finish();
-        col.add_child(Container::new(add_button).with_margin_top(8.).finish());
+        header.add_child(add_button);
 
-        // Add form (shown when show_add_form is true)
-        if view.show_add_form {
-            col.add_child(render_add_form(appearance, view));
+        col.add_child(header.finish());
+        col.add_child(super::settings_page::render_separator(appearance));
+
+        if credentials.entries.is_empty() {
+            col.add_child(
+                Text::new_inline(
+                    "No credentials configured. Click \"+ Add credential\" to add one.",
+                    appearance.ui_font_family(),
+                    12.,
+                )
+                .with_color(appearance.theme().disabled_ui_text_color().into())
+                .finish(),
+            );
+        } else {
+            for (index, entry) in credentials.entries.iter().enumerate() {
+                col.add_child(render_credential_row(view, entry, index, appearance));
+            }
         }
 
         col.finish()
     }
 }
 
-fn render_entry_row(
-    appearance: &Appearance,
+fn render_credential_row(
+    _view: &CloudSettingsPageView,
     entry: &ai::cloud_credentials::CloudCredentialEntry,
-) -> Box<dyn Element> {
+    index: usize,
+    appearance: &Appearance,
+) -> Box<dyn WarpuiElement> {
     use ai::cloud_credentials::CloudPlatform;
-    let mut row = Flex::row()
-        .with_main_axis_alignment(MainAxisAlignment::SpaceBetween)
-        .with_cross_axis_alignment(warpui::elements::CrossAxisAlignment::Center);
 
-    let label = entry
-        .name
-        .as_deref()
-        .unwrap_or_else(|| match entry.platform {
-            CloudPlatform::Modal => "Modal",
-            CloudPlatform::Vps => "VPS",
-        });
+    let mut row = Flex::row()
+        .with_main_axis_size(MainAxisSize::Max)
+        .with_main_axis_alignment(MainAxisAlignment::SpaceBetween)
+        .with_cross_axis_alignment(CrossAxisAlignment::Center);
 
     let platform_icon = match entry.platform {
         CloudPlatform::Modal => "☁️",
         CloudPlatform::Vps => "🖥️",
     };
 
-    let info_text = format!(
-        "{} {} — {}",
-        platform_icon,
-        entry.platform.label(),
-        label
-    );
+    let label = if entry.name.as_deref().unwrap_or("").trim().is_empty() {
+        entry.host_or_key.as_deref().unwrap_or("").to_string()
+    } else {
+        entry.name.as_deref().unwrap_or("").to_string()
+    };
+
+    let info_text = format!("{} {} — {}", platform_icon, entry.platform.label(), label);
 
     row.add_child(
         Text::new_inline(info_text, appearance.ui_font_family(), 12.)
@@ -353,156 +300,19 @@ fn render_entry_row(
             .finish(),
     );
 
-    let host_display = entry
-        .host_or_key
-        .as_deref()
-        .unwrap_or("")
-        .chars()
-        .take(20)
-        .collect::<String>();
-    if !host_display.is_empty() {
-        row.add_child(
-            Text::new_inline(
-                format!("{}", host_display),
-                appearance.ui_font_family(),
-                11.,
-            )
-            .with_color(appearance.theme().nonactive_ui_text_color().into())
-            .finish(),
-        );
-    }
-
-    Container::new(row.finish())
-        .with_padding(warpui::elements::Padding::uniform(10.))
-        .with_background(appearance.theme().surface_2())
-        .with_corner_radius(CornerRadius::with_all(Radius::Pixels(6.)))
-        .with_margin_bottom(8.)
-        .finish()
-}
-
-fn render_add_form(appearance: &Appearance, view: &CloudSettingsPageView) -> Box<dyn Element> {
-    use ai::cloud_credentials::CloudPlatform;
-    let mut col = Flex::column();
-
-    // Platform selector
-    let platform_label = Text::new_inline("Platform", appearance.ui_font_family(), 12.)
-        .with_style(Properties::default().weight(Weight::Semibold))
-        .with_color(appearance.theme().active_ui_text_color().into())
-        .finish();
-    col.add_child(Container::new(platform_label).with_margin_bottom(4.).finish());
-
-    let platform_buttons = Flex::row().with_spacing(8.);
-    let modal_selected = view.selected_platform == CloudPlatform::Modal;
-    let vps_selected = view.selected_platform == CloudPlatform::Vps;
-
-    let modal_btn = render_platform_button(
-        appearance,
-        "Modal",
-        modal_selected,
-        CloudSettingsPageAction::SelectPlatform(CloudPlatform::Modal),
-    );
-    let vps_btn = render_platform_button(
-        appearance,
-        "VPS",
-        vps_selected,
-        CloudSettingsPageAction::SelectPlatform(CloudPlatform::Vps),
-    );
-
-    col.add_child(
-        Flex::row()
-            .with_spacing(8.)
-            .with_child(modal_btn)
-            .with_child(vps_btn)
-            .finish(),
-    );
-
-    // Name field
-    col.add_child(render_form_label(appearance, "Name"));
-    col.add_child(render_editor_container(appearance, &view.name_editor));
-
-    // Host / API Key field
-    let host_label = match view.selected_platform {
-        CloudPlatform::Modal => "Modal API Key",
-        CloudPlatform::Vps => "VPS Host (IP or hostname)",
-    };
-    col.add_child(render_form_label(appearance, host_label));
-    col.add_child(render_editor_container(appearance, &view.host_or_key_editor));
-
-    // VPS-only fields
-    if view.selected_platform == CloudPlatform::Vps {
-        col.add_child(render_form_label(appearance, "VPS Username"));
-        col.add_child(render_editor_container(appearance, &view.vps_username_editor));
-        col.add_child(render_form_label(appearance, "VPS SSH Private Key"));
-        col.add_child(render_editor_container(appearance, &view.vps_ssh_key_editor));
-    }
-
-    // Save button
-    let save_btn = appearance
+    let remove_btn = appearance
         .ui_builder()
-        .button(ButtonVariant::Accent, Default::default())
-        .with_text_label("Save".to_string())
+        .button(ButtonVariant::Basic, Default::default())
+        .with_text_label("Remove".to_string())
         .build()
-        .on_click(|ctx, _, _| {
-            ctx.dispatch_typed_action(CloudSettingsPageAction::SaveEntry);
+        .on_click(move |ctx, _, _| {
+            ctx.dispatch_typed_action(CloudSettingsPageAction::RemoveEntry { index });
         })
         .finish();
-    col.add_child(Container::new(save_btn).with_margin_top(8.).finish());
+    row.add_child(remove_btn);
 
-    Container::new(col.finish())
-        .with_padding(warpui::elements::Padding::uniform(12.))
-        .with_background(appearance.theme().surface_2())
-        .with_corner_radius(CornerRadius::with_all(Radius::Pixels(8.)))
-        .with_margin_top(12.)
-        .finish()
-}
-
-fn render_platform_button(
-    appearance: &Appearance,
-    label: &str,
-    selected: bool,
-    action: CloudSettingsPageAction,
-) -> Box<dyn Element> {
-    let bg = if selected {
-        appearance.theme().accent()
-    } else {
-        appearance.theme().surface_3()
-    };
-    let text_color = if selected {
-        appearance.theme().background()
-    } else {
-        appearance.theme().active_ui_text_color()
-    };
-
-    Container::new(
-        Text::new_inline(label.to_string(), appearance.ui_font_family(), 12.)
-            .with_color(text_color.into())
-            .finish(),
-    )
-    .with_padding(warpui::elements::Padding::uniform(6.))
-    .with_background(bg)
-    .with_corner_radius(CornerRadius::with_all(Radius::Pixels(4.)))
-    .finish()
-}
-
-fn render_form_label(appearance: &Appearance, label: &str) -> Box<dyn Element> {
-    Container::new(
-        Text::new_inline(label.to_string(), appearance.ui_font_family(), 12.)
-            .with_style(Properties::default().weight(Weight::Semibold))
-            .with_color(appearance.theme().active_ui_text_color().into())
-            .finish(),
-    )
-    .with_margin_top(8.)
-    .with_margin_bottom(4.)
-    .finish()
-}
-
-fn render_editor_container(
-    appearance: &Appearance,
-    editor: &ViewHandle<EditorView>,
-) -> Box<dyn Element> {
-    Container::new(warpui::elements::ChildView::new(editor).finish())
-        .with_padding(warpui::elements::Padding::uniform(8.))
-        .with_background(appearance.theme().surface_1())
-        .with_corner_radius(CornerRadius::with_all(Radius::Pixels(6.)))
+    Container::new(row.finish())
+        .with_padding_top(8.)
+        .with_padding_bottom(8.)
         .finish()
 }
