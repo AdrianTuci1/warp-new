@@ -1855,11 +1855,12 @@ pub(crate) fn initialize_app(
     // AIDocumentModel subscribes to UpdateManager so that it can be notified when notebooks are created on the server.
     ctx.add_singleton_model(AIDocumentModel::new);
 
+    // ProfileModel holds the user's display name and photo (no server auth required).
+    // Must be registered before AgentConversationsModel which depends on it.
+    ctx.add_singleton_model(ProfileModel::new);
+
     // AgentConversationsModel subscribes to UpdateManager for RTC task updates.
     ctx.add_singleton_model(AgentConversationsModel::new);
-
-    // ProfileModel holds the user's display name and photo (no server auth required).
-    ctx.add_singleton_model(ProfileModel::new);
 
     // ByoLlmAuthBannerSessionState tracks dismissal of the BYO LLM auth banner (e.g., AWS Bedrock login).
     ctx.add_singleton_model(ByoLlmAuthBannerSessionState::new);
