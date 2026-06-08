@@ -102,6 +102,7 @@ pub enum SettingsPageViewHandle {
     AI(ViewHandle<AISettingsPageView>),
     MCPServers(ViewHandle<MCPServersSettingsPageView>),
     OctomusDrive(ViewHandle<WarpDriveSettingsPageView>),
+    CloudPlatform(ViewHandle<super::cloud_page::CloudSettingsPageView>),
 }
 
 impl SettingsPageViewHandle {
@@ -118,6 +119,7 @@ impl SettingsPageViewHandle {
             AI(view_handle) => ChildView::new(view_handle).finish(),
             MCPServers(view_handle) => ChildView::new(view_handle).finish(),
             OctomusDrive(view_handle) => ChildView::new(view_handle).finish(),
+            CloudPlatform(view_handle) => ChildView::new(view_handle).finish(),
         }
     }
 }

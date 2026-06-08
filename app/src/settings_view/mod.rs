@@ -102,6 +102,7 @@ mod telemetry;
 mod transfer_ownership_confirmation_modal;
 pub mod update_environment_form;
 mod warp_drive_page;
+mod cloud_page;
 // mod warpify_page;
 
 #[cfg(not(target_family = "wasm"))]
@@ -1017,6 +1018,7 @@ macro_rules! update_page {
             SettingsPageViewHandle::MCPServers(handle) => $ctx.update_view(handle, $update),
             SettingsPageViewHandle::OctomusDrive(handle) => $ctx.update_view(handle, $update),
             SettingsPageViewHandle::CloudEnvironments(handle) => $ctx.update_view(handle, $update),
+            SettingsPageViewHandle::CloudPlatform(handle) => $ctx.update_view(handle, $update),
         }
     };
 }
@@ -1123,6 +1125,9 @@ impl SettingsView {
             me.handle_mcp_servers_page_event(event, ctx);
         });
 
+        // Cloud Platform page
+        let cloud_platform_page_handle = ctx.add_typed_action_view(cloud_page::CloudSettingsPageView::new);
+
         let font_family = Appearance::as_ref(ctx).ui_font_family();
         let search_editor = ctx.add_typed_action_view(|ctx| {
             let options = SingleLineEditorOptions {
@@ -1164,6 +1169,7 @@ impl SettingsView {
         settings_pages.extend(vec![
             SettingsPage::new(mcp_servers_page_handle),
             SettingsPage::new(privacy_page_handle),
+            SettingsPage::new(cloud_platform_page_handle),
         ]);
 
         // Build sidebar nav items. AI page is presented as an "Agents" umbrella
@@ -1185,6 +1191,7 @@ impl SettingsView {
             SettingsNavItem::Page(SettingsSection::Features),
             SettingsNavItem::Page(SettingsSection::Keybindings),
             SettingsNavItem::Page(SettingsSection::OctomusDrive),
+            SettingsNavItem::Page(SettingsSection::CloudPlatform),
             SettingsNavItem::Page(SettingsSection::Privacy),
         ];
 
@@ -1561,9 +1568,6 @@ impl SettingsView {
     ) {
         match event {
             MainSettingsPageEvent::CheckForUpdate => ctx.emit(SettingsViewEvent::CheckForUpdate),
-            MainSettingsPageEvent::SignupAnonymousUser => {
-                ctx.emit(SettingsViewEvent::SignupAnonymousUser)
-            }
             _ => (),
         }
     }
@@ -1667,14 +1671,9 @@ impl SettingsView {
 
     fn handle_warp_drive_page_event(
         &mut self,
-        event: &warp_drive_page::WarpDriveSettingsPageEvent,
-        ctx: &mut ViewContext<Self>,
+        _event: &warp_drive_page::WarpDriveSettingsPageEvent,
+        _ctx: &mut ViewContext<Self>,
     ) {
-        match event {
-            warp_drive_page::WarpDriveSettingsPageEvent::SignUp => {
-                ctx.emit(SettingsViewEvent::SignupAnonymousUser)
-            }
-        }
     }
 
     fn handle_ai_page_event(&mut self, event: &AISettingsPageEvent, ctx: &mut ViewContext<Self>) {
@@ -1858,6 +1857,7 @@ impl SettingsView {
             SettingsPageViewHandle::Code(v) => v.as_ref(app).should_render(app),
             SettingsPageViewHandle::OctomusDrive(v) => v.as_ref(app).should_render(app),
             SettingsPageViewHandle::CloudEnvironments(v) => v.as_ref(app).should_render(app),
+            SettingsPageViewHandle::CloudPlatform(v) => v.as_ref(app).should_render(app),
         }
     }
 

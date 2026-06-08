@@ -10,29 +10,63 @@ pub enum CloudCredentialsEvent {
     CredentialsUpdated,
 }
 
+/// Platform type for cloud credentials.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum CloudPlatform {
+    Modal,
+    Vps,
+}
+
+impl Default for CloudPlatform {
+    fn default() -> Self {
+        CloudPlatform::Modal
+    }
+}
+
+impl CloudPlatform {
+    pub fn label(&self) -> &'static str {
+        match self {
+            CloudPlatform::Modal => "Modal",
+            CloudPlatform::Vps => "VPS",
+        }
+    }
+}
+
+/// A single cloud credential entry.
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct CloudCredentialEntry {
+    pub id: String,
+    pub platform: CloudPlatform,
+    /// Display name / label for this entry
+    pub name: Option<String>,
+    /// Modal API key or VPS host
+    pub host_or_key: Option<String>,
+    /// VPS username (only used for VPS platform)
+    pub vps_username: Option<String>,
+    /// VPS SSH private key (only used for VPS platform)
+    pub vps_ssh_key: Option<String>,
+}
+
 /// User-provided credentials for cloud platforms.
 /// Used to launch Cloud Agents or Subagents on VPS or Modal.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct CloudCredentials {
-    /// Modal API key for launching subagents on Modal platform
-    pub modal_api_key: Option<String>,
-    /// VPS IP address or hostname
-    pub vps_host: Option<String>,
-    /// VPS SSH private key or password
-    pub vps_ssh_key: Option<String>,
-    /// VPS username for SSH connection
-    pub vps_username: Option<String>,
+    pub entries: Vec<CloudCredentialEntry>,
 }
 
 impl CloudCredentials {
-    pub fn has_modal_key(&self) -> bool {
-        self.modal_api_key.as_ref().is_some_and(|k| !k.trim().is_empty())
+    pub fn entries(&self) -> &[CloudCredentialEntry] {
+        &self.entries
     }
 
-    pub fn has_vps_credentials(&self) -> bool {
-        self.vps_host.as_ref().is_some_and(|h| !h.trim().is_empty())
-            && self.vps_ssh_key.as_ref().is_some_and(|k| !k.trim().is_empty())
+    pub fn modal_entries(&self) -> impl Iterator<Item = &CloudCredentialEntry> {
+        self.entries.iter().filter(|e| e.platform == CloudPlatform::Modal)
+    }
+
+    pub fn vps_entries(&self) -> impl Iterator<Item = &CloudCredentialEntry> {
+        self.entries.iter().filter(|e| e.platform == CloudPlatform::Vps)
     }
 }
 
@@ -55,26 +89,28 @@ impl CloudCredentialsManager {
         &self.credentials
     }
 
-    pub fn set_modal_api_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
-        self.credentials.modal_api_key = key;
+    pub fn add_entry(&mut self, entry: CloudCredentialEntry, ctx: &mut ModelContext<Self>) {
+        self.credentials.entries.push(entry);
         ctx.emit(CloudCredentialsEvent::CredentialsUpdated);
         self.write_to_secure_storage(ctx);
     }
 
-    pub fn set_vps_host(&mut self, host: Option<String>, ctx: &mut ModelContext<Self>) {
-        self.credentials.vps_host = host;
+    pub fn remove_entry(&mut self, id: &str, ctx: &mut ModelContext<Self>) {
+        self.credentials.entries.retain(|e| e.id != id);
         ctx.emit(CloudCredentialsEvent::CredentialsUpdated);
         self.write_to_secure_storage(ctx);
     }
 
-    pub fn set_vps_ssh_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
-        self.credentials.vps_ssh_key = key;
-        ctx.emit(CloudCredentialsEvent::CredentialsUpdated);
-        self.write_to_secure_storage(ctx);
+    pub fn update_entry(&mut self, id: &str, f: impl FnOnce(&mut CloudCredentialEntry), ctx: &mut ModelContext<Self>) {
+        if let Some(entry) = self.credentials.entries.iter_mut().find(|e| e.id == id) {
+            f(entry);
+            ctx.emit(CloudCredentialsEvent::CredentialsUpdated);
+            self.write_to_secure_storage(ctx);
+        }
     }
 
-    pub fn set_vps_username(&mut self, username: Option<String>, ctx: &mut ModelContext<Self>) {
-        self.credentials.vps_username = username;
+    pub fn set_entries(&mut self, entries: Vec<CloudCredentialEntry>, ctx: &mut ModelContext<Self>) {
+        self.credentials.entries = entries;
         ctx.emit(CloudCredentialsEvent::CredentialsUpdated);
         self.write_to_secure_storage(ctx);
     }
