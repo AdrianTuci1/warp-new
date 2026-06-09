@@ -780,7 +780,8 @@ async fn fetch_version(
         Channel::Stable => versions.stable,
         Channel::Preview => versions.preview,
         Channel::Dev => versions.dev,
-        Channel::Integration | Channel::Local | Channel::Oss => {
+        Channel::Oss => versions.dev,
+        Channel::Integration | Channel::Local => {
             // These channels don't ship release artifacts, so there's no
             // version to fetch. This branch is normally unreachable because
             // `AutoupdateState::register` gates the poll loop on the
@@ -789,7 +790,7 @@ async fn fetch_version(
             // these channels. Return an error rather than panicking so the
             // poll loop just logs and bails.
             anyhow::bail!(
-                "Local, integration, and open-source channel binaries don't support autoupdate"
+                "Local and integration channel binaries don't support autoupdate"
             );
         }
     };
@@ -1152,8 +1153,9 @@ fn release_assets_directory_url(channel: Channel, version: &str) -> String {
             format!("{releases_base_url}/preview/{version}")
         }
         Channel::Dev => format!("{releases_base_url}/dev/{version}"),
-        Channel::Local | Channel::Integration | Channel::Oss => {
-            unreachable!("local/integration/oss autoupdate not supported");
+        Channel::Oss => format!("{releases_base_url}/oss/{version}"),
+        Channel::Local | Channel::Integration => {
+            unreachable!("local/integration autoupdate not supported");
         }
     }
 }

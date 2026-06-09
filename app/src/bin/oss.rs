@@ -3,7 +3,7 @@
 #![cfg_attr(feature = "release_bundle", windows_subsystem = "windows")]
 
 use anyhow::Result;
-use warp_core::channel::{Channel, ChannelConfig, ChannelState, OzConfig, WarpServerConfig};
+use warp_core::channel::{AutoupdateConfig, Channel, ChannelConfig, ChannelState, OzConfig, WarpServerConfig};
 use warp_core::AppId;
 
 // Simple wrapper around warp::run() for Warp OSS builds.
@@ -17,7 +17,10 @@ fn main() -> Result<()> {
             oz_config: OzConfig::production(),
             telemetry_config: None,
             crash_reporting_config: None,
-            autoupdate_config: None,
+            autoupdate_config: Some(AutoupdateConfig {
+                releases_base_url: option_env!("R2_RELEASES_BASE_URL").unwrap_or("").into(),
+                show_autoupdate_menu_items: true,
+            }),
             mcp_static_config: None,
         },
     );
