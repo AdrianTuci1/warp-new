@@ -2195,10 +2195,9 @@ impl UpdateManager {
         }
 
         // Cloud sync disabled - remove object locally only
-        let deleted_objects =
-            CloudModel::handle(ctx).update(ctx, |cloud_model, ctx| {
-                cloud_model.delete_object_and_descendants(server_id.uid(), ctx)
-            });
+        let deleted_objects = CloudModel::handle(ctx).update(ctx, |cloud_model, ctx| {
+            cloud_model.delete_object_and_descendants(server_id.uid(), ctx)
+        });
 
         // Show a confirmation toast.
         ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
@@ -4006,8 +4005,7 @@ impl UpdateManager {
             }
 
             // Persist changes in sqlite.
-            let hashed_sqlite_id =
-                server_id.sqlite_type_and_uid_hash(id.object_id_type());
+            let hashed_sqlite_id = server_id.sqlite_type_and_uid_hash(id.object_id_type());
             self.save_in_memory_object_metadata_to_sqlite(
                 cloud_model,
                 &hashed_id,
@@ -4132,7 +4130,8 @@ impl UpdateManager {
             }
         });
 
-        let num_deleted_objects = self.on_object_delete_success(vec![SyncId::ServerId(server_id)], ctx);
+        let num_deleted_objects =
+            self.on_object_delete_success(vec![SyncId::ServerId(server_id)], ctx);
         ctx.emit(UpdateManagerEvent::ObjectOperationComplete {
             result: ObjectOperationResult {
                 success_type: OperationSuccessType::Success,

@@ -22,7 +22,6 @@ use warpui::elements::{
 use warpui::fonts::{Properties, Weight};
 use warpui::keymap::{ContextPredicate, Keystroke};
 use warpui::platform::Cursor;
-use warpui::ui_components::button::ButtonVariant;
 use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use warpui::ui_components::slider::SliderStateHandle;
 use warpui::ui_components::switch::{SwitchStateHandle, TooltipConfig};
@@ -79,11 +78,11 @@ use crate::settings::{
     AIAutoDetectionEnabled, AICommandDenylist, AISettingsChangedEvent,
     AgentModeCodingPermissionsType, AgentModeCommandExecutionDenylist,
     AgentModeCommandExecutionPredicate, AgentModeQuerySuggestionsEnabled, AwsBedrockAutoLogin,
-    AwsBedrockCredentialsEnabled, CanUseWarpCreditsForFallback, CodeSettings,
-    CodebaseContextEnabled, FileBasedMcpEnabled, GitOperationsAutogenEnabled,
-    IncludeAgentCommandsInHistory, InputSettings, IntelligentAutosuggestionsEnabled, MemoryEnabled,
-    NLDInTerminalEnabled, NaturalLanguageAutosuggestionsEnabled, PromptSubmissionMode,
-    RuleSuggestionsEnabled, SharedBlockTitleGenerationEnabled, ShouldRenderCLIAgentToolbar,
+    AwsBedrockCredentialsEnabled, CodeSettings, CodebaseContextEnabled, FileBasedMcpEnabled,
+    GitOperationsAutogenEnabled, IncludeAgentCommandsInHistory, InputSettings,
+    IntelligentAutosuggestionsEnabled, MemoryEnabled, NLDInTerminalEnabled,
+    NaturalLanguageAutosuggestionsEnabled, PromptSubmissionMode, RuleSuggestionsEnabled,
+    SharedBlockTitleGenerationEnabled, ShouldRenderCLIAgentToolbar,
     ShouldRenderUseAgentToolbarForUserCommands, ShouldShowOzUpdatesInZeroState, ShowAgentTips,
     ShowConversationHistory, ShowHintText, ThinkingDisplayMode, VoiceInputEnabled,
     WarpDriveContextEnabled,
@@ -288,8 +287,8 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
     ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
         vec![ToggleSettingActionPair::custom(
             SettingActionPairDescriptions::new(
-                "Show Oz changelog in new agent conversation view",
-                "Hide Oz changelog in new agent conversation view",
+                "Show Octo changelog in new agent conversation view",
+                "Hide Octo changelog in new agent conversation view",
             ),
             builder(SettingsAction::AI(
                 AISettingsPageAction::ToggleShowOzUpdatesInZeroState,
@@ -522,20 +521,6 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
     );
     ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
         vec![
-            ToggleSettingActionPair::new(
-                "Warp credit fallback",
-                builder(SettingsAction::AI(
-                    AISettingsPageAction::ToggleCanUseWarpCreditsForFallback,
-                )),
-                &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
-                flags::WARP_CREDIT_FALLBACK_FLAG,
-            )
-            .with_group(bindings::BindingGroup::WarpAi)
-            .is_supported_on_current_platform(
-                UserWorkspaces::as_ref(app).is_byo_api_key_enabled(app)
-                    || (FeatureFlag::CustomInferenceEndpoints.is_enabled()
-                        && UserWorkspaces::as_ref(app).is_custom_inference_enabled(app)),
-            ),
             ToggleSettingActionPair::new(
                 "auto show or hide Rich Input based on agent status",
                 builder(SettingsAction::AI(
@@ -1819,8 +1804,7 @@ impl AISettingsPageView {
             .collect()
     }
     fn can_use_custom_inference_controls(app: &AppContext) -> bool {
-        FeatureFlag::CustomInferenceEndpoints.is_enabled()
-            && AISettings::as_ref(app).is_any_ai_enabled(app)
+        AISettings::as_ref(app).is_any_ai_enabled(app)
             && UserWorkspaces::as_ref(app).is_custom_inference_enabled(app)
     }
 
@@ -6335,7 +6319,7 @@ impl SettingsWidget for OtherAIWidget {
         if FeatureFlag::AgentView.is_enabled() {
             let mut agent_view_column = Flex::column()
                 .with_child(render_ai_setting_toggle::<ShouldShowOzUpdatesInZeroState>(
-                    "Show Oz changelog in new conversation view",
+                    "Show Octo changelog in new conversation view",
                     AISettingsPageAction::ToggleShowOzUpdatesInZeroState,
                     *ai_settings.should_show_oz_updates_in_zero_state,
                     is_toggleable,
@@ -6743,7 +6727,7 @@ impl SettingsWidget for AgentAttributionWidget {
     type View = AISettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "agent attribution commit pull request co-author author credit oz warp"
+        "agent attribution commit pull request co-author author credit octo octomus"
     }
 
     fn render(
@@ -6819,7 +6803,7 @@ impl SettingsWidget for AgentAttributionWidget {
             )
             .with_child(toggle_row)
             .with_child(render_ai_setting_description(
-                "Oz can add attribution to commit messages and pull requests it creates",
+                "Octo can add attribution to commit messages and pull requests it creates",
                 !state.is_disabled,
                 app,
             ))
@@ -6840,7 +6824,7 @@ impl SettingsWidget for CloudAgentComputerUseWidget {
     type View = AISettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "oz cloud agent computer use orchestration multi-agent"
+        "octo octomus cloud agent computer use orchestration multi-agent"
     }
 
     fn render(
@@ -6924,7 +6908,7 @@ impl SettingsWidget for CloudAgentComputerUseWidget {
             )
             .with_child(toggle_row)
             .with_child(render_ai_setting_description(
-                "Enable computer use in cloud agent conversations started from the Warp app.",
+                "Enable computer use in cloud agent conversations started from Octomus.",
                 !is_disabled,
                 app,
             ))
@@ -7101,8 +7085,6 @@ struct ApiKeysWidget {
     openai_api_key_editor: ViewHandle<EditorView>,
     anthropic_api_key_editor: ViewHandle<EditorView>,
     google_api_key_editor: ViewHandle<EditorView>,
-
-    can_use_warp_credits_for_fallback: SwitchStateHandle,
     upgrade_highlight_index: HighlightedHyperlink,
 
     custom_inference_info_tooltip: MouseStateHandle,
@@ -7213,8 +7195,6 @@ impl ApiKeysWidget {
             openai_api_key_editor,
             anthropic_api_key_editor,
             google_api_key_editor,
-
-            can_use_warp_credits_for_fallback: Default::default(),
             upgrade_highlight_index: Default::default(),
 
             custom_inference_info_tooltip: Default::default(),
@@ -7464,35 +7444,6 @@ impl ApiKeysWidget {
         }
         list.finish()
     }
-
-    fn render_warp_credit_fallback_toggle(
-        &self,
-        view: &AISettingsPageView,
-        app: &AppContext,
-    ) -> Box<dyn Element> {
-        let ai_settings = AISettings::as_ref(app);
-
-        let toggle = render_ai_setting_toggle::<CanUseWarpCreditsForFallback>(
-            "Warp credit fallback",
-            AISettingsPageAction::ToggleCanUseWarpCreditsForFallback,
-            *ai_settings.can_use_warp_credits_for_fallback,
-            ai_settings.is_any_ai_enabled(app),
-            self.can_use_warp_credits_for_fallback.clone(),
-            &view.local_only_icon_tooltip_states,
-            app,
-        );
-
-        let description = render_ai_setting_description(
-            "When enabled, agent requests may be routed to one of Warp's provided models in the event of an error. Warp will prioritize using your API keys over your Warp credits.",
-            ai_settings.is_any_ai_enabled(app),
-            app,
-        );
-
-        Flex::column()
-            .with_child(toggle)
-            .with_child(description)
-            .finish()
-    }
 }
 
 impl SettingsWidget for ApiKeysWidget {
@@ -7515,8 +7466,7 @@ impl SettingsWidget for ApiKeysWidget {
             UserWorkspaces::as_ref(app).is_custom_inference_enabled(app);
         let provider_keys_enabled = is_any_ai_enabled && is_byo_enabled;
         let custom_inference_controls_enabled = is_any_ai_enabled && is_custom_inference_enabled;
-        let custom_inference_flag_on = FeatureFlag::CustomInferenceEndpoints.is_enabled();
-        let show_custom_inference = custom_inference_flag_on && is_custom_inference_enabled;
+        let show_custom_inference = is_custom_inference_enabled;
 
         let mut column = Flex::column().with_child(render_separator(appearance));
 
@@ -7600,15 +7550,6 @@ impl SettingsWidget for ApiKeysWidget {
                     app,
                 ));
             }
-        }
-
-        // Warp credit fallback toggle (shown when BYO or custom inference is enabled)
-        if is_byo_enabled || show_custom_inference {
-            column.add_child(
-                Container::new(self.render_warp_credit_fallback_toggle(view, app))
-                    .with_margin_top(16.)
-                    .finish(),
-            );
         }
 
         // Upgrade CTA if BYOK not enabled

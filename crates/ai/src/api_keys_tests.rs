@@ -3,6 +3,7 @@ use super::*;
 fn make_manager(keys: ApiKeys) -> ApiKeyManager {
     ApiKeyManager {
         keys,
+        request_credentials_override: None,
         aws_credentials_state: AwsCredentialsState::Missing,
         aws_credentials_refresh_strategy: AwsCredentialsRefreshStrategy::default(),
         secure_storage_write_version: 0,
@@ -333,4 +334,60 @@ fn api_keys_for_request_none_for_custom_endpoints_only() {
         ..Default::default()
     });
     assert!(mgr.api_keys_for_request(true, false).is_none());
+}
+
+// ── request_credentials_override ───────────────────────────────
+
+#[test]
+fn request_credentials_override_builds_provider_api_keys() {
+    let override_config = RequestCredentialsOverride {
+        api_keys: ApiKeys {
+            openai: Some("sk-openai".into()),
+            anthropic: Some("sk-anthropic".into()),
+            ..Default::default()
+        },
+        allow_use_of_warp_credits: Some(false),
+    };
+
+    let api_keys = override_config.api_keys_for_request().unwrap();
+    assert_eq!(api_keys.openai, "sk-openai");
+    assert_eq!(api_keys.anthropic, "sk-anthropic");
+    assert!(!api_keys.allow_use_of_warp_credits);
+}
+
+#[test]
+fn request_credentials_override_supports_warp_credit_only_runs() {
+    let override_config = RequestCredentialsOverride {
+        api_keys: ApiKeys::default(),
+        allow_use_of_warp_credits: Some(true),
+    };
+
+    let api_keys = override_config.api_keys_for_request().unwrap();
+    assert!(api_keys.allow_use_of_warp_credits);
+    assert!(api_keys.openai.is_empty());
+    assert!(api_keys.anthropic.is_empty());
+}
+
+#[test]
+fn request_credentials_override_builds_custom_model_providers() {
+    let override_config = RequestCredentialsOverride {
+        api_keys: ApiKeys {
+            custom_endpoints: vec![endpoint_with_keys(
+                "ep",
+                "https://custom.example/v1",
+                "custom-key",
+                &[("custom-model", Some("alias"), "cfg-1")],
+            )],
+            ..Default::default()
+        },
+        allow_use_of_warp_credits: None,
+    };
+
+    let providers = override_config
+        .custom_model_providers_for_request()
+        .unwrap();
+    assert_eq!(providers.providers.len(), 1);
+    assert_eq!(providers.providers[0].base_url, "https://custom.example/v1");
+    assert_eq!(providers.providers[0].api_key, "custom-key");
+    assert_eq!(providers.providers[0].models[0].config_key, "cfg-1");
 }

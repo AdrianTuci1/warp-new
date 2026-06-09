@@ -182,10 +182,7 @@ fn subpage_display_names_are_correct() {
         SettingsSection::EditorAndCodeReview.to_string(),
         "Editor and Code Review"
     );
-    assert_eq!(
-        SettingsSection::CloudPlatform.to_string(),
-        "Cloud platform"
-    );
+    assert_eq!(SettingsSection::CloudPlatform.to_string(), "Cloud platform");
 }
 
 #[test]
@@ -695,7 +692,10 @@ fn collapsed_umbrella_is_a_single_nav_stop() {
             last_subpage: SettingsSection::CloudPlatform,
         }
     ));
-    assert!(matches!(stops[5], NavStop::Section(SettingsSection::Account)));
+    assert!(matches!(
+        stops[5],
+        NavStop::Section(SettingsSection::Account)
+    ));
 }
 
 #[test]

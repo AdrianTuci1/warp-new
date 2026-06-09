@@ -398,6 +398,7 @@ fn build_merged_config_and_task(
             .or(file_merged.computer_use_enabled),
         harness: harness_override,
         harness_auth_secrets: None,
+        octomus_cloud_credentials: None,
     };
 
     let runtime_mcp_specs = match merged_config.mcp_servers.as_ref() {
@@ -493,6 +494,7 @@ fn build_server_side_task(
         computer_use_enabled: args.computer_use.computer_use_override(),
         harness: harness_override,
         harness_auth_secrets: None,
+        octomus_cloud_credentials: None,
     };
 
     let skill = resolved_skill.as_ref().map(|s| s.parsed_skill.clone());
@@ -671,6 +673,14 @@ impl AgentDriverRunner {
                 }
             }
             let resume_conversation_id = args.conversation.clone();
+
+            foreground
+                .spawn(|_, ctx| {
+                    ApiKeyManager::handle(ctx).update(ctx, |manager, _ctx| {
+                        manager.set_request_credentials_override(None);
+                    });
+                })
+                .await?;
 
             // Build driver options and task, handling task creation or existing task setup.
             // For the `--task-id` path, `task_conversation_id` is the `conversation_id` read off
@@ -1214,32 +1224,52 @@ impl AgentDriverRunner {
                 }
             }
         };
-        let (parent_run_id, task_conversation_id, task_harness, task_harness_model_config) =
-            match task_metadata_result {
-                Ok(Some(task_metadata)) => {
-                    // The task's harness is stored on the snapshot; if absent, it's the default Oz.
-                    let task_harness_config = task_metadata
-                        .agent_config_snapshot
-                        .as_ref()
-                        .and_then(|c| c.harness.as_ref());
-                    let task_harness = task_harness_config
-                        .map(|h| h.harness_type)
-                        .unwrap_or(Harness::Oz);
-                    let task_harness_model_config =
-                        task_harness_config.and_then(|h| h.model_config());
-                    (
-                        task_metadata.parent_run_id,
-                        task_metadata.conversation_id,
-                        Some(task_harness),
-                        task_harness_model_config,
-                    )
+        let (
+            parent_run_id,
+            task_conversation_id,
+            task_harness,
+            task_harness_model_config,
+            task_request_credentials_override,
+        ) = match task_metadata_result {
+            Ok(Some(task_metadata)) => {
+                // The task's harness is stored on the snapshot; if absent, it's the default Oz.
+                let task_harness_config = task_metadata
+                    .agent_config_snapshot
+                    .as_ref()
+                    .and_then(|c| c.harness.as_ref());
+                let task_harness = task_harness_config
+                    .map(|h| h.harness_type)
+                    .unwrap_or(Harness::Oz);
+                let task_harness_model_config = task_harness_config.and_then(|h| h.model_config());
+                let task_request_credentials_override = task_metadata
+                    .agent_config_snapshot
+                    .as_ref()
+                    .and_then(|snapshot| snapshot.octomus_cloud_credentials.clone());
+                (
+                    task_metadata.parent_run_id,
+                    task_metadata.conversation_id,
+                    Some(task_harness),
+                    task_harness_model_config,
+                    task_request_credentials_override,
+                )
+            }
+            Ok(None) => (None, None, None, None, None),
+            Err(err) => {
+                log::warn!("Failed to fetch task metadata: {err:#}");
+                (None, None, None, None, None)
+            }
+        };
+
+        foreground
+            .spawn({
+                let task_request_credentials_override = task_request_credentials_override.clone();
+                move |_, ctx| {
+                    ApiKeyManager::handle(ctx).update(ctx, |manager, _ctx| {
+                        manager.set_request_credentials_override(task_request_credentials_override);
+                    });
                 }
-                Ok(None) => (None, None, None, None),
-                Err(err) => {
-                    log::warn!("Failed to fetch task metadata: {err:#}");
-                    (None, None, None, None)
-                }
-            };
+            })
+            .await?;
 
         // Validate the requested `--harness` against the task's harness setting. This avoids the
         // extra conversation-metadata roundtrip that would otherwise be needed downstream when the

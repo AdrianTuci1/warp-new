@@ -28,7 +28,6 @@ mod crash_recovery;
 #[cfg(feature = "crash_reporting")]
 mod crash_reporting;
 mod debug_dump;
-pub mod profile;
 mod default_terminal;
 mod download_method;
 mod drive;
@@ -60,6 +59,7 @@ mod prefix;
 #[cfg(target_os = "macos")]
 mod preview_config_migration;
 mod pricing;
+pub mod profile;
 mod profiling;
 mod projects;
 mod prompt;

@@ -83,8 +83,9 @@ fn test_highlight_urls() {
 #[test]
 fn test_highlight_urls_unicode() {
     let test_runs = vec![StyledBufferRun {
-        run: "This (not https://example.com) is a 🔥 link about a 🇨🇦 🏡:\u{a0}https://localhost:8080"
-            .to_string(),
+        run:
+            "This (not https://example.com) is a 🔥 link about a 🇨🇦 🏡:\u{a0}https://localhost:8080"
+                .to_string(),
         text_styles: Default::default(),
         block_style: BufferBlockStyle::PlainText,
     }];
@@ -133,7 +134,8 @@ fn test_links_not_auto_highlighted() {
         },
         StyledBufferRun {
             run: "http://example.com".to_string(),
-            text_styles: TextStylesWithMetadata::default().link("https://localhost:8080".to_string()),
+            text_styles: TextStylesWithMetadata::default()
+                .link("https://localhost:8080".to_string()),
             block_style: BufferBlockStyle::PlainText,
         },
         StyledBufferRun {
@@ -205,7 +207,8 @@ fn test_text_around_link_not_auto_highlighted() {
         },
         StyledBufferRun {
             run: "alink".to_string(),
-            text_styles: TextStylesWithMetadata::default().link("https://localhost:8080".to_string()),
+            text_styles: TextStylesWithMetadata::default()
+                .link("https://localhost:8080".to_string()),
             block_style: BufferBlockStyle::PlainText,
         },
         StyledBufferRun {

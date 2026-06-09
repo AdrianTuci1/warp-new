@@ -1145,7 +1145,7 @@ pub fn init(app: &mut AppContext) {
         .with_custom_action(CustomAction::NewAgentModePane),
         EditableBinding::new(
             "workspace:toggle_ai_assistant",
-            "Toggle Warp AI",
+            "Toggle Octomus Agent",
             WorkspaceAction::ToggleAIAssistant,
         )
         .with_enabled(|| !FeatureFlag::AgentMode.is_enabled())
@@ -1417,7 +1417,7 @@ fn add_open_setting_pages_as_editable_binding(app: &mut AppContext) {
         .with_context_predicate(id!("Workspace")),
         EditableBinding::new(
             "workspace:show_settings_warpify_page",
-            BindingDescription::new("Open Settings: Warpify")
+            BindingDescription::new("Open Settings: Octofy")
                 .with_custom_description(bindings::MAC_MENUS_CONTEXT, "Configure Octofy..."),
             WorkspaceAction::ShowSettingsPage(SettingsSection::Octofy),
         )

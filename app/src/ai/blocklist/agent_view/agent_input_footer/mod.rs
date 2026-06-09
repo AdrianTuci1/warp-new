@@ -67,8 +67,6 @@ use crate::context_chips::{self, ContextChipKind};
 use crate::features::FeatureFlag;
 use crate::network::NetworkStatus;
 use crate::send_telemetry_from_ctx;
-#[cfg(feature = "voice_input")]
-use crate::voice::transcriber::TranscribeError;
 #[cfg(not(target_family = "wasm"))]
 use crate::server::telemetry::PluginChipTelemetryAction;
 use crate::server::telemetry::{PluginChipTelemetryKind, TelemetryEvent};
@@ -110,6 +108,8 @@ use crate::view_components::action_button::{
 use crate::view_components::DismissibleToast;
 #[cfg(not(target_family = "wasm"))]
 use crate::view_components::ToastLink;
+#[cfg(feature = "voice_input")]
+use crate::voice::transcriber::TranscribeError;
 use crate::workspace::view::TOGGLE_PROJECT_EXPLORER_BINDING_NAME;
 use crate::workspace::ToastStack;
 #[cfg(not(target_family = "wasm"))]

@@ -7,8 +7,8 @@ use url::{Origin, ParseError, Url};
 
 use super::Channel;
 use crate::channel::config::{
-    ChannelConfig, IapConfig, McpOAuthProviderConfig, OzConfig, RudderStackDestination,
-    RudderStackConfig, TelemetryConfig, WarpServerConfig,
+    ChannelConfig, IapConfig, McpOAuthProviderConfig, OzConfig, RudderStackConfig,
+    RudderStackDestination, TelemetryConfig, WarpServerConfig,
 };
 use crate::features::FeatureFlag;
 use crate::AppId;
@@ -47,15 +47,17 @@ impl ChannelState {
                 server_config: WarpServerConfig::production(),
                 oz_config: OzConfig::production(),
                 telemetry_config: Some(TelemetryConfig {
-    telemetry_file_name: "octomus_telemetry_events.json".into(),
-    rudderstack_config: Some(RudderStackConfig {
-        write_key: std::env::var("OCTOMUS_RUDDER_WRITE_KEY")
-            .unwrap_or_else(|_| "octomus_default_write_key".to_string()).into(),
-        root_url: std::env::var("OCTOMUS_RUDDER_DATA_PLANE_URL")
-            .unwrap_or_else(|_| "https://telemetry.octomus.dev".to_string()).into(),
-        ugc_write_key: "".into(),
-    }),
-}),
+                    telemetry_file_name: "octomus_telemetry_events.json".into(),
+                    rudderstack_config: Some(RudderStackConfig {
+                        write_key: std::env::var("OCTOMUS_RUDDER_WRITE_KEY")
+                            .unwrap_or_else(|_| "octomus_default_write_key".to_string())
+                            .into(),
+                        root_url: std::env::var("OCTOMUS_RUDDER_DATA_PLANE_URL")
+                            .unwrap_or_else(|_| "https://telemetry.octomus.dev".to_string())
+                            .into(),
+                        ugc_write_key: "".into(),
+                    }),
+                }),
                 autoupdate_config: None,
                 crash_reporting_config: None,
                 mcp_static_config: None,

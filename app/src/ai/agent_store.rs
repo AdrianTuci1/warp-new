@@ -109,11 +109,7 @@ impl AgentStore {
             .collect()
     }
 
-    pub fn update_status(
-        &self,
-        agent_name: &str,
-        status: AgentStatus,
-    ) -> std::io::Result<()> {
+    pub fn update_status(&self, agent_name: &str, status: AgentStatus) -> std::io::Result<()> {
         let dir = self.agent_dir(agent_name);
         fs::create_dir_all(&dir)?;
         let path = dir.join("status.json");
@@ -128,12 +124,7 @@ impl AgentStore {
         serde_json::from_str(&json).ok()
     }
 
-    pub fn store_artifact(
-        &self,
-        agent_name: &str,
-        name: &str,
-        data: &str,
-    ) -> std::io::Result<()> {
+    pub fn store_artifact(&self, agent_name: &str, name: &str, data: &str) -> std::io::Result<()> {
         let dir = self.agent_dir(agent_name).join("artifacts");
         fs::create_dir_all(&dir)?;
         fs::write(dir.join(name), data)?;
@@ -152,8 +143,8 @@ impl AgentStore {
         if !base.exists() {
             return;
         }
-        let cutoff = std::time::SystemTime::now()
-            .checked_sub(std::time::Duration::from_secs(7 * 86400));
+        let cutoff =
+            std::time::SystemTime::now().checked_sub(std::time::Duration::from_secs(7 * 86400));
         let Some(cutoff) = cutoff else { return };
         if let Ok(entries) = fs::read_dir(&base) {
             for entry in entries.flatten() {

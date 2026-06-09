@@ -62,11 +62,15 @@ impl CloudCredentials {
     }
 
     pub fn modal_entries(&self) -> impl Iterator<Item = &CloudCredentialEntry> {
-        self.entries.iter().filter(|e| e.platform == CloudPlatform::Modal)
+        self.entries
+            .iter()
+            .filter(|e| e.platform == CloudPlatform::Modal)
     }
 
     pub fn vps_entries(&self) -> impl Iterator<Item = &CloudCredentialEntry> {
-        self.entries.iter().filter(|e| e.platform == CloudPlatform::Vps)
+        self.entries
+            .iter()
+            .filter(|e| e.platform == CloudPlatform::Vps)
     }
 }
 
@@ -101,7 +105,12 @@ impl CloudCredentialsManager {
         self.write_to_secure_storage(ctx);
     }
 
-    pub fn update_entry(&mut self, id: &str, f: impl FnOnce(&mut CloudCredentialEntry), ctx: &mut ModelContext<Self>) {
+    pub fn update_entry(
+        &mut self,
+        id: &str,
+        f: impl FnOnce(&mut CloudCredentialEntry),
+        ctx: &mut ModelContext<Self>,
+    ) {
         if let Some(entry) = self.credentials.entries.iter_mut().find(|e| e.id == id) {
             f(entry);
             ctx.emit(CloudCredentialsEvent::CredentialsUpdated);
@@ -109,7 +118,11 @@ impl CloudCredentialsManager {
         }
     }
 
-    pub fn set_entries(&mut self, entries: Vec<CloudCredentialEntry>, ctx: &mut ModelContext<Self>) {
+    pub fn set_entries(
+        &mut self,
+        entries: Vec<CloudCredentialEntry>,
+        ctx: &mut ModelContext<Self>,
+    ) {
         self.credentials.entries = entries;
         ctx.emit(CloudCredentialsEvent::CredentialsUpdated);
         self.write_to_secure_storage(ctx);

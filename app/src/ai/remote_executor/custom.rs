@@ -28,7 +28,10 @@ impl RemoteExecutor for CustomExecutor {
             .await
             .map_err(|e| format!("custom http test_connection failed: {e}"))?;
         if !resp.status().is_success() {
-            return Err(format!("custom http test_connection failed: {}", resp.status()));
+            return Err(format!(
+                "custom http test_connection failed: {}",
+                resp.status()
+            ));
         }
         Ok(())
     }

@@ -1,9 +1,7 @@
 use warp_core::features::FeatureFlag;
 use warp_core::report_if_error;
 use warp_core::settings::ToggleableSetting as _;
-use warpui::elements::{
-    Container, Element, Flex, MouseStateHandle, ParentElement, Text,
-};
+use warpui::elements::{Container, Element, Flex, MouseStateHandle, ParentElement, Text};
 use warpui::keymap::ContextPredicate;
 use warpui::ui_components::components::UiComponent;
 use warpui::ui_components::switch::SwitchStateHandle;
@@ -50,8 +48,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
     );
 }
 
-pub enum WarpDriveSettingsPageEvent {
-}
+pub enum WarpDriveSettingsPageEvent {}
 
 pub struct WarpDriveSettingsPageView {
     page: PageType<Self>,
@@ -61,9 +58,7 @@ impl WarpDriveSettingsPageView {
     pub fn new(_ctx: &mut ViewContext<Self>) -> Self {
         Self {
             page: PageType::new_uncategorized(
-                vec![
-                    Box::new(OctomusDriveToggleWidget::default()),
-                ],
+                vec![Box::new(OctomusDriveToggleWidget::default())],
                 None,
             ),
         }

@@ -1,13 +1,13 @@
 // Octomus — generic remote executor for "Run Remote".
 // Supports SSH, Modal, and custom HTTP endpoints configured via settings.
 
-pub mod ssh;
-pub mod modal;
 pub mod custom;
+pub mod modal;
+pub mod ssh;
 
-use std::path::PathBuf;
 use futures::stream::Stream;
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
 /// The backend type configured in settings.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

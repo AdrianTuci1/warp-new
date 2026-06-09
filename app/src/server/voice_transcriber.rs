@@ -5,7 +5,7 @@ use warpui::{Entity, SingletonEntity};
 
 use super::server_api::ServerApi;
 use crate::ai::voice::transcribe::{Provider, TranscribeRequest};
-use crate::voice::transcriber::{Transcriber, TranscribeError};
+use crate::voice::transcriber::{TranscribeError, Transcriber};
 
 pub struct ServerVoiceTranscriber {
     server_api: Arc<ServerApi>,

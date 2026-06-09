@@ -712,7 +712,7 @@ fn test_has_any_ai_remaining_true_with_byo_key_and_no_workspace() {
 }
 
 #[test]
-fn test_byo_api_key_disabled_for_anonymous_firebase_user() {
+fn test_byo_api_key_enabled_for_anonymous_firebase_user_when_solo_byok_enabled() {
     App::test((), |mut app| async move {
         let _guard = FeatureFlag::SoloUserByok.override_enabled(true);
 
@@ -725,8 +725,8 @@ fn test_byo_api_key_disabled_for_anonymous_firebase_user() {
 
         app.read(|ctx| {
             assert!(
-                !UserWorkspaces::as_ref(ctx).is_byo_api_key_enabled(ctx),
-                "expected is_byo_api_key_enabled to be false for anonymous Firebase users even with SoloUserByok enabled",
+                UserWorkspaces::as_ref(ctx).is_byo_api_key_enabled(ctx),
+                "expected is_byo_api_key_enabled to be true for anonymous Firebase users when SoloUserByok is enabled",
             );
         });
 
@@ -735,8 +735,23 @@ fn test_byo_api_key_disabled_for_anonymous_firebase_user() {
             model.bonus_grants.clear();
 
             assert!(
-                !model.has_any_ai_remaining(ctx),
-                "expected has_any_ai_remaining to be false for anonymous Firebase user even with BYO key and SoloUserByok enabled",
+                model.has_any_ai_remaining(ctx),
+                "expected has_any_ai_remaining to be true for anonymous Firebase user with a BYO key when SoloUserByok is enabled",
+            );
+        });
+    });
+}
+
+#[test]
+fn test_custom_inference_enabled_for_anonymous_firebase_user_without_workspace() {
+    App::test((), |mut app| async move {
+        app.add_singleton_model(UserWorkspaces::default_mock);
+        let _request_usage_model = add_request_usage_model_for_anonymous_users(&mut app);
+
+        app.read(|ctx| {
+            assert!(
+                UserWorkspaces::as_ref(ctx).is_custom_inference_enabled(ctx),
+                "expected custom inference to stay enabled for anonymous Firebase users without a workspace",
             );
         });
     });

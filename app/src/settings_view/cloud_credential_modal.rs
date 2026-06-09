@@ -1,10 +1,10 @@
 use warpui::elements::{
-    Container, CornerRadius, CrossAxisAlignment, Element, Flex, MainAxisSize, MouseStateHandle,
+    ChildView, ConstrainedBox, Container, CornerRadius, Flex, MainAxisSize, MouseStateHandle,
     ParentElement, Radius, Text,
 };
 use warpui::fonts::{Properties, Weight};
 use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use warpui::ui_components::components::UiComponent;
 use warpui::{
     AppContext, Element as WarpuiElement, Entity, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
@@ -16,6 +16,7 @@ use crate::editor::{
     TextOptions,
 };
 use crate::modal::{Modal, ModalViewState};
+use crate::view_components::{Dropdown, DropdownItem};
 
 const LABEL_FONT_SIZE: f32 = 12.;
 const INPUT_WIDTH: f32 = 480.;
@@ -40,6 +41,7 @@ pub enum CloudCredentialModalAction {
 }
 
 pub struct CloudCredentialModal {
+    platform_dropdown: ViewHandle<Dropdown<CloudCredentialModalAction>>,
     name_editor: ViewHandle<EditorView>,
     host_or_key_editor: ViewHandle<EditorView>,
     vps_username_editor: ViewHandle<EditorView>,
@@ -51,11 +53,32 @@ pub struct CloudCredentialModal {
 
 impl CloudCredentialModal {
     pub fn new(ctx: &mut ViewContext<Self>) -> Self {
+        use ai::cloud_credentials::CloudPlatform;
+
         let font_family = Appearance::as_ref(ctx).ui_font_family();
         let text_colors = crate::settings_view::editor_text_colors(Appearance::as_ref(ctx));
         let text_colors_2 = text_colors.clone();
         let text_colors_3 = text_colors.clone();
         let text_colors_4 = text_colors.clone();
+
+        let platform_dropdown = ctx.add_typed_action_view(|ctx| {
+            let mut dropdown = Dropdown::new(ctx);
+            dropdown.set_items(
+                vec![
+                    DropdownItem::new(
+                        CloudPlatform::Modal.label(),
+                        CloudCredentialModalAction::SelectPlatform(CloudPlatform::Modal),
+                    ),
+                    DropdownItem::new(
+                        CloudPlatform::Vps.label(),
+                        CloudCredentialModalAction::SelectPlatform(CloudPlatform::Vps),
+                    ),
+                ],
+                ctx,
+            );
+            dropdown.set_selected_by_name(CloudPlatform::Modal.label(), ctx);
+            dropdown
+        });
 
         let name_editor = ctx.add_typed_action_view(move |ctx| {
             let options = SingleLineEditorOptions {
@@ -135,6 +158,7 @@ impl CloudCredentialModal {
         });
 
         Self {
+            platform_dropdown,
             name_editor,
             host_or_key_editor,
             vps_username_editor,
@@ -145,7 +169,31 @@ impl CloudCredentialModal {
         }
     }
 
+    fn sync_platform_controls(&mut self, ctx: &mut ViewContext<Self>) {
+        let selected_label = self.selected_platform.label();
+        self.platform_dropdown.update(ctx, |dropdown, ctx| {
+            dropdown.set_selected_by_name(selected_label, ctx);
+        });
+
+        let name_placeholder = match self.selected_platform {
+            ai::cloud_credentials::CloudPlatform::Modal => "e.g., Modal build pool",
+            ai::cloud_credentials::CloudPlatform::Vps => "e.g., Production VPS",
+        };
+        self.name_editor.update(ctx, |editor, ctx| {
+            editor.set_placeholder_text(name_placeholder, ctx);
+        });
+
+        let host_placeholder = match self.selected_platform {
+            ai::cloud_credentials::CloudPlatform::Modal => "ak-...",
+            ai::cloud_credentials::CloudPlatform::Vps => "server.example.com",
+        };
+        self.host_or_key_editor.update(ctx, |editor, ctx| {
+            editor.set_placeholder_text(host_placeholder, ctx);
+        });
+    }
+
     pub fn on_open(&mut self, ctx: &mut ViewContext<Self>) {
+        self.sync_platform_controls(ctx);
         ctx.focus(&self.name_editor);
         ctx.notify();
     }
@@ -164,6 +212,8 @@ impl CloudCredentialModal {
             editor.clear_buffer_and_reset_undo_stack(ctx);
         });
         self.selected_platform = ai::cloud_credentials::CloudPlatform::Modal;
+        self.sync_platform_controls(ctx);
+        ctx.notify();
     }
 
     fn save(&mut self, ctx: &mut ViewContext<Self>) {
@@ -172,7 +222,7 @@ impl CloudCredentialModal {
         let vps_username = self.vps_username_editor.as_ref(ctx).buffer_text(ctx);
         let vps_ssh_key = self.vps_ssh_key_editor.as_ref(ctx).buffer_text(ctx);
 
-        if host_or_key.trim().is_empty() {
+        if !self.is_valid(ctx) {
             return;
         }
 
@@ -218,7 +268,17 @@ impl CloudCredentialModal {
 
     fn is_valid(&self, app: &AppContext) -> bool {
         let host_or_key = self.host_or_key_editor.as_ref(app).buffer_text(app);
-        !host_or_key.trim().is_empty()
+        if host_or_key.trim().is_empty() {
+            return false;
+        }
+
+        if self.selected_platform == ai::cloud_credentials::CloudPlatform::Vps {
+            let username = self.vps_username_editor.as_ref(app).buffer_text(app);
+            let ssh_key = self.vps_ssh_key_editor.as_ref(app).buffer_text(app);
+            return !username.trim().is_empty() && !ssh_key.trim().is_empty();
+        }
+
+        true
     }
 }
 
@@ -239,6 +299,7 @@ impl TypedActionView for CloudCredentialModal {
             }
             CloudCredentialModalAction::SelectPlatform(platform) => {
                 self.selected_platform = *platform;
+                self.sync_platform_controls(ctx);
                 ctx.notify();
             }
         }
@@ -255,59 +316,66 @@ impl View for CloudCredentialModal {
         let appearance = Appearance::as_ref(app);
         let mut col = Flex::column();
 
-        // Platform selector
-        let platform_label = Text::new_inline("Platform", appearance.ui_font_family(), LABEL_FONT_SIZE)
-            .with_style(Properties::default().weight(Weight::Semibold))
-            .with_color(appearance.theme().active_ui_text_color().into())
-            .finish();
-        col.add_child(Container::new(platform_label).with_margin_bottom(4.).finish());
-
-        let modal_selected = self.selected_platform == CloudPlatform::Modal;
-        let vps_selected = self.selected_platform == CloudPlatform::Vps;
-
-        let modal_btn = render_platform_button(
-            appearance,
-            "Modal",
-            modal_selected,
-            CloudCredentialModalAction::SelectPlatform(CloudPlatform::Modal),
-        );
-        let vps_btn = render_platform_button(
-            appearance,
-            "VPS",
-            vps_selected,
-            CloudCredentialModalAction::SelectPlatform(CloudPlatform::Vps),
-        );
-
+        let platform_label = Text::new_inline(
+            "Credential type",
+            appearance.ui_font_family(),
+            LABEL_FONT_SIZE,
+        )
+        .with_style(Properties::default().weight(Weight::Semibold))
+        .with_color(appearance.theme().active_ui_text_color().into())
+        .finish();
         col.add_child(
-            Flex::row()
-                .with_spacing(8.)
-                .with_child(modal_btn)
-                .with_child(vps_btn)
+            Container::new(platform_label)
+                .with_margin_bottom(4.)
                 .finish(),
         );
+        col.add_child(
+            ConstrainedBox::new(ChildView::new(&self.platform_dropdown).finish())
+                .with_width(INPUT_WIDTH)
+                .finish(),
+        );
+        col.add_child(
+            Container::new(
+                Text::new_inline(
+                    platform_description(self.selected_platform),
+                    appearance.ui_font_family(),
+                    appearance.ui_font_size(),
+                )
+                .with_color(appearance.theme().nonactive_ui_text_color().into())
+                .finish(),
+            )
+            .with_margin_top(6.)
+            .finish(),
+        );
 
-        // Name field
-        col.add_child(render_form_label(appearance, "Name"));
+        col.add_child(render_form_label(appearance, "Display name"));
         col.add_child(render_editor_container(appearance, &self.name_editor));
 
-        // Host / API Key field
         let host_label = match self.selected_platform {
             CloudPlatform::Modal => "Modal API Key",
             CloudPlatform::Vps => "VPS Host (IP or hostname)",
         };
         col.add_child(render_form_label(appearance, host_label));
-        col.add_child(render_editor_container(appearance, &self.host_or_key_editor));
+        col.add_child(render_editor_container(
+            appearance,
+            &self.host_or_key_editor,
+        ));
 
         // VPS-only fields
         if self.selected_platform == CloudPlatform::Vps {
             col.add_child(render_form_label(appearance, "VPS Username"));
-            col.add_child(render_editor_container(appearance, &self.vps_username_editor));
+            col.add_child(render_editor_container(
+                appearance,
+                &self.vps_username_editor,
+            ));
             col.add_child(render_form_label(appearance, "VPS SSH Private Key"));
-            col.add_child(render_editor_container(appearance, &self.vps_ssh_key_editor));
+            col.add_child(render_editor_container(
+                appearance,
+                &self.vps_ssh_key_editor,
+            ));
         }
 
         // Buttons
-        let is_valid = self.is_valid(app);
         let mut button_row = Flex::row()
             .with_main_axis_size(MainAxisSize::Max)
             .with_main_axis_alignment(warpui::elements::MainAxisAlignment::End)
@@ -318,55 +386,35 @@ impl View for CloudCredentialModal {
             .button(ButtonVariant::Basic, self.cancel_button_mouse_state.clone())
             .with_text_label("Cancel".to_string())
             .build()
-            .on_click(|ctx, _, _| {
+            .on_click(|ctx: &mut warpui::elements::EventContext, _, _| {
                 ctx.dispatch_typed_action(CloudCredentialModalAction::Cancel);
             })
             .finish();
         button_row.add_child(cancel_btn);
 
-        let save_btn = appearance
+        let mut save_button = appearance
             .ui_builder()
             .button(ButtonVariant::Accent, self.save_button_mouse_state.clone())
-            .with_text_label("Save".to_string())
+            .with_text_label("Save".to_string());
+        if !self.is_valid(app) {
+            save_button = save_button.disabled();
+        }
+        let save_btn = save_button
             .build()
-            .on_click(|ctx, _, _| {
+            .on_click(|ctx: &mut warpui::elements::EventContext, _, _| {
                 ctx.dispatch_typed_action(CloudCredentialModalAction::Save);
             })
             .finish();
         button_row.add_child(save_btn);
 
-        col.add_child(Container::new(button_row.finish()).with_margin_top(16.).finish());
+        col.add_child(
+            Container::new(button_row.finish())
+                .with_margin_top(16.)
+                .finish(),
+        );
 
         col.finish()
     }
-}
-
-fn render_platform_button(
-    appearance: &Appearance,
-    label: &str,
-    selected: bool,
-    action: CloudCredentialModalAction,
-) -> Box<dyn WarpuiElement> {
-    let bg = if selected {
-        appearance.theme().accent()
-    } else {
-        appearance.theme().surface_3()
-    };
-    let text_color = if selected {
-        appearance.theme().background()
-    } else {
-        appearance.theme().active_ui_text_color()
-    };
-
-    Container::new(
-        Text::new_inline(label.to_string(), appearance.ui_font_family(), 12.)
-            .with_color(text_color.into())
-            .finish(),
-    )
-    .with_padding(warpui::elements::Padding::uniform(6.))
-    .with_background(bg)
-    .with_corner_radius(CornerRadius::with_all(Radius::Pixels(4.)))
-    .finish()
 }
 
 fn render_form_label(appearance: &Appearance, label: &str) -> Box<dyn WarpuiElement> {
@@ -385,11 +433,26 @@ fn render_editor_container(
     appearance: &Appearance,
     editor: &ViewHandle<EditorView>,
 ) -> Box<dyn WarpuiElement> {
-    Container::new(warpui::elements::ChildView::new(editor).finish())
-        .with_padding(warpui::elements::Padding::uniform(8.))
-        .with_background(appearance.theme().surface_1())
-        .with_corner_radius(CornerRadius::with_all(Radius::Pixels(6.)))
-        .finish()
+    Container::new(
+        ConstrainedBox::new(ChildView::new(editor).finish())
+            .with_width(INPUT_WIDTH)
+            .finish(),
+    )
+    .with_padding(warpui::elements::Padding::uniform(8.))
+    .with_background(appearance.theme().surface_1())
+    .with_corner_radius(CornerRadius::with_all(Radius::Pixels(6.)))
+    .finish()
+}
+
+fn platform_description(platform: ai::cloud_credentials::CloudPlatform) -> &'static str {
+    match platform {
+        ai::cloud_credentials::CloudPlatform::Modal => {
+            "Use a Modal API key for managed cloud workloads."
+        }
+        ai::cloud_credentials::CloudPlatform::Vps => {
+            "Use a host, username, and SSH key for your own server."
+        }
+    }
 }
 
 pub struct CloudCredentialModalViewState {
@@ -420,6 +483,7 @@ impl CloudCredentialModalViewState {
                 body.on_open(ctx);
             });
         });
+        ctx.notify();
     }
 
     pub fn close<T: View>(&mut self, ctx: &mut ViewContext<T>) {
@@ -429,5 +493,6 @@ impl CloudCredentialModalViewState {
                 body.on_close(ctx);
             });
         });
+        ctx.notify();
     }
 }

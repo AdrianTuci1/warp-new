@@ -33,7 +33,7 @@ use crate::root_view::{
 };
 use crate::server::ids::ServerId;
 use crate::server::telemetry::{LaunchConfigUiLocation, TelemetryEvent};
-use crate::settings_view::{SettingsSection};
+use crate::settings_view::SettingsSection;
 use crate::tab_configs::TabConfig;
 use crate::user_config::{load_launch_configs, load_tab_configs, tab_configs_dir};
 use crate::util::openable_file_type::{
@@ -355,7 +355,7 @@ impl UriHost {
                     match settings_sub_page.as_str() {
                         "teams" => {
                             let invite_email = query_string.get("invite").map(|s| s.to_string());
-                            let args =  { invite_email };
+                            let args = { invite_email };
                             dispatch_action_in_new_or_existing_window(
                                 primary_window_id,
                                 "root_view:open_team_settings_with_email_invite_in_existing_window",

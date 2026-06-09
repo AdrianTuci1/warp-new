@@ -31,8 +31,8 @@ use super::{flags, SettingsAction, SettingsSection, ToggleSettingActionPair};
 use crate::appearance::Appearance;
 use crate::auth::auth_manager::{AuthManager, LoginGatedFeature};
 use crate::auth::auth_state::AuthState;
+use crate::auth::AuthStateProvider;
 use crate::auth::UserUid;
-use crate::auth::{AuthStateProvider};
 use crate::autoupdate::{self, AutoupdateStage, AutoupdateState};
 #[cfg(not(target_family = "wasm"))]
 use crate::server::iap::{IapCredentialsState, IapManager, IapManagerEvent};

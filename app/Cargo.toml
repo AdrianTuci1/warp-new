@@ -49,6 +49,11 @@ required-features = ["preview_channel"]
 test = false
 
 [[bin]]
+name = "octomus-worker"
+path = "src/bin/octomus_worker.rs"
+test = false
+
+[[bin]]
 name = "generate_settings_schema"
 path = "src/bin/generate_settings_schema.rs"
 test = false

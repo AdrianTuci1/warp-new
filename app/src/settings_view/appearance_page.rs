@@ -1318,9 +1318,7 @@ impl AppearanceSettingsPageView {
     fn build_page(ctx: &mut ViewContext<Self>) -> PageType<Self> {
         let mut categories = vec![Category::new(
             "Themes",
-            vec![
-                Box::new(ThemeSelectWidget::default()),
-            ],
+            vec![Box::new(ThemeSelectWidget::default())],
         )];
 
         if AppIconSettings::as_ref(ctx).is_supported_on_current_platform() {

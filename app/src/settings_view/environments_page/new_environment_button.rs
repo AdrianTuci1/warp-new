@@ -1,5 +1,7 @@
-use warpui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
 use crate::editor::EditorView;
+use warpui::{
+    AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
+};
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum NewEnvironmentButtonAction {}
@@ -34,5 +36,10 @@ impl Entity for NewEnvironmentButtonView {
 impl TypedActionView for NewEnvironmentButtonView {
     type Action = NewEnvironmentButtonAction;
 
-    fn handle_action(&mut self, _action: &NewEnvironmentButtonAction, _ctx: &mut ViewContext<Self>) {}
+    fn handle_action(
+        &mut self,
+        _action: &NewEnvironmentButtonAction,
+        _ctx: &mut ViewContext<Self>,
+    ) {
+    }
 }

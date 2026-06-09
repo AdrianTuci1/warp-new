@@ -1463,8 +1463,7 @@ impl AISettings {
     }
 
     pub fn is_any_ai_enabled(&self, _app: &AppContext) -> bool {
-        *self.is_any_ai_enabled
-            && !self.is_ai_disabled_due_to_remote_session_org_policy(_app)
+        *self.is_any_ai_enabled && !self.is_ai_disabled_due_to_remote_session_org_policy(_app)
     }
 
     pub fn default_session_mode(&self, app: &AppContext) -> DefaultSessionMode {

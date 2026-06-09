@@ -79,7 +79,9 @@ impl WhisperTranscriber {
         if !response.status().is_success() {
             let status = response.status();
             let body = response.text().await.unwrap_or_default();
-            return Err(WhisperTranscribeError::ApiError(format!("{status}: {body}")));
+            return Err(WhisperTranscribeError::ApiError(format!(
+                "{status}: {body}"
+            )));
         }
 
         let whisper_response: WhisperResponse = response

@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use ai::api_keys::RequestCredentialsOverride;
 use cloud_objects::cloud_object::{
     GenericCloudObject, GenericServerObject, GenericStringModel, JsonObjectType,
 };
@@ -54,6 +55,9 @@ pub struct AgentConfigSnapshot {
     /// Authentication secrets for third-party harnesses.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub harness_auth_secrets: Option<HarnessAuthSecretsConfig>,
+    /// Request-scoped BYO model credentials uploaded for remote Octomus runs.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub octomus_cloud_credentials: Option<RequestCredentialsOverride>,
 }
 
 /// Configuration for a third-party execution harness.
@@ -139,6 +143,7 @@ impl AgentConfigSnapshot {
             computer_use_enabled,
             harness,
             harness_auth_secrets,
+            octomus_cloud_credentials,
         } = self;
 
         name.is_none()
@@ -152,6 +157,7 @@ impl AgentConfigSnapshot {
             && computer_use_enabled.is_none()
             && harness.is_none()
             && harness_auth_secrets.is_none()
+            && octomus_cloud_credentials.is_none()
     }
 }
 

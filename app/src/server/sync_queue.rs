@@ -30,10 +30,10 @@ use crate::cloud_object::model::actions::{
 };
 use crate::cloud_object::model::generic_string_model::GenericStringObjectId;
 use crate::cloud_object::{
-    CloudModelType, CloudObject, CloudObjectEventEntrypoint, CreateCloudObjectResult, CreateObjectRequest,
-    GenericCloudObject, GenericStringObjectFormat, GenericStringObjectUniqueKey, JsonObjectType,
-    ObjectType, Owner, Revision, RevisionAndLastEditor, ServerCloudObject, ServerCreationInfo,
-    UpdateCloudObjectResult,
+    CloudModelType, CloudObject, CloudObjectEventEntrypoint, CreateCloudObjectResult,
+    CreateObjectRequest, GenericCloudObject, GenericStringObjectFormat,
+    GenericStringObjectUniqueKey, JsonObjectType, ObjectType, Owner, Revision,
+    RevisionAndLastEditor, ServerCloudObject, ServerCreationInfo, UpdateCloudObjectResult,
 };
 use crate::drive::folders::CloudFolderModel;
 use crate::drive::CloudObjectTypeAndId;

@@ -98,12 +98,12 @@ pub(crate) mod settings_page;
 // mod show_blocks_view;
 // mod tab_menu;
 // mod teams_page;
+mod cloud_credential_modal;
+mod cloud_page;
 mod telemetry;
 mod transfer_ownership_confirmation_modal;
 pub mod update_environment_form;
 mod warp_drive_page;
-mod cloud_credential_modal;
-mod cloud_page;
 // mod warpify_page;
 
 #[cfg(not(target_family = "wasm"))]
@@ -1082,16 +1082,12 @@ impl SettingsView {
             me.handle_features_page_event(event, ctx);
         });
 
-
-
         // AI page
         let ai_page_handle = ctx.add_typed_action_view(AISettingsPageView::new);
         let ai_page_handle_for_nav = ai_page_handle.clone();
         ctx.subscribe_to_view(&ai_page_handle, |me, _, event, ctx| {
             me.handle_ai_page_event(event, ctx);
         });
-
-
 
         // Keybindings page
         let keybindings_handle = ctx.add_typed_action_view(KeybindingsView::new);
@@ -1103,14 +1099,11 @@ impl SettingsView {
             me.handle_code_page_event(event, ctx);
         });
 
-
-
         // Render the privacy page only if telemetry opt-out is enabled.
         let privacy_page_handle = ctx.add_typed_action_view(PrivacyPageView::new);
         ctx.subscribe_to_view(&privacy_page_handle, |me, _, event, ctx| {
             me.handle_privacy_page_event(event, ctx);
         });
-
 
         // Warp Drive page
         let warp_drive_page_handle =
@@ -1119,7 +1112,6 @@ impl SettingsView {
             me.handle_warp_drive_page_event(event, ctx);
         });
 
-
         // MCP Servers page
         let mcp_servers_page_handle = ctx.add_typed_action_view(MCPServersSettingsPageView::new);
         ctx.subscribe_to_view(&mcp_servers_page_handle, |me, _, event, ctx| {
@@ -1127,7 +1119,8 @@ impl SettingsView {
         });
 
         // Cloud Platform page
-        let cloud_platform_page_handle = ctx.add_typed_action_view(cloud_page::CloudSettingsPageView::new);
+        let cloud_platform_page_handle =
+            ctx.add_typed_action_view(cloud_page::CloudSettingsPageView::new);
 
         let font_family = Appearance::as_ref(ctx).ui_font_family();
         let search_editor = ctx.add_typed_action_view(|ctx| {
@@ -1573,7 +1566,6 @@ impl SettingsView {
         }
     }
 
-
     fn handle_appearance_page_event(
         &mut self,
         event: &SettingsPageEvent,
@@ -1589,7 +1581,6 @@ impl SettingsView {
             }
         }
     }
-
 
     fn handle_features_page_event(
         &mut self,
@@ -1668,7 +1659,6 @@ impl SettingsView {
             }
         }
     }
-
 
     fn handle_warp_drive_page_event(
         &mut self,
@@ -1784,7 +1774,6 @@ impl SettingsView {
         }
         self.current_settings_page = section;
 
-
         // When navigating to a subpage, update the backing page's active subpage mode
         // and auto-expand the umbrella containing it.
         if section.is_subpage() {
@@ -1861,7 +1850,6 @@ impl SettingsView {
             SettingsPageViewHandle::CloudPlatform(v) => v.as_ref(app).should_render(app),
         }
     }
-
 
     /// Open the MCP servers page, optionally to list page or edit page.
     /// If `autoinstall_gallery_title` is provided, triggers auto-install of the specified gallery MCP.
@@ -2440,7 +2428,8 @@ impl TypedActionView for SettingsView {
             }
             SettingsAction::OctomusDrive(warp_drive_action) => {
                 if let Some(warp_drive_page) = self.settings_page(SettingsSection::OctomusDrive) {
-                    if let SettingsPageViewHandle::OctomusDrive(view) = &warp_drive_page.view_handle {
+                    if let SettingsPageViewHandle::OctomusDrive(view) = &warp_drive_page.view_handle
+                    {
                         view.update(ctx, |view, ctx| {
                             view.handle_action(warp_drive_action, ctx);
                         })

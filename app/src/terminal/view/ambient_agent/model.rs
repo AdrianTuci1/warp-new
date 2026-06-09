@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use ::ai::api_keys::{ApiKeyManager, RequestCredentialsOverride};
 use instant::Instant;
 use session_sharing_protocol::common::SessionId;
 use warp_cli::agent::Harness;
@@ -44,7 +45,7 @@ use crate::server::server_api::ai::{
 use crate::server::server_api::{
     AIApiError, ClientError, CloudAgentCapacityError, ServerApiProvider,
 };
-use crate::settings::PrivacySettings;
+use crate::settings::{AISettings, PrivacySettings};
 use crate::terminal::view::ambient_agent::{SetupCommandGroupId, SetupCommandState};
 use crate::terminal::CLIAgent;
 use crate::workspaces::user_workspaces::UserWorkspaces;
@@ -63,6 +64,27 @@ const HANDOFF_CONTINUE_PROMPT: &str = "Continue";
 /// conversation that carries uploaded snapshot content.
 #[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
 const HANDOFF_APPLY_SNAPSHOT_PROMPT: &str = "Apply the workspace changes from my previous session.";
+
+fn build_octomus_cloud_request_credentials(app: &AppContext) -> RequestCredentialsOverride {
+    let user_workspaces = UserWorkspaces::as_ref(app);
+    let mut api_keys = ApiKeyManager::as_ref(app).keys().clone();
+
+    if !user_workspaces.is_byo_api_key_enabled(app) {
+        api_keys.openai = None;
+        api_keys.anthropic = None;
+        api_keys.google = None;
+        api_keys.open_router = None;
+    }
+
+    if !user_workspaces.is_custom_inference_enabled(app) {
+        api_keys.custom_endpoints.clear();
+    }
+
+    RequestCredentialsOverride {
+        api_keys,
+        allow_use_of_warp_credits: Some(*AISettings::as_ref(app).can_use_warp_credits_for_fallback),
+    }
+}
 
 /// Tracks progress timestamps for each step during ambient agent spawning.
 #[derive(Debug, Clone)]
@@ -1173,6 +1195,8 @@ impl AmbientAgentViewModel {
                 .id
                 .to_string()
         });
+        let octomus_cloud_credentials =
+            (selected_harness == Harness::Oz).then(|| build_octomus_cloud_request_credentials(ctx));
         let third_party_harness = (selected_harness != Harness::Oz).then(|| HarnessConfig {
             harness_type: selected_harness,
             model_id: self.harness_model_id.clone(),
@@ -1201,6 +1225,7 @@ impl AmbientAgentViewModel {
             worker_host: self.worker_host.clone(),
             harness: third_party_harness,
             harness_auth_secrets,
+            octomus_cloud_credentials,
             ..Default::default()
         }
     }
