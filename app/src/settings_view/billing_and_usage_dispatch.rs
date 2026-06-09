@@ -99,7 +99,7 @@ impl View for BillingAndUsageDispatchView {
 
 impl SettingsPageMeta for BillingAndUsageDispatchView {
     fn section() -> SettingsSection {
-        SettingsSection::BillingAndUsage
+        SettingsSection::Account
     }
 
     fn should_render(&self, ctx: &AppContext) -> bool {

@@ -60,7 +60,6 @@ const THEME_CHOOSER_ITEM_PADDING: f32 = 16.;
 
 #[derive(Default)]
 struct MouseStateHandles {
-    create_theme_button_hover_state: MouseStateHandle,
     close_button_mouse_state: MouseStateHandle,
 }
 
@@ -628,7 +627,7 @@ impl ThemeChooser {
     }
 
     fn render_title_row(&self, appearance: &Appearance) -> Box<dyn Element> {
-        let mut title_row = Flex::row()
+        let title_row = Flex::row()
             .with_cross_axis_alignment(CrossAxisAlignment::Center)
             .with_child(
                 Shrinkable::new(
@@ -651,29 +650,6 @@ impl ThemeChooser {
                 )
                 .finish(),
             );
-
-        // Custom themes are only supported on desktop platforms currently.
-        if cfg!(not(target_family = "wasm")) {
-            let create_theme_button = SavePosition::new(
-                icon_button(
-                    appearance,
-                    icons::Icon::Plus,
-                    false,
-                    self.button_mouse_states
-                        .create_theme_button_hover_state
-                        .clone(),
-                )
-                .build()
-                .on_click(|ctx, _, _| {
-                    ctx.dispatch_typed_action(ThemeChooserAction::OpenThemeCreator)
-                })
-                .finish(),
-                "create_theme_button",
-            )
-            .finish();
-
-            title_row = title_row.with_child(create_theme_button);
-        }
 
         Container::new(title_row.finish())
             .with_margin_bottom(6.)

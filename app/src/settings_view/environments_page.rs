@@ -2008,7 +2008,7 @@ impl EnvironmentsPageWidget {
 
 impl SettingsPageMeta for EnvironmentsPageView {
     fn section() -> SettingsSection {
-        SettingsSection::CloudEnvironments
+        SettingsSection::Features
     }
     fn on_page_selected(&mut self, _allow_steal_focus: bool, ctx: &mut ViewContext<Self>) {
         self.environment_form.update(ctx, |form, ctx| {

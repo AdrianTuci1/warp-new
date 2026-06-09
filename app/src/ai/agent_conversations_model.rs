@@ -42,9 +42,9 @@ use crate::ai::blocklist::{
 use crate::ai::cloud_environments::CloudAmbientAgentEnvironment;
 use crate::ai::conversation_navigation::ConversationNavigationData;
 use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};
-use crate::auth::AuthStateProvider;
 use crate::cloud_object::CloudObjectLookup as _;
 use crate::network::{NetworkStatus, NetworkStatusEvent, NetworkStatusKind};
+use crate::profile::ProfileModel;
 use crate::server::cloud_objects::update_manager::{UpdateManager, UpdateManagerEvent};
 use crate::server::ids::{ServerId, SyncId};
 use crate::server::retry_strategies::{
@@ -656,6 +656,10 @@ impl AgentConversationsModel {
         // here to avoid duplicate requests at startup.
         if AppExecutionMode::as_ref(ctx).can_fetch_agent_runs_for_management() {
             model.sync_conversations(ctx);
+
+            // Always fetch server data using the profile's user_id.
+            // ProfileModel doesn't require server auth — it uses a local display name.
+            model.fetch_ambient_agent_tasks_and_cloud_convo_metadata(ctx);
         } else {
             model.has_finished_initial_load = true;
         }
@@ -861,18 +865,13 @@ impl AgentConversationsModel {
     /// Fetches tasks and cloud conversation metadata async. Cloud conversation metadata is merged with
     /// metadata stored in local db in the BlocklistAIHistoryModel
     fn fetch_ambient_agent_tasks_and_cloud_convo_metadata(&mut self, ctx: &mut ModelContext<Self>) {
-        let Some(creator_uid) = AuthStateProvider::as_ref(ctx)
-            .get()
-            .user_id()
-            .map(|uid| uid.as_string())
-        else {
-            // If we don't have a user ID, don't pull tasks
-            return;
-        };
+        // Use ProfileModel to get a stable user ID (no server auth required)
+        let creator_uid = ProfileModel::as_ref(ctx).user_id();
 
         let ai_settings = AISettings::as_ref(ctx);
         if !ai_settings.is_any_ai_enabled(ctx) {
             // If we don't have AI enabled, don't pull tasks
+            self.has_finished_initial_load = true;
             return;
         }
 
@@ -1696,10 +1695,10 @@ impl AgentConversationsModel {
             .collect();
 
         // Include the current user since they may have local conversations
-        let auth_state = AuthStateProvider::as_ref(app).get();
-        if let (Some(name), Some(uid)) = (auth_state.display_name(), auth_state.user_id()) {
-            creators.push((name, uid.to_string()));
-        }
+        let profile = ProfileModel::as_ref(app);
+        let name = profile.display_name();
+        let uid = profile.user_id();
+        creators.push((name, uid));
 
         creators.sort_by(|a, b| a.0.cmp(&b.0));
         creators.dedup_by(|a, b| a.0 == b.0);

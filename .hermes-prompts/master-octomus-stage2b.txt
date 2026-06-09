@@ -1,0 +1,274 @@
+Repo: AdrianTuci1/warp-new
+
+Ești AGENT UNIC pentru Octomus — STAGE 2b (Funcționalități Noi). Rulezi LOCAL pe mașina utilizatorului.
+
+=== CONTEXT ===
+Stage 1 a produs octomus/stage1 care trece cargo check.
+Stage 2a (dacă e gata) a produs octomus/stage2a — dacă există, pleacă de acolo.
+Dacă stage2a nu există încă, pleacă de pe octomus/stage1.
+Stage 2b execută SEQUENTIAL: A11 (remote executor) + A12 (agent store) + A14 (voice).
+Fiecare task se termină cu commit. La final: cargo check + push.
+
+=== PAS 1: CLONE + BRANCH ===
+
+[bash]
+if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q "AdrianTuci1/warp-new"; then
+  cd /tmp/repo && git fetch origin
+  # Prefer stage2a dacă există, altfel stage1
+  if git show-ref --verify --quiet refs/remotes/origin/octomus/stage2a; then
+    git checkout octomus/stage2a && git pull origin octomus/stage2a
+  else
+    git checkout octomus/stage1 && git pull origin octomus/stage1
+  fi
+else
+  rm -rf /tmp/repo
+  git clone https://x-access-token:__GH_TOKEN__@github.com/AdrianTuci1/warp-new.git /tmp/repo
+  cd /tmp/repo
+  git fetch origin
+  if git show-ref --verify --quiet refs/remotes/origin/octomus/stage2a; then
+    git checkout octomus/stage2a
+  else
+    git checkout octomus/stage1
+  fi
+fi
+
+# Șterge branch local stage2b dacă există
+git branch -D octomus/stage2b 2>/dev/null || true
+git checkout -b octomus/stage2b
+
+# Git config
+git config --global user.email "octomus@agent.local"
+git config --global user.name "Octomus Agent"
+
+echo "Repo gata pe branch octomus/stage2b"
+[/bash]
+
+=== TASK A11: Remote Executor (new files) ===
+
+CREATE app/src/ai/remote_executor.rs:
+
+```rust
+// Octomus — generic remote executor for "Run Remote".
+// Supports SSH, Modal, and custom HTTP endpoints configured via settings.
+
+use std::path::PathBuf;
+use std::sync::Arc;
+use futures::stream::Stream;
+use serde::{Deserialize, Serialize};
+
+/// The backend type configured in settings.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum RemoteBackendType {
+    /// Execute via SSH on a user-provided VPS.
+    Ssh,
+    /// Execute via Modal API (modal.com).
+    Modal,
+    /// Custom HTTP endpoint (user runs their own orchestrator).
+    Custom,
+}
+
+/// Configuration for a remote backend.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RemoteBackendConfig {
+    pub backend_type: RemoteBackendType,
+    /// SSH: "user@host:22", Modal: "modal", Custom: "https://..."
+    pub host: String,
+    /// SSH private key path, Modal token, or Custom API key
+    pub credential: String,
+    /// Optional: docker image, env vars, timeout
+    pub image: Option<String>,
+    pub timeout_seconds: Option<u64>,
+    pub extra_env: Vec<(String, String)>,
+}
+
+/// A single line of output from the remote execution.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum RemoteOutput {
+    Stdout(String),
+    Stderr(String),
+    Exit(i32),
+    Error(String),
+}
+
+/// Prep step: what to copy and run remotely.
+#[derive(Debug, Clone)]
+pub struct RemoteTask {
+    pub files: Vec<PathBuf>,
+    pub command: String,
+    pub env: Vec<(String, String)>,
+    pub remote_work_dir: String,
+}
+
+/// The trait that every backend implements.
+#[async_trait::async_trait]
+pub trait RemoteExecutor: Send + Sync {
+    async fn test_connection(&self, config: &RemoteBackendConfig) -> Result<(), String>;
+    async fn execute(
+        &self,
+        config: &RemoteBackendConfig,
+        task: RemoteTask,
+    ) -> Result<Box<dyn Stream<Item = RemoteOutput> + Send + Unpin>, String>;
+}
+
+/// Factory: build the right executor for a given backend type.
+pub fn create_executor(backend_type: &RemoteBackendType) -> Box<dyn RemoteExecutor> {
+    match backend_type {
+        RemoteBackendType::Ssh => Box::new(ssh::SshExecutor::new()),
+        RemoteBackendType::Modal => Box::new(modal::ModalExecutor::new()),
+        RemoteBackendType::Custom => Box::new(custom::CustomExecutor::new()),
+    }
+}
+```
+
+CREATE app/src/ai/remote_executor/ssh.rs:
+Implement SshExecutor with test_connection (ssh -o ConnectTimeout=5) and execute (scp upload + ssh + stream output). Use tokio::process::Command for async execution.
+
+CREATE app/src/ai/remote_executor/modal.rs:
+Implement ModalExecutor with test_connection (modal token check) and execute stub returning "Modal executor: full implementation pending".
+
+CREATE app/src/ai/remote_executor/custom.rs:
+Implement CustomExecutor with test_connection (HTTP GET to base URL) and execute (HTTP POST with JSON task, stream response lines).
+
+CREATE app/src/ai/remote_executor/mod.rs:
+pub mod ssh;
+pub mod modal;
+pub mod custom;
+
+EDIT app/src/ai/mod.rs:
+Add: pub mod remote_executor;
+Add: pub mod remote_executor::ssh;
+Add: pub mod remote_executor::modal;
+Add: pub mod remote_executor::custom;
+
+Also add "futures" and "async-trait" to app/Cargo.toml if not already present.
+
+=== COMMIT A11 ===
+git add -A
+git commit -m "octomus: add generic remote executor — SSH/Modal/Custom backends"
+
+=== TASK A12: Agent Store (new file) ===
+
+CREATE app/src/ai/agent_store.rs:
+
+A single-file module (~200 lines) wrapping the filesystem for multi-agent orchestration:
+
+```rust
+// Octomus — local agent state store for multi-agent orchestration.
+// Replaces cloud-dependent SSE event streaming, artifact reporting,
+// and snapshot upload with a local JSONL-based directory.
+
+use std::collections::HashMap;
+use std::fs;
+use std::io::{BufRead, BufReader, Write};
+use std::path::{Path, PathBuf};
+
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+
+const STORE_BASE: &str = ".octomus/agent-store";
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum AgentStoreEvent {
+    Lifecycle {
+        agent: String,
+        stage: String,
+        timestamp: i64,
+    },
+    Message {
+        from_agent: String,
+        to_agent: String,
+        message_type: String,
+        payload: Value,
+        timestamp: i64,
+    },
+    Artifact {
+        agent: String,
+        artifact_type: String,
+        data: Value,
+        timestamp: i64,
+    },
+    Error {
+        agent: String,
+        error: String,
+        timestamp: i64,
+    },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AgentStatus {
+    pub status: String, // "running" | "succeeded" | "failed"
+    pub summary: Option<String>,
+    pub exit_code: Option<i32>,
+}
+
+pub struct AgentStore {
+    store_root: PathBuf,
+    conversation_id: String,
+}
+
+impl AgentStore {
+    pub fn new(conversation_id: impl Into<String>) -> Self { ... }
+    pub fn events_path(&self) -> PathBuf { ... }
+    pub fn agent_dir(&self, agent_name: &str) -> PathBuf { ... }
+    pub fn write_event(&self, event: AgentStoreEvent) -> std::io::Result<()> { ... }
+    pub fn poll_events(&self, since_line: usize) -> Vec<AgentStoreEvent> { ... }
+    pub fn update_status(&self, agent_name: &str, status: AgentStatus) -> std::io::Result<()> { ... }
+    pub fn read_status(&self, agent_name: &str) -> Option<AgentStatus> { ... }
+    pub fn store_artifact(&self, agent_name: &str, name: &str, data: &str) -> std::io::Result<()> { ... }
+    pub fn snapshot_dir(&self, agent_name: &str) -> PathBuf { ... }
+    pub fn cleanup_old_stores() { ... }
+    pub fn list_agents(&self) -> Vec<String> { ... }
+    pub fn event_count(&self) -> usize { ... }
+}
+```
+
+Implement ALL methods (nu doar stub-uri). Vezi conținutul complet în fișierul agent-12-agent-store.txt din .hermes-prompts/ pentru implementarea completă a fiecărei metode.
+
+EDIT app/src/ai/mod.rs:
+Add: pub mod agent_store;
+
+Add "dirs" to app/Cargo.toml dependencies if not present.
+
+=== COMMIT A12 ===
+git add -A
+git commit -m "octomus: add local agent store — JSONL-based event streaming, status, artifacts"
+
+=== TASK A14: Voice — Whisper API ===
+
+CREATE app/src/ai/whisper_transcriber.rs:
+Direct OpenAI Whisper API implementation. Implement ALL methods (nu doar stub-uri):
+- WhisperTranscriber::new(api_key) — stores key, model "whisper-1", builds reqwest client
+- transcribe_wav(wav_base64) — decodes base64, sends multipart POST to OpenAI, returns text
+- Proper error handling: NoApiKey, RequestFailed, ApiError
+Vezi conținutul complet în fișierul agent-14-voice.txt din .hermes-prompts/ pentru implementarea completă.
+
+Check and add "base64" and "reqwest" to app/Cargo.toml if not present.
+
+EDIT app/src/voice/transcriber.rs:
+- Remove `use crate::server::server_api::TranscribeError;`
+- Add: `pub type TranscribeError = String;`
+- Add `new_disabled()` to VoiceTranscriber (returns Self { transcriber: None })
+
+EDIT app/src/settings/ai.rs:
+- Change voice_input_enabled default from true → false
+- Add whisper_api_key setting (String, default "", private, toml_path: "agents.voice.whisper_api_key")
+- Update is_voice_input_enabled to check !whisper_api_key.is_empty()
+- Add getter: pub fn whisper_api_key(&self) -> &str
+
+=== COMMIT A14 ===
+git add -A
+git commit -m "octomus: add Whisper API voice transcription — BYOK, disabled by default"
+
+=== CARGO CHECK FINAL ===
+cargo check 2>&1 | tail -80
+Fix any compilation errors. Re-run until clean (max 30 iterations).
+
+=== PUSH ===
+git push origin octomus/stage2b
+
+=== RAPORTEAZĂ ===
+- "✅ STAGE 2b COMPLETE — octomus/stage2b pushed, cargo check clean"
+- Câte fișiere noi ai creat (remote_executor.rs + 3 backends + agent_store.rs + whisper_transcriber.rs)
+- Câte erori de compilare ai reparat
+- Dacă cargo check nu trece, spune exact ce erori au rămas

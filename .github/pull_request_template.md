@@ -23,7 +23,7 @@ You can run the app locally using `./script/run` - see WARP.md for more details 
 <!-- Attach screenshots or a short video demonstrating the change, where appropriate. Remove this section if it is not relevant to your PR. -->
 
 ## Agent Mode
-- [ ] Warp Agent Mode - This PR was created via Warp's AI Agent Mode
+- [ ] Octomus Agent Mode - This PR was created via Octomus's AI Agent Mode
 
 <!--
 ## Changelog Entries for Stable

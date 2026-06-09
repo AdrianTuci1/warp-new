@@ -2146,7 +2146,7 @@ impl TypedActionView for BillingAndUsagePageV2View {
             BillingAndUsagePageAction::NavigateToByokSettings => {
                 ctx.dispatch_typed_action_deferred(WorkspaceAction::ShowSettingsPageWithSearch {
                     search_query: "api".to_string(),
-                    section: Some(SettingsSection::WarpAgent),
+                    section: Some(SettingsSection::OctomusAgent),
                 });
             }
         }

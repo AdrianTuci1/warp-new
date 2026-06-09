@@ -47,47 +47,17 @@ pub enum ThemeKind {
     ReceivedReferralReward,
     #[schemars(description = "Adeberry")]
     Adeberry,
-    #[schemars(description = "Phenomenon")]
-    Phenomenon,
     #[default]
     #[schemars(description = "Dark")]
     Dark,
-    #[schemars(description = "Dracula")]
-    Dracula,
-    #[schemars(description = "Fancy Dracula")]
-    FancyDracula,
     #[schemars(description = "Cyber Wave")]
     CyberWave,
-    #[schemars(description = "Solar Flare")]
-    SolarFlare,
-    #[schemars(description = "Solarized Dark")]
-    SolarizedDark,
-    #[schemars(description = "Willow Dream")]
-    WillowDream,
-    #[schemars(description = "Light")]
-    Light,
-    #[schemars(description = "Dark City")]
-    DarkCity,
     #[schemars(description = "Gruvbox Dark")]
     GruvboxDark,
-    #[schemars(description = "Red Rock")]
-    RedRock,
-    #[schemars(description = "Jellyfish")]
-    JellyFish,
-    #[schemars(description = "Leafy")]
-    Leafy,
-    #[schemars(description = "Koi")]
-    Koi,
+    #[schemars(description = "Light")]
+    Light,
     #[schemars(description = "Solarized Light")]
     SolarizedLight,
-    #[schemars(description = "Snowy")]
-    Snowy,
-    #[schemars(description = "Gruvbox Light")]
-    GruvboxLight,
-    #[schemars(description = "Pink City")]
-    PinkCity,
-    #[schemars(description = "Marble")]
-    Marble,
     #[schemars(description = "A user-provided custom theme loaded from a file.")]
     Custom(CustomTheme),
     /// Base16 themes are a special case of custom themes with their own semantics for ANSI colors that override "bright" color variants.
@@ -112,27 +82,12 @@ impl std::fmt::Display for ThemeKind {
         let value = match &self {
             ThemeKind::Light => "Light",
             ThemeKind::Dark => "Dark",
-            ThemeKind::Dracula => "Dracula",
-            ThemeKind::SolarizedDark => "Solarized Dark",
-            ThemeKind::SolarizedLight => "Solarized Light",
             ThemeKind::GruvboxDark => "Gruvbox Dark",
-            ThemeKind::GruvboxLight => "Gruvbox Light",
-            ThemeKind::JellyFish => "Jellyfish",
-            ThemeKind::Koi => "Koi",
-            ThemeKind::Leafy => "Leafy",
-            ThemeKind::Marble => "Marble",
-            ThemeKind::PinkCity => "Pink City",
-            ThemeKind::Snowy => "Snowy",
-            ThemeKind::DarkCity => "Dark City",
-            ThemeKind::RedRock => "Red Rock",
             ThemeKind::CyberWave => "Cyber Wave",
-            ThemeKind::WillowDream => "Willow Dream",
-            ThemeKind::FancyDracula => "Fancy Dracula",
-            ThemeKind::Phenomenon => "Phenomenon",
-            ThemeKind::SolarFlare => "Solar Flare",
+            ThemeKind::SolarizedLight => "Solarized Light",
             ThemeKind::Adeberry => "Adeberry",
-            ThemeKind::SentReferralReward => "Warp Referral",
-            ThemeKind::ReceivedReferralReward => "Referred to Warp",
+            ThemeKind::SentReferralReward => "Octomus Referral",
+            ThemeKind::ReceivedReferralReward => "Referred to Octomus",
             ThemeKind::Custom(custom_theme) => custom_theme.name.as_str(),
             ThemeKind::CustomBase16(custom_theme) => custom_theme.name.as_str(),
             ThemeKind::InMemory(in_memory_theme) => in_memory_theme.name.as_str(),
@@ -472,24 +427,9 @@ impl WarpThemeConfig {
             ),
             (ThemeKind::Dark, dark_theme()),
             (ThemeKind::Light, light_theme()),
-            (ThemeKind::SolarizedDark, solarized_dark()),
-            (ThemeKind::SolarizedLight, solarized_light()),
-            (ThemeKind::Dracula, dracula()),
             (ThemeKind::GruvboxDark, gruvbox_dark()),
-            (ThemeKind::GruvboxLight, gruvbox_light()),
-            (ThemeKind::JellyFish, jellyfish()),
-            (ThemeKind::Koi, koi()),
-            (ThemeKind::Leafy, leafy()),
-            (ThemeKind::Marble, marble()),
-            (ThemeKind::PinkCity, pink_city()),
-            (ThemeKind::Snowy, snowy()),
-            (ThemeKind::DarkCity, dark_city()),
-            (ThemeKind::RedRock, red_rock()),
             (ThemeKind::CyberWave, cyber_wave()),
-            (ThemeKind::WillowDream, willow_dream()),
-            (ThemeKind::FancyDracula, fancy_dracula()),
-            (ThemeKind::Phenomenon, phenomenon()),
-            (ThemeKind::SolarFlare, solar_flare()),
+            (ThemeKind::SolarizedLight, solarized_light()),
             (ThemeKind::Adeberry, adeberry()),
         ]);
         WarpThemeConfig { theme_map }

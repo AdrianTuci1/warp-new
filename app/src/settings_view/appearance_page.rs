@@ -1318,10 +1318,7 @@ impl AppearanceSettingsPageView {
     fn build_page(ctx: &mut ViewContext<Self>) -> PageType<Self> {
         let mut categories = vec![Category::new(
             "Themes",
-            vec![
-                Box::new(CreateCustomThemeWidget::default()),
-                Box::new(ThemeSelectWidget::default()),
-            ],
+            vec![Box::new(ThemeSelectWidget::default())],
         )];
 
         if AppIconSettings::as_ref(ctx).is_supported_on_current_platform() {
@@ -2650,43 +2647,6 @@ fn render_group(
     .with_margin_top(-4.)
     .with_margin_bottom(HEADER_PADDING)
     .finish()
-}
-
-#[derive(Default)]
-struct CreateCustomThemeWidget {
-    mouse_state: MouseStateHandle,
-}
-
-impl SettingsWidget for CreateCustomThemeWidget {
-    type View = AppearanceSettingsPageView;
-
-    fn search_terms(&self) -> &str {
-        "create theme create custom theme"
-    }
-
-    fn render(
-        &self,
-        _view: &Self::View,
-        appearance: &Appearance,
-        _app: &AppContext,
-    ) -> Box<dyn Element> {
-        Align::new(
-            appearance
-                .ui_builder()
-                .link(
-                    "Create your own custom theme".to_string(),
-                    Some("https://docs.warp.dev/terminal/appearance/custom-themes".to_string()),
-                    None,
-                    self.mouse_state.clone(),
-                )
-                .soft_wrap(false)
-                .build()
-                .with_margin_bottom(10.)
-                .finish(),
-        )
-        .left()
-        .finish()
-    }
 }
 
 #[derive(Default)]

@@ -1,0 +1,70 @@
+name: Release to R2
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The release tag like v1.2.3.456'
+        required: true
+        type: string
+      channel:
+        description: 'Release channel'
+        default: 'oss'
+        type: string
+
+env:
+  R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  R2_BUCKET: ${{ secrets.R2_BUCKET }}
+
+jobs:
+  build-and-upload-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/prepare_environment
+        with:
+          target_os: macos
+          is_self_hosted: false
+          install_release_deps: true
+
+      - name: Set release tag
+        run: echo "GIT_RELEASE_TAG=${{ inputs.version }}" >> $GITHUB_ENV
+
+      - name: Build bundle
+        run: script/bundle --channel oss --arch aarch64
+
+      - name: Configure AWS credentials for R2
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: auto
+          aws-access-key-id: ${{ env.R2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.R2_SECRET_ACCESS_KEY }}
+
+      - name: Upload DMG to R2 (aarch64)
+        run: aws s3 cp target/release/warp-oss-arm64.dmg s3://${{ env.R2_BUCKET }}/oss/${{ inputs.version }}/WarpOss-arm64.dmg --endpoint-url ${{ env.R2_ENDPOINT }}
+
+      - name: Upload DMG to R2 (universal)
+        run: aws s3 cp target/release/warp-oss-arm64.dmg s3://${{ env.R2_BUCKET }}/oss/${{ inputs.version }}/WarpOss.dmg --endpoint-url ${{ env.R2_ENDPOINT }}
+
+  upload-channel-versions:
+    needs: build-and-upload-macos
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials for R2
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: auto
+          aws-access-key-id: ${{ env.R2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.R2_SECRET_ACCESS_KEY }}
+
+      - name: Generate channel_versions.json
+        run: |
+          cat > channel_versions.json << 'EOF'
+          {"dev":{"version":"${{ inputs.version }}","overrides":[]},"preview":{"version":"v0","overrides":[]},"stable":{"version":"v0","overrides":[]}}
+          EOF
+
+      - name: Upload channel_versions.json to R2
+        run: aws s3 cp channel_versions.json s3://${{ env.R2_BUCKET }}/channel_versions.json --endpoint-url ${{ env.R2_ENDPOINT }}

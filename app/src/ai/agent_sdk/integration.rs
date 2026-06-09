@@ -114,6 +114,7 @@ impl IntegrationCommandRunner {
                     // TODO(REMOTE-1134): Support harness selection for integrations.
                     harness: None,
                     harness_auth_secrets: None,
+                    octomus_cloud_credentials: None,
                 },
             );
 
@@ -426,6 +427,7 @@ impl IntegrationCommandRunner {
                     // TODO(REMOTE-1134): Support harness selection for integrations.
                     harness: None,
                     harness_auth_secrets: None,
+                    octomus_cloud_credentials: None,
                 },
             );
 

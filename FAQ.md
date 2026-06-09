@@ -134,11 +134,11 @@ Yes — that's what AGPL is for. The license prevents fully-proprietary relaunch
 
 ### Where do I get help?
 
-- The [Warp docs](https://docs.warp.dev/) for using the product.
+- The [Warp docs](http://localhost:8080/docs/) for using the product.
 - [GitHub Issues](https://github.com/warpdotdev/warp/issues) for bug reports and feature requests.
-- The [Slack community](https://go.warp.dev/join-preview) for general questions and discussion — contributors chat with each other and the Warp team in [`#oss-contributors`](https://warpcommunity.slack.com/archives/C0B0LM8N4DB).
+- The [Slack community](https://go.localhost/join-preview) for general questions and discussion — contributors chat with each other and the Warp team in [`#oss-contributors`](https://warpcommunity.slack.com/archives/C0B0LM8N4DB).
 - Mention **@oss-maintainers** on an issue or PR to escalate to the team.
 
 ### How do I report a security vulnerability?
 
-Please don't open a public GitHub issue. See [SECURITY.md](SECURITY.md) — report via [security@warp.dev](mailto:security@warp.dev) or open a private [GitHub Security Advisory](https://github.com/warpdotdev/Warp/security/advisories/new).
+Please don't open a public GitHub issue. See [SECURITY.md](SECURITY.md) — report via [security@localhost](mailto:security@localhost) or open a private [GitHub Security Advisory](https://github.com/warpdotdev/Warp/security/advisories/new).

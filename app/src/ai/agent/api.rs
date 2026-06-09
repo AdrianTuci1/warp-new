@@ -236,19 +236,34 @@ impl RequestParams {
 
         let user_workspaces = UserWorkspaces::as_ref(app);
         let api_key_manager = ApiKeyManager::as_ref(app);
-        let is_byo_enabled = user_workspaces.is_byo_api_key_enabled(app);
-        let api_keys = api_key_manager.api_keys_for_request(
-            is_byo_enabled,
-            user_workspaces.is_aws_bedrock_credentials_enabled(app),
-        );
-        let is_custom_inference_enabled = user_workspaces.is_custom_inference_enabled(app);
-        let custom_model_providers = FeatureFlag::CustomInferenceEndpoints
-            .is_enabled()
-            .then(|| {
-                api_key_manager.custom_model_providers_for_request(is_custom_inference_enabled)
-            })
-            .flatten();
-        let allow_use_of_warp_credits = *AISettings::as_ref(app).can_use_warp_credits_for_fallback;
+        let default_allow_use_of_warp_credits =
+            *AISettings::as_ref(app).can_use_warp_credits_for_fallback;
+        let (api_keys, custom_model_providers, allow_use_of_warp_credits) =
+            if let Some(request_credentials_override) =
+                api_key_manager.request_credentials_override()
+            {
+                (
+                    request_credentials_override.api_keys_for_request(),
+                    request_credentials_override.custom_model_providers_for_request(),
+                    request_credentials_override
+                        .allow_use_of_warp_credits
+                        .unwrap_or(default_allow_use_of_warp_credits),
+                )
+            } else {
+                let is_byo_enabled = user_workspaces.is_byo_api_key_enabled(app);
+                let api_keys = api_key_manager.api_keys_for_request(
+                    is_byo_enabled,
+                    user_workspaces.is_aws_bedrock_credentials_enabled(app),
+                );
+                let is_custom_inference_enabled = user_workspaces.is_custom_inference_enabled(app);
+                let custom_model_providers =
+                    api_key_manager.custom_model_providers_for_request(is_custom_inference_enabled);
+                (
+                    api_keys,
+                    custom_model_providers,
+                    default_allow_use_of_warp_credits,
+                )
+            };
 
         let app_execution_mode = AppExecutionMode::as_ref(app);
         let autonomy_level = if app_execution_mode.is_autonomous() {

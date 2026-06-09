@@ -59,6 +59,7 @@ mod prefix;
 #[cfg(target_os = "macos")]
 mod preview_config_migration;
 mod pricing;
+pub mod profile;
 mod profiling;
 mod projects;
 mod prompt;
@@ -150,6 +151,7 @@ use auth::auth_state::{AuthState, AuthStateProvider};
 use code::editor_management::CodeManager;
 use code::opened_files::OpenedFilesModel;
 use code_review::GlobalCodeReviewModel;
+use profile::ProfileModel;
 use quit_warning::UnsavedStateSummary;
 #[cfg(feature = "local_fs")]
 use repo_metadata::{
@@ -1375,6 +1377,7 @@ pub(crate) fn initialize_app(
     ctx.add_singleton_model(|_| ExecutionProfileEditorManager::default());
     ctx.add_singleton_model(|_| NetworkLogPaneManager::default());
     ctx.add_singleton_model(|_| pricing::PricingInfoModel::new());
+    ctx.add_singleton_model(::ai::cloud_credentials::CloudCredentialsManager::new);
     ctx.add_singleton_model(|ctx| {
         // Not using the *Provider types isn't ideal, but it's worth it for the ability to move managed secrets to a separate crate.
         ManagedSecretManager::new(
@@ -1851,6 +1854,10 @@ pub(crate) fn initialize_app(
 
     // AIDocumentModel subscribes to UpdateManager so that it can be notified when notebooks are created on the server.
     ctx.add_singleton_model(AIDocumentModel::new);
+
+    // ProfileModel holds the user's display name and photo (no server auth required).
+    // Must be registered before AgentConversationsModel which depends on it.
+    ctx.add_singleton_model(ProfileModel::new);
 
     // AgentConversationsModel subscribes to UpdateManager for RTC task updates.
     ctx.add_singleton_model(AgentConversationsModel::new);

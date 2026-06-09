@@ -3,9 +3,9 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use warpui::{Entity, SingletonEntity};
 
-use super::server_api::{ServerApi, TranscribeError};
+use super::server_api::ServerApi;
 use crate::ai::voice::transcribe::{Provider, TranscribeRequest};
-use crate::voice::transcriber::Transcriber;
+use crate::voice::transcriber::{TranscribeError, Transcriber};
 
 pub struct ServerVoiceTranscriber {
     server_api: Arc<ServerApi>,
@@ -29,7 +29,7 @@ impl Transcriber for ServerVoiceTranscriber {
         let response = self.server_api.transcribe(&request).await;
         match response {
             Ok(response) => Ok(response.text),
-            Err(e) => Err(e),
+            Err(e) => Err(e.to_string()),
         }
     }
 }

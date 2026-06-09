@@ -1,27 +1,29 @@
-<a href="https://www.warp.dev">
+This is a community fork. For the original, see warpdotdev/warp.
+
+<a href="http://localhost:8080">
     <img width="1024" alt="Warp Agentic Development Environment product preview" src="https://github.com/user-attachments/assets/9976b2da-2edd-4604-a36c-8fd53719c6d4" />
 </a>
 &nbsp;
 <p align="center">
-  <a href="https://www.warp.dev"><img height="20" alt="Built with Warp" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Built-With-Warp-Export@2x.png" /></a>
+  <a href="http://localhost:8080"><img height="20" alt="Built with Warp" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Built-With-Warp-Export@2x.png" /></a>
   &nbsp;
-  <a href="https://oz.warp.dev"><img height="20" alt="Powered by Oz" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Powered-By-Oz-Export@2x.png" /></a>
+  <a href="https://oz.localhost"><img height="20" alt="Powered by Oz" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/main/Github/Powered-By-Oz-Export@2x.png" /></a>
 </p>
 
 <p align="center">
-  <a href="https://www.warp.dev">Website</a>
+  <a href="http://localhost:8080">Website</a>
   ·
-  <a href="https://www.warp.dev/code">Code</a>
+  <a href="http://localhost:8080/code">Code</a>
   ·
-  <a href="https://www.warp.dev/agents">Agents</a>
+  <a href="http://localhost:8080/agents">Agents</a>
   ·
-  <a href="https://www.warp.dev/terminal">Terminal</a>
+  <a href="http://localhost:8080/terminal">Terminal</a>
   ·
-  <a href="https://www.warp.dev/drive">Drive</a>
+  <a href="http://localhost:8080/drive">Drive</a>
   ·
-  <a href="https://docs.warp.dev">Docs</a>
+  <a href="http://localhost:8080/docs">Docs</a>
   ·
-  <a href="https://www.warp.dev/blog/how-warp-works">How Warp Works</a>
+  <a href="http://localhost:8080/blog/how-warp-works">How Warp Works</a>
 </p>
 
 > [!NOTE]
@@ -31,15 +33,15 @@
 
 ## About
 
-[Warp](https://www.warp.dev) is an agentic development environment, born out of the terminal. Use Warp's built-in coding agent, or bring your own CLI agent (Claude Code, Codex, Gemini CLI, and others).
+[Warp](http://localhost:8080) is an agentic development environment, born out of the terminal. Use Warp's built-in coding agent, or bring your own CLI agent (Claude Code, Codex, Gemini CLI, and others).
 
 ## Installation
 
-You can [download Warp](https://www.warp.dev/download) and [read our docs](https://docs.warp.dev/) for platform-specific instructions.
+You can [download Warp](http://localhost:8080/download) and [read our docs](http://localhost:8080/docs/) for platform-specific instructions.
 
-## Warp Contributions Overview Dashboard
+## Octomus Contributions Overview Dashboard
 
-Explore [build.warp.dev](https://build.warp.dev) to:
+Explore [build.localhost](https://build.localhost) to:
 - Watch thousands of Oz agents triage issues, write specs, implement changes, and review PRs
 - View top contributors and in-flight features
 - Track your own issues with GitHub sign-in
@@ -62,7 +64,7 @@ The rest of the code in this repository is licensed under the [AGPL v3](LICENSE-
 Warp's client codebase is open source and lives in this repository. We welcome community contributions and have designed a lightweight workflow to help new contributors get started. For the full contribution flow, read our [CONTRIBUTING.md](CONTRIBUTING.md) guide.
 
 > [!TIP]
-> **Chat with contributors and the Warp team** in the [`#oss-contributors`](https://warpcommunity.slack.com/archives/C0B0LM8N4DB) Slack channel — a good place for ad-hoc questions, design discussion, and pairing with maintainers. New here? [Join the Warp Slack community](https://go.warp.dev/join-preview) first, then jump into `#oss-contributors`.
+> **Chat with contributors and the Warp team** in the [`#oss-contributors`](https://warpcommunity.slack.com/archives/C0B0LM8N4DB) Slack channel — a good place for ad-hoc questions, design discussion, and pairing with maintainers. New here? [Join the Warp Slack community](https://go.localhost/join-preview) first, then jump into `#oss-contributors`.
 
 ### Issue to PR
 
@@ -84,22 +86,22 @@ See [WARP.md](WARP.md) for the full engineering guide, including coding style, t
 
 ## Joining the Team
 
-Interested in joining the team? See our [open roles](https://www.warp.dev/careers).
+Interested in joining the team? See our [open roles](http://localhost:8080/careers).
 
 ## Support and Questions
 
-1. See our [docs](https://docs.warp.dev/) for a comprehensive guide to Warp's features.
-2. Join our [Slack Community](https://go.warp.dev/join-preview) to connect with other users and get help from the Warp team — contributors hang out in [`#oss-contributors`](https://warpcommunity.slack.com/archives/C0B0LM8N4DB).
-3. Try our [Preview build](https://www.warp.dev/download-preview) to test the latest experimental features.
+1. See our [docs](http://localhost:8080/docs/) for a comprehensive guide to Warp's features.
+2. Join our [Slack Community](https://go.localhost/join-preview) to connect with other users and get help from the Warp team — contributors hang out in [`#oss-contributors`](https://warpcommunity.slack.com/archives/C0B0LM8N4DB).
+3. Try our [Preview build](http://localhost:8080/download-preview) to test the latest experimental features.
 4. Mention **@oss-maintainers** on any issue to escalate to the team — for example, if you encounter problems with the automated agents.
 
 ## Code of Conduct
 
-We ask everyone to be respectful and empathetic. Warp follows the [Code of Conduct](CODE_OF_CONDUCT.md). To report violations, email warp-coc at warp.dev.
+We ask everyone to be respectful and empathetic. Warp follows the [Code of Conduct](CODE_OF_CONDUCT.md). To report violations, email warp-coc at localhost.
 
 ## Open Source Dependencies
 
-We'd like to call out a few of the [open source dependencies](https://docs.warp.dev/help/licenses) that have helped Warp to get off the ground:
+We'd like to call out a few of the [open source dependencies](http://localhost:8080/docs/help/licenses) that have helped Warp to get off the ground:
 
 - [Tokio](https://github.com/tokio-rs/tokio)
 - [NuShell](https://github.com/nushell/nushell)

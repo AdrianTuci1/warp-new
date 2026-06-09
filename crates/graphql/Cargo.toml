@@ -1,7 +1,7 @@
 [package]
-authors = ["Warp Team <dev@warp.dev>"]
-edition = "2021"
 name = "warp_graphql"
+authors = ["Octomus Contributors <dev@octomus.dev>"]
+edition = "2021"
 version = "0.1.0"
 publish.workspace = true
 license.workspace = true

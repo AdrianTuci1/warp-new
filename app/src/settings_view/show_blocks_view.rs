@@ -607,7 +607,7 @@ impl View for ShowBlocksView {
 
 impl SettingsPageMeta for ShowBlocksView {
     fn section() -> SettingsSection {
-        SettingsSection::SharedBlocks
+        SettingsSection::Account
     }
 
     fn should_render(&self, ctx: &AppContext) -> bool {

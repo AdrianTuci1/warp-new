@@ -150,23 +150,6 @@ impl PromptAlertView {
 
         let request_usage_model = AIRequestUsageModel::as_ref(app);
         let has_requests_remaining = request_usage_model.has_requests_remaining();
-        let auth_state = AuthStateProvider::as_ref(app).get();
-
-        // Next, if the user is anonymous, we check if they have reached a certain percentage of requests used.
-        if auth_state
-            .is_anonymous_user_feature_gated()
-            .unwrap_or_default()
-        {
-            let percentage_used = request_usage_model.request_percentage_used();
-
-            if percentage_used >= ANONYMOUS_USER_REQUEST_LIMIT_SOFT_GATE_PERCENTAGE {
-                if has_requests_remaining {
-                    return PromptAlertState::AnonymousUserRequestLimitSoftGate;
-                } else {
-                    return PromptAlertState::AnonymousUserRequestLimitHardGate;
-                }
-            }
-        }
 
         // Next, make sure the user isn't delinquent in their plan.
         let workspace = UserWorkspaces::as_ref(app).current_workspace();
@@ -388,7 +371,7 @@ impl PromptAlertView {
                         "use your own API keys",
                         WorkspaceAction::ShowSettingsPageWithSearch {
                             search_query: "api".to_string(),
-                            section: Some(SettingsSection::WarpAgent),
+                            section: Some(SettingsSection::OctomusAgent),
                         },
                     ));
                 }
@@ -451,7 +434,7 @@ impl View for PromptAlertView {
             text_fragments.push(FormattedTextFragment::plain_text("  "));
             text_fragments.push(FormattedTextFragment::hyperlink_action(
                 "Add credits",
-                WorkspaceAction::ShowSettingsPage(SettingsSection::BillingAndUsage),
+                WorkspaceAction::ShowSettingsPage(SettingsSection::Account),
             ));
         } else {
             self.action_hyperlink(&state, &mut text_fragments, app);

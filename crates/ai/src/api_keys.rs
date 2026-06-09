@@ -28,6 +28,45 @@ pub struct ApiKeys {
     pub custom_endpoints: Vec<CustomEndpoint>,
 }
 
+/// Request-scoped credential override used by remote/cloud agent runs.
+///
+/// The payload is kept in-memory only on the worker process and is never
+/// written to secure storage. This lets remote Octomus runs reuse the same
+/// BYO model setup as the user's local app session.
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct RequestCredentialsOverride {
+    pub api_keys: ApiKeys,
+    pub allow_use_of_warp_credits: Option<bool>,
+}
+
+impl RequestCredentialsOverride {
+    pub fn api_keys_for_request(&self) -> Option<api::request::settings::ApiKeys> {
+        let mut api_keys = api_keys_for_request_from_keys(&self.api_keys, true, None);
+
+        match (api_keys.as_mut(), self.allow_use_of_warp_credits) {
+            (Some(api_keys), Some(allow_use_of_warp_credits)) => {
+                api_keys.allow_use_of_warp_credits = allow_use_of_warp_credits;
+            }
+            (None, Some(true)) => {
+                api_keys = Some(api::request::settings::ApiKeys {
+                    allow_use_of_warp_credits: true,
+                    ..Default::default()
+                });
+            }
+            (None, Some(false)) | (_, None) => {}
+        }
+
+        api_keys
+    }
+
+    pub fn custom_model_providers_for_request(
+        &self,
+    ) -> Option<api::request::settings::CustomModelProviders> {
+        custom_model_providers_for_keys(&self.api_keys, true)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct CustomEndpoint {
@@ -96,6 +135,7 @@ pub enum AwsCredentialsRefreshStrategy {
 /// A structure that manages API keys for AI providers.
 pub struct ApiKeyManager {
     keys: ApiKeys,
+    request_credentials_override: Option<RequestCredentialsOverride>,
     pub(crate) aws_credentials_state: AwsCredentialsState,
     aws_credentials_refresh_strategy: AwsCredentialsRefreshStrategy,
     secure_storage_write_version: u64,
@@ -106,6 +146,7 @@ impl ApiKeyManager {
         let keys = Self::load_keys_from_secure_storage(ctx);
         Self {
             keys,
+            request_credentials_override: None,
             aws_credentials_state: AwsCredentialsState::Missing,
             aws_credentials_refresh_strategy: AwsCredentialsRefreshStrategy::default(),
             secure_storage_write_version: 0,
@@ -114,6 +155,17 @@ impl ApiKeyManager {
 
     pub fn keys(&self) -> &ApiKeys {
         &self.keys
+    }
+
+    pub fn request_credentials_override(&self) -> Option<&RequestCredentialsOverride> {
+        self.request_credentials_override.as_ref()
+    }
+
+    pub fn set_request_credentials_override(
+        &mut self,
+        request_credentials_override: Option<RequestCredentialsOverride>,
+    ) {
+        self.request_credentials_override = request_credentials_override;
     }
 
     pub fn set_google_key(&mut self, key: Option<String>, ctx: &mut ModelContext<Self>) {
@@ -253,40 +305,7 @@ impl ApiKeyManager {
         &self,
         include_custom_models: bool,
     ) -> Option<api::request::settings::CustomModelProviders> {
-        if !include_custom_models {
-            return None;
-        }
-
-        let providers: Vec<_> = self
-            .keys
-            .custom_endpoints
-            .iter()
-            .filter(|endpoint| !endpoint.url.trim().is_empty() && !endpoint.api_key.is_empty())
-            .map(
-                |endpoint| api::request::settings::custom_model_providers::CustomModelProvider {
-                    base_url: endpoint.url.clone(),
-                    api_key: endpoint.api_key.clone(),
-                    models: endpoint
-                        .models
-                        .iter()
-                        .filter(|m| !m.name.trim().is_empty() && !m.config_key.is_empty())
-                        .map(
-                            |m| api::request::settings::custom_model_providers::CustomModel {
-                                slug: m.name.clone(),
-                                config_key: m.config_key.clone(),
-                            },
-                        )
-                        .collect(),
-                },
-            )
-            .filter(|provider| !provider.models.is_empty())
-            .collect();
-
-        if providers.is_empty() {
-            None
-        } else {
-            Some(api::request::settings::CustomModelProviders { providers })
-        }
+        custom_model_providers_for_keys(&self.keys, include_custom_models)
     }
 
     pub fn api_keys_for_request(
@@ -294,23 +313,6 @@ impl ApiKeyManager {
         include_byo_keys: bool,
         include_aws_bedrock_credentials: bool,
     ) -> Option<api::request::settings::ApiKeys> {
-        let anthropic = include_byo_keys
-            .then(|| self.keys.anthropic.clone())
-            .flatten()
-            .unwrap_or_default();
-        let openai = include_byo_keys
-            .then(|| self.keys.openai.clone())
-            .flatten()
-            .unwrap_or_default();
-        let google = include_byo_keys
-            .then(|| self.keys.google.clone())
-            .flatten()
-            .unwrap_or_default();
-        let open_router = include_byo_keys
-            .then(|| self.keys.open_router.clone())
-            .flatten()
-            .unwrap_or_default();
-
         // Also include credentials when running with OIDC-managed Bedrock inference, regardless
         // of the per-user setting flag (which only applies to the local credential chain path).
         let include_aws = include_aws_bedrock_credentials
@@ -327,23 +329,7 @@ impl ApiKeyManager {
             })
             .flatten();
 
-        if anthropic.is_empty()
-            && openai.is_empty()
-            && google.is_empty()
-            && open_router.is_empty()
-            && aws_credentials.is_none()
-        {
-            None
-        } else {
-            Some(api::request::settings::ApiKeys {
-                anthropic,
-                openai,
-                google,
-                open_router,
-                allow_use_of_warp_credits: false,
-                aws_credentials,
-            })
-        }
+        api_keys_for_request_from_keys(&self.keys, include_byo_keys, aws_credentials)
     }
 
     fn load_keys_from_secure_storage(ctx: &mut ModelContext<Self>) -> ApiKeys {
@@ -399,6 +385,86 @@ impl Entity for ApiKeyManager {
 }
 
 impl SingletonEntity for ApiKeyManager {}
+
+fn custom_model_providers_for_keys(
+    keys: &ApiKeys,
+    include_custom_models: bool,
+) -> Option<api::request::settings::CustomModelProviders> {
+    if !include_custom_models {
+        return None;
+    }
+
+    let providers: Vec<_> = keys
+        .custom_endpoints
+        .iter()
+        .filter(|endpoint| !endpoint.url.trim().is_empty() && !endpoint.api_key.is_empty())
+        .map(
+            |endpoint| api::request::settings::custom_model_providers::CustomModelProvider {
+                base_url: endpoint.url.clone(),
+                api_key: endpoint.api_key.clone(),
+                models: endpoint
+                    .models
+                    .iter()
+                    .filter(|m| !m.name.trim().is_empty() && !m.config_key.is_empty())
+                    .map(
+                        |m| api::request::settings::custom_model_providers::CustomModel {
+                            slug: m.name.clone(),
+                            config_key: m.config_key.clone(),
+                        },
+                    )
+                    .collect(),
+            },
+        )
+        .filter(|provider| !provider.models.is_empty())
+        .collect();
+
+    if providers.is_empty() {
+        None
+    } else {
+        Some(api::request::settings::CustomModelProviders { providers })
+    }
+}
+
+fn api_keys_for_request_from_keys(
+    keys: &ApiKeys,
+    include_byo_keys: bool,
+    aws_credentials: Option<api::request::settings::api_keys::AwsCredentials>,
+) -> Option<api::request::settings::ApiKeys> {
+    let anthropic = include_byo_keys
+        .then(|| keys.anthropic.clone())
+        .flatten()
+        .unwrap_or_default();
+    let openai = include_byo_keys
+        .then(|| keys.openai.clone())
+        .flatten()
+        .unwrap_or_default();
+    let google = include_byo_keys
+        .then(|| keys.google.clone())
+        .flatten()
+        .unwrap_or_default();
+    let open_router = include_byo_keys
+        .then(|| keys.open_router.clone())
+        .flatten()
+        .unwrap_or_default();
+
+    if anthropic.is_empty()
+        && openai.is_empty()
+        && google.is_empty()
+        && open_router.is_empty()
+        && aws_credentials.is_none()
+    {
+        None
+    } else {
+        Some(api::request::settings::ApiKeys {
+            anthropic,
+            openai,
+            google,
+            open_router,
+            allow_use_of_warp_credits: false,
+            aws_credentials,
+        })
+    }
+}
 
 #[cfg(test)]
 #[path = "api_keys_tests.rs"]

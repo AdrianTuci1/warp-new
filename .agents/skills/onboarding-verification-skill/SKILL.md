@@ -33,7 +33,7 @@ Those two baseline explorers are also responsible for noticing meaningful altern
 ## Managed FTUE auth secret
 
 - `ONBOARDING_AGENT_FTUE_REFRESH_TOKEN` is an internal-team managed secret for cloud agents, not a repo file or prompt literal.
-- The secret should authenticate as a dedicated non-employee, non-`warp.dev` FTUE test user.
+- The secret should authenticate as a dedicated non-employee, non-`localhost` FTUE test user.
 - Rotate the secret with `oz-dev secret update --team --value-file <private-token-file> ONBOARDING_AGENT_FTUE_REFRESH_TOKEN`.
 - Treat the private token file as local scratch material only. Do not read it into chat, print it, stage it, commit it, upload it, or include it in artifacts. Delete it after the managed secret is updated.
 - Children should receive the secret only through the managed environment variable injected into the remote run.
@@ -87,15 +87,15 @@ Install requirements:
 - Prefer native packages over AppImage because they install dependencies and register the app normally.
 
 Stable Linux package mapping:
-- Debian/Ubuntu with amd64 or x86_64: https://app.warp.dev/download?package=deb
-- Debian/Ubuntu with arm64 or aarch64: https://app.warp.dev/download?package=deb_arm64
-- Fedora/RHEL/CentOS/openSUSE with amd64 or x86_64: https://app.warp.dev/download?package=rpm
-- Fedora/RHEL/CentOS/openSUSE with arm64 or aarch64: https://app.warp.dev/download?package=rpm_arm64
-- Arch with amd64 or x86_64: https://app.warp.dev/download?package=pacman
-- Arch with arm64 or aarch64: https://app.warp.dev/download?package=pacman_arm64
+- Debian/Ubuntu with amd64 or x86_64: https://app.localhost/download?package=deb
+- Debian/Ubuntu with arm64 or aarch64: https://app.localhost/download?package=deb_arm64
+- Fedora/RHEL/CentOS/openSUSE with amd64 or x86_64: https://app.localhost/download?package=rpm
+- Fedora/RHEL/CentOS/openSUSE with arm64 or aarch64: https://app.localhost/download?package=rpm_arm64
+- Arch with amd64 or x86_64: https://app.localhost/download?package=pacman
+- Arch with arm64 or aarch64: https://app.localhost/download?package=pacman_arm64
 - If no native package path is available, use the AppImage fallback:
-  - amd64 or x86_64: https://app.warp.dev/download?package=appimage
-  - arm64 or aarch64: https://app.warp.dev/download?package=appimage_arm64
+  - amd64 or x86_64: https://app.localhost/download?package=appimage
+  - arm64 or aarch64: https://app.localhost/download?package=appimage_arm64
 
 Before launch:
 - Create a flow-specific artifact directory such as `~/warp-onboarding-logged-out` or `~/warp-onboarding-logged-in`.
@@ -195,7 +195,7 @@ Append this prompt to the shared child prompt for the logged-in child:
 You own the logged-in onboarding flow.
 
 Flow-specific goal:
-- Use the managed secret environment variable `ONBOARDING_AGENT_FTUE_REFRESH_TOKEN` to authenticate as the dedicated non-employee, non-`warp.dev` FTUE test user.
+- Use the managed secret environment variable `ONBOARDING_AGENT_FTUE_REFRESH_TOKEN` to authenticate as the dedicated non-employee, non-`localhost` FTUE test user.
 - Exercise onboarding screens that are available to an already-authenticated user.
 - Continue through the authenticated onboarding path until Warp reaches a usable terminal session.
 

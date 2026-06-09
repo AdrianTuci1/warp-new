@@ -3,7 +3,8 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use warpui::{Entity, SingletonEntity};
 
-use crate::server::server_api::TranscribeError;
+/// Error type for transcription. Octomus: String (server::server_api was deleted).
+pub type TranscribeError = String;
 
 /// Interface for transcribing voice input.
 #[cfg_attr(not(target_family = "wasm"), async_trait)]
@@ -33,6 +34,10 @@ impl VoiceTranscriber {
         Self {
             transcriber: Some(transcriber),
         }
+    }
+
+    pub fn new_disabled() -> Self {
+        Self { transcriber: None }
     }
 
     /// Returns the transcriber if one is set.
