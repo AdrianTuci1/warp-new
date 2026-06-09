@@ -189,7 +189,7 @@ elif [[ $RELEASE_CHANNEL = "oss" ]]; then
     BUNDLE_ID="dev.octomus.OctomusOss"
     WARP_APP_NAME="OctomusOss"
     WARP_SCHEME_NAME="octomusoss"
-    FEATURES="release_bundle,extern_plist"
+    FEATURES="release_bundle,extern_plist,autoupdate"
 fi
 
 OUT_DIR="target/$TARGET_PROFILE_DIR/bundle/osx"
