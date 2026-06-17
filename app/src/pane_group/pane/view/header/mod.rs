@@ -743,11 +743,6 @@ impl<P: BackingView> View for PaneHeader<P> {
             .as_ref(app)
             .render_header_content(&header_ctx, app);
 
-        let show_active_pane_indicator = self
-            .pane_configuration
-            .as_ref(app)
-            .show_active_pane_indicator;
-
         let should_wrap_with_draggable = !matches!(
             header_content,
             HeaderContent::Custom {
@@ -784,10 +779,6 @@ impl<P: BackingView> View for PaneHeader<P> {
         // Always add overlays — they only render when open_overlay != None,
         // which requires a button click to trigger.
         self.add_overlays_to_stack(&mut stack, has_overflow_items, app);
-
-        if show_active_pane_indicator {
-            add_active_pane_indicator_to_stack(&mut stack, appearance);
-        }
 
         let clickable_stack = Hoverable::new(
             self.mouse_state_handles.header_click_handle.clone(),
@@ -960,28 +951,6 @@ impl<P: BackingView> TypedActionView for PaneHeader<P> {
             PaneHeaderAction::PaneHeaderClicked => ctx.emit(Event::PaneHeaderClicked),
         }
     }
-}
-
-/// Adds the active pane indicator to the stack.
-fn add_active_pane_indicator_to_stack(stack: &mut Stack, appearance: &Appearance) {
-    let indicator = Icon::new(
-        "bundled/svg/upper-left-triangle.svg",
-        appearance.theme().accent(),
-    )
-    .finish();
-    let child = ConstrainedBox::new(indicator)
-        .with_height(16.)
-        .with_width(16.)
-        .finish();
-    stack.add_positioned_child(
-        child,
-        OffsetPositioning::offset_from_parent(
-            vec2f(0., 0.),
-            ParentOffsetBounds::ParentBySize,
-            ParentAnchor::TopLeft,
-            ChildAnchor::TopLeft,
-        ),
-    );
 }
 
 pub fn toolbelt_button_position_id(

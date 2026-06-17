@@ -1,8 +1,8 @@
 use pathfinder_geometry::vector::vec2f;
 use settings::Setting;
 use warpui::elements::{
-    Border, ChildAnchor, ChildView, Clipped, Container, DropTarget, Element, Empty, Flex,
-    Hoverable, OffsetPositioning, ParentAnchor, ParentElement, ParentOffsetBounds, SavePosition,
+    Border, ChildAnchor, ChildView, Clipped, Container, CornerRadius, DropTarget, Element, Empty, Flex,
+    Hoverable, OffsetPositioning, ParentAnchor, ParentElement, ParentOffsetBounds, Radius, SavePosition,
     Stack,
 };
 use warpui::{AppContext, SingletonEntity};
@@ -244,26 +244,19 @@ impl Input {
         let show_block_dividers = *BlockListSettings::as_ref(app).show_block_dividers.value();
         let should_render_divider = !FeatureFlag::AgentView.is_enabled() || show_block_dividers;
 
-        let border = match input_mode {
-            InputMode::PinnedToBottom => Border::top(if should_render_divider {
-                get_input_box_top_border_width()
-            } else {
-                0.
-            })
-            .with_border_fill(theme.outline()),
-            InputMode::PinnedToTop => Border::bottom(if should_render_divider {
-                get_input_box_top_border_width()
-            } else {
-                0.
-            })
-            .with_border_fill(theme.outline()),
-            InputMode::Waterfall => Border::new(get_input_box_top_border_width())
-                .with_sides(true, false, true, false)
-                .with_border_fill(theme.outline()),
-        };
+        let border = Border::all(if should_render_divider {
+            get_input_box_top_border_width()
+        } else {
+            0.
+        })
+        .with_border_fill(theme.outline());
 
         let drop_target = DropTarget::new(
-            Container::new(stack.finish()).with_border(border).finish(),
+            Container::new(stack.finish())
+                .with_border(border)
+                .with_corner_radius(CornerRadius::with_all(Radius::Pixels(4.)))
+                .with_uniform_margin(1.)
+                .finish(),
             InputDropTargetData::new(self.weak_view_handle.clone()),
         )
         .finish();

@@ -571,9 +571,15 @@ impl AgentDriver {
             )
         );
 
-        // If we're not logged in, the root view will go to an auth screen, and all subsequent steps will fail.
-        // This should be impossible, since we enforce login before reaching this point.
-        if !AuthStateProvider::as_ref(ctx).get().is_logged_in() {
+        let requires_authenticated_session = task_id.is_some() || environment.is_some();
+
+        // Cloud-backed runs still require a full account, but local runs can continue
+        // with user-supplied model credentials even when no Warp session exists.
+        if requires_authenticated_session
+            && AuthStateProvider::as_ref(ctx)
+                .get()
+                .is_anonymous_or_logged_out()
+        {
             return Err(AgentDriverError::NotLoggedIn);
         }
 

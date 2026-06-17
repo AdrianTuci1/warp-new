@@ -123,8 +123,8 @@ impl FreeUserNoAiSlide {
             appearance,
             0,
             Icon::Code2,
-            "Agent driven development with Warp's built-in agent",
-            "Iterate, plan, and build with Oz: Warp's built-in agent. Available locally or in the cloud.",
+            "Agent driven development with Octomus",
+            "Iterate, plan, and build with Octomus. Available locally or in the cloud.",
             agent_price_badge.to_string(),
             true, // badge is green
             self.agent_mouse_state.clone(),
@@ -318,7 +318,7 @@ impl FreeUserNoAiSlide {
             self.next_button.render(
                 appearance,
                 button::Params {
-                    content: button::Content::Label("Get Warping".into()),
+                    content: button::Content::Label("Get Running".into()),
                     theme: &button::themes::Primary,
                     options: button::Options {
                         keystroke: Some(enter),

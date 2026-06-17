@@ -405,7 +405,7 @@ impl EditorView {
 
     fn apply_transcribed_voice_input(
         &mut self,
-        result: Result<String, TranscribeError>,
+        result: Result<String, crate::voice::transcriber::TranscribeError>,
         ctx: &mut ViewContext<Self>,
     ) {
         if !self.voice_transcription_options.is_enabled() {

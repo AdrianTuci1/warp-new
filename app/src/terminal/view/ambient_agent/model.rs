@@ -15,26 +15,27 @@ use crate::ai::active_agent_views_model::ActiveAgentViewsModel;
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::extract_user_query_mode;
 use crate::ai::ambient_agents::github_auth_notifier::{GitHubAuthEvent, GitHubAuthNotifier};
-use crate::ai::ambient_agents::spawn::{spawn_task, submit_run_followup, AmbientAgentEvent};
+use crate::ai::ambient_agents::spawn::{AmbientAgentEvent, spawn_task, submit_run_followup};
 use crate::ai::ambient_agents::task::{HarnessAuthSecretsConfig, HarnessConfig};
 use crate::ai::ambient_agents::telemetry::CloudAgentTelemetryEvent;
 use crate::ai::ambient_agents::{
-    github_auth_url, AgentSource, AmbientAgentTaskId, OUT_OF_CREDITS_TASK_FAILURE_MESSAGE,
-    SERVER_OVERLOADED_TASK_FAILURE_MESSAGE,
+    AgentSource, AmbientAgentTaskId, OUT_OF_CREDITS_TASK_FAILURE_MESSAGE,
+    SERVER_OVERLOADED_TASK_FAILURE_MESSAGE, github_auth_url,
 };
-#[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
-use crate::ai::blocklist::handoff::touched_repos::TouchedWorkspace;
+use crate::ai::blocklist::BlocklistAIHistoryModel;
 #[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
 use crate::ai::blocklist::handoff::PendingCloudLaunch;
-use crate::ai::blocklist::BlocklistAIHistoryModel;
+#[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
+use crate::ai::blocklist::handoff::touched_repos::TouchedWorkspace;
 use crate::ai::cloud_environments::CloudAmbientAgentEnvironment;
+use crate::ai::cloud_worker_connector::CloudWorkerConnectorModel;
 use crate::ai::execution_profiles::{
-    resolve_cloud_agent_computer_use_state, CloudAgentComputerUseState,
+    CloudAgentComputerUseState, resolve_cloud_agent_computer_use_state,
 };
 use crate::ai::harness_availability::HarnessAvailabilityModel;
 use crate::ai::llms::{LLMId, LLMPreferences};
-use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
 use crate::cloud_object::CloudObjectLookup as _;
+use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
 use crate::server::cloud_objects::update_manager::UpdateManager;
 use crate::server::ids::{ServerId, SyncId};
 #[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
@@ -46,8 +47,8 @@ use crate::server::server_api::{
     AIApiError, ClientError, CloudAgentCapacityError, ServerApiProvider,
 };
 use crate::settings::{AISettings, PrivacySettings};
-use crate::terminal::view::ambient_agent::{SetupCommandGroupId, SetupCommandState};
 use crate::terminal::CLIAgent;
+use crate::terminal::view::ambient_agent::{SetupCommandGroupId, SetupCommandState};
 use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::workspaces::workspace::AdminEnablementSetting;
 
@@ -1000,6 +1001,9 @@ impl AmbientAgentViewModel {
             |me, result, ctx| match result {
                 Ok(task) => {
                     me.source = task.source.clone();
+                    CloudWorkerConnectorModel::handle(ctx).update(ctx, |model, ctx| {
+                        model.restore_record_from_task(&task, ctx);
+                    });
                     me.apply_viewed_task_config_snapshot(task.agent_config_snapshot.as_ref(), ctx);
                     ctx.emit(AmbientAgentViewModelEvent::ViewerHarnessResolved);
                 }
@@ -1357,6 +1361,18 @@ impl AmbientAgentViewModel {
         match event {
             AmbientAgentEvent::TaskSpawned { task_id, run_id } => {
                 self.task_id = Some(task_id);
+                if let Some(request) = self.request.as_ref() {
+                    let local_conversation_id = self.conversation_id;
+                    CloudWorkerConnectorModel::handle(ctx).update(ctx, |model, ctx| {
+                        model.record_spawn_for_request(
+                            request,
+                            task_id,
+                            &run_id,
+                            local_conversation_id,
+                            ctx,
+                        );
+                    });
+                }
                 if matches!(self.status, Status::Cancelled { .. }) {
                     log::info!(
                         "Received task_id after cancellation, sending server cancellation for task {}",
@@ -1448,6 +1464,16 @@ impl AmbientAgentViewModel {
                 }
 
                 if let Some(session_id) = session_join_info.session_id {
+                    if let Some(task_id) = self.task_id {
+                        CloudWorkerConnectorModel::handle(ctx).update(ctx, |model, ctx| {
+                            model.record_session_started(
+                                &task_id.to_string(),
+                                Some(session_id.to_string()),
+                                Some(session_join_info.session_link.clone()),
+                                ctx,
+                            );
+                        });
+                    }
                     self.stop_progress_timer();
                     let event_session_id = session_id;
                     let event = match &self.status {

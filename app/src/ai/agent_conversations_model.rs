@@ -18,14 +18,14 @@ use warp_cli::agent::Harness;
 use warp_core::execution_mode::AppExecutionMode;
 use warp_core::features::FeatureFlag;
 use warp_core::report_error;
-use warp_core::ui::theme::color::internal_colors;
 use warp_core::ui::theme::WarpTheme;
-use warpui::color::ColorU;
+use warp_core::ui::theme::color::internal_colors;
 use warpui::r#async::Timer;
+use warpui::color::ColorU;
 use warpui::windowing::{StateEvent, WindowManager};
 use warpui::{
-    duration_with_jitter, AppContext, Entity, EntityId, ModelContext, RequestState,
-    SingletonEntity, WindowId,
+    AppContext, Entity, EntityId, ModelContext, RequestState, SingletonEntity, WindowId,
+    duration_with_jitter,
 };
 
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;
@@ -40,7 +40,9 @@ use crate::ai::blocklist::{
     BlocklistAIHistoryEvent, BlocklistAIHistoryModel, ConversationStatusUpdate,
 };
 use crate::ai::cloud_environments::CloudAmbientAgentEnvironment;
+use crate::ai::cloud_worker_connector::CloudWorkerConnectorModel;
 use crate::ai::conversation_navigation::ConversationNavigationData;
+use crate::auth::AuthStateProvider;
 use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};
 use crate::cloud_object::CloudObjectLookup as _;
 use crate::network::{NetworkStatus, NetworkStatusEvent, NetworkStatusKind};
@@ -48,11 +50,11 @@ use crate::profile::ProfileModel;
 use crate::server::cloud_objects::update_manager::{UpdateManager, UpdateManagerEvent};
 use crate::server::ids::{ServerId, SyncId};
 use crate::server::retry_strategies::{
-    is_transient_http_error, OUT_OF_BAND_REQUEST_RETRY_STRATEGY, PERIODIC_POLL_RETRY_STRATEGY,
+    OUT_OF_BAND_REQUEST_RETRY_STRATEGY, PERIODIC_POLL_RETRY_STRATEGY, is_transient_http_error,
 };
+use crate::server::server_api::ServerApiProvider;
 use crate::server::server_api::ai::TaskListFilter;
 use crate::server::server_api::presigned_upload::HttpStatusError;
-use crate::server::server_api::ServerApiProvider;
 use crate::settings::AISettings;
 use crate::ui_components::icons::Icon;
 use crate::workspace::{RestoreConversationLayout, WorkspaceAction};
@@ -554,6 +556,8 @@ pub struct AgentConversationsModel {
     active_data_consumers_per_window: HashMap<WindowId, HashSet<EntityId>>,
     /// Whether we have finished the initial task load
     has_finished_initial_load: bool,
+    /// Whether the initial cloud sync was skipped because the session has no full account.
+    skipped_cloud_sync_due_to_auth: bool,
     /// Per-task fetch state for `get_or_async_fetch_task_data`. See [`TaskFetchState`] for
     /// the meaning of each variant. Tasks that have been successfully fetched live in `tasks`
     /// and are absent from this map.
@@ -597,6 +601,21 @@ impl Entity for AgentConversationsModel {
 impl SingletonEntity for AgentConversationsModel {}
 
 impl AgentConversationsModel {
+    fn record_cloud_worker_tasks(
+        tasks: impl IntoIterator<Item = AmbientAgentTask>,
+        ctx: &mut ModelContext<Self>,
+    ) {
+        let tasks = tasks.into_iter().collect::<Vec<_>>();
+        if tasks.is_empty() {
+            return;
+        }
+        CloudWorkerConnectorModel::handle(ctx).update(ctx, |model, ctx| {
+            for task in &tasks {
+                model.restore_record_from_task(task, ctx);
+            }
+        });
+    }
+
     pub fn new(ctx: &mut ModelContext<Self>) -> Self {
         // If FF not enabled, return an empty model and don't sync any tasks.
         if !FeatureFlag::AgentManagementView.is_enabled() {
@@ -607,6 +626,7 @@ impl AgentConversationsModel {
                 next_poll_abort_handle: None,
                 active_data_consumers_per_window: HashMap::new(),
                 has_finished_initial_load: true,
+                skipped_cloud_sync_due_to_auth: false,
                 task_fetch_state: HashMap::new(),
                 rtc_task_refresh_throttle_state: RtcTaskRefreshThrottleState::default(),
                 dirty_since: None,
@@ -646,6 +666,7 @@ impl AgentConversationsModel {
             next_poll_abort_handle: None,
             active_data_consumers_per_window: HashMap::new(),
             has_finished_initial_load: false,
+            skipped_cloud_sync_due_to_auth: false,
             task_fetch_state: HashMap::new(),
             rtc_task_refresh_throttle_state: RtcTaskRefreshThrottleState::default(),
             dirty_since: None,
@@ -706,8 +727,11 @@ impl AgentConversationsModel {
         // When auth completes, retry the initial task sync if we haven't loaded tasks yet
         // Only sync if we're not in CLI mode
         if matches!(event, AuthManagerEvent::AuthComplete)
-            && !self.has_finished_initial_load
+            && (!self.has_finished_initial_load || self.skipped_cloud_sync_due_to_auth)
             && AppExecutionMode::as_ref(ctx).can_fetch_agent_runs_for_management()
+            && !AuthStateProvider::as_ref(ctx)
+                .get()
+                .is_anonymous_or_logged_out()
         {
             self.fetch_ambient_agent_tasks_and_cloud_convo_metadata(ctx);
         }
@@ -875,6 +899,20 @@ impl AgentConversationsModel {
             return;
         }
 
+        if AuthStateProvider::as_ref(ctx)
+            .get()
+            .is_anonymous_or_logged_out()
+        {
+            // Local conversations are still available from history; only cloud task sync is blocked.
+            self.skipped_cloud_sync_due_to_auth = true;
+            self.has_finished_initial_load = true;
+            self.abort_existing_poll();
+            ctx.emit(AgentConversationsModelEvent::ConversationsLoaded);
+            return;
+        }
+
+        self.skipped_cloud_sync_due_to_auth = false;
+
         let ai_client = ServerApiProvider::as_ref(ctx).get_ai_client();
 
         ctx.spawn_with_retry_on_error(
@@ -967,6 +1005,7 @@ impl AgentConversationsModel {
                     // Update tasks if we got any
                     if !tasks.is_empty() {
                         log::info!("Updating model with {} tasks", tasks.len());
+                        Self::record_cloud_worker_tasks(tasks.iter().cloned(), ctx);
                         for task in tasks {
                             model.tasks.insert(task.task_id, task);
                         }
@@ -1048,6 +1087,14 @@ impl AgentConversationsModel {
     /// Returns true if we should be polling: online, not loading, and active window has the view open.
     fn should_be_polling(&self, ctx: &ModelContext<Self>) -> bool {
         if !self.has_finished_initial_load {
+            return false;
+        }
+
+        if self.skipped_cloud_sync_due_to_auth
+            || AuthStateProvider::as_ref(ctx)
+                .get()
+                .is_anonymous_or_logged_out()
+        {
             return false;
         }
 
@@ -1140,6 +1187,9 @@ impl AgentConversationsModel {
 
         for task in tasks {
             let task_id = task.task_id;
+            CloudWorkerConnectorModel::handle(ctx).update(ctx, |model, ctx| {
+                model.restore_record_from_task(&task, ctx);
+            });
             match self.tasks.get(&task_id) {
                 Some(existing_task) => {
                     if existing_task != &task {
@@ -1654,6 +1704,9 @@ impl AgentConversationsModel {
             move |model, result, ctx| match result {
                 RequestState::RequestSucceeded(task) => {
                     let fetched_id = task.task_id;
+                    CloudWorkerConnectorModel::handle(ctx).update(ctx, |connector, ctx| {
+                        connector.restore_record_from_task(&task, ctx);
+                    });
                     model.tasks.insert(fetched_id, task);
                     model.task_fetch_state.remove(&fetched_id);
                     ctx.emit(AgentConversationsModelEvent::TasksUpdated);
@@ -1906,6 +1959,7 @@ impl AgentConversationsModel {
         self.dirty_since = None;
         // Reset the initial load flag so that we can retry the initial sync with the new logged in user
         self.has_finished_initial_load = false;
+        self.skipped_cloud_sync_due_to_auth = false;
     }
 }
 

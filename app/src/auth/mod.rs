@@ -219,6 +219,7 @@ pub fn log_out(app: &mut AppContext) {
 
     AuthManager::handle(app).update(app, |auth_manager, ctx| {
         auth_manager.log_out(ctx);
+        auth_manager.create_anonymous_user(None, ctx);
     });
     AIExecutionProfilesModel::handle(app).update(app, |ai_execution_profiles_model, _| {
         ai_execution_profiles_model.reset();

@@ -8,8 +8,8 @@ pub use header_content::{
     HeaderContent, HeaderRenderContext, StandardHeader, StandardHeaderOptions,
 };
 use warpui::elements::{
-    Border, Container, DropTarget, DropTargetData, Flex, MainAxisSize, ParentElement, SavePosition,
-    Shrinkable,
+    Border, Container, CornerRadius, DropTarget, DropTargetData, Flex, MainAxisSize, ParentElement,
+    Radius, SavePosition, Shrinkable,
 };
 use warpui::keymap::EditableBinding;
 use warpui::presenter::ChildView;
@@ -395,9 +395,14 @@ impl<P: BackingView> View for PaneView<P> {
 
         let mut container = Container::new(column.finish());
         if pane_configuration.show_accent_border {
-            let border = Border::all(2.).with_border_fill(appearance.theme().accent());
+            let border = Border::all(1.).with_border_fill(appearance.theme().accent());
             container = container.with_border(border);
+        } else {
+            container = container
+                .with_border(Border::all(1.).with_border_fill(appearance.theme().outline()));
         }
+        container = container.with_corner_radius(CornerRadius::with_all(Radius::Pixels(4.)));
+        container = container.with_uniform_margin(3.);
 
         // Dim inactive panes.
         let should_dim_inactive_panes = *PaneSettings::as_ref(app).should_dim_inactive_panes;

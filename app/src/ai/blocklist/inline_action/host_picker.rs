@@ -490,9 +490,14 @@ pub(crate) fn menu_label_for(slug: &str, default_host: Option<&str>) -> String {
 }
 
 fn format_known_label(slug: &str, badge: Option<&str>) -> String {
+    let display_slug = if slug.eq_ignore_ascii_case(ORCHESTRATION_WARP_WORKER_HOST) {
+        "Octomus"
+    } else {
+        slug
+    };
     match badge {
-        Some(badge) => format!("{slug}  ({badge})"),
-        None => slug.to_string(),
+        Some(badge) => format!("{display_slug}  ({badge})"),
+        None => display_slug.to_string(),
     }
 }
 

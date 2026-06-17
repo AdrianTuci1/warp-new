@@ -1673,43 +1673,8 @@ impl RootView {
                 if #[cfg(target_family = "wasm")] {
                     AuthOnboardingState::WebImport(AuthOnboardingTarget::Workspace(workspace_args.into()))
                 } else {
-                    // Only Stable and Preview have real production servers to authenticate against.
-                    // All other channels (Dev, Local, Integration, Oss) skip login/onboarding
-                    // entirely and go directly into the workspace.
-                    let channel = ChannelState::channel();
-                    if matches!(channel, Channel::Stable | Channel::Preview) {
-                        // Production channels — show auth/onboarding based on feature flags.
-                        // When OpenWarpNewSettingsModes is enabled, show onboarding before login for
-                        // users who haven't completed it yet (tracked via a local UserPreferences key).
-                        let has_completed_local_onboarding = FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
-                            && has_completed_local_onboarding(ctx);
-                        let should_show_pre_login_onboarding = FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
-                            && FeatureFlag::AgentOnboarding.is_enabled()
-                            && !has_completed_local_onboarding;
-                        if FeatureFlag::ForceLogin.is_enabled() {
-                            // ForceLogin is true for Preview
-                            AuthOnboardingState::Auth(workspace_args.into())
-                        } else if should_show_pre_login_onboarding {
-                            let workspace_args_box: Box<WorkspaceArgs> = workspace_args.into();
-                            let onboarding_view = Self::create_agent_onboarding_view(ctx);
-                            onboarding_view.update(ctx, |view, ctx| {
-                                view.start_onboarding(ctx);
-                            });
-                            AuthOnboardingState::Onboarding {
-                                onboarding_view,
-                                target: AuthOnboardingTarget::Workspace(workspace_args_box),
-                            }
-                        } else if FeatureFlag::SkipFirebaseAnonymousUser.is_enabled() {
-                            // When SkipFirebaseAnonymousUser is enabled, skip the login screen
-                            // entirely and go directly into the workspace.
-                            AuthOnboardingState::Terminal(workspace_args.create_workspace(ctx))
-                        } else {
-                            AuthOnboardingState::Auth(workspace_args.into())
-                        }
-                    } else {
-                        // Dev/Local/Integration/Oss channels — no real server, skip auth entirely.
-                        AuthOnboardingState::Terminal(workspace_args.create_workspace(ctx))
-                    }
+                    // Always skip login/onboarding screen and go directly into the workspace
+                    AuthOnboardingState::Terminal(workspace_args.create_workspace(ctx))
                 }
             }
         };
@@ -3564,9 +3529,12 @@ impl AuthOnboardingState {
 
     fn log_out(&mut self, ctx: &mut ViewContext<RootView>) {
         match self {
-            AuthOnboardingState::Auth(_) => (),
+            AuthOnboardingState::Auth(workspace_args) => {
+                *self = AuthOnboardingState::Terminal(workspace_args.clone().create_workspace(ctx));
+                ctx.emit(RootViewEvent::AuthOnboardingStateChanged);
+            }
             AuthOnboardingState::ConfirmIncomingAuth(workspace_args) => {
-                *self = AuthOnboardingState::Auth(workspace_args.clone());
+                *self = AuthOnboardingState::Terminal(workspace_args.clone().create_workspace(ctx));
                 ctx.emit(RootViewEvent::AuthOnboardingStateChanged);
             }
             #[cfg(target_family = "wasm")]
@@ -3576,7 +3544,7 @@ impl AuthOnboardingState {
             }
             AuthOnboardingState::NeedsSsoLink(needs_sso_link_mode) => match needs_sso_link_mode {
                 AuthOnboardingTarget::Workspace(args) => {
-                    *self = AuthOnboardingState::Auth(args.clone());
+                    *self = AuthOnboardingState::Terminal(args.clone().create_workspace(ctx));
                     ctx.emit(RootViewEvent::AuthOnboardingStateChanged);
                 }
                 AuthOnboardingTarget::Terminal(_) => {}
@@ -3604,10 +3572,8 @@ impl AuthOnboardingState {
                     workspace_setting,
                 };
 
-                // Auth no longer holds the original workspace view handle
-                // This way it is destroyed at this step, and we will re-create
-                // a new workspace view handle when the user logs in.
-                *self = AuthOnboardingState::Auth(workspace_args.into());
+                // Create a fresh workspace and stay in Terminal state instead of going to Auth!
+                *self = AuthOnboardingState::Terminal(workspace_args.create_workspace(ctx));
                 ctx.emit(RootViewEvent::AuthOnboardingStateChanged);
             }
         }

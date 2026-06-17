@@ -28,8 +28,8 @@ pub use callout::{OnboardingCalloutView, OnboardingKeybindings};
 /// Shared by the intention slide's agent card checklist and the login slide's
 /// skip-login confirmation dialog so the two always stay in sync.
 pub const AI_FEATURES: &[&str] = &[
-    "Warp agents",
-    "Oz cloud agents platform",
+    "Octomus agents",
+    "Octomus cloud agents platform",
     "Next command predictions",
     "Prompt suggestions",
     "Codebase context",

@@ -108,7 +108,7 @@ const IMAGE_SOURCE_LINK_LINE_INDEX: usize = 1;
 const ERROR_APOLOGY_TEXT: &str = "I'm sorry, I couldn't complete that request.";
 const INTERNAL_WARP_ERROR: &str = "Internal Warp error.";
 
-pub const LOAD_OUTPUT_MESSAGE: &str = "Warping...";
+pub const LOAD_OUTPUT_MESSAGE: &str = "Running...";
 pub const LOAD_OUTPUT_MESSAGE_FOR_ADJUSTING: &str = "Adjusting tasks...";
 pub const LOAD_OUTPUT_MESSAGE_FOR_PASSIVE_CODE_GEN: &str = "Generating fix...";
 pub const LOAD_OUTPUT_MESSAGE_FOR_CREATING_DIFF: &str = "Creating diff...";
@@ -542,17 +542,7 @@ pub fn render_warping_indicator_base(
         is_passive_code_diff,
         secondary_element,
     } = props;
-    // Unicode code point for the Warp glyph that is embedded in the version of Roboto we bundle
-    // into the app. This code point MUST be rendered using Roboto (the default ui font) or else the
-    // glyph may not be rendered.
-    const WARP_GLYPH: &str = "\u{E500}";
-
     let appearance = Appearance::as_ref(app);
-
-    let should_indent_tip_for_warp_glyph = matches!(
-        warping_indicator_text,
-        MaybeShimmeringText::Shimmering { .. }
-    );
 
     let text = render_output_status_text(warping_indicator_text, appearance, app);
 
@@ -577,33 +567,9 @@ pub fn render_warping_indicator_base(
 
     let mut text_col = Flex::column();
     if let Some(sub_element) = secondary_element {
-        // Our warping indicator text prepends the Warp glyph (and a space) to the label.
-        // If we render the tip directly underneath, it will align to the glyph instead of
-        // the start of the actual warping text.
-        let sub_element = if should_indent_tip_for_warp_glyph {
-            let font_size = appearance.monospace_font_size() - 3.;
-            let glyph_indent = Text::new_inline(
-                format!("{WARP_GLYPH} "),
-                appearance.ui_font_family(),
-                font_size,
-            )
-            .with_color(ColorU::new(0, 0, 0, 0))
-            .with_selectable(false)
-            .soft_wrap(false)
-            .finish();
-
-            Flex::row()
-                .with_cross_axis_alignment(CrossAxisAlignment::Start)
-                .with_child(glyph_indent)
-                .with_child(Shrinkable::new(1., sub_element).finish())
-                .finish()
-        } else {
-            Shrinkable::new(1., sub_element).finish()
-        };
-
         text_col = text_col
             .with_child(text_content)
-            .with_child(Container::new(sub_element).with_margin_top(1.).finish());
+            .with_child(Container::new(Shrinkable::new(1., sub_element).finish()).with_margin_top(1.).finish());
     } else if FeatureFlag::AgentTips.is_enabled() && *InputSettings::as_ref(app).show_agent_tips {
         text_col = text_col.with_child(text_content);
     } else {

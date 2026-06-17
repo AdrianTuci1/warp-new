@@ -238,7 +238,7 @@ use crate::ai::blocklist::agent_view::{
     get_agent_view_entry_block_position_id, is_in_cloud_context, AgentViewController,
     AgentViewControllerEvent, AgentViewDisplayMode, AgentViewEntryBlockParams,
     AgentViewEntryOrigin, AgentViewHeaderDisabledTheme, AgentViewHeaderTheme,
-    AgentViewZeroStateBlock, AgentViewZeroStateEvent, EphemeralMessageModel,
+    EphemeralMessageModel,
     ExitConfirmationTrigger, InlineAgentViewHeader, OrchestrationPillBar,
     ENTER_OR_EXIT_CONFIRMATION_WINDOW,
 };
@@ -778,16 +778,16 @@ impl NotificationsTrigger {
     pub fn discovery_banner_copy(&self) -> &'static str {
         match self {
             NotificationsTrigger::LongRunningCommand(..) => {
-                "Warp can notify you when long-running commands finish."
+                "Octomus can notify you when long-running commands finish."
             }
             NotificationsTrigger::AgentTaskCompleted(..) => {
-                "Warp can notify you when an agent finishes responding."
+                "Octomus can notify you when an agent finishes responding."
             }
             NotificationsTrigger::NeedsAttention => {
-                "Warp can notify you when a command or agent needs your attention."
+                "Octomus can notify you when a command or agent needs your attention."
             }
             NotificationsTrigger::PasswordPrompt => {
-                "Warp can notify you when you're prompted to enter a password."
+                "Octomus can notify you when you're prompted to enter a password."
             }
         }
     }
@@ -3145,64 +3145,6 @@ impl TerminalView {
                                         | AgentViewEntryOrigin::SlashInit
                                         | AgentViewEntryOrigin::ThirdPartyCloudAgent
                                 );
-                            if should_insert_zero_state_block {
-                                let mut should_show_init_callout = false;
-                                if let Some(directory) = me.current_local_repo_path() {
-                                    should_show_init_callout = me
-                                        .should_show_agent_mode_setup_for_directory(directory, ctx);
-                                    if should_show_init_callout {
-                                        me.mark_agent_init_callout_as_shown_for_directory(
-                                            directory, ctx,
-                                        );
-                                    }
-                                }
-                                let agent_view_zero_state = ctx.add_typed_action_view(|ctx| {
-                                    AgentViewZeroStateBlock::new(
-                                        *conversation_id,
-                                        *origin,
-                                        me.agent_view_controller.clone(),
-                                        &me.sessions,
-                                        me.ambient_agent_view_model.as_ref(),
-                                        me.model.clone(),
-                                        &me.model_events_handle,
-                                        should_show_init_callout,
-                                        ctx,
-                                    )
-                                });
-                                ctx.subscribe_to_view(
-                                    &agent_view_zero_state,
-                                    |me, _, event, ctx| match event {
-                                        AgentViewZeroStateEvent::ClickedInitCallout => {
-                                            me.input.update(ctx, |input, ctx| {
-                                                input.replace_buffer_content(
-                                                    commands::INIT.name,
-                                                    ctx,
-                                                );
-                                            });
-                                        }
-                                        AgentViewZeroStateEvent::OpenConversation {
-                                            conversation_id,
-                                        } => {
-                                            me.enter_agent_view_for_conversation(
-                                                None,
-                                                AgentViewEntryOrigin::ConversationListView,
-                                                *conversation_id,
-                                                ctx,
-                                            );
-                                        }
-                                    },
-                                );
-                                me.insert_rich_content(
-                                    Some(RichContentType::AgentViewZeroState),
-                                    agent_view_zero_state,
-                                    Some(RichContentMetadata::AgentViewZeroState),
-                                    RichContentInsertionPosition::Append {
-                                        insert_below_long_running_block: false,
-                                    },
-                                    ctx,
-                                );
-                            }
-
                             // On agent-view-enter, we want to scroll to the bottom of the view
                             // (and save the current scroll position so we can get back to it when we exit the agent view).
                             me.scroll_position_before_entering_agent_view =
@@ -3249,8 +3191,7 @@ impl TerminalView {
                             let is_lrc_header =
                                 matches!(origin, AgentViewEntryOrigin::LongRunningCommand)
                                     && view.is_inline_agent_view_header();
-                            let is_agent_view_zero_state = view.is_agent_view_zero_state();
-                            (is_lrc_header || is_agent_view_zero_state).then_some(view.view_id())
+                            (is_lrc_header).then_some(view.view_id())
                         })
                         .collect_vec();
                     for view_id_to_remove in view_ids_to_remove.into_iter() {
@@ -27504,6 +27445,8 @@ impl View for TerminalView {
             element
         };
 
+        let final_element_with_border = final_element;
+
         // Wrap with conversation details panel on the right if open.
         // On WASM, the panel is rendered in the wasm_view instead.
         //
@@ -27524,14 +27467,13 @@ impl View for TerminalView {
                 Flex::row()
                     .with_main_axis_size(warpui::elements::MainAxisSize::Max)
                     .with_cross_axis_alignment(CrossAxisAlignment::Stretch)
-                    .with_child(Shrinkable::new(1., final_element).finish())
+                    .with_child(Shrinkable::new(1., final_element_with_border).finish())
                     .with_child(panel_with_background)
                     .finish(),
             )
-            .with_border(Border::top(1.0).with_border_fill(appearance.theme().outline()))
             .finish()
         } else {
-            final_element
+            final_element_with_border
         }
     }
 

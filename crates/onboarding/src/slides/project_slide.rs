@@ -299,7 +299,7 @@ impl ProjectSlide {
                 if theme_picker_last {
                     "Next"
                 } else {
-                    "Get Warping"
+                    "Get Running"
                 },
                 Keystroke::parse("enter").unwrap_or_default(),
                 ProjectSlideAction::NextClicked,

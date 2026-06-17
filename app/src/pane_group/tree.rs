@@ -1424,7 +1424,7 @@ fn create_divider(
 ) -> Box<dyn Element> {
     let divider = ConstrainedBox::new(
         Rect::new()
-            .with_background(theme.split_pane_border_color())
+            .with_background(theme.split_pane_border_color().with_opacity(0))
             .finish(),
     );
 
@@ -1460,7 +1460,7 @@ fn create_minimalist_divider(
 ) -> Box<dyn Element> {
     let divider = ConstrainedBox::new(
         Rect::new()
-            .with_background(theme.split_pane_border_color())
+            .with_background(theme.split_pane_border_color().with_opacity(0))
             .finish(),
     );
 

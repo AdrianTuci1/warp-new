@@ -174,10 +174,6 @@ impl RichContent {
         )
     }
 
-    pub fn is_agent_view_zero_state(&self) -> bool {
-        matches!(self.metadata, Some(RichContentMetadata::AgentViewZeroState))
-    }
-
     pub fn is_pending_user_query(&self) -> bool {
         matches!(
             self.metadata,
@@ -272,7 +268,6 @@ pub enum RichContentMetadata {
         block_handle: ViewHandle<AmbientAgentEntryBlock>,
     },
     InlineAgentViewHeader,
-    AgentViewZeroState,
     TerminalViewZeroState,
     PluginInstructionsBlock,
     PendingUserQuery {

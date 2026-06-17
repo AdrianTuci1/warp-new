@@ -1453,7 +1453,7 @@ impl<'a> TabComponent<'a> {
                 .finish(),
             );
             Container::new(flex_row.finish())
-                .with_horizontal_padding(8.)
+                .with_horizontal_padding(4.)
                 .finish()
         };
 
@@ -1592,16 +1592,17 @@ impl<'a> TabComponent<'a> {
         .finish();
 
         let mut tab = Container::new(stack)
-            .with_vertical_padding(2.)
             .with_background(background_color);
         if FeatureFlag::NewTabStyling.is_enabled() {
             let is_first_tab = self.tab_index == 0;
-            tab = tab.with_border(
-                Border::all(1.)
-                    // We only include a left border on the very first tab to avoid double borders.
-                    .with_sides(false, is_first_tab, false, true)
-                    .with_border_fill(border_fill),
-            );
+            tab = tab
+                .with_corner_radius(CornerRadius::with_all(Radius::Pixels(4.0)))
+                .with_border(
+                    Border::all(1.)
+                        // We only include a left border on the very first tab to avoid double borders.
+                        .with_sides(false, is_first_tab, false, true)
+                        .with_border_fill(border_fill),
+                );
         } else {
             tab = tab
                 .with_corner_radius(CornerRadius::with_all(Radius::Pixels(4.0)))
@@ -1868,17 +1869,7 @@ impl UiComponent for TabComponent<'_> {
             SavePosition::new(tab_with_drag, &tab_position_id(tab_index)).finish()
         };
 
-        if FeatureFlag::NewTabStyling.is_enabled() {
-            Shrinkable::new(1.0, full_tab)
-        } else {
-            Shrinkable::new(
-                1.0,
-                Container::new(full_tab)
-                    .with_vertical_margin(4.)
-                    .with_margin_left(8.)
-                    .finish(),
-            )
-        }
+        Shrinkable::new(1.0, full_tab)
     }
 
     fn with_style(self, style: UiComponentStyles) -> Self {

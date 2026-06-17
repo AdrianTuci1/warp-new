@@ -5,13 +5,15 @@ use super::super::base_client::CLOUD_AGENT_ID_HEADER;
 use super::super::ServerApi;
 use super::{
     build_fork_conversation_url, build_list_agent_runs_url, build_run_followup_url,
-    AgentMessageHeader, AgentRunEvent, AgentSource, AmbientAgentTaskState, Artifact,
-    ArtifactDownloadResponse, ArtifactType, ConnectedSelfHostedWorker, ExecutionLocation,
-    ForkConversationResponse, ListConnectedSelfHostedWorkersResponse, ListRunsResponse,
-    ReadAgentMessageResponse, RunFollowupRequest, RunSortBy, RunSortOrder, SpawnAgentRequest,
-    TaskListFilter, UserQueryMode, CONNECTED_SELF_HOSTED_WORKERS_PATH,
+    multi_agent_request_has_user_owned_credentials, AgentMessageHeader, AgentRunEvent, AgentSource,
+    AmbientAgentTaskState, Artifact, ArtifactDownloadResponse, ArtifactType,
+    ConnectedSelfHostedWorker, ExecutionLocation, ForkConversationResponse,
+    ListConnectedSelfHostedWorkersResponse, ListRunsResponse, ReadAgentMessageResponse,
+    RunFollowupRequest, RunSortBy, RunSortOrder, SpawnAgentRequest, TaskListFilter, UserQueryMode,
+    CONNECTED_SELF_HOSTED_WORKERS_PATH,
 };
 use crate::notebooks::NotebookId;
+use warp_multi_agent_api as api;
 
 #[test]
 fn ambient_agent_headers_for_task_overrides_existing_cloud_agent_header() {
@@ -257,6 +259,65 @@ fn test_deserialize_pull_request_artifact() {
     assert_eq!(branch, "feature-branch");
     assert_eq!(*repo, Some("repo".to_string()));
     assert_eq!(*number, Some(42));
+}
+
+#[test]
+fn multi_agent_request_has_user_owned_credentials_detects_byo_keys() {
+    let request = api::Request {
+        settings: Some(api::request::Settings {
+            api_keys: Some(api::request::settings::ApiKeys {
+                openai: "sk-test".to_string(),
+                allow_use_of_warp_credits: true,
+                ..Default::default()
+            }),
+            ..Default::default()
+        }),
+        ..Default::default()
+    };
+
+    assert!(multi_agent_request_has_user_owned_credentials(&request));
+}
+
+#[test]
+fn multi_agent_request_has_user_owned_credentials_detects_custom_providers() {
+    let request = api::Request {
+        settings: Some(api::request::Settings {
+            custom_model_providers: Some(api::request::settings::CustomModelProviders {
+                providers: vec![
+                    api::request::settings::custom_model_providers::CustomModelProvider {
+                        base_url: "https://example.test/v1".to_string(),
+                        api_key: "provider-key".to_string(),
+                        models: vec![
+                            api::request::settings::custom_model_providers::CustomModel {
+                                slug: "gpt-custom".to_string(),
+                                config_key: "cfg-123".to_string(),
+                            },
+                        ],
+                    },
+                ],
+            }),
+            ..Default::default()
+        }),
+        ..Default::default()
+    };
+
+    assert!(multi_agent_request_has_user_owned_credentials(&request));
+}
+
+#[test]
+fn multi_agent_request_has_user_owned_credentials_rejects_warp_credit_only_requests() {
+    let request = api::Request {
+        settings: Some(api::request::Settings {
+            api_keys: Some(api::request::settings::ApiKeys {
+                allow_use_of_warp_credits: true,
+                ..Default::default()
+            }),
+            ..Default::default()
+        }),
+        ..Default::default()
+    };
+
+    assert!(!multi_agent_request_has_user_owned_credentials(&request));
 }
 
 #[test]

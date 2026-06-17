@@ -3222,6 +3222,31 @@ impl StoreClient for ServerApi {
     }
 }
 
+pub(super) fn multi_agent_request_has_user_owned_credentials(request: &warp_multi_agent_api::Request) -> bool {
+    let Some(settings) = request.settings.as_ref() else {
+        return false;
+    };
+
+    settings.api_keys.as_ref().is_some_and(|api_keys| {
+        !api_keys.anthropic.is_empty()
+            || !api_keys.openai.is_empty()
+            || !api_keys.google.is_empty()
+            || !api_keys.open_router.is_empty()
+            || api_keys.aws_credentials.is_some()
+    }) || settings
+        .custom_model_providers
+        .as_ref()
+        .is_some_and(|providers| {
+            providers.providers.iter().any(|provider| {
+                !provider.base_url.trim().is_empty()
+                    && !provider.api_key.is_empty()
+                    && provider.models.iter().any(|model| {
+                        !model.slug.trim().is_empty() && !model.config_key.trim().is_empty()
+                    })
+            })
+        })
+}
+
 #[cfg(test)]
 #[path = "ai_tests.rs"]
 mod tests;

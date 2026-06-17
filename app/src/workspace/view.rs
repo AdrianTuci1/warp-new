@@ -505,7 +505,7 @@ use crate::{
 };
 
 /// The padding that should be applied to the workspace as a whole.
-pub const WORKSPACE_PADDING: f32 = 1.0;
+pub const WORKSPACE_PADDING: f32 = 3.0;
 
 /// The minimum font size at which terminal text will be rendered.
 const MIN_FONT_SIZE: f32 = 5.0;
@@ -522,15 +522,15 @@ pub const TAB_BAR_HEIGHT: f32 = 34.;
 pub const PANEL_HEADER_HEIGHT: f32 = TAB_BAR_HEIGHT;
 /// The hover area height for states where the tab bar is revealed on hover.
 const TAB_BAR_HOVER_HEIGHT: f32 = 12.;
-const TAB_BAR_PADDING_LEFT: f32 = 4.;
-const TAB_BAR_PADDING_RIGHT: f32 = 8.;
+const TAB_BAR_PADDING_LEFT: f32 = 0.;
+const TAB_BAR_PADDING_RIGHT: f32 = 0.;
 const TITLE_BAR_SEARCH_BAR_MAX_WIDTH: f32 = 320.;
 const TITLE_BAR_SEARCH_BAR_SLOT_PADDING: f32 = 8.;
 
 // The total height taken up by the tab bar, including its bottom border.
 pub const TOTAL_TAB_BAR_HEIGHT: f32 = TAB_BAR_HEIGHT + TAB_BAR_BORDER_HEIGHT;
 
-const TAB_BAR_ICON_PADDING: f32 = 4.;
+const TAB_BAR_ICON_PADDING: f32 = 0.;
 
 const TAB_BAR_PILL_WIDTH: f32 = 100.;
 const PILL_FONT_SIZE: f32 = 12.;
@@ -19668,9 +19668,6 @@ impl Workspace {
         .with_height(TAB_BAR_HEIGHT)
         .finish();
 
-        let tab_bar_border =
-            Border::bottom(TAB_BAR_BORDER_HEIGHT).with_border_fill(appearance.theme().outline());
-
         let mut tab_bar_container = Container::new(
             EventHandler::new(Clipped::new(self.render_tab_bar_hoverable(bar_contents)).finish())
                 .on_back_mouse_down(move |ctx, _app, _position| {
@@ -19683,7 +19680,7 @@ impl Workspace {
                 })
                 .finish(),
         )
-        .with_border(tab_bar_border);
+        .with_corner_radius(CornerRadius::with_all(Radius::Pixels(4.)));
         if FeatureFlag::NewTabStyling.is_enabled() {
             tab_bar_container = tab_bar_container
                 .with_background(internal_colors::fg_overlay_1(appearance.theme()));
@@ -20928,7 +20925,9 @@ impl Workspace {
     ) -> Box<dyn Element> {
         let mut container = Container::new(contents)
             .with_background(appearance.theme().surface_1().with_opacity(90))
-            .with_corner_radius(corner_radius);
+            .with_corner_radius(corner_radius)
+            .with_border(Border::all(1.).with_border_fill(appearance.theme().outline()))
+            .with_uniform_margin(3.);
 
         match side {
             PanelPosition::Left => container = container.with_margin_right(2.0),
@@ -24447,6 +24446,7 @@ impl View for Workspace {
             outer_column.add_child(Shrinkable::new(1.0, panels_row).finish());
             Container::new(outer_column.finish())
                 .with_background(util::get_terminal_background_fill(self.window_id, app))
+                .with_uniform_padding(WORKSPACE_PADDING)
                 .finish()
         } else {
             let mut outer_column = Flex::column();
@@ -24458,6 +24458,7 @@ impl View for Workspace {
             outer_column.add_child(Shrinkable::new(1.0, panels_row).finish());
             Container::new(outer_column.finish())
                 .with_background(util::get_terminal_background_fill(self.window_id, app))
+                .with_uniform_padding(WORKSPACE_PADDING)
                 .finish()
         };
         let mut stack = Stack::new();
@@ -24508,11 +24509,7 @@ impl View for Workspace {
             }
         }
 
-        stack.add_child(
-            Container::new(panels)
-                .with_uniform_padding(WORKSPACE_PADDING)
-                .finish(),
-        );
+        stack.add_child(panels);
 
         if !use_simplified_wasm_tab_bar
             && FeatureFlag::VerticalTabs.is_enabled()

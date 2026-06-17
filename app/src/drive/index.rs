@@ -650,9 +650,6 @@ impl DriveIndex {
                 > 0
             {
                 sections.insert(0, DriveIndexSection::JoinTeam);
-                sections.insert(1, DriveIndexSection::CreateATeam);
-            } else {
-                sections.insert(0, DriveIndexSection::CreateATeam);
             }
         }
 

@@ -232,12 +232,15 @@ impl ChannelState {
     }
 
     pub fn ws_server_url() -> Cow<'static, str> {
-        CHANNEL_STATE
-            .lock()
-            .config
-            .server_config
-            .rtc_server_url
-            .clone()
+        let state = CHANNEL_STATE.lock();
+        let configured = state.config.server_config.rtc_server_url.clone();
+        drop(state);
+
+        sanitize_loopback_zero_port_url(
+            configured,
+            WarpServerConfig::production().rtc_server_url,
+            "RTC server URL",
+        )
     }
 
     /// Returns the HTTP(S) root URL for the RTC server. Used for HTTP endpoints
@@ -266,13 +269,33 @@ impl ChannelState {
             if #[cfg(feature = "test-util")] {
                 Some(Cow::Borrowed("fake_session_sharing_url"))
             } else {
-                CHANNEL_STATE.lock().config.server_config.session_sharing_server_url.clone()
+                let state = CHANNEL_STATE.lock();
+                let configured = state.config.server_config.session_sharing_server_url.clone();
+                drop(state);
+
+                configured.map(|configured| {
+                    sanitize_loopback_zero_port_url(
+                        configured,
+                        WarpServerConfig::production()
+                            .session_sharing_server_url
+                            .expect("production session-sharing URL should be present"),
+                        "session-sharing server URL",
+                    )
+                })
             }
         }
     }
 
     pub fn oz_root_url() -> Cow<'static, str> {
-        CHANNEL_STATE.lock().config.oz_config.oz_root_url.clone()
+        let state = CHANNEL_STATE.lock();
+        let configured = state.config.oz_config.oz_root_url.clone();
+        drop(state);
+
+        sanitize_loopback_zero_port_url(
+            configured,
+            OzConfig::production().oz_root_url,
+            "Oz root URL",
+        )
     }
 
     pub fn server_root_url() -> Cow<'static, str> {
@@ -280,7 +303,15 @@ impl ChannelState {
             if #[cfg(feature = "test-util")] {
                 Cow::Owned(MOCK_SERVER_URL.clone())
             } else {
-                CHANNEL_STATE.lock().config.server_config.server_root_url.clone()
+                let state = CHANNEL_STATE.lock();
+                let configured = state.config.server_config.server_root_url.clone();
+                drop(state);
+
+                sanitize_loopback_zero_port_url(
+                    configured,
+                    WarpServerConfig::production().server_root_url,
+                    "server root URL",
+                )
             }
         }
     }
@@ -402,6 +433,31 @@ impl ChannelState {
             Channel::Local => "warplocal",
             Channel::Oss => "warposs",
         }
+    }
+}
+
+fn sanitize_loopback_zero_port_url(
+    configured: Cow<'static, str>,
+    fallback: Cow<'static, str>,
+    label: &'static str,
+) -> Cow<'static, str> {
+    let Ok(url) = Url::parse(configured.as_ref()) else {
+        return configured;
+    };
+
+    let is_loopback_host = matches!(
+        url.host_str(),
+        Some("localhost") | Some("127.0.0.1") | Some("[::1]")
+    ) || url
+        .host()
+        .is_some_and(|host| matches!(host, url::Host::Ipv6(addr) if addr.is_loopback()));
+    if url.port() == Some(0) && is_loopback_host {
+        log::warn!(
+            "Invalid loopback {label} configured as {configured}; falling back to {fallback}"
+        );
+        fallback
+    } else {
+        configured
     }
 }
 

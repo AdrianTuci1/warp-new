@@ -358,7 +358,7 @@ impl AmbientAgentTask {
     }
 }
 
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum AmbientAgentTaskState {
     Queued,

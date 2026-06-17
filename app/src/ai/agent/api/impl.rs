@@ -6,6 +6,7 @@ use warp_core::features::FeatureFlag;
 use warp_multi_agent_api as api;
 
 use super::convert_to::convert_input;
+use super::local_custom_model;
 use super::{ConvertToAPITypeError, RequestParams, ResponseStream};
 use crate::ai::agent::redaction;
 use crate::server::server_api::ServerApi;
@@ -133,6 +134,12 @@ pub async fn generate_multi_agent_output(
             .map(|suggestions| suggestions.into()),
         mcp_context: params.mcp_context.map(Into::into),
     };
+
+    if local_custom_model::selected_custom_model_from_request(&request).is_some() {
+        let output_stream =
+            local_custom_model::generate_multi_agent_output(request).take_until(cancellation_rx);
+        return Ok(Box::pin(output_stream));
+    }
 
     let response_stream = server_api.generate_multi_agent_output(&request).await;
     match response_stream {

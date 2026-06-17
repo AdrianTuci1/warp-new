@@ -237,32 +237,7 @@ impl MainSettingsPageView {
             ctx.notify();
         });
 
-        let mut widgets: Vec<Box<dyn SettingsWidget<View = Self>>> = vec![
-            Box::new(AccountWidget::default()),
-            Box::new(DividerWidget {}),
-        ];
-
-        widgets.push(Box::new(SettingsSyncWidget::default()));
-
-        widgets.push(Box::new(EarnRewardsWidget::default()));
-
-        #[cfg(not(target_family = "wasm"))]
-        if IapManager::as_ref(ctx).is_enabled() {
-            widgets.push(Box::new(IapCredentialsWidget::default()));
-            let iap_manager_handle = IapManager::handle(ctx);
-            ctx.subscribe_to_model(&iap_manager_handle, |_, _, e, ctx| {
-                match e {
-                    IapManagerEvent::StateChanged => ctx.notify(),
-                };
-            })
-        }
-
-        if ChannelState::app_version().is_some() {
-            widgets.push(Box::new(VersionInfoWidget::default()));
-        }
-
-        widgets.push(Box::new(LogoutWidget::default()));
-
+        let widgets: Vec<Box<dyn SettingsWidget<View = Self>>> = vec![];
         let page = PageType::new_uncategorized(widgets, Some("Account"));
 
         MainSettingsPageView { page, auth_state }

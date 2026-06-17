@@ -1,11 +1,12 @@
 use warpui::{Entity, ModelContext, SingletonEntity};
 
-use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};
+use crate::ai::cloud_worker_connector::{CloudWorkerConnectorEvent, CloudWorkerConnectorModel};
 use crate::auth::AuthStateProvider;
+use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};
 use crate::network::{NetworkStatus, NetworkStatusEvent, NetworkStatusKind};
 use crate::report_error;
-use crate::server::server_api::ai::ConnectedSelfHostedWorker;
 use crate::server::server_api::ServerApiProvider;
+use crate::server::server_api::ai::ConnectedSelfHostedWorker;
 use crate::workspaces::user_workspaces::{UserWorkspaces, UserWorkspacesEvent};
 pub const WARP_WORKER_HOST: &str = "warp";
 
@@ -15,6 +16,7 @@ pub enum ConnectedSelfHostedWorkersEvent {
 
 pub struct ConnectedSelfHostedWorkersModel {
     workers: Vec<ConnectedSelfHostedWorker>,
+    managed_worker_hosts: Vec<String>,
 }
 
 impl ConnectedSelfHostedWorkersModel {
@@ -49,10 +51,21 @@ impl ConnectedSelfHostedWorkersModel {
                 me.refresh(ctx);
             }
         });
+        ctx.subscribe_to_model(&CloudWorkerConnectorModel::handle(ctx), |me, event, ctx| {
+            if matches!(
+                event,
+                CloudWorkerConnectorEvent::ManagedHostsChanged
+                    | CloudWorkerConnectorEvent::ExecutionRecordsChanged
+            ) {
+                me.refresh_managed_hosts(ctx);
+            }
+        });
 
         let mut me = Self {
             workers: Vec::new(),
+            managed_worker_hosts: Vec::new(),
         };
+        me.refresh_managed_hosts(ctx);
         me.refresh(ctx);
         me
     }
@@ -69,6 +82,17 @@ impl ConnectedSelfHostedWorkersModel {
                 None => true,
             })
             .collect();
+        hosts.extend(
+            self.managed_worker_hosts
+                .iter()
+                .filter(|host| !host.trim().is_empty())
+                .filter(|host| !host.eq_ignore_ascii_case(WARP_WORKER_HOST))
+                .filter(|host| match excluded {
+                    Some(excluded) => !host.eq_ignore_ascii_case(excluded),
+                    None => true,
+                })
+                .cloned(),
+        );
         hosts.sort();
         hosts.dedup();
         hosts
@@ -101,6 +125,16 @@ impl ConnectedSelfHostedWorkersModel {
 
     fn clear_workers(&mut self, ctx: &mut ModelContext<Self>) {
         if self.clear_worker_cache() {
+            ctx.emit(ConnectedSelfHostedWorkersEvent::Changed);
+        }
+    }
+
+    fn refresh_managed_hosts(&mut self, ctx: &mut ModelContext<Self>) {
+        let mut next_hosts = CloudWorkerConnectorModel::as_ref(ctx).managed_worker_host_slugs();
+        next_hosts.sort();
+        next_hosts.dedup();
+        if next_hosts != self.managed_worker_hosts {
+            self.managed_worker_hosts = next_hosts;
             ctx.emit(ConnectedSelfHostedWorkersEvent::Changed);
         }
     }

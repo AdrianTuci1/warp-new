@@ -2,6 +2,7 @@ pub(crate) mod convert_conversation;
 mod convert_from;
 mod convert_to;
 mod r#impl;
+mod local_custom_model;
 
 use std::path::Path;
 use std::pin::Pin;

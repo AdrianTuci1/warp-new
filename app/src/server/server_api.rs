@@ -1289,11 +1289,26 @@ impl ServerApi {
         request: &warp_multi_agent_api::Request,
     ) -> std::result::Result<AIOutputStream<warp_multi_agent_api::ResponseEvent>, Arc<AIApiError>>
     {
-        let auth_token = self
-            .get_or_refresh_access_token()
-            .await
-            .map_err(Into::into)
-            .map_err(Arc::new)?;
+        let mut request_without_warp_credit_fallback = None;
+        let auth_token = match self.get_or_refresh_access_token().await {
+            Ok(auth_token) => Some(auth_token),
+            Err(error) if ai::multi_agent_request_has_user_owned_credentials(request) => {
+                let mut request = request.clone();
+                if let Some(api_keys) = request
+                    .settings
+                    .as_mut()
+                    .and_then(|settings| settings.api_keys.as_mut())
+                {
+                    api_keys.allow_use_of_warp_credits = false;
+                }
+                request_without_warp_credit_fallback = Some(request);
+                None
+            }
+            Err(error) => return Err(Arc::new(error.into())),
+        };
+        let request = request_without_warp_credit_fallback
+            .as_ref()
+            .unwrap_or(request);
 
         let is_passive = request.input.as_ref().is_some_and(|input| {
             matches!(
@@ -1329,7 +1344,10 @@ impl ServerApi {
             .post(url)
             .proto(request)
             .prevent_sleep("Agent Mode request in-progress");
-        if let Some(token) = auth_token.as_bearer_token() {
+        if let Some(token) = auth_token
+            .as_ref()
+            .and_then(|token| token.as_bearer_token())
+        {
             request_builder = request_builder.bearer_auth(token);
         }
 

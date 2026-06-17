@@ -19,38 +19,39 @@ use warp_multi_agent_api::response_event::stream_finished::{
 };
 use warpui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
 
+use super::RequestInput;
 use super::controller::response_stream::ResponseStreamId;
 use super::persistence::{PersistedAIInput, PersistedAIInputType};
-use super::RequestInput;
+use crate::GlobalResourceHandlesProvider;
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::agent::conversation::{
     AIConversation, AIConversationId, ConversationStatus, ServerAIConversationMetadata,
     UpdateConversationError,
 };
-use crate::ai::agent::task::helper::{MessageExt, ToolCallExt};
 use crate::ai::agent::task::TaskId;
+use crate::ai::agent::task::helper::{MessageExt, ToolCallExt};
 use crate::ai::agent::{
     AIAgentActionId, AIAgentExchange, AIAgentExchangeId, AIAgentInput, AIAgentOutputStatus,
     CancellationReason, FinishedAIAgentOutput, MessageId, RenderableAIError, RequestCost,
     Suggestions,
 };
 use crate::ai::artifacts::Artifact;
+use crate::ai::cloud_worker_connector::CloudWorkerConnectorModel;
 use crate::ai::document::ai_document_model::AIDocumentModel;
 use crate::input_suggestions::HistoryOrder;
-use crate::persistence::model::{AgentConversation, AgentConversationData};
 use crate::persistence::ModelEvent;
+use crate::persistence::model::{AgentConversation, AgentConversationData};
 #[cfg(feature = "local_fs")]
-use crate::persistence::{database_file_path_for_scope, establish_ro_connection, PersistenceScope};
+use crate::persistence::{PersistenceScope, database_file_path_for_scope, establish_ro_connection};
 use crate::server::server_api::ServerApiProvider;
 use crate::terminal::model::block::BlockId;
 use crate::terminal::view::blocklist_filter;
 use crate::ui_components::icons::Icon;
-use crate::GlobalResourceHandlesProvider;
 
 mod conversation_loader;
 pub use conversation_loader::{
-    convert_persisted_conversation_to_ai_conversation_with_metadata, load_conversation_from_server,
     CLIAgentConversation, CloudConversationData,
+    convert_persisted_conversation_to_ai_conversation_with_metadata, load_conversation_from_server,
 };
 
 /// Mirrors [`crate::persistence::agent::MAX_PERSISTED_CONVERSATION_COUNT`].
@@ -1137,6 +1138,7 @@ impl BlocklistAIHistoryModel {
         terminal_view_id: EntityId,
         ctx: &mut ModelContext<Self>,
     ) {
+        let run_id_for_store = run_id.clone();
         let (agent_key, server_token) = {
             let Some(conversation) = self.conversations_by_id.get_mut(&conversation_id) else {
                 log::warn!(
@@ -1162,6 +1164,9 @@ impl BlocklistAIHistoryModel {
             self.server_token_to_conversation_id
                 .insert(token, conversation_id);
         }
+        CloudWorkerConnectorModel::handle(ctx).update(ctx, |model, ctx| {
+            model.attach_local_conversation_id(&run_id_for_store, conversation_id, ctx);
+        });
 
         self.persist_conversation_state(conversation_id, ctx);
         ctx.emit(BlocklistAIHistoryEvent::ConversationServerTokenAssigned {

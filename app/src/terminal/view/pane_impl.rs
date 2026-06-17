@@ -109,7 +109,7 @@ impl TerminalView {
         let is_active_session = self.is_active_session(ctx);
         self.pane_configuration
             .update(ctx, move |pane_config, ctx| {
-                pane_config.set_show_active_pane_indicator(is_active_session, ctx);
+                pane_config.set_show_accent_border(is_active_session, ctx);
                 pane_config.refresh_pane_header_overflow_menu_items(ctx);
             });
     }

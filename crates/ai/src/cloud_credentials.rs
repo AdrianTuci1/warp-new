@@ -30,6 +30,13 @@ impl CloudPlatform {
             CloudPlatform::Vps => "VPS",
         }
     }
+
+    pub fn slug(&self) -> &'static str {
+        match self {
+            CloudPlatform::Modal => "modal",
+            CloudPlatform::Vps => "vps",
+        }
+    }
 }
 
 /// A single cloud credential entry.
@@ -46,6 +53,34 @@ pub struct CloudCredentialEntry {
     pub vps_username: Option<String>,
     /// VPS SSH private key (only used for VPS platform)
     pub vps_ssh_key: Option<String>,
+}
+
+impl CloudCredentialEntry {
+    pub fn worker_host_slug(&self) -> Option<String> {
+        let id = self.id.trim();
+        if id.is_empty() {
+            return None;
+        }
+        Some(format!("cloud-{}-{id}", self.platform.slug()))
+    }
+
+    pub fn display_label(&self) -> String {
+        self.name
+            .as_deref()
+            .map(str::trim)
+            .filter(|name| !name.is_empty())
+            .map(ToOwned::to_owned)
+            .or_else(|| match self.platform {
+                CloudPlatform::Modal => Some(self.platform.label().to_string()),
+                CloudPlatform::Vps => self
+                    .host_or_key
+                    .as_deref()
+                    .map(str::trim)
+                    .filter(|host| !host.is_empty())
+                    .map(ToOwned::to_owned),
+            })
+            .unwrap_or_else(|| self.platform.label().to_string())
+    }
 }
 
 /// User-provided credentials for cloud platforms.
