@@ -1,0 +1,278 @@
+name: Release Multi-Platform to R2
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release tag (e.g., v1.2.3.456)'
+        required: true
+        type: string
+      channel:
+        description: 'Release channel'
+        default: 'oss'
+        type: choice
+        options:
+          - oss
+          - dev
+          - preview
+          - stable
+
+env:
+  R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  R2_BUCKET: ${{ secrets.R2_BUCKET }}
+  R2_RELEASES_BASE_URL: ${{ vars.R2_RELEASES_BASE_URL }}
+  GIT_RELEASE_TAG: ${{ inputs.version }}
+
+jobs:
+  # ═══════════════════════════════════════════════════════════
+  # BUILD macOS — Universal DMG (Intel + ARM)
+  # ═══════════════════════════════════════════════════════════
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/prepare_environment
+        with:
+          target_os: macos
+          is_self_hosted: false
+          install_release_deps: true
+
+      - name: Build macOS universal DMG
+        run: |
+          export GIT_RELEASE_TAG="${{ inputs.version }}"
+          export R2_RELEASES_BASE_URL="${{ env.R2_RELEASES_BASE_URL }}"
+          ./script/macos/bundle --channel ${{ inputs.channel }} --nouniversal
+        # Note: --nouniversal builds for default arch (aarch64 on macos-latest)
+        # For a true universal binary, remove --nouniversal (takes longer)
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-dmg
+          path: target/release-lto/bundle/osx/*.dmg
+          retention-days: 1
+
+  # ═══════════════════════════════════════════════════════════
+  # BUILD Linux — x86_64 AppImage
+  # ═══════════════════════════════════════════════════════════
+  build-linux-x86_64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/prepare_environment
+        with:
+          target_os: linux
+          is_self_hosted: false
+          install_release_deps: true
+
+      - name: Build Linux x86_64 AppImage
+        run: |
+          export GIT_RELEASE_TAG="${{ inputs.version }}"
+          export R2_RELEASES_BASE_URL="${{ env.R2_RELEASES_BASE_URL }}"
+          ./script/linux/bundle --channel ${{ inputs.channel }} --arch x86_64 --packages appimage
+
+      - name: Upload Linux x86_64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-x86_64-appimage
+          path: target/release-lto/bundle/linux/*.AppImage
+          retention-days: 1
+
+  # ═══════════════════════════════════════════════════════════
+  # BUILD Linux — aarch64 AppImage (via cross-compilation or qemu)
+  # ═══════════════════════════════════════════════════════════
+  build-linux-aarch64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/prepare_environment
+        with:
+          target_os: linux
+          is_self_hosted: false
+          install_release_deps: true
+
+      - name: Install aarch64 toolchain
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+          rustup target add aarch64-unknown-linux-gnu
+
+      - name: Build Linux aarch64 AppImage
+        run: |
+          export GIT_RELEASE_TAG="${{ inputs.version }}"
+          export R2_RELEASES_BASE_URL="${{ env.R2_RELEASES_BASE_URL }}"
+          export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
+          ./script/linux/bundle --channel ${{ inputs.channel }} --arch aarch64 --packages appimage
+        env:
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
+
+      - name: Upload Linux aarch64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-aarch64-appimage
+          path: target/release-lto/bundle/linux/*.AppImage
+          retention-days: 1
+
+  # ═══════════════════════════════════════════════════════════
+  # BUILD Windows — x64 Installer
+  # ═══════════════════════════════════════════════════════════
+  build-windows-x64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/prepare_environment
+        with:
+          target_os: windows
+          is_self_hosted: false
+          install_release_deps: true
+
+      - name: Build Windows x64 installer
+        shell: pwsh
+        run: |
+          $env:GIT_RELEASE_TAG = "${{ inputs.version }}"
+          $env:R2_RELEASES_BASE_URL = "${{ env.R2_RELEASES_BASE_URL }}"
+          ./script/windows/bundle.ps1 -CHANNEL ${{ inputs.channel }} -ARCH x64
+
+      - name: Upload Windows x64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64-installer
+          path: script/windows/Output/*.exe
+          retention-days: 1
+
+  # ═══════════════════════════════════════════════════════════
+  # BUILD Windows — arm64 Installer
+  # ═══════════════════════════════════════════════════════════
+  build-windows-arm64:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/prepare_environment
+        with:
+          target_os: windows
+          is_self_hosted: false
+          install_release_deps: true
+
+      - name: Build Windows arm64 installer
+        shell: pwsh
+        run: |
+          $env:GIT_RELEASE_TAG = "${{ inputs.version }}"
+          $env:R2_RELEASES_BASE_URL = "${{ env.R2_RELEASES_BASE_URL }}"
+          ./script/windows/bundle.ps1 -CHANNEL ${{ inputs.channel }} -ARCH arm64
+
+      - name: Upload Windows arm64 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-arm64-installer
+          path: script/windows/Output/*.exe
+          retention-days: 1
+
+  # ═══════════════════════════════════════════════════════════
+  # UPLOAD — All artifacts to Cloudflare R2
+  # ═══════════════════════════════════════════════════════════
+  upload-to-r2:
+    needs: [build-macos, build-linux-x86_64, build-linux-aarch64, build-windows-x64, build-windows-arm64]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: false
+
+      - name: List downloaded artifacts
+        run: find artifacts -type f
+
+      - name: Configure AWS credentials for R2
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: auto
+          aws-access-key-id: ${{ env.R2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.R2_SECRET_ACCESS_KEY }}
+
+      - name: Upload macOS DMG to R2
+        run: |
+          mkdir -p upload/${{ inputs.channel }}/${{ inputs.version }}
+          cp artifacts/macos-dmg/*.dmg upload/${{ inputs.channel }}/${{ inputs.version }}/ || true
+          for f in upload/${{ inputs.channel }}/${{ inputs.version }}/*.dmg; do
+            [ -f "$f" ] || continue
+            aws s3 cp "$f" "s3://${{ env.R2_BUCKET }}/${{ inputs.channel }}/${{ inputs.version }}/$(basename "$f")" --endpoint-url ${{ env.R2_ENDPOINT }}
+          done
+
+      - name: Upload Linux x86_64 AppImage to R2
+        run: |
+          mkdir -p upload/${{ inputs.channel }}/${{ inputs.version }}
+          cp artifacts/linux-x86_64-appimage/*.AppImage upload/${{ inputs.channel }}/${{ inputs.version }}/ || true
+          for f in upload/${{ inputs.channel }}/${{ inputs.version }}/*.AppImage; do
+            [ -f "$f" ] || continue
+            aws s3 cp "$f" "s3://${{ env.R2_BUCKET }}/${{ inputs.channel }}/${{ inputs.version }}/$(basename "$f")" --endpoint-url ${{ env.R2_ENDPOINT }}
+          done
+
+      - name: Upload Linux aarch64 AppImage to R2
+        run: |
+          mkdir -p upload/${{ inputs.channel }}/${{ inputs.version }}
+          cp artifacts/linux-aarch64-appimage/*.AppImage upload/${{ inputs.channel }}/${{ inputs.version }}/ || true
+          for f in upload/${{ inputs.channel }}/${{ inputs.version }}/*.AppImage; do
+            [ -f "$f" ] || continue
+            aws s3 cp "$f" "s3://${{ env.R2_BUCKET }}/${{ inputs.channel }}/${{ inputs.version }}/$(basename "$f")" --endpoint-url ${{ env.R2_ENDPOINT }}
+          done
+
+      - name: Upload Windows x64 installer to R2
+        run: |
+          mkdir -p upload/${{ inputs.channel }}/${{ inputs.version }}
+          cp artifacts/windows-x64-installer/*.exe upload/${{ inputs.channel }}/${{ inputs.version }}/ || true
+          for f in upload/${{ inputs.channel }}/${{ inputs.version }}/*.exe; do
+            [ -f "$f" ] || continue
+            aws s3 cp "$f" "s3://${{ env.R2_BUCKET }}/${{ inputs.channel }}/${{ inputs.version }}/$(basename "$f")" --endpoint-url ${{ env.R2_ENDPOINT }}
+          done
+
+      - name: Upload Windows arm64 installer to R2
+        run: |
+          mkdir -p upload/${{ inputs.channel }}/${{ inputs.version }}
+          cp artifacts/windows-arm64-installer/*.exe upload/${{ inputs.channel }}/${{ inputs.version }}/ || true
+          for f in upload/${{ inputs.channel }}/${{ inputs.version }}/*.exe; do
+            [ -f "$f" ] || continue
+            aws s3 cp "$f" "s3://${{ env.R2_BUCKET }}/${{ inputs.channel }}/${{ inputs.version }}/$(basename "$f")" --endpoint-url ${{ env.R2_ENDPOINT }}
+          done
+
+      - name: Generate channel_versions.json
+        run: |
+          mkdir -p upload
+          cat > upload/channel_versions.json <<EOF
+          {
+            "dev": {
+              "version": "${{ inputs.version }}",
+              "overrides": []
+            },
+            "preview": {
+              "version": "v0",
+              "overrides": []
+            },
+            "stable": {
+              "version": "v0",
+              "overrides": []
+            },
+            "oss": {
+              "version": "${{ inputs.version }}",
+              "overrides": []
+            }
+          }
+          EOF
+
+      - name: Upload channel_versions.json to R2
+        run: |
+          aws s3 cp upload/channel_versions.json s3://${{ env.R2_BUCKET }}/channel_versions.json --endpoint-url ${{ env.R2_ENDPOINT }}
+
+      - name: Verify R2 uploads
+        run: |
+          echo "=== Files uploaded to R2 ==="
+          aws s3 ls "s3://${{ env.R2_BUCKET }}/${{ inputs.channel }}/${{ inputs.version }}/" --endpoint-url ${{ env.R2_ENDPOINT }}
+          echo "=== channel_versions.json ==="
+          aws s3 ls "s3://${{ env.R2_BUCKET }}/channel_versions.json" --endpoint-url ${{ env.R2_ENDPOINT }}
