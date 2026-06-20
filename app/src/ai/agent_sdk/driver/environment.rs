@@ -20,7 +20,7 @@ use warpui::{ModelContext, ModelSpawner, SingletonEntity};
 use super::terminal::TerminalDriver;
 use super::AgentDriverError;
 use crate::ai::agent_sdk::setup_observability::{SetupClientEventReporter, SetupStep};
-use crate::ai::cloud_environments::{AmbientAgentEnvironment, GithubRepo};
+use crate::ai::cloud_environments::{AmbientAgentEnvironment, GithubRepo, SshConfig};
 use crate::terminal::model::session::command_executor::shell_escape_single_quotes;
 use crate::terminal::shell::ShellType;
 
@@ -40,7 +40,66 @@ pub enum PrepareEnvironmentError {
     TerminalDriver { source: AgentDriverError },
 }
 
-/// Prepare a cloud agent environment within a terminal session. This will:
+/// Prepare a VPS environment with SSH passthrough. This will:
+/// 1. Configure SSH with the provided private key
+/// 2. Clone all repositories to the VPS
+/// 3. Run any setup commands
+/// 4. If there is only one repository, navigate into it.
+pub fn prepare_vps_environment(
+    environment: AmbientAgentEnvironment,
+    working_dir: PathBuf,
+    harness: Harness,
+    setup_events: SetupClientEventReporter,
+    ctx: &mut ModelContext<TerminalDriver>,
+) -> impl Future<Output = Result<(), PrepareEnvironmentError>> {
+    let spawner = ctx.spawner();
+    async move {
+        let ssh_config = environment.ssh_config.as_ref().ok_or_else(|| {
+            PrepareEnvironmentError::InvalidRuntimeState
+        })?;
+
+        // Configure SSH
+        setup_ssh_config(ssh_config, &spawner).await?;
+
+        // Clone repos and run setup
+        prepare_environment_impl(
+            &spawner,
+            working_dir.as_path(),
+            false, // is_sandbox
+            &environment.github_repos,
+            environment.setup_commands,
+            harness == Harness::Oz,
+            Arc::new(Mutex::new(HashMap::new())),
+            setup_events,
+        )
+        .await
+    }
+}
+
+async fn setup_ssh_config(
+    ssh_config: &SshConfig,
+    spawner: &ModelSpawner<TerminalDriver>,
+) -> Result<(), PrepareEnvironmentError> {
+    // Create .ssh directory
+    execute_command("mkdir -p ~/.ssh".to_string(), spawner).await?;
+    
+    // Write private key
+    let escaped_key = ssh_config.private_key.replace('"', "\\\"");
+    let command = format!(
+        "echo \"{}\" > ~/.ssh/id_vps && chmod 600 ~/.ssh/id_vps",
+        escaped_key
+    );
+    execute_command(command, spawner).await?;
+    
+    // Add host to known_hosts
+    let command = format!(
+        "ssh-keyscan -H {} >> ~/.ssh/known_hosts 2>/dev/null",
+        ssh_config.host
+    );
+    execute_command(command, spawner).await?;
+    
+    Ok(())
+}
 /// 1. Clone all repositories, skipping any that are already cloned.
 /// 2. Begin codebase indexing for all repositories (Oz harness only).
 /// 3. Run any setup commands.

@@ -73,6 +73,20 @@ impl ProvidersConfig {
 }
 
 /// An AmbientAgentEnvironment represents an environment that we would run a Warp agent in.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Default)]
+pub struct SshConfig {
+    pub host: String,
+    pub username: String,
+    #[serde(skip_serializing)]
+    pub private_key: String,
+}
+
+impl SshConfig {
+    pub fn is_valid(&self) -> bool {
+        !self.host.is_empty() && !self.username.is_empty() && !self.private_key.is_empty()
+    }
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct AmbientAgentEnvironment {
     /// Environment name
@@ -93,6 +107,9 @@ pub struct AmbientAgentEnvironment {
     /// Optional cloud provider configurations for automatic auth.
     #[serde(default, skip_serializing_if = "ProvidersConfig::is_empty")]
     pub providers: ProvidersConfig,
+    /// Optional SSH configuration for VPS environments
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ssh_config: Option<SshConfig>,
 }
 
 impl AmbientAgentEnvironment {
@@ -110,6 +127,26 @@ impl AmbientAgentEnvironment {
             base_image: BaseImage::DockerImage(docker_image),
             setup_commands,
             providers: ProvidersConfig::default(),
+            ssh_config: None,
+        }
+    }
+
+    pub fn new_with_ssh(
+        name: String,
+        description: Option<String>,
+        github_repos: Vec<GithubRepo>,
+        docker_image: String,
+        setup_commands: Vec<String>,
+        ssh_config: SshConfig,
+    ) -> Self {
+        Self {
+            name,
+            description,
+            github_repos,
+            base_image: BaseImage::DockerImage(docker_image),
+            setup_commands,
+            providers: ProvidersConfig::default(),
+            ssh_config: Some(ssh_config),
         }
     }
 }

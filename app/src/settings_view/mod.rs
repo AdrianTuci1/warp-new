@@ -65,6 +65,7 @@ use crate::{GlobalResourceHandlesProvider, TelemetryEvent};
 // mod about_page;
 mod admin_actions;
 mod agent_assisted_environment_modal;
+mod add_vps_modal;
 mod ai_page;
 mod appearance_page;
 // mod billing_and_usage;
@@ -103,6 +104,7 @@ mod cloud_page;
 mod telemetry;
 mod transfer_ownership_confirmation_modal;
 pub mod update_environment_form;
+mod vps_hosts_page;
 mod warp_drive_page;
 // mod warpify_page;
 
@@ -257,8 +259,9 @@ pub enum SettingsSection {
     // ── Code umbrella subpages ──
     CodeIndexing,
     EditorAndCodeReview,
-    // ── Cloud platform page ──
+    // ── Cloud platform umbrella ──
     CloudPlatform,
+    VpsHosts,
 }
 
 use std::fmt::{self, Display};
@@ -279,6 +282,8 @@ impl Display for SettingsSection {
             SettingsSection::ThirdPartyCLIAgents => write!(f, "Third party CLI agents"),
             SettingsSection::CodeIndexing => write!(f, "Indexing and projects"),
             SettingsSection::EditorAndCodeReview => write!(f, "Editor and Code Review"),
+            SettingsSection::CloudPlatform => write!(f, "Cloud Credentials"),
+            SettingsSection::VpsHosts => write!(f, "VPS Hosts"),
             _ => write!(f, "{self:?}"),
         }
     }
@@ -287,7 +292,7 @@ impl Display for SettingsSection {
 impl SettingsSection {
     /// Returns true if this section is a subpage under any umbrella.
     pub fn is_subpage(&self) -> bool {
-        self.is_ai_subpage() || self.is_code_subpage()
+        self.is_ai_subpage() || self.is_code_subpage() || self.is_cloud_platform_subpage()
     }
 
     /// Returns true if this section is a subpage under the "Agents" umbrella.
@@ -300,6 +305,11 @@ impl SettingsSection {
                 | Self::Knowledge
                 | Self::ThirdPartyCLIAgents
         )
+    }
+
+    /// Returns true if this section is a subpage under the "Cloud Platform" umbrella.
+    pub fn is_cloud_platform_subpage(&self) -> bool {
+        matches!(self, Self::CloudPlatform | Self::VpsHosts)
     }
 
     /// Returns true if this section is a subpage under the "Code" umbrella.
@@ -317,6 +327,8 @@ impl SettingsSection {
             s if s.is_ai_subpage() => Self::AI,
             // Code subpages render within the Code page.
             s if s.is_code_subpage() => Self::Code,
+            // Cloud Platform subpages render within the Cloud Platform page.
+            s if s.is_cloud_platform_subpage() => Self::CloudPlatform,
             other => *other,
         }
     }
@@ -335,6 +347,11 @@ impl SettingsSection {
     /// The ordered list of Code subpage sections shown under the Code umbrella.
     pub fn code_subpages() -> &'static [Self] {
         &[Self::CodeIndexing, Self::EditorAndCodeReview]
+    }
+
+    /// The ordered list of Cloud Platform subpage sections shown under the Cloud Platform umbrella.
+    pub fn cloud_platform_subpages() -> &'static [Self] {
+        &[Self::CloudPlatform, Self::VpsHosts]
     }
 }
 
@@ -361,6 +378,7 @@ impl FromStr for SettingsSection {
             "Indexing and projects" | "CodeIndexing" => Ok(Self::CodeIndexing),
             "Editor and Code Review" | "EditorAndCodeReview" => Ok(Self::EditorAndCodeReview),
             "Cloud platform" | "CloudPlatform" => Ok(Self::CloudPlatform),
+            "VPS Hosts" | "VpsHosts" => Ok(Self::VpsHosts),
             _ => Err(()),
         }
     }
@@ -1020,6 +1038,7 @@ macro_rules! update_page {
             SettingsPageViewHandle::OctomusDrive(handle) => $ctx.update_view(handle, $update),
             SettingsPageViewHandle::CloudEnvironments(handle) => $ctx.update_view(handle, $update),
             SettingsPageViewHandle::CloudPlatform(handle) => $ctx.update_view(handle, $update),
+            SettingsPageViewHandle::VpsHosts(handle) => $ctx.update_view(handle, $update),
         }
     };
 }
@@ -1122,6 +1141,10 @@ impl SettingsView {
         let cloud_platform_page_handle =
             ctx.add_typed_action_view(cloud_page::CloudSettingsPageView::new);
 
+        // VPS Hosts page
+        let vps_hosts_page_handle =
+            ctx.add_typed_action_view(vps_hosts_page::VpsHostsPageView::new);
+
         let font_family = Appearance::as_ref(ctx).ui_font_family();
         let search_editor = ctx.add_typed_action_view(|ctx| {
             let options = SingleLineEditorOptions {
@@ -1164,6 +1187,7 @@ impl SettingsView {
             SettingsPage::new(mcp_servers_page_handle),
             SettingsPage::new(privacy_page_handle),
             SettingsPage::new(cloud_platform_page_handle),
+            SettingsPage::new(vps_hosts_page_handle),
         ]);
 
         // Build sidebar nav items. AI page is presented as an "Agents" umbrella
@@ -1185,7 +1209,10 @@ impl SettingsView {
             SettingsNavItem::Page(SettingsSection::Features),
             SettingsNavItem::Page(SettingsSection::Keybindings),
             SettingsNavItem::Page(SettingsSection::OctomusDrive),
-            SettingsNavItem::Page(SettingsSection::CloudPlatform),
+            SettingsNavItem::Umbrella(SettingsUmbrella::new(
+                "Cloud Platform",
+                SettingsSection::cloud_platform_subpages().to_vec(),
+            )),
             SettingsNavItem::Page(SettingsSection::Privacy),
         ];
 
@@ -1848,6 +1875,7 @@ impl SettingsView {
             SettingsPageViewHandle::OctomusDrive(v) => v.as_ref(app).should_render(app),
             SettingsPageViewHandle::CloudEnvironments(v) => v.as_ref(app).should_render(app),
             SettingsPageViewHandle::CloudPlatform(v) => v.as_ref(app).should_render(app),
+            SettingsPageViewHandle::VpsHosts(v) => v.as_ref(app).should_render(app),
         }
     }
 

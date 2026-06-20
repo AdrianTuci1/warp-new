@@ -29,7 +29,9 @@ use crate::ai::ambient_agents::scheduled::{
 };
 use crate::ai::ambient_agents::AmbientAgentTaskId;
 use crate::ai::blocklist::BlocklistAIHistoryModel;
-use crate::ai::cloud_environments::{AmbientAgentEnvironment, CloudAmbientAgentEnvironmentModel};
+use crate::ai::cloud_environments::{
+    AmbientAgentEnvironment, CloudAmbientAgentEnvironmentModel, GithubRepo, SshConfig,
+};
 use crate::ai::execution_profiles::profiles::AIExecutionProfilesModel;
 use crate::ai::execution_profiles::{AIExecutionProfile, CloudAIExecutionProfileModel};
 use crate::ai::facts::{AIFact, CloudAIFactModel};
@@ -3025,6 +3027,40 @@ impl UpdateManager {
             None,
             ctx,
         )
+    }
+
+    /// Creates a VPS environment with SSH passthrough and GitHub credentials.
+    #[cfg_attr(target_family = "wasm", allow(dead_code))]
+    pub fn create_vps_environment(
+        &mut self,
+        name: String,
+        description: Option<String>,
+        github_repos: Vec<GithubRepo>,
+        docker_image: String,
+        setup_commands: Vec<String>,
+        ssh_host: String,
+        ssh_username: String,
+        ssh_private_key: String,
+        client_id: ClientId,
+        owner: Owner,
+        ctx: &mut ModelContext<Self>,
+    ) {
+        let ssh_config = SshConfig {
+            host: ssh_host,
+            username: ssh_username,
+            private_key: ssh_private_key,
+        };
+
+        let environment = AmbientAgentEnvironment::new_with_ssh(
+            name,
+            description,
+            github_repos,
+            docker_image,
+            setup_commands,
+            ssh_config,
+        );
+
+        self.create_ambient_agent_environment(environment, client_id, owner, ctx);
     }
 
     #[cfg_attr(target_family = "wasm", allow(dead_code))]
