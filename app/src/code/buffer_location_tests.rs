@@ -3,11 +3,11 @@ use remote_server::proto::TextEdit;
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
 use repo_metadata::RepoMetadataModel;
-use warp_files::FileModel;
-use warp_util::content_version::ContentVersion;
-use warp_util::host_id::HostId;
-use warp_util::standardized_path::StandardizedPath;
-use warpui::{App, ModelHandle, SingletonEntity};
+use octomus_files::FileModel;
+use octomus_util::content_version::ContentVersion;
+use octomus_util::host_id::HostId;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::{App, ModelHandle, SingletonEntity};
 
 use crate::code::global_buffer_model::{CharOffsetEdit, GlobalBufferModel, GlobalBufferModelEvent};
 use crate::test_util::settings::initialize_settings_for_tests;
@@ -30,7 +30,7 @@ fn gbm(app: &App) -> ModelHandle<GlobalBufferModel> {
 }
 
 /// Reads the text content of a buffer tracked by `GlobalBufferModel`.
-fn content(app: &App, file_id: warp_util::file::FileId) -> String {
+fn content(app: &App, file_id: octomus_util::file::FileId) -> String {
     let handle = gbm(app);
     app.read(|ctx| {
         handle
@@ -41,7 +41,7 @@ fn content(app: &App, file_id: warp_util::file::FileId) -> String {
 }
 
 /// Returns the server_version from the ServerLocal sync clock.
-fn server_version(app: &App, file_id: warp_util::file::FileId) -> ContentVersion {
+fn server_version(app: &App, file_id: octomus_util::file::FileId) -> ContentVersion {
     let handle = gbm(app);
     app.read(|ctx| {
         handle

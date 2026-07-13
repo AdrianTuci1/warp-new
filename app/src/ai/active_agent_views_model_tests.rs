@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use warpui::{App, EntityId, WindowId};
+use octomusui::{App, EntityId, WindowId};
 
 use super::*;
 

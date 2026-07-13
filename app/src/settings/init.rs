@@ -1,11 +1,11 @@
 use std::path::Path;
 
 use settings::{Setting as _, SettingsManager};
-use warp_core::features::FeatureFlag;
-use warp_core::semantic_selection::SemanticSelection;
-use warpui::rendering::GPUPowerPreference;
-use warpui::{AppContext, SingletonEntity};
-use warpui_extras::user_preferences;
+use octomus_core::features::FeatureFlag;
+use octomus_core::semantic_selection::SemanticSelection;
+use octomusui::rendering::GPUPowerPreference;
+use octomusui::{AppContext, SingletonEntity};
+use octomusui_extras::user_preferences;
 
 use super::app_icon::AppIconSettings;
 use super::app_installation_detection::UserAppInstallDetectionSettings;
@@ -17,11 +17,11 @@ use super::{
     BlockVisibilitySettings, ChangelogSettings, CodeSettings, DebugSettings, EmacsBindingsSettings,
     FontSettings, FontSettingsChangedEvent, GPUSettings, InputBoxType, InputModeSettings,
     InputSettings, PaneSettings, SameLinePromptBlockSettings, ScrollSettings, SelectionSettings,
-    SshSettings, ThemeSettings, VimBannerSettings, WarpDrivePrivacySettings,
+    SshSettings, ThemeSettings, VimBannerSettings, OctomusDrivePrivacySettings,
 };
 use crate::ai::cloud_agent_settings::CloudAgentSettings;
 use crate::banner::BannerState;
-use crate::drive::settings::WarpDriveSettings;
+use crate::drive::settings::OctomusDriveSettings;
 use crate::resource_center::TipsCompleted;
 use crate::search::command_search::settings::CommandSearchSettings;
 use crate::terminal::alt_screen_reporting::AltScreenReporting;
@@ -32,7 +32,7 @@ use crate::terminal::safe_mode_settings::SafeModeSettings;
 use crate::terminal::session_settings::{SessionSettings, SessionSettingsChangedEvent};
 use crate::terminal::settings::TerminalSettings;
 use crate::terminal::shared_session::settings::SharedSessionSettings;
-use crate::terminal::warpify::settings::WarpifySettings;
+use crate::terminal::octomusify::settings::OctomusifySettings;
 use crate::terminal::BlockListSettings;
 use crate::undo_close::UndoCloseSettings;
 use crate::window_settings::WindowSettings;
@@ -80,18 +80,18 @@ pub fn register_all_settings(ctx: &mut AppContext) {
     AccessibilitySettings::register(ctx);
     NativePreferenceSettings::register(ctx);
     CloudPreferencesSettings::register(ctx);
-    WarpDrivePrivacySettings::register(ctx);
+    OctomusDrivePrivacySettings::register(ctx);
     UserAppInstallDetectionSettings::register(ctx);
     AppIconSettings::register(ctx);
     AppEditorSettings::register(ctx);
     InputSettings::register(ctx);
-    WarpifySettings::register(ctx);
+    OctomusifySettings::register(ctx);
     AltScreenReporting::register(ctx);
     UndoCloseSettings::register(ctx);
     SshSettings::register(ctx);
     VimBannerSettings::register(ctx);
     SharedSessionSettings::register(ctx);
-    WarpDriveSettings::register(ctx);
+    OctomusDriveSettings::register(ctx);
     WorkflowAliases::register(ctx);
     EmacsBindingsSettings::register(ctx);
     SameLinePromptBlockSettings::register(ctx);
@@ -204,7 +204,7 @@ pub fn init(
     // push changed values into setting models.
     #[cfg(feature = "local_fs")]
     {
-        let prefs = <settings::PublicPreferences as warpui::SingletonEntity>::as_ref(ctx);
+        let prefs = <settings::PublicPreferences as octomusui::SingletonEntity>::as_ref(ctx);
         if prefs.is_settings_file() {
             ctx.subscribe_to_model(
                 &crate::user_config::WarpConfig::handle(ctx),
@@ -220,7 +220,7 @@ pub fn init(
 /// the settings file is modified, created, or deleted.
 #[cfg(feature = "local_fs")]
 fn handle_warp_config_change(
-    _: warpui::ModelHandle<crate::user_config::WarpConfig>,
+    _: octomusui::ModelHandle<crate::user_config::WarpConfig>,
     event: &crate::user_config::WarpConfigUpdateEvent,
     ctx: &mut AppContext,
 ) {
@@ -229,7 +229,7 @@ fn handle_warp_config_change(
     if !matches!(event, WarpConfigUpdateEvent::Settings) {
         return;
     }
-    let prefs = <settings::PublicPreferences as warpui::SingletonEntity>::as_ref(ctx);
+    let prefs = <settings::PublicPreferences as octomusui::SingletonEntity>::as_ref(ctx);
     if let Err(err) = prefs.reload_from_disk() {
         log::warn!("Settings file reload failed: {err}");
         WarpConfig::handle(ctx).update(ctx, |_, ctx| {
@@ -268,11 +268,11 @@ fn init_platform_native_preferences() -> user_preferences::Model {
                 }
             }
         } else if #[cfg(target_os = "windows")] {
-            let app_id = warp_core::channel::ChannelState::app_id();
+            let app_id = octomus_core::channel::ChannelState::app_id();
             Box::new(user_preferences::registry_backed::RegistryBackedPreferences::new(app_id.application_name()))
         } else if #[cfg(target_os = "macos")] {
             Box::new(user_preferences::user_defaults::UserDefaultsPreferencesStorage::new(
-                warp_core::channel::ChannelState::data_domain_if_not_default()
+                octomus_core::channel::ChannelState::data_domain_if_not_default()
             ))
         } else if #[cfg(target_family = "wasm")] {
             Box::<user_preferences::local_storage::LocalStoragePreferences>::default()
@@ -307,7 +307,7 @@ pub fn init_public_user_preferences() -> (user_preferences::Model, Option<user_p
         } else if #[cfg(target_family = "wasm")] {
             (Box::<user_preferences::local_storage::LocalStoragePreferences>::default(), None)
         } else {
-            if warp_core::features::FeatureFlag::SettingsFile.is_enabled() {
+            if octomus_core::features::FeatureFlag::SettingsFile.is_enabled() {
                 let (prefs, parse_error) =
                     user_preferences::toml_backed::TomlBackedUserPreferences::new(
                         super::user_preferences_toml_file_path(),
@@ -343,7 +343,7 @@ fn needs_settings_file_migration_for_path(ctx: &AppContext, settings_file_path: 
         return false;
     }
 
-    use warp_core::user_preferences::GetUserPreferences as _;
+    use octomus_core::user_preferences::GetUserPreferences as _;
     ctx.private_user_preferences()
         .read_value(SETTINGS_FILE_MIGRATION_COMPLETE_KEY)
         .unwrap_or_default()
@@ -360,7 +360,7 @@ fn needs_settings_file_migration_for_path(ctx: &AppContext, settings_file_path: 
 /// the in-memory setting, and writes to the TOML file with the correct
 /// hierarchy, `serialize_for_file` transforms, and `max_table_depth`.
 fn migrate_native_settings_to_settings_file(ctx: &mut AppContext) {
-    use warp_core::user_preferences::GetUserPreferences as _;
+    use octomus_core::user_preferences::GetUserPreferences as _;
 
     log::info!("Migrating public settings from native store to settings.toml");
 

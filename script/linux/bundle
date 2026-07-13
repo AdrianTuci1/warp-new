@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Builds a Warp binary and bundles it up for distribution.
+# Builds a Octomus binary and bundles it up for distribution.
 
 set -e
 
@@ -150,14 +150,14 @@ mkdir -p "$OUT_DIR"
 # WARP_BIN is the name of the binary produced by cargo;
 # BINARY_NAME is the desired name of the binary in the final package.
 if [[ $RELEASE_CHANNEL = "local" ]]; then
-  WARP_BIN="warp"
-  BINARY_NAME="warp-local"
+  WARP_BIN="octomus"
+  BINARY_NAME="octomus-local"
   APP_NAME="WarpLocal"
   FEATURES="$FEATURES,agent_mode_debug"
   export HANDLE_MARKDOWN=1
 elif [[ $RELEASE_CHANNEL = "dev" ]]; then
   WARP_BIN="dev"
-  BINARY_NAME="warp-dev"
+  BINARY_NAME="octomus-dev"
   APP_NAME="WarpDev"
   FEATURES="$FEATURES,agent_mode_debug"
   # Enable heap profiling using jemalloc through pprof.
@@ -165,16 +165,16 @@ elif [[ $RELEASE_CHANNEL = "dev" ]]; then
   export HANDLE_MARKDOWN=1
 elif [[ $RELEASE_CHANNEL = "preview" ]]; then
   WARP_BIN="preview"
-  BINARY_NAME="warp-preview"
+  BINARY_NAME="octomus-preview"
   APP_NAME="WarpPreview"
   FEATURES="$FEATURES,preview_channel"
 elif [[ $RELEASE_CHANNEL = "stable" ]]; then
   WARP_BIN="stable"
-  BINARY_NAME="warp"
-  APP_NAME="Warp"
+  BINARY_NAME="octomus"
+  APP_NAME="Octomus"
 elif [[ $RELEASE_CHANNEL = "oss" ]]; then
-  WARP_BIN="warp-oss"
-  BINARY_NAME="warp-oss"
+  WARP_BIN="octomus-oss"
+  BINARY_NAME="octomus-oss"
   APP_NAME="WarpOss"
   # The OSS channel does not ship Sentry, so drop the crash_reporting feature
   # (which would otherwise pull in the Sentry SDK as a dependency).
@@ -183,11 +183,11 @@ fi
 
 # Artifact-specific binary naming
 if [[ "$ARTIFACT" == "cli" ]]; then
-  # For CLI artifacts, use oz instead of warp as the binary name.  The OSS
-  # channel is an exception: its CLI command name is `warp-oss`, matching
+  # For CLI artifacts, use oz instead of octomus as the binary name.  The OSS
+  # channel is an exception: its CLI command name is `octomus-oss`, matching
   # `Channel::cli_command_name` in the Rust source.
   if [[ $RELEASE_CHANNEL != "oss" ]]; then
-    BINARY_NAME="${BINARY_NAME/warp/oz}"
+    BINARY_NAME="${BINARY_NAME/octomus/oz}"
   fi
 fi
 
@@ -205,7 +205,7 @@ elif [[ "$ARTIFACT" == "app" ]]; then
   fi
 fi
 
-BUNDLE_ID="dev.warp.$APP_NAME"
+BUNDLE_ID="dev.octomus.$APP_NAME"
 EXECUTABLE_PATH="$CARGO_TARGET_OUTPUT_DIR/$WARP_BIN"
 DEBUG_EXECUTABLE_PATH="$EXECUTABLE_PATH.debug"
 
@@ -218,14 +218,14 @@ export APPIMAGE_NAME="$APP_NAME-$BUILD_ARCH.AppImage"
 # then exit.  We use this script to invoke `cargo check` to ensure that we are
 # using the same feature flags and profile that we would be using in production.
 if [[ "$CHECK_ONLY" == "true" ]]; then
-  cargo check -p warp --profile "$CARGO_PROFILE" --bin "$WARP_BIN" --features "$FEATURES"
+  cargo check -p octomus --profile "$CARGO_PROFILE" --bin "$WARP_BIN" --features "$FEATURES"
   exit 0
 fi
 
 # Build the binary.
 if [[ "$BUILD" == "true" ]]; then
-  echo "Building and bundling Warp for channel $RELEASE_CHANNEL and bundle id $BUNDLE_ID"
-  cargo build -p warp --profile "$CARGO_PROFILE" --bin "$WARP_BIN" --features "$FEATURES"
+  echo "Building and bundling Octomus for channel $RELEASE_CHANNEL and bundle id $BUNDLE_ID"
+  cargo build -p octomus --profile "$CARGO_PROFILE" --bin "$WARP_BIN" --features "$FEATURES"
   echo "Making debug copy of '$EXECUTABLE_PATH' at '$DEBUG_EXECUTABLE_PATH'"
   cp "$EXECUTABLE_PATH" "$DEBUG_EXECUTABLE_PATH"
 

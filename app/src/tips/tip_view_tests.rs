@@ -1,6 +1,6 @@
-use warpui::elements::{ChildView, Empty, SavePosition};
-use warpui::platform::WindowStyle;
-use warpui::{App, ViewHandle};
+use octomusui::elements::{ChildView, Empty, SavePosition};
+use octomusui::platform::WindowStyle;
+use octomusui::{App, ViewHandle};
 
 use super::*;
 

@@ -4,14 +4,14 @@ Linear: QUALITY-474
 
 ## Problem
 
-`CloudPreferencesSyncer::handle_initial_load` uses `ForceCloudToMatchLocal::No` on normal startup, meaning cloud values overwrite local values for all synced keys. This is incorrect when the user has made local changes (file edit while Warp was closed, or UI change while offline) that haven't been synced to cloud.
+`CloudPreferencesSyncer::handle_initial_load` uses `ForceCloudToMatchLocal::No` on normal startup, meaning cloud values overwrite local values for all synced keys. This is incorrect when the user has made local changes (file edit while Octomus was closed, or UI change while offline) that haven't been synced to cloud.
 
 ## Relevant Code
 
 - `app/src/settings/cloud_preferences_syncer.rs` — `CloudPreferencesSyncer`, `handle_initial_load`, `maybe_sync_local_prefs_to_cloud`, `ForceCloudToMatchLocal`
 - `app/src/settings/init.rs` — `init()`, `init_public_user_preferences()`, `UserDefaultsOnStartup`
 - `app/src/lib.rs (930-960)` — `initialize_app`, where `settings::init` is called and `UserDefaultsOnStartup` is consumed
-- `crates/warpui_extras/src/user_preferences/toml_backed.rs` — `TomlBackedUserPreferences`, `flush()`, `reload_from_disk()`
+- `crates/octomusui_extras/src/user_preferences/toml_backed.rs` — `TomlBackedUserPreferences`, `flush()`, `reload_from_disk()`
 - `crates/settings/src/manager.rs` — `SettingsManager`
 
 ## Current State
@@ -30,7 +30,7 @@ Already implemented on the `daniel/inhibit-writes-mode` branch:
 
 ### 1. Hash computation on TomlBackedUserPreferences
 
-`crates/warpui_extras/src/user_preferences/toml_backed.rs`:
+`crates/octomusui_extras/src/user_preferences/toml_backed.rs`:
 
 ```rust
 /// Hashes the settings file content on disk.
@@ -233,11 +233,11 @@ sequenceDiagram
     participant Cloud as Cloud Storage
     participant PrivPrefs as Private Preferences
 
-    Note over User,File: User edits file while Warp is closed
+    Note over User,File: User edits file while Octomus is closed
 
     User->>File: Edit settings.toml
 
-    Note over LibRs: Warp starts up
+    Note over LibRs: Octomus starts up
     LibRs->>Init: initialize_cloud_preferences_syncer(toml_path, parse_error)
     Init->>File: file_content_hash(toml_path)
     Init->>PrivPrefs: Read stored hash

@@ -8,7 +8,7 @@ use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::{vec2f, Vector2F};
 use serde_yaml::Mapping;
 use string_offset::ByteOffset;
-use warp_core::ui::appearance::Appearance;
+use octomus_core::ui::appearance::Appearance;
 use warp_editor::content::markdown::MarkdownStyle;
 use warp_editor::content::text::TextStylesWithMetadata;
 use warp_editor::editor::EmbeddedItemModel;
@@ -22,14 +22,14 @@ use warp_editor::render::model::{
     EMBEDDED_ITEM_FIRST_LINE_HEIGHT,
 };
 use warp_editor::render::BLOCK_FOOTER_HEIGHT;
-use warpui::elements::{Border, ConstrainedBox, CornerRadius, Empty, Margin, Padding, Radius};
-use warpui::text_layout::TextFrame;
-use warpui::units::{IntoPixels, Pixels};
-use warpui::{AppContext, Element, LayoutContext, SingletonEntity, SizeConstraint};
+use octomusui::elements::{Border, ConstrainedBox, CornerRadius, Empty, Margin, Padding, Radius};
+use octomusui::text_layout::TextFrame;
+use octomusui::units::{IntoPixels, Pixels};
+use octomusui::{AppContext, Element, LayoutContext, SingletonEntity, SizeConstraint};
 
 use crate::cloud_object::model::persistence::CloudModel;
 use crate::cloud_object::CloudObject;
-use crate::drive::cloud_object_styling::warp_drive_icon_color;
+use crate::drive::cloud_object_styling::octomus_drive_icon_color;
 use crate::drive::DriveObjectType;
 use crate::server::ids::{HashableId, ToServerId};
 use crate::ui_components::icons::Icon;
@@ -305,7 +305,7 @@ impl EmbeddedItem for EmbeddedWorkflow {
 
         // If the workflow is no longer accessible or is trashed, set the content to
         // an empty string. But we should still keep the HTML element formatting and
-        // attributes so we could re-parse the ID and metadata when pasted into Warp.
+        // attributes so we could re-parse the ID and metadata when pasted into Octomus.
         let workflow_content = workflow
             .and_then(|workflow| {
                 if !workflow.is_trashed(cloud_model) {
@@ -453,16 +453,16 @@ impl RenderableEmbeddedWorkflow {
         let (icon, icon_color) = if is_agent_mode_prompt {
             (
                 Icon::Prompt,
-                warp_drive_icon_color(appearance, DriveObjectType::AgentModeWorkflow),
+                octomus_drive_icon_color(appearance, DriveObjectType::AgentModeWorkflow),
             )
         } else {
             (
                 Icon::Workflow,
-                warp_drive_icon_color(appearance, DriveObjectType::Workflow),
+                octomus_drive_icon_color(appearance, DriveObjectType::Workflow),
             )
         };
         let workflow_icon = ConstrainedBox::new(
-            icon.to_warpui_icon(icon_color.into())
+            icon.to_octomusui_icon(icon_color.into())
                 .with_opacity(1.0)
                 .finish(),
         )
@@ -611,7 +611,7 @@ impl RenderableBlock for RenderableEmbeddedWorkflow {
             );
         }
 
-        ctx.paint.scene.start_layer(warpui::ClipBounds::ActiveLayer);
+        ctx.paint.scene.start_layer(octomusui::ClipBounds::ActiveLayer);
 
         // Position the block footer right below the content area, flush with its right-hand edge.
         // This gives the footer some padding relative to the visible area with a background.
@@ -626,15 +626,15 @@ impl RenderableBlock for RenderableEmbeddedWorkflow {
         ctx.paint.scene.stop_layer();
     }
 
-    fn after_layout(&mut self, ctx: &mut warpui::AfterLayoutContext, app: &warpui::AppContext) {
+    fn after_layout(&mut self, ctx: &mut octomusui::AfterLayoutContext, app: &octomusui::AppContext) {
         self.footer.after_layout(ctx, app);
     }
 
     fn dispatch_event(
         &mut self,
         _model: &warp_editor::render::model::RenderState,
-        event: &warpui::event::DispatchedEvent,
-        ctx: &mut warpui::EventContext,
+        event: &octomusui::event::DispatchedEvent,
+        ctx: &mut octomusui::EventContext,
         app: &AppContext,
     ) -> bool {
         self.footer.dispatch_event(event, ctx, app)

@@ -1,13 +1,13 @@
 use settings::Setting as _;
 use voice_input::{StartListeningError, VoiceInput, VoiceSessionResult};
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::AnsiColorIdentifier;
-use warpui::elements::{Container, CornerRadius, Icon, Radius};
-use warpui::platform::Cursor;
-use warpui::r#async::SpawnedFutureHandle;
-use warpui::ui_components::button::ButtonTooltipPosition;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{elements, AppContext, Element, SingletonEntity, ViewContext, ViewHandle};
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::AnsiColorIdentifier;
+use octomusui::elements::{Container, CornerRadius, Icon, Radius};
+use octomusui::platform::Cursor;
+use octomusui::r#async::SpawnedFutureHandle;
+use octomusui::ui_components::button::ButtonTooltipPosition;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{elements, AppContext, Element, SingletonEntity, ViewContext, ViewHandle};
 
 use super::{EditorAction, EditorView, VoiceTranscriber, VoiceTranscriptionOptions};
 use crate::ai::blocklist::InputType;
@@ -75,7 +75,7 @@ impl EditorView {
                 crate::view_components::NewFeaturePopupEvent::Dismissed
             ) {
                 AISettings::handle(ctx).update(ctx, |settings, ctx| {
-                    warp_core::report_if_error!(settings
+                    octomus_core::report_if_error!(settings
                         .dismissed_voice_input_new_feature_popup
                         .set_value(true, ctx));
                 });
@@ -217,18 +217,18 @@ impl EditorView {
                 // If the keypress is not valid in the current state, we ignore it.
                 match &self.voice_input_state {
                     // For example, the user could press Fn in a different app, then switch focus
-                    // to Warp and let it go - we should NOT activate voice input in this case.
+                    // to Octomus and let it go - we should NOT activate voice input in this case.
                     VoiceInputState::Stopped => {
-                        if matches!(state, warpui::event::KeyState::Released) {
+                        if matches!(state, octomusui::event::KeyState::Released) {
                             return false;
                         }
                     }
                     // Note that in reality, this case is unreachable because we stop voice input
-                    // if the user is not focused on Warp (since we lose the ability to listen to modifier
+                    // if the user is not focused on Octomus (since we lose the ability to listen to modifier
                     // key events). Thus, the user cannot enter a state where we're listening for voice input
                     // but the key is not held already.
                     VoiceInputState::Listening => {
-                        if matches!(state, warpui::event::KeyState::Pressed) {
+                        if matches!(state, octomusui::event::KeyState::Pressed) {
                             return false;
                         }
                     }
@@ -442,8 +442,8 @@ impl EditorView {
         let microphone_access_state = app.microphone_access_state();
         let mic_access_denied = matches!(
             microphone_access_state,
-            warpui::platform::MicrophoneAccessState::Restricted
-                | warpui::platform::MicrophoneAccessState::Denied
+            octomusui::platform::MicrophoneAccessState::Restricted
+                | octomusui::platform::MicrophoneAccessState::Denied
         );
 
         let modifier_key = AISettings::handle(app).as_ref(app).voice_input_toggle_key;
@@ -522,7 +522,7 @@ impl EditorView {
             button = button.disabled();
         }
 
-        warpui::elements::SavePosition::new(
+        octomusui::elements::SavePosition::new(
             button
                 .build()
                 .on_click(move |ctx, _, _| {

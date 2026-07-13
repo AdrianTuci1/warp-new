@@ -1,5 +1,5 @@
-use warpui::elements::MouseStateHandle;
-use warpui::Element;
+use octomusui::elements::MouseStateHandle;
+use octomusui::Element;
 
 use super::{
     render_inline_block_list_banner, InlineBannerButtonState, InlineBannerContent,
@@ -39,12 +39,12 @@ pub fn render_inline_ssh_wrapper_banner(
     let (style, title) = if state.wrapper_enabled {
         (
             InlineBannerStyle::LowPriority,
-            "Warp SSH wrapper enabled".to_string(),
+            "Octomus SSH wrapper enabled".to_string(),
         )
     } else {
         (
             InlineBannerStyle::VeryLowPriority,
-            "Warp SSH wrapper disabled".to_string(),
+            "Octomus SSH wrapper disabled".to_string(),
         )
     };
     let buttons = vec![

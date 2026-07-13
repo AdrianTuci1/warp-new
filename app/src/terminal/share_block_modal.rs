@@ -6,26 +6,26 @@ use parking_lot::FairMutex;
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::{vec2f, Vector2F};
 use serde::Serialize;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::theme::Fill;
-use warpui::clipboard::ClipboardContent;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::theme::Fill;
+use octomusui::clipboard::ClipboardContent;
+use octomusui::elements::{
     try_rect_with_z, Align, Border, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     Dismiss, Element, Empty, Flex, MainAxisAlignment, MainAxisSize, MouseStateHandle,
     ParentElement, Point, Radius, SavePosition, ScrollData, ScrollStateHandle, Scrollable,
     ScrollableElement, ScrollbarWidth, Shrinkable, Stack, Text,
 };
-use warpui::event::{DispatchedEvent, ModifiersState};
-use warpui::fonts::{FamilyId, Properties, Style, Weight};
-use warpui::keymap::FixedBinding;
-use warpui::r#async::SpawnedFutureHandle;
-use warpui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::ui_components::radio_buttons::{
+use octomusui::event::{DispatchedEvent, ModifiersState};
+use octomusui::fonts::{FamilyId, Properties, Style, Weight};
+use octomusui::keymap::FixedBinding;
+use octomusui::r#async::SpawnedFutureHandle;
+use octomusui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::ui_components::radio_buttons::{
     RadioButtonItem, RadioButtonLayout, RadioButtonStateHandle,
 };
-use warpui::units::{IntoLines, IntoPixels, Lines, Pixels};
-use warpui::{
+use octomusui::units::{IntoLines, IntoPixels, Lines, Pixels};
+use octomusui::{
     AfterLayoutContext, AppContext, ClipBounds, Entity, Event, EventContext, FocusContext,
     LayoutContext, PaintContext, SingletonEntity, SizeConstraint, TypedActionView, View,
     ViewContext, ViewHandle,
@@ -82,7 +82,7 @@ const COMMAND_OPTION: (&str, DisplaySetting) = ("Command", DisplaySetting::Comma
 const OUTPUT_OPTION: (&str, DisplaySetting) = ("Output", DisplaySetting::Output);
 
 /// This default title is helpful for screen readers.
-const DEFAULT_EMBED_TITLE: &str = "embedded warp block";
+const DEFAULT_EMBED_TITLE: &str = "embedded octomus block";
 const BLOCK_CREATION_FAILED_MESSAGE: &str = "Something went wrong. Please try again.";
 
 #[derive(PartialEq)]
@@ -154,7 +154,7 @@ pub enum ShareBlockModalAction {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings(vec![
         FixedBinding::custom(
@@ -667,7 +667,7 @@ impl ShareBlockModal {
             } else {
                 text_label.to_string()
             },
-            icon.to_warpui_icon(appearance.theme().active_ui_text_color()),
+            icon.to_octomusui_icon(appearance.theme().active_ui_text_color()),
             MainAxisSize::Max,
             MainAxisAlignment::Center,
             vec2f(16., 16.),
@@ -794,7 +794,7 @@ impl ShareBlockModal {
         let text_and_icon = TextAndIcon::new(
             TextAndIconAlignment::TextFirst,
             "Copy".to_string(),
-            Icon::Copy.to_warpui_icon(appearance.theme().active_ui_text_color()),
+            Icon::Copy.to_octomusui_icon(appearance.theme().active_ui_text_color()),
             MainAxisSize::Max,
             MainAxisAlignment::Center,
             vec2f(16., 16.),
@@ -846,7 +846,7 @@ impl ShareBlockModal {
         let link_generated = matches!(self.request_state, ShareRequestState::Succeeded { .. });
         let mut column = Flex::column().with_cross_axis_alignment(CrossAxisAlignment::Stretch);
 
-        // If we're using the combined prompt/command grid, then "show prompt" should only be configurable if using Warp prompt!
+        // If we're using the combined prompt/command grid, then "show prompt" should only be configurable if using Octomus prompt!
         // Otherwise, we MUST always render the prompt alongside the command (since they're in the same combined grid for PS1).
         let show_prompt_configurable = self
             .model
@@ -1295,7 +1295,7 @@ impl SingleBlock {
         let mut padding_between_prompt_and_cmd_rendered = Lines::zero();
 
         if self.show_prompt {
-            // If we're rendering Warp prompt (above the command).
+            // If we're rendering Octomus prompt (above the command).
             if !block.honor_ps1() {
                 if let Some(native_prompt_text) = self.native_prompt_text.as_mut() {
                     if self.scroll_top - padding_top_rendered <= Lines::zero() {

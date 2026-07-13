@@ -24,7 +24,7 @@ This spec covers the following two sections:
 - `app/src/terminal/model_events.rs:105–160, 340–369` — existing Bootstrapped ↔ RemoteServerReady stash-and-wait gate; unchanged.
 - `app/src/terminal/writeable_pty/terminal_manager_util.rs:120` — `init_pty_controller_model` where both `PtyController` and the new `RemoteServerController` are constructed side-by-side.
 - `app/src/terminal/model/session.rs:511–514` — `IsLegacySSHSession` enum used to distinguish sessions we can engage.
-- `crates/warp_features/src/lib.rs:806` — `FeatureFlag::SshRemoteServer`.
+- `crates/octomus_features/src/lib.rs:806` — `FeatureFlag::SshRemoteServer`.
 - `app/src/ai/blocklist/inline_action/ask_user_question_view.rs` — existing block-based dialog we draw visual inspiration from; `HeaderConfig` + `NumberShortcutButtons` are the reusable primitives.
 ## 3. Current state
 Two subscribers react synchronously to `ModelEvent::Handler(AnsiHandlerEvent::InitShell)`:
@@ -546,10 +546,10 @@ The `SetupFailed` arm is renamed to `SessionConnectionFailed`, and the `SetupSta
 New file: `app/src/terminal/view/ssh_remote_server_choice_view.rs` (final location TBD alongside existing inline block views).
 A standalone `View` composed of existing block primitives. We don't extract a shared `ChoiceBlockView` abstraction: this is the only two-option choice block in the blocklist today, and `HeaderConfig` + `NumberShortcutButtons` compose cleanly into the view without further factoring. If a second consumer with similar structure arrives, the abstraction can be lifted at that point.
 Structure:
-- **Header** — `HeaderConfig` from `inline_action_header` with title "Install Warp remote server?" and a suitable icon.
-- **Description** — `render_text_with_markdown_support` (the same helper `AskUserQuestionView` uses) briefly explaining that Warp can install a helper binary on the remote host to enable remote-server features.
+- **Header** — `HeaderConfig` from `inline_action_header` with title "Install Octomus remote server?" and a suitable icon.
+- **Description** — `render_text_with_markdown_support` (the same helper `AskUserQuestionView` uses) briefly explaining that Octomus can install a helper binary on the remote host to enable remote-server features.
 - **Two numbered buttons via `NumberShortcutButtons`**:
-  - `1.` "Install Warp's SSH extension"
+  - `1.` "Install Octomus's SSH extension"
   - `2.` "Continue without installing"
 - **Session association** — constructor takes a `SessionId` used in click callbacks. The view is a pure renderer of the two-button prompt and owns no internal state beyond the session ID; dismissal is performed by `TerminalView` removing the block on click.
 **Action enum** on the prompt view:

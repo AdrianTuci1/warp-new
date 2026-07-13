@@ -16,9 +16,9 @@ Param (
     [String]$RELEASE_TAG = '',
     [String]$FEATURES = 'release_bundle,crash_reporting,gui',
 
-    # Builds only the Warp binary, skips the installer.
+    # Builds only the Octomus binary, skips the installer.
     [Switch]$SKIP_BUILD_INSTALLER = $False,
-    # Builds only the installer, skips the Warp binary. Use this if the Warp
+    # Builds only the installer, skips the Octomus binary. Use this if the Octomus
     # binary has already been built.
     [Switch]$SKIP_BUILD_BINARY = $False,
 
@@ -79,7 +79,7 @@ if ($CARGO_PROFILE -eq 'dev') {
 } else {
     $CARGO_TARGET_OUTPUT_DIR = "$CARGO_TARGET_DIR" + '\' + $PLATFORM_TARGET + '\' + "$CARGO_PROFILE"
 }
-$BUNDLE_ID = "dev.warp.$app_name"
+$BUNDLE_ID = "dev.octomus.$app_name"
 
 # Update parameters based on the target release channel.
 #
@@ -89,8 +89,8 @@ $BUNDLE_ID = "dev.warp.$app_name"
 # WARP_BIN is the name of the binary produced by cargo;
 # BINARY_NAME is the desired name of the binary in the final package.
 if ("$CHANNEL" -eq 'local') {
-    $WARP_BIN = 'warp'
-    $BINARY_NAME = 'warp.exe'
+    $WARP_BIN = 'octomus'
+    $BINARY_NAME = 'octomus.exe'
     $APP_NAME = 'WarpLocal'
 } elseif ("$CHANNEL" -eq 'dev') {
     $WARP_BIN = 'dev'
@@ -104,11 +104,11 @@ if ("$CHANNEL" -eq 'local') {
     $FEATURES = "$FEATURES,preview_channel"
 } elseif ("$CHANNEL" -eq 'stable') {
     $WARP_BIN = 'stable'
-    $BINARY_NAME = 'warp.exe'
-    $APP_NAME = 'Warp'
+    $BINARY_NAME = 'octomus.exe'
+    $APP_NAME = 'Octomus'
 } elseif ("$CHANNEL" -eq 'oss') {
-    $WARP_BIN = 'warp-oss'
-    $BINARY_NAME = 'warp-oss.exe'
+    $WARP_BIN = 'octomus-oss'
+    $BINARY_NAME = 'octomus-oss.exe'
     $APP_NAME = 'WarpOss'
     # The OSS channel does not ship Sentry, so drop the crash_reporting feature
     # (which would otherwise pull in the Sentry SDK as a dependency).
@@ -124,7 +124,7 @@ if (("$CHANNEL" -eq 'local') -or ("$CHANNEL" -eq 'dev')) {
 }
 
 $BINARY_PATH = "$CARGO_TARGET_OUTPUT_DIR\$BINARY_NAME"
-$BUNDLE_ID = "dev.warp.$APP_NAME"
+$BUNDLE_ID = "dev.octomus.$APP_NAME"
 $INSTALLER_OUTPUT_DIR = "$WINDOWS_INSTALLER_DIR\Output"
 $INSTALLER_NAME = "$($APP_NAME)$($FILE_ENDING)"
 $INSTALLER_PATH = "$($INSTALLER_OUTPUT_DIR)\$($INSTALLER_NAME).exe"
@@ -142,21 +142,21 @@ if ($DEBUG_BUILD) {
 # then exit.  We use this script to invoke `cargo check` to ensure that we are
 # using the same feature flags and profile that we would be using in production.
 if ($CHECK_ONLY) {
-    cargo check -p warp --profile "$CARGO_PROFILE" --bin "$WARP_BIN" --features "$FEATURES" --target $PLATFORM_TARGET
+    cargo check -p octomus --profile "$CARGO_PROFILE" --bin "$WARP_BIN" --features "$FEATURES" --target $PLATFORM_TARGET
     if (-Not $?) {
-        Write-Error "Failed to verify Warp $WARP_BIN compilation with profile $CARGO_PROFILE"
+        Write-Error "Failed to verify Octomus $WARP_BIN compilation with profile $CARGO_PROFILE"
         exit 1
     }
     exit 0
 }
 
 if (-Not $SKIP_BUILD_BINARY) {
-    Write-Output "Building Warp for channel $CHANNEL and bundle id $BUNDLE_ID"
+    Write-Output "Building Octomus for channel $CHANNEL and bundle id $BUNDLE_ID"
     $env:CARGO_BIN_NAME = $CHANNEL
     $env:WARP_APP_NAME = $APP_NAME
-    cargo build -p warp --profile "$CARGO_PROFILE" --bin "$WARP_BIN" --features "$FEATURES" --target $PLATFORM_TARGET
+    cargo build -p octomus --profile "$CARGO_PROFILE" --bin "$WARP_BIN" --features "$FEATURES" --target $PLATFORM_TARGET
     if (-Not $?) {
-        Write-Error "Failed to build Warp $WARP_BIN binary with profile $CARGO_PROFILE"
+        Write-Error "Failed to build Octomus $WARP_BIN binary with profile $CARGO_PROFILE"
         exit 1
     }
 
@@ -191,7 +191,7 @@ if (-Not $?) {
     exit 1
 }
 
-Write-Output 'Building Warp installer'
+Write-Output 'Building Octomus installer'
 $ISCC_ARGS = @(
     "$WINDOWS_INSTALLER_DIR\windows-installer.iss",
     "/DReleaseChannel=$CHANNEL",

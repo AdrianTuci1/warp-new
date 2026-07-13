@@ -1,9 +1,9 @@
-use warpui::elements::{Container, CornerRadius, Dismiss, MouseStateHandle, Radius};
-use warpui::fonts::Weight;
-use warpui::platform::Cursor;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::elements::{Container, CornerRadius, Dismiss, MouseStateHandle, Radius};
+use octomusui::fonts::Weight;
+use octomusui::platform::Cursor;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };

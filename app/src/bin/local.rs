@@ -2,8 +2,8 @@
 mod channel_config;
 
 use anyhow::Result;
-use warp_core::channel::{Channel, ChannelState};
-use warp_core::features;
+use octomus_core::channel::{Channel, ChannelState};
+use octomus_core::features;
 
 fn main() -> Result<()> {
     let config = channel_config::load_config!("local");
@@ -20,7 +20,7 @@ fn main() -> Result<()> {
 
     ChannelState::set(state);
 
-    warp::run()
+    octomus::run()
 }
 
 // If we're not using an external plist, embed the following as the Info.plist.
@@ -35,9 +35,9 @@ embed_plist::embed_info_plist_bytes!(r#"
     <key>CFBundleDisplayName</key>
     <string>WarpLocal</string>
     <key>CFBundleExecutable</key>
-    <string>warp</string>
+    <string>octomus</string>
     <key>CFBundleIdentifier</key>
-    <string>dev.warp.Warp-Local</string>
+    <string>dev.octomus.Octomus-Local</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>

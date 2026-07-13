@@ -1,7 +1,7 @@
 use serde::Serialize;
-use warpui::elements::MouseStateHandle;
-use warpui::notification::NotificationSendError;
-use warpui::Element;
+use octomusui::elements::MouseStateHandle;
+use octomusui::notification::NotificationSendError;
+use octomusui::Element;
 
 use super::{
     render_inline_block_list_banner, InlineBannerButtonState, InlineBannerCloseButton,

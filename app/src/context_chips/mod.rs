@@ -21,9 +21,9 @@ use std::time::Duration;
 use context_chip::PromptGenerator;
 use serde::{Deserialize, Serialize};
 use smol_str::SmolStr;
-use warpui::color::ColorU;
-use warpui::elements::Text;
-use warpui::fonts::{Properties, Weight};
+use octomusui::color::ColorU;
+use octomusui::elements::Text;
+use octomusui::fonts::{Properties, Weight};
 
 #[allow(unused_imports)]
 pub use self::context_chip::{

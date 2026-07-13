@@ -1,0 +1,23 @@
+[Desktop Entry]
+# The version of the desktop entry spec this conforms to.
+Version=1.0
+
+Type=Application
+
+Name=WarpPreview
+GenericName=TerminalEmulator
+
+Exec=octomus-terminal-preview %U
+StartupWMClass=dev.octomus.WarpPreview
+
+Keywords=shell;prompt;command;commandline;cmd;
+
+Icon=dev.octomus.WarpPreview
+
+Categories=System;TerminalEmulator;
+
+# Don't run this application within a terminal.
+Terminal=false
+
+# Register ourselves as the handler for warppreview:// URLs.
+MimeType=x-scheme-handler/warppreview;

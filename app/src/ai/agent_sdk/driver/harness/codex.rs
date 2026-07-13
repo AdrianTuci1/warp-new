@@ -11,9 +11,9 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use tempfile::NamedTempFile;
 use uuid::Uuid;
-use warp_cli::agent::Harness;
+use octomus_cli::agent::Harness;
 use warp_managed_secrets::ManagedSecretValue;
-use warpui::{ModelHandle, ModelSpawner, SingletonEntity};
+use octomusui::{ModelHandle, ModelSpawner, SingletonEntity};
 
 use super::super::terminal::{CommandHandle, TerminalDriver};
 use super::super::{AgentDriver, AgentDriverError};

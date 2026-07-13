@@ -1,6 +1,6 @@
-use warp_core::ui::appearance::Appearance;
-use warpui::platform::WindowStyle;
-use warpui::{App, TypedActionView};
+use octomus_core::ui::appearance::Appearance;
+use octomusui::platform::WindowStyle;
+use octomusui::{App, TypedActionView};
 
 use super::{Menu, MenuAction, MenuItem, MenuItemFields, SelectAction, SubMenu};
 

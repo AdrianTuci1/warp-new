@@ -1,6 +1,6 @@
-use warp_core::ui::appearance::Appearance;
-use warpui::elements::Icon;
-use warpui::Element;
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::Icon;
+use octomusui::Element;
 
 use crate::search::result_renderer::ItemHighlightState;
 

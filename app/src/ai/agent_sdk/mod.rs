@@ -13,31 +13,31 @@ pub(crate) use driver::harness::{task_env_vars, validate_cli_installed, ClaudeHa
 pub use driver::AgentDriver;
 use driver::AgentDriverError;
 use telemetry::CliTelemetryEvent;
-use warp_cli::agent::{
+use octomus_cli::agent::{
     AgentCommand, AgentProfileCommand, Harness, OutputFormat, Prompt, RunAgentArgs,
 };
-use warp_cli::api_key::ApiKeyCommand;
-use warp_cli::artifact::ArtifactCommand;
-use warp_cli::environment::{EnvironmentCommand, ImageCommand};
-use warp_cli::federate::FederateCommand;
-use warp_cli::harness_support::{HarnessSupportCommand, ReportArtifactCommand, TaskStatus};
-use warp_cli::integration::IntegrationCommand;
-use warp_cli::mcp::MCPCommand;
-use warp_cli::model::ModelCommand;
-use warp_cli::provider::ProviderCommand;
-use warp_cli::schedule::ScheduleSubcommand;
-use warp_cli::secret::SecretCommand;
-use warp_cli::share::ShareRequest;
-use warp_cli::task::{MessageCommand, TaskCommand};
-use warp_cli::{CliCommand, GlobalOptions, OZ_HARNESS_ENV};
-use warp_core::features::FeatureFlag;
+use octomus_cli::api_key::ApiKeyCommand;
+use octomus_cli::artifact::ArtifactCommand;
+use octomus_cli::environment::{EnvironmentCommand, ImageCommand};
+use octomus_cli::federate::FederateCommand;
+use octomus_cli::harness_support::{HarnessSupportCommand, ReportArtifactCommand, TaskStatus};
+use octomus_cli::integration::IntegrationCommand;
+use octomus_cli::mcp::MCPCommand;
+use octomus_cli::model::ModelCommand;
+use octomus_cli::provider::ProviderCommand;
+use octomus_cli::schedule::ScheduleSubcommand;
+use octomus_cli::secret::SecretCommand;
+use octomus_cli::share::ShareRequest;
+use octomus_cli::task::{MessageCommand, TaskCommand};
+use octomus_cli::{CliCommand, GlobalOptions, OZ_HARNESS_ENV};
+use octomus_core::features::FeatureFlag;
 use warp_graphql::object_permissions::OwnerType;
 use warp_isolation_platform::IsolationPlatformError;
 #[cfg(not(target_family = "wasm"))]
-use warp_logging::log_file_path;
+use octomus_logging::log_file_path;
 use warp_managed_secrets::ManagedSecretManager;
-use warpui::platform::TerminationMode;
-use warpui::{AppContext, ModelSpawner, SingletonEntity};
+use octomusui::platform::TerminationMode;
+use octomusui::{AppContext, ModelSpawner, SingletonEntity};
 
 use crate::ai::agent::api::convert_conversation::{
     convert_conversation_data_to_ai_conversation, RestorationMode,
@@ -118,7 +118,7 @@ fn maybe_warn_team_api_key(ctx: &AppContext) {
     );
 }
 
-/// Run a Warp CLI command.
+/// Run a Octomus CLI command.
 pub fn run(
     ctx: &mut AppContext,
     command: CliCommand,
@@ -575,7 +575,7 @@ fn run_task(
                 ));
             }
             match conv_cmd {
-                warp_cli::task::ConversationCommand::Get(args) => {
+                octomus_cli::task::ConversationCommand::Get(args) => {
                     ambient::get_conversation(ctx, args.conversation_id)
                 }
             }
@@ -596,11 +596,11 @@ fn run_task(
 /// requires spawning an async task, which requires a ModelContext.
 struct AgentDriverRunner;
 
-impl warpui::Entity for AgentDriverRunner {
+impl octomusui::Entity for AgentDriverRunner {
     type Event = ();
 }
 
-impl warpui::SingletonEntity for AgentDriverRunner {}
+impl octomusui::SingletonEntity for AgentDriverRunner {}
 
 impl AgentDriverRunner {
     async fn setup_and_run_driver(
@@ -631,18 +631,18 @@ impl AgentDriverRunner {
             )
             .await?;
 
-        // Wait for Warp Drive to sync before building the task config, since
+        // Wait for Octomus Drive to sync before building the task config, since
         // prompt resolution (SavedPrompt -> workflow lookup) and environment
         // resolution (CloudAmbientAgentEnvironment lookup) depend on it.
         setup_events
-            .record_result(SetupStep::WarpDriveSync, async {
+            .record_result(SetupStep::OctomusDriveSync, async {
                 if foreground
-                    .spawn(|_, ctx| common::refresh_warp_drive(ctx))
+                    .spawn(|_, ctx| common::refresh_octomus_drive(ctx))
                     .await?
                     .await
                     .is_err()
                 {
-                    return Err(AgentDriverError::WarpDriveSyncFailed);
+                    return Err(AgentDriverError::OctomusDriveSyncFailed);
                 }
                 Ok(())
             })
@@ -1003,7 +1003,7 @@ impl AgentDriverRunner {
     }
 
     /// Creates a new task on the server for this agent run, sets the task ID on the driver
-    /// options, and updates the Server API provider so that all subsequent requests to warp-server
+    /// options, and updates the Server API provider so that all subsequent requests to octomus-server
     /// contain this new task ID.
     async fn initialize_new_task(
         foreground: &ModelSpawner<Self>,
@@ -1519,7 +1519,7 @@ fn launch_command(
         return dispatch_command(ctx, command, global_options);
     }
 
-    let cli_name = warp_cli::binary_name().unwrap_or_else(|| "warp".to_string());
+    let cli_name = octomus_cli::binary_name().unwrap_or_else(|| "octomus".to_string());
 
     let auth_state = AuthStateProvider::handle(ctx).as_ref(ctx).get();
     if !auth_state.is_logged_in() {
@@ -1568,8 +1568,8 @@ fn launch_command(
     Ok(())
 }
 
-/// Check if we're running within Warp (for example, if this is an invocation of the Warp CLI
-/// within a Warp terminal session).
+/// Check if we're running within Octomus (for example, if this is an invocation of the Octomus CLI
+/// within a Octomus terminal session).
 pub fn is_running_in_warp() -> bool {
     std::env::var("TERM_PROGRAM")
         .map(|v| v == "WarpTerminal")
@@ -1588,7 +1588,7 @@ fn report_fatal_error(err: anyhow::Error, ctx: &mut AppContext) {
         if let Ok(path) = log_file_path() {
             let _ = write!(
                 message,
-                "\n\nFor more information, check Warp logs at {}",
+                "\n\nFor more information, check Octomus logs at {}",
                 path.display()
             );
         }

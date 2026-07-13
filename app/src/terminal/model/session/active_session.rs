@@ -1,13 +1,13 @@
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warp_util::remote_path::RemotePath;
-use warp_util::standardized_path::StandardizedPath;
-use warpui::{AppContext, Entity, ModelContext, ModelHandle};
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomus_util::remote_path::RemotePath;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::{AppContext, Entity, ModelContext, ModelHandle};
 
 use super::{Session, SessionType, Sessions};
-use crate::ai_assistant::execution_context::WarpAiExecutionContext;
+use crate::ai_assistant::execution_context::OctomusAiExecutionContext;
 use crate::terminal::model::session::SessionsEvent;
 use crate::terminal::model_events::{ModelEvent, ModelEventDispatcher};
 use crate::terminal::shell::ShellType;
@@ -122,9 +122,9 @@ impl ActiveSession {
         self.location_for_path(cwd.as_str(), app)
     }
 
-    /// Returns the `WarpAiExecutionContext` for the active session.
-    pub fn ai_execution_environment(&self, app: &AppContext) -> Option<WarpAiExecutionContext> {
-        self.session(app).as_ref().map(WarpAiExecutionContext::new)
+    /// Returns the `OctomusAiExecutionContext` for the active session.
+    pub fn ai_execution_environment(&self, app: &AppContext) -> Option<OctomusAiExecutionContext> {
+        self.session(app).as_ref().map(OctomusAiExecutionContext::new)
     }
 }
 

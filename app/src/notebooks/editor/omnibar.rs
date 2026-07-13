@@ -10,15 +10,15 @@ use warp_editor::content::text::{
 };
 use warp_editor::model::RichTextEditorModel;
 use warp_editor::render::model::RenderState;
-use warpui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
-use warpui::elements::{
+use octomusui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
+use octomusui::elements::{
     AnchorPair, Border, ConstrainedBox, Container, CornerRadius, DropShadow, Flex, MainAxisSize,
     MouseStateHandle, OffsetPositioning, OffsetType, ParentElement, Point,
     PositionedElementOffsetBounds, PositioningAxis, Radius, Rect, XAxisAnchor, YAxisAnchor,
 };
-use warpui::presenter::ChildView;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, SizeConstraint, TypedActionView,
     View, ViewContext, ViewHandle,
 };
@@ -258,7 +258,7 @@ impl View for Omnibar {
         "Omnibar"
     }
 
-    fn render(&self, app: &warpui::AppContext) -> Box<dyn Element> {
+    fn render(&self, app: &octomusui::AppContext) -> Box<dyn Element> {
         let appearance = Appearance::as_ref(app);
         let mut actions = Flex::row().with_main_axis_size(MainAxisSize::Min);
 
@@ -483,9 +483,9 @@ impl Compact {
 impl Element for Compact {
     fn layout(
         &mut self,
-        constraint: warpui::SizeConstraint,
-        ctx: &mut warpui::LayoutContext,
-        app: &warpui::AppContext,
+        constraint: octomusui::SizeConstraint,
+        ctx: &mut octomusui::LayoutContext,
+        app: &octomusui::AppContext,
     ) -> Vector2F {
         self.child.layout(
             SizeConstraint {
@@ -500,8 +500,8 @@ impl Element for Compact {
     fn paint(
         &mut self,
         origin: Vector2F,
-        ctx: &mut warpui::PaintContext,
-        app: &warpui::AppContext,
+        ctx: &mut octomusui::PaintContext,
+        app: &octomusui::AppContext,
     ) {
         self.child.paint(origin, ctx, app)
     }
@@ -516,18 +516,18 @@ impl Element for Compact {
 
     fn dispatch_event(
         &mut self,
-        event: &warpui::event::DispatchedEvent,
-        ctx: &mut warpui::EventContext,
-        app: &warpui::AppContext,
+        event: &octomusui::event::DispatchedEvent,
+        ctx: &mut octomusui::EventContext,
+        app: &octomusui::AppContext,
     ) -> bool {
         self.child.dispatch_event(event, ctx, app)
     }
 
-    fn after_layout(&mut self, ctx: &mut warpui::AfterLayoutContext, app: &AppContext) {
+    fn after_layout(&mut self, ctx: &mut octomusui::AfterLayoutContext, app: &AppContext) {
         self.child.after_layout(ctx, app)
     }
 
-    fn z_index(&self) -> Option<warpui::elements::ZIndex> {
+    fn z_index(&self) -> Option<octomusui::elements::ZIndex> {
         self.child.z_index()
     }
 

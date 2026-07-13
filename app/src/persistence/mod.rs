@@ -32,10 +32,10 @@ pub use sqlite::database_file_path_for_scope;
 #[cfg(any(feature = "local_fs", feature = "integration_tests"))]
 pub use sqlite::establish_ro_connection;
 use uuid::Uuid;
-use warp_core::command::ExitCode;
+use octomus_core::command::ExitCode;
 use warp_graphql::scalars::time::ServerTimestamp;
 use warp_multi_agent_api as api;
-use warpui::{AppContext, Entity, SingletonEntity};
+use octomusui::{AppContext, Entity, SingletonEntity};
 
 use self::model::{AgentConversation, AgentConversationData, Project};
 use crate::ai::blocklist::PersistedAIInput;

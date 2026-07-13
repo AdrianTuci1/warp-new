@@ -13,8 +13,8 @@ Remove these from [workspace.members]:
 - "crates/cloud_objects"
 - "crates/cloud_object_persistence"
 - "crates/warp_graphql"
-- "crates/warp_server_auth"
-- "crates/warp_server_client"
+- "crates/octomus_server_auth"
+- "crates/octomus_server_client"
 
 Remove these from [workspace.dependencies]:
 - cloud_object_client
@@ -22,8 +22,8 @@ Remove these from [workspace.dependencies]:
 - cloud_objects
 - cloud_object_persistence
 - warp_graphql
-- warp_server_auth
-- warp_server_client
+- octomus_server_auth
+- octomus_server_client
 
 2. DELETE these entire crate directories (rm -rf):
 |- crates/cloud_object_client/
@@ -31,10 +31,10 @@ Remove these from [workspace.dependencies]:
 |- crates/cloud_objects/
 |- crates/cloud_object_persistence/
 |- crates/warp_graphql/
-|- crates/warp_server_auth/
-|- crates/warp_server_client/
+|- crates/octomus_server_auth/
+|- crates/octomus_server_client/
 
-3. EDIT crates/warp_core/src/features.rs:
+3. EDIT crates/octomus_core/src/features.rs:
 Remove FeatureFlag variants that reference cloud/billing/auth:
 - CloudAgent (and any cloud_agent related)
 - WarpDrive
@@ -55,8 +55,8 @@ Remove remaining dependency references:
 - cloud_objects = { workspace = true }
 - cloud_object_persistence = { workspace = true }
 - warp_graphql = { workspace = true }
-- warp_server_auth = { workspace = true }
-- warp_server_client = { workspace = true }
+- octomus_server_auth = { workspace = true }
+- octomus_server_client = { workspace = true }
 - oauth2
 - sentry, sentry-core, sentry-types (crash reporting gone)
 - Any other dependency that was only used by deleted cloud modules
@@ -70,7 +70,7 @@ Look at the [features] section. Remove any feature flags like:
 - "crash_reporting"
 
 6. Scan remaining crates for dependency on deleted cloud crates:
-grep -r "cloud_object_client\|cloud_object_models\|cloud_objects\|warp_graphql\|warp_server_auth\|warp_server_client" crates/ --include="*.toml"
+grep -r "cloud_object_client\|cloud_object_models\|cloud_objects\|warp_graphql\|octomus_server_auth\|octomus_server_client" crates/ --include="*.toml"
 
 For any Cargo.toml that still references them, remove the dependency. If removing it breaks the crate, mark the entire crate for deletion (those crates can't work without cloud).
 

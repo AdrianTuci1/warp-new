@@ -1,11 +1,11 @@
 use std::collections::HashSet;
 
 use pathfinder_geometry::rect::RectF;
-use warpui::elements::DraggableState;
-use warpui::geometry::vector::{vec2f, Vector2F};
-use warpui::platform::TerminationMode;
-use warpui::windowing::WindowManager;
-use warpui::{AppContext, Entity, ModelContext, SingletonEntity, WindowId};
+use octomusui::elements::DraggableState;
+use octomusui::geometry::vector::{vec2f, Vector2F};
+use octomusui::platform::TerminationMode;
+use octomusui::windowing::WindowManager;
+use octomusui::{AppContext, Entity, ModelContext, SingletonEntity, WindowId};
 
 /// Singleton model that owns all cross-window tab drag state.
 ///

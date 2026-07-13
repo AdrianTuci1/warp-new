@@ -10,8 +10,8 @@ Remove or comment out these dependencies (check if they're used elsewhere first)
 - cloud_object_client
 - cloud_object_models
 - cloud_objects
-- warp_server_auth
-- warp_server_client
+- octomus_server_auth
+- octomus_server_client
 - cloud_object_persistence
 - warp_graphql (if only referenced from deleted modules)
 - oauth2 (if only used by auth)

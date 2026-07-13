@@ -1,29 +1,29 @@
-# APP-3945: Channel-aware Warp home watching Technical Spec
+# APP-3945: Channel-aware Octomus home watching Technical Spec
 
 ## Problem
-Warp's hot-reload behavior for user-managed files depends on several consumers observing filesystem changes from the current channel's Warp home. This work centralizes those updates behind `WarpDataDirectoryWatcher`, but it must also preserve a platform-specific requirement: public settings live under `config_local_dir()` while most other Warp home content lives under `data_dir()`.
+Octomus's hot-reload behavior for user-managed files depends on several consumers observing filesystem changes from the current channel's Octomus home. This work centralizes those updates behind `WarpDataDirectoryWatcher`, but it must also preserve a platform-specific requirement: public settings live under `config_local_dir()` while most other Octomus home content lives under `data_dir()`.
 
-The technical problem is to keep one Warp-specific watcher abstraction while:
-- filtering `.warp*/worktrees` only for the data-directory tree
+The technical problem is to keep one Octomus-specific watcher abstraction while:
+- filtering `.octomus*/worktrees` only for the data-directory tree
 - watching `config_local_dir()` in addition to `data_dir()` when those roots differ
-- preserving the existing downstream event contracts used by `WarpConfig`, Warp home MCP watching, and Warp home skill watching
+- preserving the existing downstream event contracts used by `WarpConfig`, Octomus home MCP watching, and Octomus home skill watching
 - avoiding new generic filtering APIs in `repo_metadata::DirectoryWatcher`
 
 ## Relevant code
-- `app/src/warp_data_directory_watcher.rs` — Warp-specific singleton watcher that owns a `BulkFilesystemWatcher`, registers Warp home roots, and emits `WarpDataDirectoryWatcherEvent::FilesChanged`.
-- `app/src/lib.rs` — startup wiring that prepares the Warp watch roots before registering `WarpDataDirectoryWatcher`.
+- `app/src/warp_data_directory_watcher.rs` — Octomus-specific singleton watcher that owns a `BulkFilesystemWatcher`, registers Octomus home roots, and emits `WarpDataDirectoryWatcherEvent::FilesChanged`.
+- `app/src/lib.rs` — startup wiring that prepares the Octomus watch roots before registering `WarpDataDirectoryWatcher`.
 - `app/src/user_config/native.rs` — `WarpConfig` subscription that maps watcher updates to `Themes`, `Workflows`, `LaunchConfigs`, `TabConfigs`, and `Settings` events.
 - `app/src/settings/init.rs` — settings-file hot-reload pipeline that reacts to `WarpConfigUpdateEvent::Settings`.
-- `app/src/ai/mcp/file_mcp_watcher.rs` — Warp home MCP watcher subscriber that depends on `WarpDataDirectoryWatcher`.
-- `app/src/ai/mcp/mod.rs` — helper that resolves the Warp MCP home config path through the shared Warp data directory helpers.
-- `app/src/ai/skills/file_watchers/skill_watcher.rs` — Warp home skill watcher subscriber that depends on `WarpDataDirectoryWatcher`.
-- `app/src/ai/skills/file_watchers/utils.rs` — skill path parsing helpers, including the Warp-home special case.
+- `app/src/ai/mcp/file_mcp_watcher.rs` — Octomus home MCP watcher subscriber that depends on `WarpDataDirectoryWatcher`.
+- `app/src/ai/mcp/mod.rs` — helper that resolves the Octomus MCP home config path through the shared Octomus data directory helpers.
+- `app/src/ai/skills/file_watchers/skill_watcher.rs` — Octomus home skill watcher subscriber that depends on `WarpDataDirectoryWatcher`.
+- `app/src/ai/skills/file_watchers/utils.rs` — skill path parsing helpers, including the Octomus-home special case.
 - `app/src/ai/skills/skill_utils.rs` — helper for resolving a skill root from a changed file path.
-- `crates/ai/src/skills/skill_provider.rs` — provider/scope classification for channel-aware Warp home skill paths.
+- `crates/ai/src/skills/skill_provider.rs` — provider/scope classification for channel-aware Octomus home skill paths.
 - `crates/integration/src/test/settings_file_hot_reload.rs` — end-to-end settings hot-reload coverage.
 
 ## Current state
-`WarpDataDirectoryWatcher` is a Warp-specific singleton that owns its own `BulkFilesystemWatcher`, similar to `HomeDirectoryWatcher`. It does not depend on `DirectoryWatcher`, and it does not require any per-directory filter plumbing in `repo_metadata`.
+`WarpDataDirectoryWatcher` is a Octomus-specific singleton that owns its own `BulkFilesystemWatcher`, similar to `HomeDirectoryWatcher`. It does not depend on `DirectoryWatcher`, and it does not require any per-directory filter plumbing in `repo_metadata`.
 
 At startup:
 - setup code prepares `data_dir()` before `WarpDataDirectoryWatcher` is registered
@@ -35,25 +35,25 @@ The watcher receives `BulkFilesystemWatcherEvent` values, converts them into `Re
 
 `WarpConfig` subscribes to that event stream and reloads themes, workflows, launch configs, and tab configs on background tasks when the update touches the relevant paths. Settings continue to flow through `WarpConfigUpdateEvent::Settings`.
 
-`FileMCPWatcher` subscribes to the same singleton for Warp home MCP updates while continuing to use the existing home-directory and repository watching paths for non-Warp providers. The duplicated startup parse path and the duplicated single-config incremental update path are now shared with the non-Warp logic.
+`FileMCPWatcher` subscribes to the same singleton for Octomus home MCP updates while continuing to use the existing home-directory and repository watching paths for non-Octomus providers. The duplicated startup parse path and the duplicated single-config incremental update path are now shared with the non-Octomus logic.
 
-`SkillWatcher` subscribes to the same singleton for Warp home skill updates while continuing to use the existing home-directory and repository watching paths for non-Warp providers and project skills. The initial Warp home skill load and repository-scan load now share the same directory-read helper.
+`SkillWatcher` subscribes to the same singleton for Octomus home skill updates while continuing to use the existing home-directory and repository watching paths for non-Octomus providers and project skills. The initial Octomus home skill load and repository-scan load now share the same directory-read helper.
 
-Because Warp home skills now live under the channel-aware `data_dir()/skills`, helper code also needs to recognize that path when determining provider, scope, and enclosing skill directory.
+Because Octomus home skills now live under the channel-aware `data_dir()/skills`, helper code also needs to recognize that path when determining provider, scope, and enclosing skill directory.
 
 ## Chosen design
 
-### 1. Dedicated Warp watcher ownership
+### 1. Dedicated Octomus watcher ownership
 `WarpDataDirectoryWatcher` owns a `BulkFilesystemWatcher` directly instead of layering on top of `DirectoryWatcher`.
 
 This keeps the abstraction boundary simple:
 - project repositories still use `DirectoryWatcher`
-- Warp-owned home/config directories use `WarpDataDirectoryWatcher`
+- Octomus-owned home/config directories use `WarpDataDirectoryWatcher`
 
-That separation avoids broadening the generic repo watcher API for a Warp-specific use case.
+That separation avoids broadening the generic repo watcher API for a Octomus-specific use case.
 
 ### 2. Watch root preparation and registration
-Each Warp-owned root is prepared before watcher registration, but that preparation happens outside the watcher constructor:
+Each Octomus-owned root is prepared before watcher registration, but that preparation happens outside the watcher constructor:
 - call `create_dir_all()` during startup/setup
 - keep watcher registration separate from root creation
 - log failures before registration rather than implicitly recovering inside watcher construction
@@ -77,20 +77,20 @@ It continues to:
 - perform those file-backed reloads via `ctx.spawn(...)` so disk reads happen off the model thread
 - emit `WarpConfigUpdateEvent::Settings` when updates touch `user_preferences_toml_file_path()`
 
-`FileMCPWatcher` subscribes to Warp watcher events for `data_dir()/.mcp.json` and keeps the existing logic for non-Warp providers. Warp remains on the Warp-specific watcher source, but shared helpers now cover:
+`FileMCPWatcher` subscribes to Octomus watcher events for `data_dir()/.mcp.json` and keeps the existing logic for non-Octomus providers. Octomus remains on the Octomus-specific watcher source, but shared helpers now cover:
 - the startup parse path for a single config file
-- the single-config incremental update path used by both Warp and non-Warp providers
+- the single-config incremental update path used by both Octomus and non-Octomus providers
 
-`SkillWatcher` subscribes to Warp watcher events for `data_dir()/skills` and keeps the existing logic for non-Warp home providers and project repositories. The Warp home initialization path and repository scan path share the same helper for reading skill directories and emitting updates.
+`SkillWatcher` subscribes to Octomus watcher events for `data_dir()/skills` and keeps the existing logic for non-Octomus home providers and project repositories. The Octomus home initialization path and repository scan path share the same helper for reading skill directories and emitting updates.
 
 ### 5. Channel-aware helper paths
-The helper path logic is updated so Warp home skills and MCP config resolve through the active channel's data directory:
-- Warp MCP home config resolves to `warp_data_mcp_config_file_path()`
-- Warp home skills resolve to `data_dir()/skills`
-- provider and scope classification recognize those paths as Warp home paths rather than project paths
+The helper path logic is updated so Octomus home skills and MCP config resolve through the active channel's data directory:
+- Octomus MCP home config resolves to `warp_data_mcp_config_file_path()`
+- Octomus home skills resolve to `data_dir()/skills`
+- provider and scope classification recognize those paths as Octomus home paths rather than project paths
 
 ## End-to-end flow
-1. Warp startup prepares `data_dir()` and, when distinct, `config_local_dir()` before constructing `WarpDataDirectoryWatcher`.
+1. Octomus startup prepares `data_dir()` and, when distinct, `config_local_dir()` before constructing `WarpDataDirectoryWatcher`.
 2. `WarpDataDirectoryWatcher` registers `data_dir()` with a watcher-level filter that excludes `<data_dir>/worktrees`.
 3. If `config_local_dir()` differs from `data_dir()`, `WarpDataDirectoryWatcher` registers that root with no extra filter.
 4. The underlying `BulkFilesystemWatcher` emits `BulkFilesystemWatcherEvent`.
@@ -102,17 +102,17 @@ The helper path logic is updated so Warp home skills and MCP config resolve thro
 ## Risks and mitigations
 - Distinct-root platforms regress settings hot reload.
   - Mitigation: register `config_local_dir()` separately when it differs from `data_dir()`.
-- Worktree events leak back into Warp home consumers.
+- Worktree events leak back into Octomus home consumers.
   - Mitigation: apply a watcher-level filter to `data_dir()` and let downstream consumers do any additional prefix filtering they need.
 - Fresh installs fail to register watchers because the root directory is missing.
   - Mitigation: prepare each watch root during startup before registration.
 - Path comparisons miss updates because watcher event paths and logical config paths may differ by symlink or canonical form.
   - Mitigation: `WarpConfig` continues checking both raw and canonicalized paths in `update_touches_dir()` and `update_touches_path()`.
-- Warp home skill or MCP paths are misclassified as project paths.
-  - Mitigation: centralize Warp-home path handling in the MCP and skills helper utilities.
+- Octomus home skill or MCP paths are misclassified as project paths.
+  - Mitigation: centralize Octomus-home path handling in the MCP and skills helper utilities.
 
 ## Testing and validation
-- `cargo test -p warp --lib filter_repository_update_by_prefix_keeps_only_matching_paths`
+- `cargo test -p octomus --lib filter_repository_update_by_prefix_keeps_only_matching_paths`
   - validates the downstream filtering helper that skills consumers rely on
 - `cargo test -p integration --test integration settings_file_hot_reload -- --nocapture`
   - verifies the end-to-end settings hot-reload behavior by rewriting `settings.toml` and asserting in-memory settings updates
@@ -121,8 +121,8 @@ The helper path logic is updated so Warp home skills and MCP config resolve thro
   - `config_local_dir()` is watched only when distinct
   - `WarpDataDirectoryWatcher` owns its own filesystem watcher instead of extending `DirectoryWatcher`
   - watch-root preparation happens before watcher registration instead of inside the watcher constructor
-  - Warp home MCP and skill helpers resolve through the channel-aware data directory
+  - Octomus home MCP and skill helpers resolve through the channel-aware data directory
 
 ## Follow-ups
 - Add a focused test for `WarpDataDirectoryWatcher` root registration when `data_dir()` and `config_local_dir()` differ.
-- Consider whether the remaining Warp-home helper changes in the MCP and skills layers can be reduced further without regressing path classification.
+- Consider whether the remaining Octomus-home helper changes in the MCP and skills layers can be reduced further without regressing path classification.

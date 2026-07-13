@@ -4,18 +4,18 @@ use std::sync::Arc;
 
 use itertools::Itertools;
 use lazy_static::lazy_static;
-use warp_core::send_telemetry_from_app_ctx;
-use warp_util::path::LineAndColumnArg;
-use warpui::elements::{
+use octomus_core::send_telemetry_from_app_ctx;
+use octomus_util::path::LineAndColumnArg;
+use octomusui::elements::{
     Align, Border, ChildView, Clipped, ClippedScrollStateHandle, ClippedScrollable, ConstrainedBox,
     Container, CornerRadius, Dismiss, DispatchEventResult, Empty, EventHandler, Fill, Flex,
     ParentElement, Radius, SavePosition, Shrinkable,
 };
-use warpui::event::KeyState;
-use warpui::keymap::BindingId;
-use warpui::platform::keyboard::KeyCode;
-use warpui::units::{IntoPixels, Pixels};
-use warpui::{
+use octomusui::event::KeyState;
+use octomusui::keymap::BindingId;
+use octomusui::platform::keyboard::KeyCode;
+use octomusui::units::{IntoPixels, Pixels};
+use octomusui::{
     AppContext, Element, Entity, EntityId, FocusContext, ModelHandle, SingletonEntity,
     TypedActionView, ViewContext, ViewHandle, WindowId,
 };
@@ -94,8 +94,8 @@ pub enum Event {
     InvokeEnvironmentVariables { id: SyncId },
     /// Open a notebook identified by `id`.
     OpenNotebook { id: SyncId },
-    /// View the relevant object in the Warp Drive sidebar.
-    ViewInWarpDrive { id: CloudObjectTypeAndId },
+    /// View the relevant object in the Octomus Drive sidebar.
+    ViewInOctomusDrive { id: CloudObjectTypeAndId },
     /// Open a file at the given path.
     OpenFile {
         path: String,
@@ -163,7 +163,7 @@ impl TypedActionView for View {
     }
 }
 
-impl warpui::View for View {
+impl octomusui::View for View {
     fn ui_name() -> &'static str {
         "CommandPaletteView"
     }
@@ -381,7 +381,7 @@ impl View {
                 | (PaletteMode::LaunchConfig, QueryFilter::LaunchConfigurations)
                 | (PaletteMode::Files, QueryFilter::Files)
                 | (PaletteMode::Conversations, QueryFilter::Conversations)
-                | (PaletteMode::WarpDrive, QueryFilter::Drive)
+                | (PaletteMode::OctomusDrive, QueryFilter::Drive)
         )
     }
 
@@ -886,8 +886,8 @@ impl View {
                 ctx.emit(Event::InvokeEnvironmentVariables { id })
             }
             CommandPaletteItemAction::OpenNotebook { id } => ctx.emit(Event::OpenNotebook { id }),
-            CommandPaletteItemAction::ViewInWarpDrive { id } => {
-                ctx.emit(Event::ViewInWarpDrive { id })
+            CommandPaletteItemAction::ViewInOctomusDrive { id } => {
+                ctx.emit(Event::ViewInOctomusDrive { id })
             }
             CommandPaletteItemAction::NewSession { source } => {
                 self.dispatch_typed_action_on_view(source.action().deref(), ctx);
@@ -1000,11 +1000,11 @@ impl View {
         self.close(ctx, Some(result_action.result_type()));
     }
 
-    /// Dispatches `action` to the correct window and [`warpui::View`] by using the current state of
+    /// Dispatches `action` to the correct window and [`octomusui::View`] by using the current state of
     /// the [`BindingSource`] model.
     fn dispatch_typed_action_on_view(
         &self,
-        action: &dyn warpui::Action,
+        action: &dyn octomusui::Action,
         ctx: &mut ViewContext<Self>,
     ) {
         send_telemetry_from_ctx!(

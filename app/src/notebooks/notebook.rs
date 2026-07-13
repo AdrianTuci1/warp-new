@@ -8,22 +8,22 @@ use lazy_static::lazy_static;
 use regex::Regex;
 use settings::Setting as _;
 use url::Url;
-use warp_core::context_flag::ContextFlag;
+use octomus_core::context_flag::ContextFlag;
 use warp_editor::editor::NavigationKey;
 use warp_editor::model::{CoreEditorModel, RichTextEditorModel};
-use warpui::accessibility::{AccessibilityContent, WarpA11yRole};
-use warpui::clipboard::ClipboardContent;
-use warpui::elements::{
+use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
+use octomusui::clipboard::ClipboardContent;
+use octomusui::elements::{
     Align, Clipped, ConstrainedBox, Container, CrossAxisAlignment, DispatchEventResult, Empty,
     EventHandler, Flex, MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement,
     SavePosition, Shrinkable, Stack,
 };
-use warpui::keymap::{EditableBinding, FixedBinding};
-use warpui::presenter::ChildView;
-use warpui::r#async::{SpawnedFutureHandle, Timer};
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::keymap::{EditableBinding, FixedBinding};
+use octomusui::presenter::ChildView;
+use octomusui::r#async::{SpawnedFutureHandle, Timer};
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, BlurContext, Element, Entity, FocusContext, ModelAsRef, ModelHandle,
     SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, WindowId,
 };
@@ -51,9 +51,9 @@ use crate::cloud_object::model::view::{Editor, EditorState};
 use crate::cloud_object::{CloudObject, CloudObjectEventEntrypoint, ObjectType, Owner, Space};
 use crate::drive::drive_helpers::has_feature_gated_anonymous_user_reached_notebook_limit;
 use crate::drive::export::ExportManager;
-use crate::drive::items::WarpDriveItemId;
+use crate::drive::items::OctomusDriveItemId;
 use crate::drive::sharing::ShareableObject;
-use crate::drive::{CloudObjectTypeAndId, OpenWarpDriveObjectSettings};
+use crate::drive::{CloudObjectTypeAndId, OpenOctomusDriveObjectSettings};
 use crate::editor::{
     EditOrigin, EditorView, Event as EditorEvent, InteractionState, PropagateAndNoOpNavigationKeys,
     SingleLineEditorOptions, TextColors, TextOptions,
@@ -132,7 +132,7 @@ lazy_static! {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_editable_bindings([
         EditableBinding::new(
@@ -206,7 +206,7 @@ enum NotebookSyncError {
     FeatureNotAvailable,
 }
 
-/// A view that allows viewing/execution and editing of a Warp notebook.
+/// A view that allows viewing/execution and editing of a Octomus notebook.
 /// We don't currently persist any data.
 pub struct NotebookView {
     /// This is a stateful component that shows information about the notebook like its location
@@ -248,7 +248,7 @@ pub enum NotebookEvent {
         source: WorkflowSource,
     },
     EditWorkflow(SyncId),
-    ViewInWarpDrive(WarpDriveItemId),
+    ViewInOctomusDrive(OctomusDriveItemId),
     Pane(PaneEvent),
     MoveToSpace {
         cloud_object_type_and_id: CloudObjectTypeAndId,
@@ -278,7 +278,7 @@ pub enum NotebookAction {
     ResetFontSize,
     ConflictResolutionBannerRefreshClicked,
     FocusTerminalInput,
-    ViewInWarpDrive(WarpDriveItemId),
+    ViewInOctomusDrive(OctomusDriveItemId),
     ContextMenu(ContextMenuAction), // right click context menu
     MoveToSpace {
         cloud_object_type_and_id: CloudObjectTypeAndId,
@@ -589,7 +589,7 @@ impl NotebookView {
                 {
                     self.pane_configuration.update(ctx, |pane_config, ctx| {
                         pane_config
-                            .set_shareable_object(Some(ShareableObject::WarpDriveObject(id)), ctx);
+                            .set_shareable_object(Some(ShareableObject::OctomusDriveObject(id)), ctx);
                     })
                 }
             }
@@ -1189,8 +1189,8 @@ impl NotebookView {
         });
     }
 
-    fn view_in_warp_drive(&mut self, id: WarpDriveItemId, ctx: &mut ViewContext<Self>) {
-        ctx.emit(NotebookEvent::ViewInWarpDrive(id));
+    fn view_in_octomus_drive(&mut self, id: OctomusDriveItemId, ctx: &mut ViewContext<Self>) {
+        ctx.emit(NotebookEvent::ViewInOctomusDrive(id));
     }
 
     fn move_to_team_owner(
@@ -1419,7 +1419,7 @@ impl NotebookView {
             );
         }
 
-        if !warpui::platform::is_mobile_device()
+        if !octomusui::platform::is_mobile_device()
             && !ContextFlag::HideOpenOnDesktopButton.is_enabled()
             && *UserAppInstallDetectionSettings::as_ref(ctx)
                 .user_app_installation_detected
@@ -1498,7 +1498,7 @@ impl NotebookView {
     pub fn wait_for_initial_load_then_load(
         &mut self,
         notebook_id: SyncId,
-        settings: &OpenWarpDriveObjectSettings,
+        settings: &OpenOctomusDriveObjectSettings,
         window_id: WindowId,
         ctx: &mut ViewContext<Self>,
     ) {
@@ -1537,7 +1537,7 @@ impl NotebookView {
     fn fetch_and_load_notebook(
         &mut self,
         notebook_id: ServerId,
-        settings: &OpenWarpDriveObjectSettings,
+        settings: &OpenOctomusDriveObjectSettings,
         window_id: WindowId,
         ctx: &mut ViewContext<Self>,
     ) {
@@ -1581,7 +1581,7 @@ impl NotebookView {
     pub fn load(
         &mut self,
         notebook: CloudNotebook,
-        settings: &OpenWarpDriveObjectSettings,
+        settings: &OpenOctomusDriveObjectSettings,
         ctx: &mut ViewContext<Self>,
     ) -> SpawnedFutureHandle {
         self.set_title(&notebook.model().title, ctx);
@@ -1591,7 +1591,7 @@ impl NotebookView {
             self.pane_configuration
                 .update(ctx, |pane_configuration, ctx| {
                     pane_configuration.set_shareable_object(
-                        Some(ShareableObject::WarpDriveObject(server_id)),
+                        Some(ShareableObject::OctomusDriveObject(server_id)),
                         ctx,
                     );
                 });
@@ -1670,8 +1670,8 @@ impl NotebookView {
                 source: SharingDialogSource::InviteeRequest,
             });
         } else if let Some(focused_folder_id) = settings.focused_folder_id.map(SyncId::ServerId) {
-            self.view_in_warp_drive(
-                WarpDriveItemId::Object(CloudObjectTypeAndId::Folder(focused_folder_id)),
+            self.view_in_octomus_drive(
+                OctomusDriveItemId::Object(CloudObjectTypeAndId::Folder(focused_folder_id)),
                 ctx,
             );
         }
@@ -1844,7 +1844,7 @@ impl NotebookView {
         if let Some(notebook) = CloudModel::as_ref(ctx).get_notebook(&id) {
             self.load(
                 notebook.clone(),
-                &OpenWarpDriveObjectSettings::default(),
+                &OpenOctomusDriveObjectSettings::default(),
                 ctx,
             );
         }
@@ -1919,7 +1919,7 @@ impl NotebookView {
                     .with_children([
                         ConstrainedBox::new(
                             icons::Icon::Trash
-                                .to_warpui_icon(appearance.theme().foreground())
+                                .to_octomusui_icon(appearance.theme().foreground())
                                 .finish(),
                         )
                         .with_width(16.)
@@ -2179,7 +2179,7 @@ impl View for NotebookView {
         }
     }
 
-    fn render(&self, app: &AppContext) -> Box<dyn warpui::Element> {
+    fn render(&self, app: &AppContext) -> Box<dyn octomusui::Element> {
         let mut content = Flex::column();
         content.extend(self.render_trash_banner(app));
         content.add_child(self.render_title(app));
@@ -2232,7 +2232,7 @@ impl View for NotebookView {
         SavePosition::new(stack.finish(), &self.view_position_id).finish()
     }
 
-    fn keymap_context(&self, app: &AppContext) -> warpui::keymap::Context {
+    fn keymap_context(&self, app: &AppContext) -> octomusui::keymap::Context {
         let mut context = Self::default_keymap_context();
 
         match self.mode_app_ctx(app) {
@@ -2283,7 +2283,7 @@ impl TypedActionView for NotebookView {
             NotebookAction::ResetFontSize => {
                 self.apply_font_size_to_setting(NotebookFontSize::default_value(), ctx)
             }
-            NotebookAction::ViewInWarpDrive(id) => self.view_in_warp_drive(*id, ctx),
+            NotebookAction::ViewInOctomusDrive(id) => self.view_in_octomus_drive(*id, ctx),
             NotebookAction::FocusTerminalInput => {
                 ctx.emit(NotebookEvent::Pane(PaneEvent::FocusActiveSession))
             }

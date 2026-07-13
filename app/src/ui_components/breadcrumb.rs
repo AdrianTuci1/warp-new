@@ -1,11 +1,11 @@
 use std::fmt::Debug;
 
 use itertools::{Itertools, Position};
-use warpui::elements::{
+use octomusui::elements::{
     CrossAxisAlignment, Flex, Hoverable, MainAxisSize, MouseStateHandle, ParentElement, Shrinkable,
 };
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, EventContext};
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, EventContext};
 
 use crate::appearance::Appearance;
 

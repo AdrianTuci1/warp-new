@@ -1,10 +1,10 @@
-use warp_core::context_flag::ContextFlag;
-use warpui::keymap::{
+use octomus_core::context_flag::ContextFlag;
+use octomusui::keymap::{
     BindingDescription, ContextPredicate, EditableBinding, FixedBinding, PerPlatformKeystroke,
 };
-use warpui::platform::OperatingSystem;
-use warpui::units::IntoLines;
-use warpui::AppContext;
+use octomusui::platform::OperatingSystem;
+use octomusui::units::IntoLines;
+use octomusui::AppContext;
 
 use super::{
     AgentOnboardingVersion, AskAISource, ContextMenuAction, OnboardingIntention, OnboardingVersion,
@@ -56,7 +56,7 @@ pub const CAN_SHOW_CONVERSATION_DETAILS_KEY: &str = "CanShowConversationDetails"
 /// these into their own function to ensure we pay special attention to
 /// these overlaps, and ensure only 1 action is taken.
 fn init_overlapping_keybindings(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     let escape_key: &str = "escape";
     let cmd_or_ctrl_enter: &str = "cmdorctrl-enter";
@@ -76,12 +76,12 @@ fn init_overlapping_keybindings(app: &mut AppContext) {
     app.register_fixed_bindings([
         FixedBinding::new(
             escape_key,
-            TerminalAction::NotifySshErrorBlock(SshErrorBlockAction::ContinueWithoutWarpification),
+            TerminalAction::NotifySshErrorBlock(SshErrorBlockAction::ContinueWithoutOctomusification),
             id!(SSH_ERROR_BLOCK_VISIBLE_KEY) & block_action_context(),
         ),
         FixedBinding::new(
             cmd_or_ctrl_enter,
-            TerminalAction::NotifySshErrorBlock(SshErrorBlockAction::ContinueWithoutWarpification),
+            TerminalAction::NotifySshErrorBlock(SshErrorBlockAction::ContinueWithoutOctomusification),
             id!(SSH_ERROR_BLOCK_VISIBLE_KEY) & block_action_context(),
         ),
     ]);
@@ -89,13 +89,13 @@ fn init_overlapping_keybindings(app: &mut AppContext) {
 
 /// Register keybindings for [`TerminalView`] actions.
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_binding_validator::<TerminalView>(is_binding_pty_compliant);
 
     init_overlapping_keybindings(app);
-    // Register input mode bindings before warpify bindings so ctrl-i warpifies
-    // instead of opening inline agent when a warpify banner is visible.
+    // Register input mode bindings before octomusify bindings so ctrl-i warpifies
+    // instead of opening inline agent when a octomusify banner is visible.
     register_input_mode_bindings(app);
 
     app.register_fixed_bindings([
@@ -180,7 +180,7 @@ pub fn init(app: &mut AppContext) {
         // On the web, we get pastes from system paste events.
         #[cfg(target_family = "wasm")]
         FixedBinding::standard(
-            warpui::actions::StandardAction::Paste,
+            octomusui::actions::StandardAction::Paste,
             TerminalAction::Paste,
             id!("Terminal") & !id!("IMEOpen"),
         ),
@@ -333,8 +333,8 @@ pub fn init(app: &mut AppContext) {
             | (id!("Terminal") & !id!("IMEOpen") & id!(flags::CLI_AGENT_RICH_INPUT_OPEN)),
         ),
         EditableBinding::new(
-            "terminal:warpify_subshell",
-            "Warpify subshell",
+            "terminal:octomusify_subshell",
+            "Octomusify subshell",
             TerminalAction::TriggerSubshellBootstrap,
         )
         .with_key_binding("ctrl-i")
@@ -342,16 +342,16 @@ pub fn init(app: &mut AppContext) {
             id!("Terminal") & !id!("IMEOpen") & id!("LongRunningCommand") & id!("SubshellBanner"),
         ),
         EditableBinding::new(
-            "terminal:warpify_ssh_session",
-            "Warpify ssh session",
-            TerminalAction::WarpifySSHSession,
+            "terminal:octomusify_ssh_session",
+            "Octomusify ssh session",
+            TerminalAction::OctomusifySSHSession,
         )
         .with_key_binding("ctrl-i")
         .with_context_predicate(
             id!("Terminal")
                 & !id!("IMEOpen")
                 & id!("LongRunningCommand")
-                & id!("SshWarpificationBanner"),
+                & id!("SshOctomusificationBanner"),
         ),
         EditableBinding::new(
             ACCEPT_PROMPT_SUGGESTION_KEYBINDING,
@@ -765,7 +765,7 @@ pub fn init(app: &mut AppContext) {
         )
         .with_enabled(|| FeatureFlag::AgentMode.is_enabled())
         .with_custom_action(CustomAction::AttachSelectionAsAgentModeContext)
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         // When possible, prioritize the text selection action over attaching a block as
         // context.
         .with_context_predicate(
@@ -788,7 +788,7 @@ pub fn init(app: &mut AppContext) {
         )
         .with_enabled(|| FeatureFlag::AgentMode.is_enabled())
         .with_custom_action(CustomAction::AttachSelectionAsAgentModeContext)
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_context_predicate(
             id!("Terminal")
                 & (id!("ActiveBlockTextSelection") | id!("ActiveAltScreenSelection"))
@@ -800,12 +800,12 @@ pub fn init(app: &mut AppContext) {
         // this is a block selection or text selection later on.
         EditableBinding::new(
             "terminal:ask_ai_assistant",
-            "Ask Warp AI about Selection",
+            "Ask Octomus AI about Selection",
             TerminalAction::ContextMenu(ContextMenuAction::AskAI(AskAISource::SelectedBlockOrText)),
         )
         .with_enabled(|| !FeatureFlag::AgentMode.is_enabled())
         .with_custom_action(CustomAction::AttachSelectionAsAgentModeContext)
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_context_predicate(
             id!("Terminal")
                 & id!(flags::IS_ANY_AI_ENABLED)
@@ -818,22 +818,22 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "terminal:ask_ai_assistant_last_block",
-            "Ask Warp AI about last block",
+            "Ask Octomus AI about last block",
             TerminalAction::ContextMenu(ContextMenuAction::AskAI(AskAISource::LastBlock)),
         )
         .with_enabled(|| !FeatureFlag::AgentMode.is_enabled())
         .with_key_binding("ctrl-shift->")
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_context_predicate(
             id!("Terminal") & id!("TerminalView_NonEmptyBlockList") & id!(flags::IS_ANY_AI_ENABLED),
         ),
         EditableBinding::new(
             "terminal:ask_ai_assistant",
-            "Ask Warp AI",
+            "Ask Octomus AI",
             TerminalAction::ContextMenu(ContextMenuAction::AskAI(AskAISource::SelectedInputText)),
         )
         .with_enabled(|| !FeatureFlag::AgentMode.is_enabled())
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_key_binding("ctrl-shift-space")
         .with_context_predicate(id!("Input") & id!(flags::IS_ANY_AI_ENABLED)),
     ]);
@@ -1002,7 +1002,7 @@ pub fn init(app: &mut AppContext) {
             TerminalAction::ToggleAutoexecuteMode,
         )
         .with_key_binding("cmdorctrl-shift-I")
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_context_predicate(id!(flags::IS_ANY_AI_ENABLED) & id!("Terminal"))
         .with_enabled(|| FeatureFlag::FastForwardAutoexecuteButton.is_enabled()),
         EditableBinding::new(
@@ -1011,7 +1011,7 @@ pub fn init(app: &mut AppContext) {
             TerminalAction::ToggleQueueNextPrompt,
         )
         .with_key_binding("cmdorctrl-shift-J")
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_context_predicate(id!(flags::IS_ANY_AI_ENABLED) & id!("Terminal"))
         .with_enabled(|| FeatureFlag::QueueSlashCommand.is_enabled()),
         EditableBinding::new(
@@ -1019,7 +1019,7 @@ pub fn init(app: &mut AppContext) {
             "[Debug] Generate codebase index",
             TerminalAction::GenerateCodebaseIndex,
         )
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_context_predicate(id!("Terminal") & !id!("IMEOpen"))
         .with_enabled(|| {
             FeatureFlag::FullSourceCodeEmbedding.is_enabled()
@@ -1076,7 +1076,7 @@ pub fn init(app: &mut AppContext) {
 
     app.register_editable_bindings([EditableBinding::new(
         "workspace:init_project_rules",
-        BindingDescription::new("Initiate project for warp"),
+        BindingDescription::new("Initiate project for octomus"),
         TerminalAction::InitProject,
     )
     .with_context_predicate(id!("Workspace") & id!(flags::IS_ANY_AI_ENABLED))]);
@@ -1095,7 +1095,7 @@ pub fn init(app: &mut AppContext) {
         "Toggle Conversation Details Panel",
         TerminalAction::ToggleConversationDetailsPanel,
     )
-    .with_group(bindings::BindingGroup::WarpAi.as_str())
+    .with_group(bindings::BindingGroup::OctomusAi.as_str())
     .with_context_predicate(id!("Terminal") & id!(CAN_SHOW_CONVERSATION_DETAILS_KEY))]);
 
     // Register bindings for starting a new cloud agent conversation.
@@ -1113,7 +1113,7 @@ pub fn init(app: &mut AppContext) {
                 && FeatureFlag::CloudMode.is_enabled()
                 && FeatureFlag::CloudModeFromLocalSession.is_enabled()
         })
-        .with_group(bindings::BindingGroup::WarpAi.as_str())]);
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())]);
         if cfg!(target_os = "macos") {
             // On MacOS, if the user has the 'Option as meta' setting enabled, the cmd-alt-enter
             // binding above will not match.
@@ -1131,11 +1131,11 @@ pub fn init(app: &mut AppContext) {
 
 /// Registers bindings related to input modes.
 fn register_input_mode_bindings(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     // A context predicate that matches when the input mode bindings are
     // available for use. Disabled when a CLI agent session is active — the
-    // Warp agent should not be tagged into a CLI agent's command, and the
+    // Octomus agent should not be tagged into a CLI agent's command, and the
     // `!` prefix is the only way to toggle shell mode in the rich input.
     let base_context = id!(flags::IS_ANY_AI_ENABLED)
         & (id!("Input") | id!("Terminal"))
@@ -1187,7 +1187,7 @@ fn register_input_mode_bindings(app: &mut AppContext) {
             "Set Input Mode to Agent Mode",
             TerminalAction::SetInputModeAgent,
         )
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_context_predicate(agent_mode_predicate)
         .with_mac_key_binding("cmd-i")
         .with_linux_or_windows_key_binding("ctrl-i"),
@@ -1196,7 +1196,7 @@ fn register_input_mode_bindings(app: &mut AppContext) {
             "Set Input Mode to Terminal Mode",
             TerminalAction::SetInputModeTerminal,
         )
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_context_predicate(terminal_mode_predicate)
         .with_mac_key_binding("cmd-i")
         .with_linux_or_windows_key_binding("ctrl-i"),
@@ -1206,7 +1206,7 @@ fn register_input_mode_bindings(app: &mut AppContext) {
             TerminalAction::ToggleHideCliResponses,
         )
         .with_key_binding("cmdorctrl-g")
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_context_predicate(
             id!(flags::IS_ANY_AI_ENABLED) & !id!(LONG_RUNNING_AGENT_REQUESTED_COMMAND_CONTEXT_KEY),
         ),

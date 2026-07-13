@@ -2,8 +2,8 @@ use std::path::PathBuf;
 
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::Vector2F;
-use warpui::elements::PositionedElementOffsetBounds;
-use warpui::EntityId;
+use octomusui::elements::PositionedElementOffsetBounds;
+use octomusui::EntityId;
 
 use super::{
     branch_label_display, coalesce_summary_branch_entries, code_detail_kind_label,
@@ -205,7 +205,7 @@ fn terminal_primary_line_uses_terminal_title_when_disabled_cli_has_only_prompt()
         conversation_title,
         cli_title,
         "Generated Claude Code title",
-        "~/warp",
+        "~/octomus",
         terminal_title_fallback_font(&agent_text),
         Some("claude".to_string()),
     );
@@ -258,7 +258,7 @@ fn terminal_primary_line_uses_cli_prompt_when_enabled_cli_has_prompt() {
         conversation_title,
         cli_title,
         "Generated Claude Code title",
-        "~/warp",
+        "~/octomus",
         terminal_title_fallback_font(&agent_text),
         Some("claude".to_string()),
     );
@@ -284,7 +284,7 @@ fn terminal_primary_line_uses_cli_prompt_when_enabled_cli_is_long_running() {
         conversation_title,
         cli_title,
         "Generated Claude Code title",
-        "~/warp",
+        "~/octomus",
         terminal_title_fallback_font(&agent_text),
         Some("claude".to_string()),
     );
@@ -347,7 +347,7 @@ fn collect_normalized_unique_summary_texts(
 }
 
 #[test]
-fn detail_sidecar_supports_terminal_code_and_warp_drive_object_panes() {
+fn detail_sidecar_supports_terminal_code_and_octomus_drive_object_panes() {
     assert!(pane_type_supports_vertical_tabs_detail_sidecar(
         IPaneType::Terminal
     ));
@@ -642,8 +642,8 @@ fn terminal_primary_line_prefers_cli_agent_display_title() {
         false,
         None,
         Some("Review the failing tests".to_string()),
-        "~/warp",
-        "~/warp",
+        "~/octomus",
+        "~/octomus",
         TerminalPrimaryLineFont::Monospace,
         Some("cargo nextest run".to_string()),
     );
@@ -657,8 +657,8 @@ fn terminal_primary_line_prefers_cli_agent_display_title_over_conversation_title
         false,
         Some("Review the failing tests".to_string()),
         Some("Summarize the failures".to_string()),
-        "~/warp",
-        "~/warp",
+        "~/octomus",
+        "~/octomus",
         TerminalPrimaryLineFont::Monospace,
         Some("cargo nextest run".to_string()),
     );
@@ -672,13 +672,13 @@ fn terminal_primary_line_falls_through_to_terminal_title_when_cli_agent_has_no_p
         false,
         None,
         None,
-        "codex - ~/warp",
-        "~/warp",
+        "codex - ~/octomus",
+        "~/octomus",
         TerminalPrimaryLineFont::Monospace,
         Some("cargo nextest run".to_string()),
     );
 
-    assert_eq!(line.text(), "codex - ~/warp");
+    assert_eq!(line.text(), "codex - ~/octomus");
 }
 
 #[test]
@@ -688,7 +688,7 @@ fn terminal_primary_line_uses_terminal_title_as_fallback() {
         None,
         None,
         "nvim src/workspace/view/vertical_tabs.rs",
-        "~/warp",
+        "~/octomus",
         TerminalPrimaryLineFont::Monospace,
         Some("cargo nextest run".to_string()),
     );
@@ -702,8 +702,8 @@ fn terminal_primary_line_uses_last_completed_command_when_shell_title_matches_wo
         false,
         None,
         None,
-        "~/warp",
-        "~/warp",
+        "~/octomus",
+        "~/octomus",
         TerminalPrimaryLineFont::Monospace,
         Some("cargo nextest run".to_string()),
     );
@@ -717,8 +717,8 @@ fn terminal_primary_line_falls_back_to_new_session() {
         false,
         None,
         None,
-        "~/warp",
-        "~/warp",
+        "~/octomus",
+        "~/octomus",
         TerminalPrimaryLineFont::Monospace,
         None,
     );
@@ -739,8 +739,8 @@ fn terminal_primary_line_uses_monospace_for_last_completed_command() {
         false,
         None,
         None,
-        "~/warp",
-        "~/warp",
+        "~/octomus",
+        "~/octomus",
         TerminalPrimaryLineFont::Monospace,
         Some("cargo nextest run".to_string()),
     );
@@ -758,11 +758,11 @@ fn terminal_primary_line_uses_monospace_for_last_completed_command() {
 fn terminal_search_fragments_include_rendered_terminal_badges() {
     let fragments = terminal_search_text_fragments(
         "Review the failing tests".to_string(),
-        "~/warp".to_string(),
+        "~/octomus".to_string(),
         Some("main".to_string()),
         terminal_kind_badge_label(false, Some(CLIAgent::Claude)),
         Some(terminal_pull_request_badge_label(
-            "https://github.com/warpdotdev/warp-internal/pull/12345",
+            "https://github.com/warpdotdev/octomus-internal/pull/12345",
         )),
         Some(GitLineChanges {
             files_changed: 1,
@@ -787,7 +787,7 @@ fn pane_search_fragments_prepend_custom_title_and_keep_generated_metadata() {
         Some("Production API"),
         vec![
             "cargo nextest run".to_string(),
-            "~/warp".to_string(),
+            "~/octomus".to_string(),
             "Claude".to_string(),
         ],
     );
@@ -795,7 +795,7 @@ fn pane_search_fragments_prepend_custom_title_and_keep_generated_metadata() {
     assert_eq!(fragments[0], "Production API");
     assert!(search_fragments_contain_query(&fragments, "production api"));
     assert!(search_fragments_contain_query(&fragments, "cargo nextest"));
-    assert!(search_fragments_contain_query(&fragments, "~/warp"));
+    assert!(search_fragments_contain_query(&fragments, "~/octomus"));
     assert!(search_fragments_contain_query(&fragments, "claude"));
 }
 
@@ -806,11 +806,11 @@ fn pane_search_fragments_dedupe_custom_title_against_generated_text() {
             Some("  Production   API  "),
             vec![
                 "Production API".to_string(),
-                "~/warp".to_string(),
-                "~/warp".to_string(),
+                "~/octomus".to_string(),
+                "~/octomus".to_string(),
             ],
         ),
-        vec!["Production API".to_string(), "~/warp".to_string()]
+        vec!["Production API".to_string(), "~/octomus".to_string()]
     );
 }
 
@@ -847,15 +847,15 @@ fn diff_stats_text_matches_rendered_badge_text() {
 #[test]
 fn branch_label_display_falls_back_without_branch_icon() {
     assert_eq!(
-        branch_label_display(None, "~/warp"),
-        ("~/warp".to_string(), false)
+        branch_label_display(None, "~/octomus"),
+        ("~/octomus".to_string(), false)
     );
     assert_eq!(
-        branch_label_display(Some(""), "~/warp"),
-        ("~/warp".to_string(), false)
+        branch_label_display(Some(""), "~/octomus"),
+        ("~/octomus".to_string(), false)
     );
     assert_eq!(
-        branch_label_display(Some("main"), "~/warp"),
+        branch_label_display(Some("main"), "~/octomus"),
         ("main".to_string(), true)
     );
 }
@@ -863,15 +863,15 @@ fn branch_label_display_falls_back_without_branch_icon() {
 #[test]
 fn compact_branch_subtitle_falls_back_to_working_directory_without_branch_icon() {
     assert_eq!(
-        compact_branch_subtitle_display(None, Some("~/warp")),
-        Some(("~/warp".to_string(), false))
+        compact_branch_subtitle_display(None, Some("~/octomus")),
+        Some(("~/octomus".to_string(), false))
     );
     assert_eq!(
-        compact_branch_subtitle_display(Some(""), Some("~/warp")),
-        Some(("~/warp".to_string(), false))
+        compact_branch_subtitle_display(Some(""), Some("~/octomus")),
+        Some(("~/octomus".to_string(), false))
     );
     assert_eq!(
-        compact_branch_subtitle_display(Some("main"), Some("~/warp")),
+        compact_branch_subtitle_display(Some("main"), Some("~/octomus")),
         Some(("main".to_string(), true))
     );
 }
@@ -893,15 +893,15 @@ fn collect_normalized_unique_summary_texts_dedupes_after_whitespace_normalizatio
 fn collect_normalized_unique_summary_texts_preserves_first_seen_order() {
     assert_eq!(
         collect_normalized_unique_summary_texts([
-            "~/warp-internal",
-            "~/warp-server",
-            "~/warp-internal",
-            "~/warp-terraform",
+            "~/octomus-internal",
+            "~/octomus-server",
+            "~/octomus-internal",
+            "~/octomus-terraform",
         ]),
         vec![
-            "~/warp-internal".to_string(),
-            "~/warp-server".to_string(),
-            "~/warp-terraform".to_string(),
+            "~/octomus-internal".to_string(),
+            "~/octomus-server".to_string(),
+            "~/octomus-terraform".to_string(),
         ]
     );
 }
@@ -1098,7 +1098,7 @@ fn summary_search_fragments_include_hidden_overflow_values() {
             label("code review"),
             label("hidden work"),
         ],
-        working_directories: vec!["~/warp-internal".to_string(), "~/warp-server".to_string()],
+        working_directories: vec!["~/octomus-internal".to_string(), "~/octomus-server".to_string()],
         branch_entries: vec![
             VerticalTabsSummaryBranchEntry {
                 repo_path: PathBuf::from("/tmp/repo-a"),

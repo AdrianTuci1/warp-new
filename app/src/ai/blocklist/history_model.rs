@@ -11,13 +11,13 @@ use diesel::SqliteConnection;
 use itertools::Itertools as _;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use warp_cli::agent::Harness;
-use warp_core::features::FeatureFlag;
+use octomus_cli::agent::Harness;
+use octomus_core::features::FeatureFlag;
 use warp_multi_agent_api::client_action::{Action, StartNewConversation};
 use warp_multi_agent_api::response_event::stream_finished::{
     ConversationUsageMetadata, TokenUsage,
 };
-use warpui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
+use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
 
 use super::controller::response_stream::ResponseStreamId;
 use super::persistence::{PersistedAIInput, PersistedAIInputType};

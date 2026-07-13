@@ -1,8 +1,8 @@
 use std::time::Duration;
 
 use futures::stream::AbortHandle;
-use warpui::r#async::Timer;
-use warpui::{Entity, ModelContext};
+use octomusui::r#async::Timer;
+use octomusui::{Entity, ModelContext};
 
 const DEFAULT_PING_FREQUENCY: Duration = Duration::from_secs(5);
 const DEFAULT_IDLE_TIMEOUT: Duration = Duration::from_secs(30);

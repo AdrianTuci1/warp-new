@@ -1,18 +1,18 @@
 #![cfg_attr(target_family = "wasm", allow(dead_code, unused_imports))]
 // Adding this file level gate as some of the code around editability is not used in WASM yet.
 
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::Fill;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::Fill;
 use warp_editor::model::CoreEditorModel;
-use warpui::elements::{
+use octomusui::elements::{
     Align, Border, ConstrainedBox, Container, CrossAxisAlignment, Flex, MouseStateHandle,
     ParentElement, Shrinkable,
 };
-use warpui::presenter::ChildView;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::units::IntoPixels;
-use warpui::{
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::units::IntoPixels;
+use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };

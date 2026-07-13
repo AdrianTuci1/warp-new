@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
-use warpui_core::{Entity, ModelContext, SingletonEntity};
-use warpui_extras::secure_storage::{self, AppContextExt};
+use octomusui_core::{Entity, ModelContext, SingletonEntity};
+use octomusui_extras::secure_storage::{self, AppContextExt};
 
 const SECURE_STORAGE_KEY: &str = "CloudCredentials";
 

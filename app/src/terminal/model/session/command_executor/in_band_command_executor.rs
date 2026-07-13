@@ -8,11 +8,11 @@ use anyhow::Result;
 use async_channel::{self, Receiver, Sender};
 use async_trait::async_trait;
 use parking_lot::{Mutex, MutexGuard};
-use warp_completer::completer::{CommandExitStatus, CommandOutput};
-use warp_core::command::ExitCode;
-use warp_terminal::model::Point;
-use warp_util::on_cancel::OnCancelFutureExt;
-use warpui::r#async::block_on;
+use octomus_completer::completer::{CommandExitStatus, CommandOutput};
+use octomus_core::command::ExitCode;
+use octomus_terminal::model::Point;
+use octomus_util::on_cancel::OnCancelFutureExt;
+use octomusui::r#async::block_on;
 
 use super::ExecuteCommandOptions;
 use crate::safe_info;
@@ -325,7 +325,7 @@ impl InBandCommandExecutor {
 
                 let in_band_command = match shell.shell_type() {
                     ShellType::PowerShell => {
-                        format!("Warp-Run-GeneratorCommand {id} '{escaped_command}' -ErrorAction Ignore")
+                        format!("Octomus-Run-GeneratorCommand {id} '{escaped_command}' -ErrorAction Ignore")
                     }
                     ShellType::Fish => {
                         // Add a leading space for in-band commands in fish, which omits them from
@@ -378,8 +378,8 @@ impl CommandExecutor for InBandCommandExecutor {
     /// the `pty_controller` passed to this executor during construction.
     ///
     /// The given `command` is executed in the active session using the
-    /// `warp_run_generator_command`/`Warp-Run-GeneratorCommand` shell script API that is declared as
-    /// part of Warp's bootstrap script.
+    /// `warp_run_generator_command`/`Octomus-Run-GeneratorCommand` shell script API that is declared as
+    /// part of Octomus's bootstrap script.
     ///
     /// Internally, `command` is added to a queue of commands to be executed serially (this is to
     /// avoid output from multiple commands corrupting one another since the pty is a single
@@ -437,7 +437,7 @@ impl CommandExecutor for InBandCommandExecutor {
 /// fish's command history.  Thus we strip leading whitespace before matching the `command`.
 pub fn is_in_band_command(command: &str) -> bool {
     let trimmed = command.trim_start();
-    trimmed.starts_with("Warp-Run-GeneratorCommand ")
+    trimmed.starts_with("Octomus-Run-GeneratorCommand ")
         || trimmed.starts_with("warp_run_generator_command ")
 }
 

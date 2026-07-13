@@ -1,15 +1,15 @@
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use warp_core::ui::theme::color::internal_colors;
-use warpui::elements::{
+use octomus_core::ui::theme::color::internal_colors;
+use octomusui::elements::{
     Border, ChildAnchor, ConstrainedBox, Container, CornerRadius, Expanded, Flex, Hoverable,
     Icon as WarpUiIcon, MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning,
     ParentAnchor, ParentElement as _, ParentOffsetBounds, Percentage, Radius, Rect, Stack, Text,
 };
-use warpui::prelude::{Align, CrossAxisAlignment};
-use warpui::text_layout::ClipConfig;
-use warpui::ui_components::components::UiComponent;
-use warpui::{AppContext, Element, SingletonEntity as _};
+use octomusui::prelude::{Align, CrossAxisAlignment};
+use octomusui::text_layout::ClipConfig;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{AppContext, Element, SingletonEntity as _};
 
 use crate::ai::llms::LLMSpec;
 use crate::appearance::Appearance;
@@ -19,7 +19,7 @@ const CORNER_RADIUS: f32 = 4.0;
 const ROW_SPACING: f32 = 12.0;
 
 pub const MODEL_SPECS_TITLE: &str = "Model Specs";
-pub const MODEL_SPECS_DESCRIPTION: &str = "Warp's benchmarks for how well a model performs in our harness, the rate at which it consumes credits, and task speed.";
+pub const MODEL_SPECS_DESCRIPTION: &str = "Octomus's benchmarks for how well a model performs in our harness, the rate at which it consumes credits, and task speed.";
 
 pub const REASONING_LEVEL_TITLE: &str = "Reasoning level";
 pub const REASONING_LEVEL_DESCRIPTION: &str = "Increased reasoning levels consume more credits and have higher latency, but higher performance for complicated tasks.";

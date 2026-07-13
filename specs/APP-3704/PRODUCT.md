@@ -5,7 +5,7 @@ Figma: [House of Agents — node 7123-32864](https://figma.com/design/CsBdBW4YoL
 
 ## Summary
 
-Add a "Save as new config" item to the tab right-click context menu that snapshots the current tab's pane layout (splits, working directories, focus, and color) and writes it as a new tab config TOML file in `~/.warp/tab_configs/`.
+Add a "Save as new config" item to the tab right-click context menu that snapshots the current tab's pane layout (splits, working directories, focus, and color) and writes it as a new tab config TOML file in `~/.octomus/tab_configs/`.
 
 ## Problem
 
@@ -44,9 +44,9 @@ Note: The Figma also shows "Save and update config" and "Combine panes into sing
 
 ### What happens
 
-1. Warp snapshots the tab's pane tree: split directions, each pane's current working directory, focus state, and tab color.
-2. Warp writes a new `.toml` file to `~/.warp/tab_configs/` with an auto-generated filename (`my_tab_config.toml`, or `my_tab_config_1.toml` if the name is taken).
-3. Warp opens the file in the user's configured editor (same behavior as "Create new tab config...").
+1. Octomus snapshots the tab's pane tree: split directions, each pane's current working directory, focus state, and tab color.
+2. Octomus writes a new `.toml` file to `~/.octomus/tab_configs/` with an auto-generated filename (`my_tab_config.toml`, or `my_tab_config_1.toml` if the name is taken).
+3. Octomus opens the file in the user's configured editor (same behavior as "Create new tab config...").
 4. The filesystem watcher picks up the new file, and it appears in the `+` tab menu as "New Tab: My Tab Config".
 
 ### TOML structure

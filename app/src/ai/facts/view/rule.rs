@@ -4,17 +4,17 @@ use std::path::PathBuf;
 use ai::project_context::model::{ProjectContextModel, ProjectContextModelEvent};
 use markdown_parser::weight::CustomWeight;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use warp_core::ui::appearance::{Appearance, AppearanceEvent};
-use warp_core::ui::theme::color::internal_colors;
-use warpui::elements::{
+use octomus_core::ui::appearance::{Appearance, AppearanceEvent};
+use octomus_core::ui::theme::color::internal_colors;
+use octomusui::elements::{
     Align, Border, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     Expanded, Flex, FormattedTextElement, HighlightedHyperlink, Hoverable, MainAxisAlignment,
     MainAxisSize, MouseStateHandle, ParentElement, Shrinkable,
 };
-use warpui::platform::{Cursor, FilePickerConfiguration};
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::platform::{Cursor, FilePickerConfiguration};
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
@@ -50,7 +50,7 @@ const SEARCH_PLACEHOLDER_TEXT: &str = "Search rules";
 const ZERO_STATE_TEXT: &str =
     "Add a rule above, or drop one at ~/.agents/AGENTS.md to apply it across every project.";
 const ZERO_STATE_TEXT_PROJECT: &str =
-    "Once you generate a WARP.md rules file for a project, it will appear here.";
+    "Once you generate a OCTOMUS.md rules file for a project, it will appear here.";
 
 const DISABLED_BANNER_TEXT: &str =
     "Your rules are disabled and won't be used as context in sessions. You can ";
@@ -96,7 +96,7 @@ struct CloudRuleRow {
 }
 
 /// A rule row backed by a file on disk — used for both project-scoped rules
-/// (e.g. `<repo>/WARP.md`) and file-based global rules (e.g.
+/// (e.g. `<repo>/OCTOMUS.md`) and file-based global rules (e.g.
 /// `~/.agents/AGENTS.md`). The render path is identical for both: a path label
 /// plus an "Open file" button.
 #[derive(Debug, Clone)]
@@ -460,7 +460,7 @@ impl RuleView {
             .with_child(
                 Container::new(
                     ConstrainedBox::new(
-                        warpui::elements::Icon::new(
+                        octomusui::elements::Icon::new(
                             Icon::BookOpen.into(),
                             appearance
                                 .theme()
@@ -563,13 +563,13 @@ impl RuleView {
             if is_selected {
                 container = container
                     .with_background(appearance.theme().surface_2())
-                    .with_corner_radius(CornerRadius::with_all(warpui::elements::Radius::Pixels(
+                    .with_corner_radius(CornerRadius::with_all(octomusui::elements::Radius::Pixels(
                         4.,
                     )));
             } else if state.is_hovered() {
                 container = container
                     .with_background(appearance.theme().surface_1())
-                    .with_corner_radius(CornerRadius::with_all(warpui::elements::Radius::Pixels(
+                    .with_corner_radius(CornerRadius::with_all(octomusui::elements::Radius::Pixels(
                         4.,
                     )));
             }
@@ -627,7 +627,7 @@ impl RuleView {
                     Container::new(
                         ConstrainedBox::new(
                             Icon::Info
-                                .to_warpui_icon(
+                                .to_octomusui_icon(
                                     appearance
                                         .theme()
                                         .sub_text_color(appearance.theme().background()),
@@ -645,7 +645,7 @@ impl RuleView {
                 .finish(),
         )
         .with_background(appearance.theme().accent_overlay())
-        .with_corner_radius(CornerRadius::with_all(warpui::elements::Radius::Pixels(4.)))
+        .with_corner_radius(CornerRadius::with_all(octomusui::elements::Radius::Pixels(4.)))
         .with_uniform_padding(style::BANNER_PADDING)
         .with_margin_bottom(style::ITEM_BOTTOM_MARGIN)
         .finish()
@@ -675,7 +675,7 @@ impl RuleView {
             return None;
         }
 
-        let item = ai_row.fact.to_warp_drive_item(appearance)?;
+        let item = ai_row.fact.to_octomus_drive_item(appearance)?;
         let icon = item.sync_status_icon(
             SyncQueue::as_ref(app).is_dequeueing(),
             ai_row.mouse_states.sync_status_icon.clone(),
@@ -740,7 +740,7 @@ impl RuleView {
         Some(
             Container::new(row.finish())
                 .with_background(internal_colors::neutral_1(appearance.theme()))
-                .with_corner_radius(CornerRadius::with_all(warpui::elements::Radius::Pixels(4.)))
+                .with_corner_radius(CornerRadius::with_all(octomusui::elements::Radius::Pixels(4.)))
                 .with_border(
                     Border::all(1.)
                         .with_border_color(internal_colors::neutral_2(appearance.theme())),
@@ -821,7 +821,7 @@ impl RuleView {
 
             Container::new(row.finish())
                 .with_background(bg_color)
-                .with_corner_radius(CornerRadius::with_all(warpui::elements::Radius::Pixels(4.)))
+                .with_corner_radius(CornerRadius::with_all(octomusui::elements::Radius::Pixels(4.)))
                 .with_border(
                     Border::all(1.)
                         .with_border_color(internal_colors::neutral_2(appearance.theme())),

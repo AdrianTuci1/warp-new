@@ -1,6 +1,6 @@
-use warpui::elements::{ChildView, Container, Dismiss, Empty};
-use warpui::ui_components::components::UiComponent;
-use warpui::{
+use octomusui::elements::{ChildView, Container, Dismiss, Empty};
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
 

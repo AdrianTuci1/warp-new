@@ -5,9 +5,9 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use warp_core::channel::ChannelState;
-use warp_core::user_preferences::GetUserPreferences;
-use warpui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
+use octomus_core::channel::ChannelState;
+use octomus_core::user_preferences::GetUserPreferences;
+use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
 
 use super::{
     AIExecutionProfile, ActionPermission, CloudAIExecutionProfileModel, WriteToPtyPermission,
@@ -58,7 +58,7 @@ impl AIExecutionProfileInfo {
         &self.id
     }
 
-    /// The Warp Drive sync ID of this profile, if it has been synced.
+    /// The Octomus Drive sync ID of this profile, if it has been synced.
     #[cfg_attr(target_family = "wasm", allow(dead_code))]
     pub fn sync_id(&self) -> Option<SyncId> {
         self.sync_id
@@ -287,7 +287,7 @@ impl AIExecutionProfilesModel {
         let mut new_profile = self.default_profile(ctx).data().clone();
         new_profile.name = "".to_string();
         new_profile.is_default_profile = false;
-        new_profile.autosync_plans_to_warp_drive = true;
+        new_profile.autosync_plans_to_octomus_drive = true;
 
         let update_manager = UpdateManager::handle(ctx);
         let client_id = ClientId::default();
@@ -911,7 +911,7 @@ impl AIExecutionProfilesModel {
         );
     }
 
-    pub fn set_autosync_plans_to_warp_drive(
+    pub fn set_autosync_plans_to_octomus_drive(
         &mut self,
         profile_id: ClientProfileId,
         enabled: bool,
@@ -920,8 +920,8 @@ impl AIExecutionProfilesModel {
         self.edit_profile_internal(
             profile_id,
             |profile| {
-                if profile.autosync_plans_to_warp_drive != enabled {
-                    profile.autosync_plans_to_warp_drive = enabled;
+                if profile.autosync_plans_to_octomus_drive != enabled {
+                    profile.autosync_plans_to_octomus_drive = enabled;
                     return true;
                 }
                 false

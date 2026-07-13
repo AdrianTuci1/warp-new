@@ -7,13 +7,13 @@ use repo_metadata::watcher::DirectoryWatcher;
 #[cfg(feature = "local_fs")]
 use repo_metadata::RepoMetadataModel;
 use string_offset::CharOffset;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
 use warp_editor::render::model::BlockItem;
 #[cfg(feature = "local_fs")]
-use warp_files::FileModel;
-use warpui::platform::WindowStyle;
-use warpui::{App, SingletonEntity, View};
+use octomus_files::FileModel;
+use octomusui::platform::WindowStyle;
+use octomusui::{App, SingletonEntity, View};
 
 use super::{FileNotebookView, FileState, MarkdownDisplayMode, SourceFile};
 use crate::auth::auth_manager::AuthManager;

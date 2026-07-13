@@ -68,10 +68,10 @@ Unit tests should cover the product invariants without depending on pixel render
 - Keep existing setup-command tests or add a regression assertion that `maybe_insert_setup_command_blocks` still inserts setup text and command blocks while a queued-query block exists and does not remove that queued item. This covers Behavior 7-8, 10, and 23.
 - Keep existing follow-up route tests in `app/src/terminal/view_test.rs (552-576)` and `app/src/terminal/view/shared_session/view_impl_test.rs (638-805)` passing; extend them only if useful to assert queued-query insertion after `submit_cloud_followup`.
 Targeted validation commands:
-- `cargo test -p warp cloud_mode_setup_tests`
-- `cargo test -p warp pending_cloud_followup`
-- `cargo test -p warp append_followup`
-- `cargo check -p warp --features handoff_cloud_cloud`
+- `cargo test -p octomus cloud_mode_setup_tests`
+- `cargo test -p octomus pending_cloud_followup`
+- `cargo test -p octomus append_followup`
+- `cargo check -p octomus --features handoff_cloud_cloud`
 Before opening or updating a PR, follow repository rules for formatting and clippy. Do not use `cargo fmt --all` or file-specific `cargo fmt`.
 Manual validation:
 - With CloudModeSetupV2 enabled, submit an initial Oz cloud prompt and verify the queued-query item appears immediately, remains visible after session attach and while setup-command rich content runs, and is replaced only when the real transcript user query appears.

@@ -6,14 +6,14 @@ use rangemap::RangeSet;
 use string_offset::CharOffset;
 use sum_tree::SumTree;
 use vec1::{Vec1, vec1};
-use warpui_core::assets::asset_cache::AssetSource;
-use warpui_core::color::ColorU;
-use warpui_core::elements::ListIndentLevel;
-use warpui_core::fonts::FamilyId;
-use warpui_core::geometry::rect::RectF;
-use warpui_core::geometry::vector::vec2f;
-use warpui_core::text_layout::TextFrame;
-use warpui_core::units::{IntoPixels, Pixels};
+use octomusui_core::assets::asset_cache::AssetSource;
+use octomusui_core::color::ColorU;
+use octomusui_core::elements::ListIndentLevel;
+use octomusui_core::fonts::FamilyId;
+use octomusui_core::geometry::rect::RectF;
+use octomusui_core::geometry::vector::vec2f;
+use octomusui_core::text_layout::TextFrame;
+use octomusui_core::units::{IntoPixels, Pixels};
 
 use super::debug::Describe;
 use super::test_utils::{layout_paragraph, layout_paragraphs};
@@ -1151,17 +1151,17 @@ fn make_test_cell_layout() -> CellLayout {
         line_char_ranges: vec![CharOffset::from(0)..CharOffset::from(3)],
         line_widths: vec![30.0],
         line_caret_positions: vec![vec![
-            warpui_core::text_layout::CaretPosition {
+            octomusui_core::text_layout::CaretPosition {
                 position_in_line: 0.0,
                 start_offset: 0,
                 last_offset: 0,
             },
-            warpui_core::text_layout::CaretPosition {
+            octomusui_core::text_layout::CaretPosition {
                 position_in_line: 10.0,
                 start_offset: 1,
                 last_offset: 1,
             },
-            warpui_core::text_layout::CaretPosition {
+            octomusui_core::text_layout::CaretPosition {
                 position_in_line: 20.0,
                 start_offset: 2,
                 last_offset: 2,

@@ -1,7 +1,7 @@
 use ordered_float::OrderedFloat;
-use warpui::elements::{ConstrainedBox, Container, Highlight, Text};
-use warpui::fonts::{Properties, Weight};
-use warpui::{AppContext, Element, SingletonEntity};
+use octomusui::elements::{ConstrainedBox, Container, Highlight, Text};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::{AppContext, Element, SingletonEntity};
 
 use super::external_secret_fuzzy_match::FuzzyMatchExternalSecretResult;
 use super::searcher::ExternalSecretSearchItemAction;
@@ -31,7 +31,7 @@ impl SearchItem for ExternalSecretSearchItem {
             ConstrainedBox::new(
                 self.external_secret
                     .icon()
-                    .to_warpui_icon(appearance.theme().active_ui_text_color())
+                    .to_octomusui_icon(appearance.theme().active_ui_text_color())
                     .finish(),
             )
             .with_width(ICON_SIZE)

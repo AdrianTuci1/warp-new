@@ -10,8 +10,8 @@ use std::ops::Range;
 /// They should _not_ be able to interface with the internal
 /// details of the editor (e.g. the [`Buffer`]).
 pub use view::*;
-pub use warpui::text::point::Point;
-use warpui::AppContext;
+pub use octomusui::text::point::Point;
+use octomusui::AppContext;
 
 pub fn init(app: &mut AppContext) {
     view::init(app);

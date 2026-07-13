@@ -16,22 +16,22 @@ use session_sharing_protocol::common::{
     AICommandMetadata, OrderedTerminalEventType, ParticipantId,
 };
 use session_sharing_protocol::sharer::SessionSourceType;
-use warp_core::features::FeatureFlag;
-use warp_core::report_error;
-use warp_core::semantic_selection::SemanticSelection;
-pub use warp_terminal::model::BlockIndex;
-use warp_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
-use warpui::assets::asset_cache::Asset;
-use warpui::image_cache::ImageType;
-use warpui::r#async::executor::Background;
+use octomus_core::features::FeatureFlag;
+use octomus_core::report_error;
+use octomus_core::semantic_selection::SemanticSelection;
+pub use octomus_terminal::model::BlockIndex;
+use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
+use octomusui::assets::asset_cache::Asset;
+use octomusui::image_cache::ImageType;
+use octomusui::r#async::executor::Background;
 #[cfg(not(target_family = "wasm"))]
-use warpui::util::save_as_file;
-use warpui::AppContext;
+use octomusui::util::save_as_file;
+use octomusui::AppContext;
 
 use super::super::{AltScreen, BlockList};
 use super::ansi::{
     BootstrappedValue, FinishUpdateValue, InputBufferValue, Mode, PendingHook,
-    TmuxInstallFailedInfo, WarpificationUnavailableReason,
+    TmuxInstallFailedInfo, OctomusificationUnavailableReason,
 };
 use super::block::{
     AgentInteractionMetadata, Block, BlockId, BlockMetadata, BlockSize, BlockState,
@@ -360,7 +360,7 @@ enum IsReceivingHook {
     No,
 }
 
-/// Information needed to render a warpify "success" block upon successful subshell bootstrap.
+/// Information needed to render a octomusify "success" block upon successful subshell bootstrap.
 #[derive(Debug, Clone)]
 pub struct SubshellSuccessBlockInfo {
     /// The ID of the newly bootstrapped subshell session.
@@ -380,15 +380,15 @@ pub struct SubshellSuccessBlockInfo {
 #[derive(Debug, Default, Clone, Copy, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum TmuxInstallationState {
-    /// This means tmux was installed by Warp in this session, successfully or unsuccessfully.
+    /// This means tmux was installed by Octomus in this session, successfully or unsuccessfully.
     /// It also means we had root access and used a package manager to install tmux and all
     /// dependencies.
     InstalledByWarpRootInThisSession,
-    /// This means tmux was installed by Warp in this session, successfully or unsuccessfully.
+    /// This means tmux was installed by Octomus in this session, successfully or unsuccessfully.
     InstalledByWarpInThisSession,
     InstalledByWarpInPriorSession,
-    /// This means that warp did not install it locally. It was either installed by the user
-    /// or it was installed by warp in a prior session using the package manager.
+    /// This means that octomus did not install it locally. It was either installed by the user
+    /// or it was installed by octomus in a prior session using the package manager.
     InstalledByUser,
     /// This means we never tried to install tmux in this session.
     #[default]
@@ -406,7 +406,7 @@ impl FromStr for TmuxInstallationState {
             "installed_by_warp_in_this_session" => {
                 Ok(TmuxInstallationState::InstalledByWarpInThisSession)
             }
-            "warp" | "installed_by_warp_in_prior_session" => {
+            "octomus" | "installed_by_warp_in_prior_session" => {
                 Ok(TmuxInstallationState::InstalledByWarpInPriorSession)
             }
             "user" | "installed_by_user" => Ok(TmuxInstallationState::InstalledByUser),
@@ -486,8 +486,8 @@ pub struct TerminalModel {
     /// machine) and when the remote shell sends the `InitShell` DCS.
     pending_legacy_ssh_session: Option<SSHValue>,
 
-    /// This variable allows us to differentiate between warp-initiated and user-initiated invocations of
-    /// control mode. Whenever we attempt to warpify an ssh session, we track the context of when warp initiated
+    /// This variable allows us to differentiate between octomus-initiated and user-initiated invocations of
+    /// control mode. Whenever we attempt to octomusify an ssh session, we track the context of when octomus initiated
     /// control mode, indicating that we expect the shell to enter control mode. We reset to None whenever
     /// the active block finishes. If we enter control mode and option is None, then we know it's user-initiated.
     pending_warp_initiated_control_mode: Option<WarpInitiatedTmuxControlMode>,
@@ -1009,7 +1009,7 @@ impl SelectedBlocks {
 pub enum TerminalInputState {
     /// Alt-screen on which programs like vim run is visible.
     AltScreen,
-    /// Warp Input View is visible.
+    /// Octomus Input View is visible.
     InputEditor,
     /// Block-list is visible but input will go to the running command.
     LongRunningCommand,
@@ -2210,7 +2210,7 @@ impl TerminalModel {
     pub fn set_custom_title(&mut self, custom_title: Option<String>) {
         self.custom_title.clone_from(&custom_title);
         // If the custom title set by the user is None, we "reset" to whatever the title was set by
-        // the shell / Warp itself.
+        // the shell / Octomus itself.
         self.send_title_event(match custom_title {
             Some(_) => custom_title,
             None => self.title.clone(),
@@ -2289,7 +2289,7 @@ impl TerminalModel {
     /// a line of output that is not a known SSH output, we consider that to be some mild evidence that
     /// login is complete. Though, because that output line might be a false alarm (i.e., it could be
     /// an SSH banner OR a line like "Permission denied."), we wait some amount of time and check again
-    /// before indicating we're ready for warpification.
+    /// before indicating we're ready for octomusification.
     pub fn check_for_end_of_ssh_login(&mut self, confirmation_check: bool) {
         let Some(mut ssh_login_state) = self.notify_on_end_of_ssh_login.clone() else {
             return;
@@ -2312,7 +2312,7 @@ impl TerminalModel {
             SshLoginState::LastLogin | SshLoginState::PromptDetected => {
                 self.event_proxy
                     .send_terminal_event(Event::DetectedEndOfSshLogin(
-                        SshLoginStatus::ReadyToWarpify,
+                        SshLoginStatus::ReadyToOctomusify,
                     ));
 
                 ssh_login_state.notification_state = SshLoginNotificationState::Completed;
@@ -2323,7 +2323,7 @@ impl TerminalModel {
                     if ssh_login_state.notification_state == SshLoginNotificationState::Monitoring {
                         self.event_proxy
                             .send_terminal_event(Event::DetectedEndOfSshLogin(
-                                SshLoginStatus::RecheckBeforeWarpifying,
+                                SshLoginStatus::RecheckBeforeOctomusifying,
                             ));
 
                         // We want to avoid emitting redundant events for the initial check.
@@ -2333,7 +2333,7 @@ impl TerminalModel {
                 } else {
                     self.event_proxy
                         .send_terminal_event(Event::DetectedEndOfSshLogin(
-                            SshLoginStatus::ReadyToWarpify,
+                            SshLoginStatus::ReadyToOctomusify,
                         ));
 
                     ssh_login_state.notification_state = SshLoginNotificationState::Completed;
@@ -2728,7 +2728,7 @@ impl ansi::Handler for TerminalModel {
         delegate!(self.configure_charset(index, charset));
     }
 
-    fn set_color(&mut self, index: usize, color: warpui::color::ColorU) {
+    fn set_color(&mut self, index: usize, color: octomusui::color::ColorU) {
         self.override_colors[index] = Some(color);
     }
 
@@ -3022,8 +3022,8 @@ impl ansi::Handler for TerminalModel {
             );
             if is_tmux_ssh {
                 self.event_proxy
-                    .send_terminal_event(Event::RemoteWarpificationIsUnavailable(
-                        WarpificationUnavailableReason::UnsupportedShell {
+                    .send_terminal_event(Event::RemoteOctomusificationIsUnavailable(
+                        OctomusificationUnavailableReason::UnsupportedShell {
                             shell_name: data.shell,
                         },
                     ))
@@ -3069,8 +3069,8 @@ impl ansi::Handler for TerminalModel {
                 })),
             _ => self
                 .event_proxy
-                .send_terminal_event(Event::RemoteWarpificationIsUnavailable(
-                    WarpificationUnavailableReason::UnsupportedShell {
+                .send_terminal_event(Event::RemoteOctomusificationIsUnavailable(
+                    OctomusificationUnavailableReason::UnsupportedShell {
                         shell_name: data.shell,
                     },
                 )),
@@ -3082,9 +3082,9 @@ impl ansi::Handler for TerminalModel {
             .send_terminal_event(Event::FinishUpdate(data));
     }
 
-    fn remote_warpification_is_unavailable(&mut self, data: WarpificationUnavailableReason) {
+    fn remote_octomusification_is_unavailable(&mut self, data: OctomusificationUnavailableReason) {
         self.event_proxy
-            .send_terminal_event(Event::RemoteWarpificationIsUnavailable(data));
+            .send_terminal_event(Event::RemoteOctomusificationIsUnavailable(data));
     }
 
     fn notify_ssh_tmux_is_installed(&mut self, tmux_installation: TmuxInstallationState) {

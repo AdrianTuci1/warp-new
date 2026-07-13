@@ -2,12 +2,12 @@ use std::time::Duration;
 
 use ai::LLMId;
 use instant::Instant;
-use warp_core::features::FeatureFlag;
-use warp_core::send_telemetry_from_ctx;
-use warpui_core::assets::asset_cache::AssetSource;
-use warpui_core::image_cache::ImageType;
-use warpui_core::windowing::state::{ApplicationStage, StateEvent};
-use warpui_core::windowing::WindowManager;
+use octomus_core::features::FeatureFlag;
+use octomus_core::send_telemetry_from_ctx;
+use octomusui_core::assets::asset_cache::AssetSource;
+use octomusui_core::image_cache::ImageType;
+use octomusui_core::windowing::state::{ApplicationStage, StateEvent};
+use octomusui_core::windowing::WindowManager;
 
 use crate::model::{
     OnboardingAuthState, OnboardingStateEvent, OnboardingStateModel, OnboardingStep,
@@ -24,16 +24,16 @@ const APP_BECAME_ACTIVE_DEBOUNCE: Duration = Duration::from_secs(15);
 
 use pathfinder_geometry::vector::vec2f;
 use ui_components::{button, Component as _, Options as _};
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::WarpTheme;
-use warpui_core::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::WarpTheme;
+use octomusui_core::elements::{
     CacheOption, ChildAnchor, Container, Empty, Image, OffsetPositioning, ParentAnchor,
     ParentElement, ParentOffsetBounds, Rect, Shrinkable, Stack,
 };
-use warpui_core::keymap::macros::*;
-use warpui_core::keymap::{FixedBinding, Keystroke};
-use warpui_core::presenter::ChildView;
-use warpui_core::{
+use octomusui_core::keymap::macros::*;
+use octomusui_core::keymap::{FixedBinding, Keystroke};
+use octomusui_core::presenter::ChildView;
+use octomusui_core::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity as _, TypedActionView, View,
     ViewContext, ViewHandle,
 };
@@ -339,7 +339,7 @@ impl AgentOnboardingView {
     /// Eagerly loads all onboarding slide images into the asset cache
     /// so they display instantly when the user navigates between slides.
     fn preload_onboarding_images(ctx: &mut ViewContext<Self>) {
-        let asset_cache = warpui_core::assets::asset_cache::AssetCache::as_ref(ctx);
+        let asset_cache = octomusui_core::assets::asset_cache::AssetCache::as_ref(ctx);
         // Preload the shared background image used on all right panels.
         asset_cache.load_asset::<ImageType>(AssetSource::Bundled {
             path: crate::slides::layout::ONBOARDING_BG_PATH,

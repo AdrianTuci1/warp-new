@@ -1,17 +1,17 @@
-use warp_core::ui::builder::UiBuilder;
-use warp_core::ui::color::blend::Blend;
-use warp_core::ui::color::darken;
-use warpui::accessibility::{AccessibilityContent, WarpA11yRole};
-use warpui::color::ColorU;
-use warpui::elements::{
+use octomus_core::ui::builder::UiBuilder;
+use octomus_core::ui::color::blend::Blend;
+use octomus_core::ui::color::darken;
+use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
+use octomusui::color::ColorU;
+use octomusui::elements::{
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Fill, Flex, Icon,
     MouseStateHandle, ParentElement, Radius, Shrinkable,
 };
-use warpui::fonts::Weight;
-use warpui::keymap::FixedBinding;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::Weight;
+use octomusui::keymap::FixedBinding;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
 };
 
@@ -28,11 +28,11 @@ const ACTION_BUTTON_BORDER_WIDTH: f32 = 2.;
 const ACTION_BUTTON_HORIZONTAL_PADDING: f32 = 8.;
 const ACTION_BUTTON_FONT_SIZE: f32 = 14.;
 
-const AUTH_OVERRIDE_DESCRIPTION: &str = "It looks like you logged into a Warp account through a web browser. If you continue, any personal Warp drive objects and preferences from this anonymous session with be permanently deleted.";
+const AUTH_OVERRIDE_DESCRIPTION: &str = "It looks like you logged into a Octomus account through a web browser. If you continue, any personal Octomus drive objects and preferences from this anonymous session with be permanently deleted.";
 const AUTH_OVERRIDE_CONFIRMATION_WARNING: &str = "This cannot be undone.";
 const AUTH_OVERRIDE_INITIAL_STEP_HEADER: &str = "New login detected";
 const AUTH_OVERRIDE_CONFIRM_CONFIRMATION_STEP_HEADER: &str =
-    "Delete personal Warp Drive objects and preferences?";
+    "Delete personal Octomus Drive objects and preferences?";
 const AUTH_OVERRIDE_BULK_EXPORT_BUTTON_LABEL: &str = "Export your data";
 const AUTH_OVERRIDE_BULK_EXPORT_DESCRIPTION: &str = " to import later.";
 const AUTH_OVERRIDE_CANCEL_BUTTON_LABEL: &str = "Cancel";
@@ -64,7 +64,7 @@ pub struct AuthOverrideWarningBody {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([FixedBinding::new(
         "enter",
@@ -377,7 +377,7 @@ impl View for AuthOverrideWarningBody {
     fn accessibility_contents(&self, _: &AppContext) -> Option<AccessibilityContent> {
         Some(AccessibilityContent::new(
             "New login detected",
-            "Warp has detected a new login from a web browser. Press escape to cancel and continue using Warp without login.",
+            "Octomus has detected a new login from a web browser. Press escape to cancel and continue using Octomus without login.",
             WarpA11yRole::HelpRole,
         ))
     }

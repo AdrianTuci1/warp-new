@@ -12,15 +12,15 @@ use parking_lot::Mutex;
 use pathfinder_geometry::vector::{vec2f, Vector2F};
 use rayon::prelude::*;
 use string_offset::ByteOffset;
-use warp_completer::completer::Description;
-use warpui::fonts::{Cache as FontCache, FamilyId, Properties};
-use warpui::platform::LineStyle;
-use warpui::text::point::Point;
-use warpui::text_layout::{
+use octomus_completer::completer::Description;
+use octomusui::fonts::{Cache as FontCache, FamilyId, Properties};
+use octomusui::platform::LineStyle;
+use octomusui::text::point::Point;
+use octomusui::text_layout::{
     self, default_compute_baseline_position_fn, ClipConfig, ComputeBaselinePositionFn, LayoutCache,
     StyleAndFont, TextAlignment, TextStyle, DEFAULT_TOP_BOTTOM_RATIO,
 };
-use warpui::{AppContext, EntityId, ModelHandle};
+use octomusui::{AppContext, EntityId, ModelHandle};
 
 use super::model::EditorModel;
 use super::{

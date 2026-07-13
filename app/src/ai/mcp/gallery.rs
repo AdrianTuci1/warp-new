@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use uuid::Uuid;
-use warpui::{Entity, ModelContext, SingletonEntity};
+use octomusui::{Entity, ModelContext, SingletonEntity};
 
 use crate::ai::mcp::templatable::{
     GalleryData, JsonTemplate, TemplatableMCPServer, TemplateVariable,

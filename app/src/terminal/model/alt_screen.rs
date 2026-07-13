@@ -8,10 +8,10 @@ use num_traits::Float as _;
 use parking_lot::Mutex;
 use pathfinder_color::ColorU;
 use vec1::Vec1;
-use warp_core::semantic_selection::SemanticSelection;
-use warp_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
-use warpui::text::SelectionType;
-use warpui::units::Lines;
+use octomus_core::semantic_selection::SemanticSelection;
+use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
+use octomusui::text::SelectionType;
+use octomusui::units::Lines;
 
 use super::find::RegexDFAs;
 use super::grid::RespectDisplayedOutput;

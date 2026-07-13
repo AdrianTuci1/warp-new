@@ -1,0 +1,6 @@
+---
+name: "Copy WarpDev Keychain to Octomus local"
+command: "security add-generic-password -a User -U -s octomus -w \"$(security find-generic-password -a User -s dev.octomus.Octomus-Dev -w)\""
+description: "Copies the refresh token from WarpDev into the local octomus app so that it can authenticate."
+author: Octomus Team
+shells: []

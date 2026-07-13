@@ -6,11 +6,11 @@ use anyhow::anyhow;
 use async_trait::async_trait;
 use futures::channel::mpsc;
 use uuid::Uuid;
-use warp_cli::agent::Harness;
-use warp_core::features::FeatureFlag;
+use octomus_cli::agent::Harness;
+use octomus_core::features::FeatureFlag;
 use warp_multi_agent_api as api;
-use warpui::r#async::{SpawnedFutureHandle, Timer};
-use warpui::{
+use octomusui::r#async::{SpawnedFutureHandle, Timer};
+use octomusui::{
     Entity, EntityId, GetSingletonModelHandle, ModelContext, SingletonEntity, UpdateModel,
 };
 
@@ -1091,7 +1091,7 @@ impl OrchestrationEventStreamer {
     fn ensure_self_run_id_watched(
         &mut self,
         conversation_id: AIConversationId,
-        ctx: &warpui::AppContext,
+        ctx: &octomusui::AppContext,
     ) -> bool {
         let (run_id, is_child) = {
             let history = BlocklistAIHistoryModel::as_ref(ctx);
@@ -1453,7 +1453,7 @@ impl OrchestrationEventStreamer {
     fn self_run_id(
         &self,
         conversation_id: AIConversationId,
-        ctx: &warpui::AppContext,
+        ctx: &octomusui::AppContext,
     ) -> Option<String> {
         BlocklistAIHistoryModel::as_ref(ctx)
             .conversation(&conversation_id)
@@ -1465,7 +1465,7 @@ impl OrchestrationEventStreamer {
     fn is_parent_agent_conversation(
         &self,
         conversation_id: AIConversationId,
-        ctx: &warpui::AppContext,
+        ctx: &octomusui::AppContext,
     ) -> bool {
         let Some(stream) = self.streams.get(&conversation_id) else {
             return false;
@@ -1492,7 +1492,7 @@ impl OrchestrationEventStreamer {
     fn is_remote_run_view(
         &self,
         conversation_id: AIConversationId,
-        ctx: &warpui::AppContext,
+        ctx: &octomusui::AppContext,
     ) -> bool {
         BlocklistAIHistoryModel::as_ref(ctx)
             .conversation(&conversation_id)
@@ -1502,7 +1502,7 @@ impl OrchestrationEventStreamer {
     fn should_skip_sse_for_dormant_local_claude_child(
         &self,
         conversation_id: AIConversationId,
-        ctx: &warpui::AppContext,
+        ctx: &octomusui::AppContext,
     ) -> bool {
         let Some(conversation) =
             BlocklistAIHistoryModel::as_ref(ctx).conversation(&conversation_id)
@@ -1527,7 +1527,7 @@ impl OrchestrationEventStreamer {
     /// this process (an open agent view or an agent_sdk driver) AND the
     /// conversation has a real role to consume events for. Passive views
     /// of agent runs hosted elsewhere are excluded regardless of state.
-    fn is_eligible(&self, conversation_id: AIConversationId, ctx: &warpui::AppContext) -> bool {
+    fn is_eligible(&self, conversation_id: AIConversationId, ctx: &octomusui::AppContext) -> bool {
         if !self.has_active_consumer(conversation_id) {
             return false;
         }
@@ -1553,7 +1553,7 @@ impl OrchestrationEventStreamer {
     fn is_dormant_claude_wake_listener_eligible(
         &self,
         conversation_id: AIConversationId,
-        ctx: &warpui::AppContext,
+        ctx: &octomusui::AppContext,
     ) -> bool {
         self.has_active_consumer(conversation_id)
             && !self.is_remote_run_view(conversation_id, ctx)

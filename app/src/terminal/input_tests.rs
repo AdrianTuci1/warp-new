@@ -14,17 +14,17 @@ use smol_str::SmolStr;
 use unindent::Unindent;
 #[cfg(feature = "voice_input")]
 use voice_input::VoiceInputToggledFrom;
-use warp_completer::completer::{
+use octomus_completer::completer::{
     EngineFileType, Match, MatchStrategy, MatchedSuggestion, Priority, Suggestion,
     SuggestionResults, SuggestionType,
 };
-use warp_completer::meta::Span;
-use warp_util::user_input::UserInput;
-use warpui::platform::WindowStyle;
-use warpui::r#async::Timer;
-use warpui::telemetry::EventPayload;
-use warpui::text::SelectionType;
-use warpui::{App, ReadModel, UpdateView, WindowId};
+use octomus_completer::meta::Span;
+use octomus_util::user_input::UserInput;
+use octomusui::platform::WindowStyle;
+use octomusui::r#async::Timer;
+use octomusui::telemetry::EventPayload;
+use octomusui::text::SelectionType;
+use octomusui::{App, ReadModel, UpdateView, WindowId};
 use watcher::HomeDirectoryWatcher;
 use workflows::workflow::{Argument, ArgumentType, Workflow};
 
@@ -90,7 +90,7 @@ use crate::terminal::writeable_pty::command_history::update_command_history;
 use crate::terminal::TerminalView;
 use crate::test_util::settings::initialize_settings_for_tests;
 use crate::themes::theme::AnsiColorIdentifier;
-use crate::warp_managed_paths_watcher::WarpManagedPathsWatcher;
+use crate::octomus_managed_paths_watcher::WarpManagedPathsWatcher;
 use crate::workspace::{ActiveSession, OneTimeModalModel, ToastStack, WorkspaceRegistry};
 use crate::workspaces::team_tester::TeamTesterStatus;
 use crate::workspaces::update_manager::TeamUpdateManager;
@@ -1608,7 +1608,7 @@ fn test_tab_completion_with_spaces() {
 
         let history_file_commands = vec![
             "cd Documents/zed".to_string(),
-            "curl https://app.warp.dev".to_string(),
+            "curl https://app.octomus.dev".to_string(),
             "cargo check\ncargo run".to_string(),
         ];
         let terminal =
@@ -1842,7 +1842,7 @@ fn test_tab_completion() {
 
         let history_file_commands = vec![
             "cd Documents/zed".to_string(),
-            "curl https://app.warp.dev".to_string(),
+            "curl https://app.octomus.dev".to_string(),
             "cargo check\ncargo run".to_string(),
         ];
         let terminal =
@@ -2097,7 +2097,7 @@ fn test_tab_completion_with_selection() {
 
         let history_file_commands = vec![
             "cd Documents/zed".to_string(),
-            "curl https://app.warp.dev".to_string(),
+            "curl https://app.octomus.dev".to_string(),
             "cargo check\ncargo run".to_string(),
         ];
         let terminal =
@@ -3647,7 +3647,7 @@ fn test_cursor_movement() {
 
         let history_file_commands = vec![
             "cd Documents/zed".to_string(),
-            "curl https://app.warp.dev".to_string(),
+            "curl https://app.octomus.dev".to_string(),
             "cargo check\ncargo run".to_string(),
         ];
         let terminal =
@@ -4394,7 +4394,7 @@ fn test_last_word_insertions() {
 
         // last word insertion looks for preceding whitespace character
         let history_file_commands = vec![
-            "https://app.warp.dev".to_string(),
+            "https://app.octomus.dev".to_string(),
             "cargo check\ncargo run --features".to_string(),
         ];
         let terminal =
@@ -4431,7 +4431,7 @@ fn test_last_word_insertions() {
             input.insert_last_word_previous_command(ctx);
         });
         input.read(&app, |input, ctx| {
-            assert_eq!(input.buffer_text(ctx), "git https://app.warp.dev");
+            assert_eq!(input.buffer_text(ctx), "git https://app.octomus.dev");
         });
 
         // Insert is temporary, undo goes back to initial state before first insertion
@@ -6272,7 +6272,7 @@ fn test_source_less_locked_config_clears_decision_source() {
 #[test]
 fn test_input_buffer_submitted_telemetry_uses_raw_input_type_decision_source() {
     fn input_buffer_submitted_events() -> Vec<serde_json::Value> {
-        warpui::telemetry::flush_events()
+        octomusui::telemetry::flush_events()
             .into_iter()
             .filter_map(|event| match event.payload {
                 EventPayload::NamedEvent { name, value, .. }
@@ -7132,7 +7132,7 @@ fn test_custom_terminal_page_scroll_binding_applies_when_prompt_is_focused() {
         app.update(|ctx| {
             ctx.set_custom_trigger(
                 "terminal:scroll_up_one_page".to_owned(),
-                warpui::keymap::Trigger::Keystrokes(
+                octomusui::keymap::Trigger::Keystrokes(
                     vec![Keystroke::parse("shift-pageup").unwrap()],
                 ),
             );

@@ -16,11 +16,11 @@ pub use convert_from::{
 use futures_lite::Stream;
 pub use r#impl::generate_multi_agent_output;
 use serde::Serialize;
-use warp_core::channel::ChannelState;
-use warp_core::execution_mode::AppExecutionMode;
-use warp_core::features::FeatureFlag;
-use warp_core::user_preferences::GetUserPreferences;
-use warpui::{AppContext, EntityId, SingletonEntity as _};
+use octomus_core::channel::ChannelState;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomus_core::features::FeatureFlag;
+use octomus_core::user_preferences::GetUserPreferences;
+use octomusui::{AppContext, EntityId, SingletonEntity as _};
 
 use super::{AIAgentInput, MCPContext, MCPServer, RequestMetadata, Suggestions};
 use crate::ai::agent::conversation::AIConversationId;
@@ -106,7 +106,7 @@ pub struct RequestParams {
     pub cli_agent_model: LLMId,
     pub computer_use_model: LLMId,
     pub is_memory_enabled: bool,
-    pub warp_drive_context_enabled: bool,
+    pub octomus_drive_context_enabled: bool,
     pub context_window_limit: Option<u32>,
     pub mcp_context: Option<MCPContext>,
     pub planning_enabled: bool,
@@ -164,7 +164,7 @@ impl RequestParams {
     ) -> Self {
         let ai_settings = AISettings::as_ref(app);
         let is_memory_enabled = ai_settings.is_memory_enabled(app);
-        let warp_drive_context_enabled = ai_settings.is_warp_drive_context_enabled(app);
+        let octomus_drive_context_enabled = ai_settings.is_octomus_drive_context_enabled(app);
 
         // Build MCP context - either grouped by server or flat lists based on feature flag
         let mcp_context = if FeatureFlag::MCPGroupedServerContext.is_enabled() {
@@ -333,7 +333,7 @@ impl RequestParams {
             cli_agent_model: request_input.cli_agent_model_id.clone(),
             computer_use_model: request_input.computer_use_model_id.clone(),
             is_memory_enabled,
-            warp_drive_context_enabled,
+            octomus_drive_context_enabled,
             mcp_context,
             planning_enabled: true,
             should_redact_secrets,

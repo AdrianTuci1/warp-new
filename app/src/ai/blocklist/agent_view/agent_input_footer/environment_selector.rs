@@ -3,14 +3,14 @@ use std::sync::Arc;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
 use settings::Setting;
-use warp_core::send_telemetry_from_ctx;
-use warp_core::ui::color::blend::Blend;
-use warp_core::ui::theme::Fill;
-use warpui::elements::{
+use octomus_core::send_telemetry_from_ctx;
+use octomus_core::ui::color::blend::Blend;
+use octomus_core::ui::theme::Fill;
+use octomusui::elements::{
     ChildAnchor, ChildView, ConstrainedBox, OffsetPositioning, ParentAnchor, ParentElement,
     ParentOffsetBounds, Stack,
 };
-use warpui::{
+use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
@@ -150,7 +150,7 @@ impl GenericMenuItem for EnvironmentMenuItem {
         let theme = Appearance::as_ref(app).theme();
         let color = theme.main_text_color(theme.surface_2()).into_solid();
         Some(
-            ConstrainedBox::new(Icon::Check.to_warpui_icon(Fill::Solid(color)).finish())
+            ConstrainedBox::new(Icon::Check.to_octomusui_icon(Fill::Solid(color)).finish())
                 .with_width(ENV_MENU_CHECK_ICON_SIZE)
                 .with_height(ENV_MENU_CHECK_ICON_SIZE)
                 .finish(),

@@ -11,8 +11,8 @@ use http::StatusCode;
 use lazy_static::lazy_static;
 use uuid::Uuid;
 use warp_graphql::scalars::time::ServerTimestamp;
-use warpui::r#async::FutureId;
-use warpui::{Entity, ModelContext, RequestState, RetryOption, SingletonEntity};
+use octomusui::r#async::FutureId;
+use octomusui::{Entity, ModelContext, RequestState, RetryOption, SingletonEntity};
 
 use super::graphql::GraphQLError;
 use super::ids::{ClientId, HashableId, ObjectUid, ServerId, SyncId, ToServerId};

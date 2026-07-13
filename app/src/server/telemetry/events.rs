@@ -5,15 +5,15 @@ use serde_json::{json, Value};
 use session_sharing_protocol::common::{ParticipantId, Role, SessionId as SharedSessionId};
 use session_sharing_protocol::sharer::{SessionEndedReason, SessionSourceType};
 use strum_macros::{EnumDiscriminants, EnumIter};
-use warp_completer::completer::MatchType;
-use warp_core::command::ExitCode;
-use warp_core::interval_timer::TimingDataPoint;
-use warp_core::telemetry::{
+use octomus_completer::completer::MatchType;
+use octomus_core::command::ExitCode;
+use octomus_core::interval_timer::TimingDataPoint;
+use octomus_core::telemetry::{
     EnablementState, TelemetryEvent as TelemetryEventTrait, TelemetryEventDesc,
 };
-use warpui::keymap::Keystroke;
-use warpui::notification::{NotificationSendError, RequestPermissionsOutcome};
-use warpui::rendering::ThinStrokes;
+use octomusui::keymap::Keystroke;
+use octomusui::notification::{NotificationSendError, RequestPermissionsOutcome};
+use octomusui::rendering::ThinStrokes;
 
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::agent::conversation::AIConversationId;
@@ -59,7 +59,7 @@ use crate::tab::TabTelemetryAction;
 use crate::terminal::block_list_viewport::InputMode;
 use crate::terminal::cli_agent_sessions::{CLIAgentInputEntrypoint, CLIAgentRichInputCloseReason};
 use crate::terminal::input::TelemetryInputSuggestionsMode;
-use crate::terminal::model::ansi::WarpificationUnavailableReason;
+use crate::terminal::model::ansi::OctomusificationUnavailableReason;
 use crate::terminal::model::block::BlockId;
 use crate::terminal::model::session::SessionId;
 use crate::terminal::model::terminal_model::{BlockSelectionCardinality, TmuxInstallationState};
@@ -191,7 +191,7 @@ impl From<Space> for TelemetrySpace {
     }
 }
 
-/// Common metadata to include in all Warp Drive telemetry events that act on a specific object.
+/// Common metadata to include in all Octomus Drive telemetry events that act on a specific object.
 /// Events that only apply to a single object type may use specific metadata like [`WorkflowTelemetryMetadata`],
 /// [`NotebookTelemetryMetadata`], or [`EnvVarTelemetryMetadata`] instead.
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -363,7 +363,7 @@ impl From<rmcp::RmcpError> for MCPServerTelemetryError {
 pub struct OpenedSharingDialogEvent {
     pub source: SharingDialogSource,
 
-    /// Metadata for the object being shared, if it's a Warp Drive object.
+    /// Metadata for the object being shared, if it's a Octomus Drive object.
     #[serde(flatten)]
     pub object_metadata: Option<CloudObjectTelemetryMetadata>,
 
@@ -371,18 +371,18 @@ pub struct OpenedSharingDialogEvent {
     pub session_id: Option<SharedSessionId>,
 }
 
-/// How the user opened the Warp Drive sharing dialog.
+/// How the user opened the Octomus Drive sharing dialog.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub enum SharingDialogSource {
     /// The sharing button in the pane header.
     PaneHeader,
     /// The per-pane command palette entry (includes keybindings).
     CommandPalette,
-    /// The Warp Drive index context menu.
+    /// The Octomus Drive index context menu.
     DriveIndex,
     /// The sharing dialog was auto-opened from shared session creation.
     StartedSessionShare,
-    /// The user intented into Warp with an email address to invite.
+    /// The user intented into Octomus with an email address to invite.
     InviteeRequest,
     /// The user jumped from an inherited ACL to its definition on a parent object.
     InheritedPermission,
@@ -435,7 +435,7 @@ pub enum PaletteSource {
     PrefixChange,
     Keybinding,
     CtrlTab { shift_pressed_initially: bool },
-    WarpDrive,
+    OctomusDrive,
     QuitModal,
     LogOutModal,
     IntegrationTest,
@@ -497,7 +497,7 @@ pub enum PluginChipTelemetryKind {
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum NotificationAgentVariant {
-    /// Warp's built-in agent (Oz).
+    /// Octomus's built-in agent (Oz).
     Oz,
     /// A CLI agent (e.g., Claude Code, Gemini CLI, etc.).
     CLIAgent(CLIAgentType),
@@ -527,7 +527,7 @@ pub enum PluginChipTelemetryAction {
 }
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
-pub enum WarpDriveSource {
+pub enum OctomusDriveSource {
     Legacy,
     LeftPanelToolbelt,
     ForceOpened,
@@ -561,7 +561,7 @@ pub enum CommandSearchResultType {
     TranslateUsingWarpAI,
     Notebook,
     EnvVarCollection,
-    ViewInWarpDrive,
+    ViewInOctomusDrive,
     AIQuery,
     Project,
 }
@@ -702,8 +702,8 @@ pub enum KnowledgePaneEntrypoint {
     #[serde(rename = "settings")]
     Settings,
 
-    #[serde(rename = "warp_drive")]
-    WarpDrive,
+    #[serde(rename = "octomus_drive")]
+    OctomusDrive,
 
     #[serde(rename = "ai_blocklist")]
     AIBlocklist,
@@ -721,8 +721,8 @@ pub enum MCPServerCollectionPaneEntrypoint {
     #[serde(rename = "settings")]
     Settings,
 
-    #[serde(rename = "warp_drive")]
-    WarpDrive,
+    #[serde(rename = "octomus_drive")]
+    OctomusDrive,
 
     #[serde(rename = "slash_command")]
     SlashCommand,
@@ -979,7 +979,7 @@ pub enum CodeContextDestination {
 
 #[derive(Clone, Debug, Serialize)]
 pub enum AgentModeCitation {
-    WarpDriveObject {
+    OctomusDriveObject {
         object_type: ObjectType,
         uid: ObjectUid,
     },
@@ -1383,7 +1383,7 @@ pub enum TelemetryEvent {
     DatabaseReadError(String),
     DatabaseWriteError(String),
     AppStartup(AppStartupInfo),
-    /// The native app was opened while logged out. Since Warp requires login,
+    /// The native app was opened while logged out. Since Octomus requires login,
     /// this usually means a new user.
     LoggedOutStartup,
     /// The download source, if it can be determined. Will only be sent when
@@ -1626,11 +1626,11 @@ pub enum TelemetryEvent {
     InitialWorkingDirectoryConfigurationChanged {
         advanced_mode_enabled: bool,
     },
-    /// Opened legacy Warp AI.
+    /// Opened legacy Octomus AI.
     OpenedWarpAI {
         source: OpenedWarpAISource,
     },
-    /// Issued legacy Warp AI request.
+    /// Issued legacy Octomus AI request.
     WarpAIRequestIssued {
         result: WarpAIRequestResult,
     },
@@ -1699,7 +1699,7 @@ pub enum TelemetryEvent {
     ToggleSshTmuxWrapper {
         enabled: bool,
     },
-    ToggleSshWarpification {
+    ToggleSshOctomusification {
         enabled: bool,
     },
     /// User changed the SSH extension install mode.
@@ -1713,26 +1713,26 @@ pub enum TelemetryEvent {
     },
     /// An ssh interactive session was detected.
     SshInteractiveSessionDetected(SshInteractiveSessionDetected),
-    SshTmuxWarpifyBannerDisplayed,
-    /// A SSH Warpify Block was accepted
-    SshTmuxWarpifyBlockAccepted,
-    /// A SSH Warpify Block was dismissed
-    SshTmuxWarpifyBlockDismissed,
-    WarpifyFooterShown {
+    SshTmuxOctomusifyBannerDisplayed,
+    /// A SSH Octomusify Block was accepted
+    SshTmuxOctomusifyBlockAccepted,
+    /// A SSH Octomusify Block was dismissed
+    SshTmuxOctomusifyBlockDismissed,
+    OctomusifyFooterShown {
         is_ssh: bool,
     },
     AgentToolbarDismissed,
-    WarpifyFooterAcceptedWarpify {
+    OctomusifyFooterAcceptedOctomusify {
         is_ssh: bool,
     },
-    /// How long until the warpify process succeeded
-    SshTmuxWarpificationSuccess {
+    /// How long until the octomusify process succeeded
+    SshTmuxOctomusificationSuccess {
         tmux_installation: Option<TmuxInstallationState>,
         duration_ms: u64,
     },
     /// An SSH Error block was displayed to the user.
-    SshTmuxWarpificationErrorBlock {
-        error: WarpificationUnavailableReason,
+    SshTmuxOctomusificationErrorBlock {
+        error: OctomusificationUnavailableReason,
         tmux_installation: Option<TmuxInstallationState>,
     },
     /// A SSH Install Tmux Block was displayed.
@@ -1758,11 +1758,11 @@ pub enum TelemetryEvent {
     },
     AnonymousUserHitCloudObjectLimit,
     NeedsReauth,
-    WarpDriveOpened {
-        source: WarpDriveSource,
+    OctomusDriveOpened {
+        source: OctomusDriveSource,
         is_code_mode_v2: bool,
     },
-    // Toggled the legacy Warp AI side panel.
+    // Toggled the legacy Octomus AI side panel.
     ToggleWarpAI {
         opened: bool,
     },
@@ -1844,7 +1844,7 @@ pub enum TelemetryEvent {
         team_uid: ServerId,
     },
     CopyObjectToClipboard(TelemetryCloudObjectType),
-    OpenAndWarpifyDockerSubshell {
+    OpenAndOctomusifyDockerSubshell {
         /// Some variant if we support this shell type, and None otherwise.
         shell_type: Option<ShellType>,
     },
@@ -2011,7 +2011,7 @@ pub enum TelemetryEvent {
     /// language auto-detection false-positive.
     AgentModePotentialAutoDetectionFalsePositive(AgentModeAutoDetectionFalsePositivePayload),
 
-    /// This is a telemetry event used to help track performance of Agent Predict in Warp,
+    /// This is a telemetry event used to help track performance of Agent Predict in Octomus,
     /// by keeping track of the context given and the predictions generated.
     AgentModePrediction {
         was_suggestion_accepted: bool,
@@ -2372,7 +2372,7 @@ pub enum TelemetryEvent {
     AutoupdateMinidumpCleanupFailed {
         exit_code: i32,
     },
-    ExecutedWarpDrivePrompt {
+    ExecutedOctomusDrivePrompt {
         id: Option<WorkflowId>,
         selection_source: WorkflowSelectionSource,
     },
@@ -2662,7 +2662,7 @@ pub enum TelemetryEvent {
     AgentManagementViewOpenedSession,
     /// Emitted when the user copies a session link from the Agent Management View.
     AgentManagementViewCopiedSessionLink,
-    /// Detected that Warp is running in an isolated sandbox.
+    /// Detected that Octomus is running in an isolated sandbox.
     DetectedIsolationPlatform {
         platform: warp_isolation_platform::IsolationPlatformType,
     },
@@ -2815,7 +2815,7 @@ pub enum TelemetryEvent {
         server_conversation_id: Option<String>,
         ambient_agent_task_id: Option<AmbientAgentTaskId>,
     },
-    /// Emitted when a warp://linear deeplink is opened.
+    /// Emitted when a octomus://linear deeplink is opened.
     LinearIssueLinkOpened,
     /// Emitted when the free tier limit hit interstitial is displayed.
     FreeTierLimitHitInterstitialDisplayed,
@@ -2908,7 +2908,7 @@ pub enum TelemetryEvent {
     /// daemon process on the remote host.  Only emitted on success — if
     /// the daemon crashes before binding, no event is sent.
     RemoteServerDaemonStartup {
-        timing_data: Vec<warp_core::interval_timer::TimingDataPoint>,
+        timing_data: Vec<octomus_core::interval_timer::TimingDataPoint>,
     },
     /// Emitted when all reconnection attempts are exhausted.
     RemoteServerReconnectExhausted {
@@ -2982,7 +2982,7 @@ impl TelemetryEventTrait for TelemetryEvent {
     }
 
     fn event_descs() -> impl Iterator<Item = Box<dyn TelemetryEventDesc>> {
-        warp_core::telemetry::enum_events::<Self>()
+        octomus_core::telemetry::enum_events::<Self>()
     }
 }
 
@@ -3398,8 +3398,8 @@ impl TelemetryEvent {
                 Some(json!({ "remember": remember }))
             }
             TelemetryEvent::AgentToolbarDismissed => None,
-            TelemetryEvent::WarpifyFooterShown { is_ssh }
-            | TelemetryEvent::WarpifyFooterAcceptedWarpify { is_ssh } => {
+            TelemetryEvent::OctomusifyFooterShown { is_ssh }
+            | TelemetryEvent::OctomusifyFooterAcceptedOctomusify { is_ssh } => {
                 Some(json!({ "is_ssh": is_ssh }))
             }
             TelemetryEvent::ToggleSameLinePrompt { enabled } => Some(json!({ "enabled": enabled })),
@@ -3472,7 +3472,7 @@ impl TelemetryEvent {
             TelemetryEvent::CopyObjectToClipboard(object_type) => {
                 Some(json!({ "object_type": object_type }))
             }
-            TelemetryEvent::OpenAndWarpifyDockerSubshell { shell_type } => {
+            TelemetryEvent::OpenAndOctomusifyDockerSubshell { shell_type } => {
                 Some(json!({ "shell_type": shell_type }))
             }
             TelemetryEvent::ToggleBlockFilterQuery { enabled, source } => {
@@ -3497,7 +3497,7 @@ impl TelemetryEvent {
                 Some(json!({"enabled": enabled}))
             }
             TelemetryEvent::ToggleSshTmuxWrapper { enabled } => Some(json!({"enabled": enabled})),
-            TelemetryEvent::ToggleSshWarpification { enabled } => Some(json!({"enabled": enabled})),
+            TelemetryEvent::ToggleSshOctomusification { enabled } => Some(json!({"enabled": enabled})),
             TelemetryEvent::SetSshExtensionInstallMode { mode } => Some(json!({"mode": mode})),
             TelemetryEvent::SshRemoteServerChoiceDoNotAskAgainToggled { checked } => {
                 Some(json!({"checked": checked}))
@@ -3505,14 +3505,14 @@ impl TelemetryEvent {
             TelemetryEvent::SshInteractiveSessionDetected(ssh_interactive_session_detected) => {
                 Some(json!({"ssh_interactive_session": ssh_interactive_session_detected}))
             }
-            TelemetryEvent::SshTmuxWarpificationSuccess {
+            TelemetryEvent::SshTmuxOctomusificationSuccess {
                 duration_ms,
                 tmux_installation,
             } => Some(json!({
                 "duration_ms": duration_ms,
                 "tmux_installation": *tmux_installation,
             })),
-            TelemetryEvent::SshTmuxWarpificationErrorBlock {
+            TelemetryEvent::SshTmuxOctomusificationErrorBlock {
                 error,
                 tmux_installation,
             } => Some(json!({
@@ -3984,7 +3984,7 @@ impl TelemetryEvent {
                 "conversation_id": conversation_id,
                 "rating": rating,
             })),
-            TelemetryEvent::ExecutedWarpDrivePrompt {
+            TelemetryEvent::ExecutedOctomusDrivePrompt {
                 id,
                 selection_source,
             } => Some(json!({
@@ -4191,7 +4191,7 @@ impl TelemetryEvent {
             | TelemetryEvent::SetNewWindowsAtCustomSize
             | TelemetryEvent::DisableInputSync
             | TelemetryEvent::ShowSubshellBanner
-            | TelemetryEvent::SshTmuxWarpifyBannerDisplayed
+            | TelemetryEvent::SshTmuxOctomusifyBannerDisplayed
             | TelemetryEvent::AddDenylistedSubshellCommand
             | TelemetryEvent::RemoveDenylistedSubshellCommand
             | TelemetryEvent::AddAddedSubshellCommand
@@ -4199,8 +4199,8 @@ impl TelemetryEvent {
             | TelemetryEvent::ReceivedSubshellRcFileDcs
             | TelemetryEvent::AddDenylistedSshTmuxWrapperHost
             | TelemetryEvent::RemoveDenylistedSshTmuxWrapperHost
-            | TelemetryEvent::SshTmuxWarpifyBlockAccepted
-            | TelemetryEvent::SshTmuxWarpifyBlockDismissed
+            | TelemetryEvent::SshTmuxOctomusifyBlockAccepted
+            | TelemetryEvent::SshTmuxOctomusifyBlockDismissed
             | TelemetryEvent::SshInstallTmuxBlockDisplayed
             | TelemetryEvent::SshInstallTmuxBlockAccepted
             | TelemetryEvent::SshInstallTmuxBlockDismissed
@@ -4580,7 +4580,7 @@ impl TelemetryEvent {
                 "banner_toggle_flag_enabled": banner_toggle_flag_enabled,
                 "post_purchase_modal_flag_enabled": post_purchase_modal_flag_enabled,
             })),
-            TelemetryEvent::WarpDriveOpened {
+            TelemetryEvent::OctomusDriveOpened {
                 source,
                 is_code_mode_v2,
             } => Some(json!({
@@ -5020,14 +5020,14 @@ impl TelemetryEvent {
             | TelemetryEvent::RemoveDenylistedSshTmuxWrapperHost
             | TelemetryEvent::ToggleSshTmuxWrapper { .. }
             | TelemetryEvent::SshInteractiveSessionDetected(_)
-            | TelemetryEvent::SshTmuxWarpifyBannerDisplayed
-            | TelemetryEvent::SshTmuxWarpifyBlockAccepted
-            | TelemetryEvent::SshTmuxWarpifyBlockDismissed
-            | TelemetryEvent::WarpifyFooterShown { .. }
+            | TelemetryEvent::SshTmuxOctomusifyBannerDisplayed
+            | TelemetryEvent::SshTmuxOctomusifyBlockAccepted
+            | TelemetryEvent::SshTmuxOctomusifyBlockDismissed
+            | TelemetryEvent::OctomusifyFooterShown { .. }
             | TelemetryEvent::AgentToolbarDismissed
-            | TelemetryEvent::WarpifyFooterAcceptedWarpify { .. }
-            | TelemetryEvent::SshTmuxWarpificationSuccess { .. }
-            | TelemetryEvent::SshTmuxWarpificationErrorBlock { .. }
+            | TelemetryEvent::OctomusifyFooterAcceptedOctomusify { .. }
+            | TelemetryEvent::SshTmuxOctomusificationSuccess { .. }
+            | TelemetryEvent::SshTmuxOctomusificationErrorBlock { .. }
             | TelemetryEvent::SshInstallTmuxBlockDisplayed
             | TelemetryEvent::SshInstallTmuxBlockAccepted
             | TelemetryEvent::SshInstallTmuxBlockDismissed
@@ -5044,7 +5044,7 @@ impl TelemetryEvent {
             | TelemetryEvent::AnonymousUserAttemptLoginGatedFeature { .. }
             | TelemetryEvent::AnonymousUserHitCloudObjectLimit
             | TelemetryEvent::NeedsReauth
-            | TelemetryEvent::WarpDriveOpened { .. }
+            | TelemetryEvent::OctomusDriveOpened { .. }
             | TelemetryEvent::ToggleWarpAI { .. }
             | TelemetryEvent::ToggleSecretRedaction { .. }
             | TelemetryEvent::CustomSecretRegexAdded
@@ -5074,7 +5074,7 @@ impl TelemetryEvent {
             | TelemetryEvent::LogOut
             | TelemetryEvent::InviteTeammates { .. }
             | TelemetryEvent::CopyObjectToClipboard(_)
-            | TelemetryEvent::OpenAndWarpifyDockerSubshell { .. }
+            | TelemetryEvent::OpenAndOctomusifyDockerSubshell { .. }
             | TelemetryEvent::UpdateBlockFilterQuery
             | TelemetryEvent::UpdateBlockFilterQueryContextLines { .. }
             | TelemetryEvent::ToggleBlockFilterQuery { .. }
@@ -5147,8 +5147,8 @@ impl TelemetryEvent {
             | TelemetryEvent::MCPTemplateShared
             | TelemetryEvent::MCPServerSpawned { .. }
             | TelemetryEvent::MCPToolCallAccepted { .. }
-            | TelemetryEvent::ExecutedWarpDrivePrompt { .. }
-            | TelemetryEvent::ToggleSshWarpification { .. }
+            | TelemetryEvent::ExecutedOctomusDrivePrompt { .. }
+            | TelemetryEvent::ToggleSshOctomusification { .. }
             | TelemetryEvent::SetSshExtensionInstallMode { .. }
             | TelemetryEvent::SshRemoteServerChoiceDoNotAskAgainToggled { .. }
             | TelemetryEvent::SettingsImportInitiated
@@ -5293,7 +5293,7 @@ impl TelemetryEvent {
         // We initialize the feature flags so that we can determine which telemetry events to print.
         crate::features::init_feature_flags();
 
-        let events: serde_json::Map<String, Value> = warp_core::telemetry::all_events()
+        let events: serde_json::Map<String, Value> = octomus_core::telemetry::all_events()
             .filter_map(|event| {
                 if !event.enablement_state().is_enabled() {
                     return None;
@@ -5571,25 +5571,25 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::ToggleTabIndicators => EnablementState::Always,
             Self::TogglePreserveActiveTabColor => EnablementState::Always,
             Self::ShowSubshellBanner => EnablementState::Always,
-            Self::SshTmuxWarpifyBannerDisplayed => EnablementState::Always,
+            Self::SshTmuxOctomusifyBannerDisplayed => EnablementState::Always,
             Self::DeclineSubshellBootstrap => EnablementState::Always,
             Self::TriggerSubshellBootstrap => EnablementState::Always,
             Self::AddDenylistedSubshellCommand => EnablementState::Always,
             Self::RemoveDenylistedSubshellCommand => EnablementState::Always,
             Self::ToggleSshTmuxWrapper => EnablementState::Always,
-            Self::ToggleSshWarpification => EnablementState::Always,
+            Self::ToggleSshOctomusification => EnablementState::Always,
             Self::SetSshExtensionInstallMode => EnablementState::Always,
             Self::SshRemoteServerChoiceDoNotAskAgainToggled => EnablementState::Always,
             Self::AddDenylistedSshTmuxWrapperHost => EnablementState::Always,
             Self::RemoveDenylistedSshTmuxWrapperHost => EnablementState::Always,
             Self::SshInteractiveSessionDetected => EnablementState::Always,
-            Self::SshTmuxWarpifyBlockAccepted => EnablementState::Always,
-            Self::SshTmuxWarpifyBlockDismissed => EnablementState::Always,
-            Self::WarpifyFooterShown
+            Self::SshTmuxOctomusifyBlockAccepted => EnablementState::Always,
+            Self::SshTmuxOctomusifyBlockDismissed => EnablementState::Always,
+            Self::OctomusifyFooterShown
             | Self::AgentToolbarDismissed
-            | Self::WarpifyFooterAcceptedWarpify => EnablementState::Always,
-            Self::SshTmuxWarpificationSuccess => EnablementState::Always,
-            Self::SshTmuxWarpificationErrorBlock => EnablementState::Always,
+            | Self::OctomusifyFooterAcceptedOctomusify => EnablementState::Always,
+            Self::SshTmuxOctomusificationSuccess => EnablementState::Always,
+            Self::SshTmuxOctomusificationErrorBlock => EnablementState::Always,
             Self::SshInstallTmuxBlockDisplayed => EnablementState::Always,
             Self::SshInstallTmuxBlockAccepted => EnablementState::Always,
             Self::SshInstallTmuxBlockDismissed => EnablementState::Always,
@@ -5604,7 +5604,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::DismissVimKeybindingsBanner => EnablementState::Always,
             Self::InitiateReauth => EnablementState::Always,
             Self::NeedsReauth => EnablementState::Always,
-            Self::WarpDriveOpened => EnablementState::Always,
+            Self::OctomusDriveOpened => EnablementState::Always,
             Self::ToggleWarpAI => EnablementState::Always,
             Self::ToggleSecretRedaction => EnablementState::Always,
             Self::CustomSecretRegexAdded => EnablementState::Always,
@@ -5623,7 +5623,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::SettingsImportInitiated => EnablementState::Always,
             Self::InviteTeammates => EnablementState::Always,
             Self::CopyObjectToClipboard => EnablementState::Always,
-            Self::OpenAndWarpifyDockerSubshell => EnablementState::Always,
+            Self::OpenAndOctomusifyDockerSubshell => EnablementState::Always,
             Self::UpdateBlockFilterQuery => EnablementState::Always,
             Self::UpdateBlockFilterQueryContextLines => EnablementState::Always,
             Self::ToggleBlockFilterQuery => EnablementState::Always,
@@ -5734,7 +5734,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::AgentModeRatedResponse => {
                 EnablementState::Flag(FeatureFlag::GlobalAIAnalyticsBanner)
             }
-            Self::ExecutedWarpDrivePrompt => EnablementState::Flag(FeatureFlag::AgentModeWorkflows),
+            Self::ExecutedOctomusDrivePrompt => EnablementState::Flag(FeatureFlag::AgentModeWorkflows),
             Self::ImageReceived => EnablementState::Always,
             Self::FileExceededContextLimit => EnablementState::Always,
             Self::AgentModeError => EnablementState::Always,
@@ -6060,11 +6060,11 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
                 "InitialWorkingDirectoryConfigurationChanged"
             }
             Self::InputModeChanged => "Input Mode Changed",
-            Self::OpenedWarpAI => "Opened Warp AI",
-            Self::WarpAIRequestIssued => "Warp AI Request Issued",
-            Self::WarpAIAction => "Warp AI Action",
-            Self::UsedWarpAIPreparedPrompt => "Used Warp AI Prepared Prompt",
-            Self::WarpAICharacterLimitExceeded => "Warp AI Character Limit Exceeded",
+            Self::OpenedWarpAI => "Opened Octomus AI",
+            Self::WarpAIRequestIssued => "Octomus AI Request Issued",
+            Self::WarpAIAction => "Octomus AI Action",
+            Self::UsedWarpAIPreparedPrompt => "Used Octomus AI Prepared Prompt",
+            Self::WarpAICharacterLimitExceeded => "Octomus AI Character Limit Exceeded",
             Self::OpenInputContextMenu => "OpenInputBoxContextMenu",
             Self::InputCutSelectedText => "InputBoxCutSelectedText",
             Self::InputCopySelectedText => "InputBoxCutSelectedText",
@@ -6082,7 +6082,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::ToggleTabIndicators => "Toggle Tab Indicators",
             Self::TogglePreserveActiveTabColor => "Toggle Preserve Active Tab Color",
             Self::ShowSubshellBanner => "Show Subshell Banner",
-            Self::SshTmuxWarpifyBannerDisplayed => "Show Warpify SSH Banner",
+            Self::SshTmuxOctomusifyBannerDisplayed => "Show Octomusify SSH Banner",
             Self::DeclineSubshellBootstrap => "Decline Subshell Bootstrap",
             Self::TriggerSubshellBootstrap => "Trigger Subshell Bootstrap",
             Self::AddDenylistedSubshellCommand => "Add Denylisted Subshell Command",
@@ -6091,7 +6091,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::RemoveAddedSubshellCommand => "Remove Added Subshell Command",
             Self::ReceivedSubshellRcFileDcs => "Received Subshell RC File DCS",
             Self::ToggleSshTmuxWrapper => "Toggle SSH Tmux Wrapper",
-            Self::ToggleSshWarpification => "Toggle SSH Warpification",
+            Self::ToggleSshOctomusification => "Toggle SSH Octomusification",
             Self::SetSshExtensionInstallMode => "Set SSH Extension Install Mode",
             Self::SshRemoteServerChoiceDoNotAskAgainToggled => {
                 "SSH Remote Server Choice Do Not Ask Again Toggled"
@@ -6099,13 +6099,13 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::AddDenylistedSshTmuxWrapperHost => "Add Denylisted SSH Tmux Wrapper Host",
             Self::RemoveDenylistedSshTmuxWrapperHost => "Remove Denylisted SSH Tmux Wrapper Host",
             Self::SshInteractiveSessionDetected => "SSH Interactive Session Detected",
-            Self::SshTmuxWarpifyBlockAccepted => "SSH Tmux Warpify Block Accepted",
-            Self::SshTmuxWarpifyBlockDismissed => "SSH Tmux Warpify Block Dismissed",
-            Self::WarpifyFooterShown => "Warpify Footer Shown",
+            Self::SshTmuxOctomusifyBlockAccepted => "SSH Tmux Octomusify Block Accepted",
+            Self::SshTmuxOctomusifyBlockDismissed => "SSH Tmux Octomusify Block Dismissed",
+            Self::OctomusifyFooterShown => "Octomusify Footer Shown",
             Self::AgentToolbarDismissed => "Agent Toolbar Dismissed",
-            Self::WarpifyFooterAcceptedWarpify => "Warpify Footer Accepted Warpify",
-            Self::SshTmuxWarpificationSuccess => "SSH Tmux Warpification Succeeded",
-            Self::SshTmuxWarpificationErrorBlock => "SSH Tmux Warpification Error Block",
+            Self::OctomusifyFooterAcceptedOctomusify => "Octomusify Footer Accepted Octomusify",
+            Self::SshTmuxOctomusificationSuccess => "SSH Tmux Octomusification Succeeded",
+            Self::SshTmuxOctomusificationErrorBlock => "SSH Tmux Octomusification Error Block",
             Self::SshInstallTmuxBlockDisplayed => "SSH Install Tmux Block Displayed",
             Self::SshInstallTmuxBlockAccepted => "SSH Install Tmux Block Accepted",
             Self::SshInstallTmuxBlockDismissed => "SSH Install Tmux Block Dismissed",
@@ -6114,8 +6114,8 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::EnableAliasExpansionFromBanner => "Enable Alias Expansion From Banner",
             Self::InitiateReauth => "Initiate Reauth",
             Self::NeedsReauth => "Needs Reauth",
-            Self::WarpDriveOpened => "Warp Drive Opened",
-            Self::ToggleWarpAI => "Toggle Warp AI",
+            Self::OctomusDriveOpened => "Octomus Drive Opened",
+            Self::ToggleWarpAI => "Toggle Octomus AI",
             Self::ToggleSecretRedaction => "Toggle Secret Redaction",
             Self::CustomSecretRegexAdded => "Custom Secret Regex Added",
             Self::ToggleObfuscateSecret => "Toggle Obfuscate Secret",
@@ -6140,13 +6140,13 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::JumpToSharedSessionParticipant { .. } => "Jumped to Shared Session Participant",
             Self::CopiedSharedSessionLink { .. } => "Copied Shared Session Link",
             Self::WebSessionOpenedOnDesktop { .. } => "Web session opened on desktop",
-            Self::WebCloudObjectOpenedOnDesktop { .. } => "Warp Drive object opened on desktop",
-            Self::DriveSharingOnboardingBlockShown => "Warp Drive Sharing onboarding block shown",
+            Self::WebCloudObjectOpenedOnDesktop { .. } => "Octomus Drive object opened on desktop",
+            Self::DriveSharingOnboardingBlockShown => "Octomus Drive Sharing onboarding block shown",
             Self::UnsupportedShell => "Unsupported Shell",
             Self::SettingsImportInitiated => "Settings Import Initiated",
             Self::InviteTeammates => "Invited Teammates",
             Self::CopyObjectToClipboard => "Copy Object To Clipboard",
-            Self::OpenAndWarpifyDockerSubshell => "OpenAndWarpifyDockerSubshell",
+            Self::OpenAndOctomusifyDockerSubshell => "OpenAndOctomusifyDockerSubshell",
             Self::UpdateBlockFilterQuery => "Update Block Filter Query",
             Self::ToggleBlockFilterQuery => "Toggle Block Filter Query",
             Self::ToggleBlockFilterCaseSensitivity => "Toggle Block Filter Case Sensitivity",
@@ -6291,7 +6291,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::ActiveIndexedReposChanged => "Active Indexed Repos Changed",
             Self::AttachedImagesToAgentModeQuery => "AgentMode.AttachedImages",
             Self::AgentModeRatedResponse => "AgentMode.RatedResponse",
-            Self::ExecutedWarpDrivePrompt => "AgentMode.ExecutedWarpDrivePrompt",
+            Self::ExecutedOctomusDrivePrompt => "AgentMode.ExecutedOctomusDrivePrompt",
             Self::ImageReceived => "Image Received",
             Self::FileExceededContextLimit => "AgentMode.Code.FileExceededContextLimit",
             Self::AgentModeError => "AgentMode.Error",
@@ -6450,7 +6450,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             }
             Self::InitiateAnonymousUserSignup => "An anonymous user initiated the sign up flow",
             Self::AnonymousUserExpirationLockout => {
-                "An anonymous user opened Warp after their conversion deadline and was locked out"
+                "An anonymous user opened Octomus after their conversion deadline and was locked out"
             }
             Self::AnonymousUserLinkedFromBrowser => {
                 "Received an auth payload from anonymous user after linking in browser"
@@ -6462,7 +6462,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
                 "Anonymous user attempted to create a cloud object past their personal object limit"
             }
             Self::BackgroundBlockStarted => {
-                "Warp created a background-output Block (whenever a processes has been backgrounded and yields some output)"
+                "Octomus created a background-output Block (whenever a processes has been backgrounded and yields some output)"
             }
             Self::BaselineCommandLatency => "Command execution time",
             Self::SessionCreation => "Created a tab",
@@ -6563,9 +6563,9 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
                 "Database write error when trying to write app state for session restoration"
             }
             Self::AppStartup => "App is launched",
-            Self::LoggedOutStartup => "Started Warp in the logged-out / signed-out state",
+            Self::LoggedOutStartup => "Started Octomus in the logged-out / signed-out state",
             Self::DownloadSource => {
-                "Whether the Warp was installed from the home page or through homebrew"
+                "Whether the Octomus was installed from the home page or through homebrew"
             }
             Self::SSHBootstrapAttempt => "Attempted bootstrapping for an SSH session",
             Self::SSHControlMasterError => {
@@ -6600,13 +6600,13 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             }
             Self::NotificationSent => "Sent desktop notification",
             Self::NotificationFailedToSend => "Failed to send desktop notification",
-            Self::NotificationClicked => "Clicked desktop notification sent from Warp",
+            Self::NotificationClicked => "Clicked desktop notification sent from Octomus",
             Self::ToggleShowAgentTips => "Toggled the Show Agent Tips setting in AI settings",
             Self::ToggleFindOption => "Changed settings in Find Toggle",
             Self::SignUpButtonClicked => "Clicked \"Sign Up\" button",
             Self::LoginButtonClicked => "Clicked on \"Log in\" button",
             Self::OpenNewSessionFromFilePath => {
-                "Dragged a file, folder, etc. into Warp to start a session"
+                "Dragged a file, folder, etc. into Octomus to start a session"
             }
             Self::OpenTeamFromURI => {
                 "Showed settings view of their newly joined team within the app"
@@ -6659,16 +6659,16 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
                 "Opened the launch config YAML file from modal once saved successfully"
             }
             Self::OpenLaunchConfig => "Opened launch config for a session",
-            Self::TeamCreated => "Created a Warp Drive team",
-            Self::TeamJoined => "Joined a Warp Drive team",
-            Self::TeamLeft => "Left a Warp Drive team",
-            Self::TeamLinkCopied => "Copied a Warp Drive team link",
-            Self::RemovedUserFromTeam => "Remove user from Warp Drive team",
-            Self::DeletedWorkflow => "Deleted workflow from Warp Drive team",
-            Self::DeletedNotebook => "Deleted notebook from Warp Drive team",
+            Self::TeamCreated => "Created a Octomus Drive team",
+            Self::TeamJoined => "Joined a Octomus Drive team",
+            Self::TeamLeft => "Left a Octomus Drive team",
+            Self::TeamLinkCopied => "Copied a Octomus Drive team link",
+            Self::RemovedUserFromTeam => "Remove user from Octomus Drive team",
+            Self::DeletedWorkflow => "Deleted workflow from Octomus Drive team",
+            Self::DeletedNotebook => "Deleted notebook from Octomus Drive team",
             Self::ToggleApprovalsModal => "Opened or closed teams modal",
             Self::ChangedInviteViewOption => "Toggled between link and invite for invite",
-            Self::SendEmailInvites => "Sent email invites for Warp Drive team",
+            Self::SendEmailInvites => "Sent email invites for Octomus Drive team",
             Self::CommandCorrection => "Accepted command correction",
             Self::SetLineHeight => "Set line height through Settings -> Appearance",
             Self::ResourceCenterOpened => "Opened Resource Center pane",
@@ -6696,7 +6696,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             }
             Self::QuitModalCancel => "`Cancel` button on the alert modal was pressed",
             Self::QuitModalDisabled => {
-                "The quit modal dialog has been disabled and will not popup when a user closes Warp while a session is running"
+                "The quit modal dialog has been disabled and will not popup when a user closes Octomus while a session is running"
             }
             Self::UserInitiatedLogOut => {
                 "Confirms a user has explicitly logged out of the application"
@@ -6721,14 +6721,14 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::InitialWorkingDirectoryConfigurationChanged => {
                 "Replaced the default working directory with a different path"
             }
-            Self::OpenedWarpAI => "Activated Warp AI",
-            Self::WarpAIRequestIssued => "Issued a question to Warp AI",
-            Self::WarpAIAction => "Executed a Warp AI action: Restart, Copy, Insert into terminal",
+            Self::OpenedWarpAI => "Activated Octomus AI",
+            Self::WarpAIRequestIssued => "Issued a question to Octomus AI",
+            Self::WarpAIAction => "Executed a Octomus AI action: Restart, Copy, Insert into terminal",
             Self::UsedWarpAIPreparedPrompt => {
-                "Used one of the Warp-provided prompts, like \"Show examples\""
+                "Used one of the Octomus-provided prompts, like \"Show examples\""
             }
             Self::WarpAICharacterLimitExceeded => {
-                "Attempted to ask a question longer than 1k chars to Warp AI"
+                "Attempted to ask a question longer than 1k chars to Octomus AI"
             }
             Self::OpenInputContextMenu => "Opened the Input Editor's context menu",
             Self::InputCutSelectedText => {
@@ -6747,7 +6747,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::InputAICommandSearch => {
                 "Opened AI Command Search via the Input Editor's context menu (right clicking the buffer)"
             }
-            Self::InputAskWarpAI => "Clicked \"Ask Warp AI\" from the Input Editor's context menu",
+            Self::InputAskWarpAI => "Clicked \"Ask Octomus AI\" from the Input Editor's context menu",
             Self::SaveAsWorkflowModal => {
                 "Opened the modal to create a new workflow using a Block's context--command, etc."
             }
@@ -6778,34 +6778,34 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
                 "Enabled or disabled preserving the active tab color"
             }
             Self::ShowSubshellBanner => {
-                "Displayed the banner asking whether Warp should Warpify the current session via Warp's subshell wrapper"
+                "Displayed the banner asking whether Octomus should Octomusify the current session via Octomus's subshell wrapper"
             }
-            Self::SshTmuxWarpifyBannerDisplayed => {
-                "Displayed the banner asking whether Warp should Warpify the current SSH session via Warp's SSH Wrapper"
+            Self::SshTmuxOctomusifyBannerDisplayed => {
+                "Displayed the banner asking whether Octomus should Octomusify the current SSH session via Octomus's SSH Wrapper"
             }
             Self::DeclineSubshellBootstrap => {
-                "Developer declined the Warp banner to Warpify the current session"
+                "Developer declined the Octomus banner to Octomusify the current session"
             }
             Self::TriggerSubshellBootstrap => {
-                "Attempted to Warpify the current session via Warp's subshell wrapper"
+                "Attempted to Octomusify the current session via Octomus's subshell wrapper"
             }
             Self::AddDenylistedSubshellCommand => {
-                "Explicitly prevent a command from being Warpified via Warp's subshell wrapper"
+                "Explicitly prevent a command from being Warpified via Octomus's subshell wrapper"
             }
             Self::RemoveDenylistedSubshellCommand => {
-                "Removed a command from the list of commands to IGNORE when trying to Warpify via Warp's subshell wrapper"
+                "Removed a command from the list of commands to IGNORE when trying to Octomusify via Octomus's subshell wrapper"
             }
             Self::AddAddedSubshellCommand => {
-                "Added a command to be automatically Warpified via Warp's subshell wrapper"
+                "Added a command to be automatically Warpified via Octomus's subshell wrapper"
             }
             Self::RemoveAddedSubshellCommand => {
-                "Removed a command from the list of commands to automatically Warpify via Warp's subshell wrapper"
+                "Removed a command from the list of commands to automatically Octomusify via Octomus's subshell wrapper"
             }
             Self::ReceivedSubshellRcFileDcs => "Spawned a subshell to be automatically Warpified",
             Self::ToggleSshTmuxWrapper => {
                 "Changed the setting for SSH sessions to prompt for Tmux Wrapper"
             }
-            Self::ToggleSshWarpification => "Changed the setting for SSH sessions to be warified",
+            Self::ToggleSshOctomusification => "Changed the setting for SSH sessions to be warified",
             Self::SetSshExtensionInstallMode => {
                 "Changed the SSH extension install mode (always ask / always allow / always skip)"
             }
@@ -6820,20 +6820,20 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             }
             Self::AgentModeRatedResponse => "User rated an Agent Mode response",
             Self::SshInteractiveSessionDetected => "An interactive SSH session was detected",
-            Self::SshTmuxWarpifyBlockAccepted => "User accepted an ssh tmux warpify block",
-            Self::SshTmuxWarpifyBlockDismissed => "User dismissed an ssh tmux warpify block",
-            Self::WarpifyFooterShown => {
-                "Displayed the warpify footer for a detected subshell or SSH session"
+            Self::SshTmuxOctomusifyBlockAccepted => "User accepted an ssh tmux octomusify block",
+            Self::SshTmuxOctomusifyBlockDismissed => "User dismissed an ssh tmux octomusify block",
+            Self::OctomusifyFooterShown => {
+                "Displayed the octomusify footer for a detected subshell or SSH session"
             }
             Self::AgentToolbarDismissed => "User dismissed the use-agent toolbar",
-            Self::WarpifyFooterAcceptedWarpify => "User clicked Warpify in the warpify footer",
-            Self::SshTmuxWarpificationSuccess => "Ssh tmux warpification succeeded",
-            Self::SshTmuxWarpificationErrorBlock => "Ssh tmux warpification errored out",
+            Self::OctomusifyFooterAcceptedOctomusify => "User clicked Octomusify in the octomusify footer",
+            Self::SshTmuxOctomusificationSuccess => "Ssh tmux octomusification succeeded",
+            Self::SshTmuxOctomusificationErrorBlock => "Ssh tmux octomusification errored out",
             Self::SshInstallTmuxBlockDisplayed => "Displayed an ssh install tmux block",
             Self::SshInstallTmuxBlockAccepted => "User accepted an ssh install tmux block",
             Self::SshInstallTmuxBlockDismissed => "User dismissed an ssh install tmux block",
             Self::ShowAliasExpansionBanner => {
-                "Displayed the banner asking whether Warp should automatically expand aliases within the Input Editor"
+                "Displayed the banner asking whether Octomus should automatically expand aliases within the Input Editor"
             }
             Self::EnableAliasExpansionFromBanner => {
                 "Enabled automatic alias expansion within the Input Editor from the banner"
@@ -6842,7 +6842,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
                 "Dismissed the banner to enable automatic alias expansion within the Input Editor"
             }
             Self::ShowVimKeybindingsBanner => {
-                "Displayed the banner asking whether Warp should enable Vim keybindings in the Input Editor"
+                "Displayed the banner asking whether Octomus should enable Vim keybindings in the Input Editor"
             }
             Self::EnableVimKeybindingsFromBanner => {
                 "Enabled Vim keybindings in the Input Editor from the banner"
@@ -6852,9 +6852,9 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             }
             Self::InitiateReauth => "Started the flow to re-authenticate the client",
             Self::NeedsReauth => "User needs to re-authenticate",
-            Self::WarpDriveOpened => "Opened Warp Drive panel",
+            Self::OctomusDriveOpened => "Opened Octomus Drive panel",
             Self::ToggleWarpAI => {
-                "Toggled Warp AI--an AI assistant to help you debug errors, look up forgotten commands and more"
+                "Toggled Octomus AI--an AI assistant to help you debug errors, look up forgotten commands and more"
             }
             Self::ToggleSecretRedaction => {
                 "Toggled on/off the setting for Secret Redaction - attempts to redact secrets and sensitive information"
@@ -6863,18 +6863,18 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::ToggleObfuscateSecret => "Revealed or hid a secret",
             Self::CopySecret => "Copied a secret's obfuscated contents to clipboard",
             Self::AutoGenerateMetadataSuccess => {
-                "Successfully generated metadata for a workflow using Warp AI"
+                "Successfully generated metadata for a workflow using Octomus AI"
             }
             Self::AutoGenerateMetadataError => {
-                "Failed to generate metadata for a workflow using Warp AI"
+                "Failed to generate metadata for a workflow using Octomus AI"
             }
-            Self::UpdateSortingChoice => "Modified the sorting scheme for Warp Drive objects",
+            Self::UpdateSortingChoice => "Modified the sorting scheme for Octomus Drive objects",
             Self::UndoClose => "Re-opened a closed tab or window (undo closing a tab or window)",
             Self::PtyThroughput => "A sample of the max PTY throughput in bytes/sec",
-            Self::DuplicateObject => "Cloned a Warp Drive object",
-            Self::ExportObject => "Exported a Warp Drive object",
+            Self::DuplicateObject => "Cloned a Octomus Drive object",
+            Self::ExportObject => "Exported a Octomus Drive object",
             Self::CommandFileRun => {
-                "Opened a .cmd or unix executable file and ran it directly in Warp"
+                "Opened a .cmd or unix executable file and ran it directly in Octomus"
             }
             Self::PageUpDownInEditorPressed => {
                 "Pressed `PAGE-UP` or `PAGE-DOWN` within the Input Editor"
@@ -6882,7 +6882,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::StartedSharingCurrentSession => "Started sharing the current session",
             Self::StoppedSharingCurrentSession => "Halted sharing the current session",
             Self::JoinedSharedSession => {
-                "When you join another instance of Warp using shared sessions"
+                "When you join another instance of Octomus using shared sessions"
             }
             Self::SharedSessionModalUpgradePressed => {
                 "Pressed upgrade after reaching max session sharing limit"
@@ -6901,18 +6901,18 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
                 "Shared session viewed on the web was opened on the desktop"
             }
             Self::WebCloudObjectOpenedOnDesktop => {
-                "Warp Drive object on the web was opened on the desktop"
+                "Octomus Drive object on the web was opened on the desktop"
             }
             Self::DriveSharingOnboardingBlockShown => {
-                "Showed onboarding block for Warp Drive sharing"
+                "Showed onboarding block for Octomus Drive sharing"
             }
-            Self::UnsupportedShell => "Booted Warp with a shell that isn't supported",
-            Self::LogOut => "Logged out of the Warp client",
+            Self::UnsupportedShell => "Booted Octomus with a shell that isn't supported",
+            Self::LogOut => "Logged out of the Octomus client",
             Self::SettingsImportInitiated => "Started the import settings flow for new users",
-            Self::InviteTeammates => "Sent emails to invite teammates to join Warp Drive team",
+            Self::InviteTeammates => "Sent emails to invite teammates to join Octomus Drive team",
             Self::CopyObjectToClipboard => "Copied an object to the user's keyboard",
-            Self::OpenAndWarpifyDockerSubshell => {
-                "Warpifying a docker subshell from using the docker extension"
+            Self::OpenAndOctomusifyDockerSubshell => {
+                "Octomusifying a docker subshell from using the docker extension"
             }
             Self::UpdateBlockFilterQuery => "When a new filter is applied to a block",
             Self::UpdateBlockFilterQueryContextLines => {
@@ -6996,7 +6996,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::ObjectLinkCopied => "The web link to an object has been copied.",
             Self::FileTreeToggled => "Opened the file tree/project explorer",
             Self::GlobalSearchOpened => "Opened the global search view",
-            Self::GlobalSearchQueryStarted => "Started a global search (warp_ripgrep) search",
+            Self::GlobalSearchQueryStarted => "Started a global search (octomus_ripgrep) search",
             Self::FileTreeItemAttachedAsContext => {
                 "Attached a file or directory as context from the file tree"
             }
@@ -7058,18 +7058,18 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             }
             Self::AgentModeOpenedCitation => "Opened a citation that was surfaced in agent mode",
             Self::OpenedSharingDialog => {
-                "Opened the sharing settings dialog for a session or Warp Drive object"
+                "Opened the sharing settings dialog for a session or Octomus Drive object"
             }
             Self::ToggleGlobalAI => "Toggled global AI enablement.",
             Self::ToggleActiveAI => "Toggled active AI enablement.",
             Self::ToggleLigatureRendering => "Toggled ligature rendering",
-            Self::WorkflowAliasAdded => "Added an alias to a Warp Drive workflow",
-            Self::WorkflowAliasRemoved => "Removed an alias from a Warp Drive workflow",
+            Self::WorkflowAliasAdded => "Added an alias to a Octomus Drive workflow",
+            Self::WorkflowAliasRemoved => "Removed an alias from a Octomus Drive workflow",
             Self::WorkflowAliasArgumentEdited => {
-                "Edited an argument in a Warp Drive workflow alias"
+                "Edited an argument in a Octomus Drive workflow alias"
             }
             Self::WorkflowAliasEnvVarsAttached => {
-                "Added or removed environment variables for a Warp Drive workflow alias"
+                "Added or removed environment variables for a Octomus Drive workflow alias"
             }
             Self::ToggledAgentModeAutoexecuteReadonlyCommandsSetting => {
                 "Toggled setting to autoexecute readonly Agent Mode requested commands"
@@ -7101,11 +7101,11 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             }
             #[cfg(windows)]
             Self::AutoupdateMutexTimeout => {
-                "The Windows auto-update installer timed out waiting for Warp to release its mutex; a force-kill was attempted"
+                "The Windows auto-update installer timed out waiting for Octomus to release its mutex; a force-kill was attempted"
             }
             #[cfg(windows)]
             Self::AutoupdateForcekillFailed { .. } => {
-                "The Windows auto-update installer failed to force-kill Warp after the mutex timeout"
+                "The Windows auto-update installer failed to force-kill Octomus after the mutex timeout"
             }
             #[cfg(windows)]
             Self::AutoupdateMinidumpCleanupFailed { .. } => {
@@ -7120,7 +7120,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::ActiveIndexedReposChanged => {
                 "Active indexed repositories changed, affecting codebase context."
             }
-            Self::ExecutedWarpDrivePrompt => "Executed a saved prompt.",
+            Self::ExecutedOctomusDrivePrompt => "Executed a saved prompt.",
             Self::ImageReceived => "Received an image through an image protocol over the pty",
             Self::FileExceededContextLimit => "File from AI exceeded context limit",
             Self::AgentModeError => "Received an error when getting Agent Mode response",
@@ -7227,7 +7227,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
                 "User copied a session link from the Agent Management View"
             }
             Self::DetectedIsolationPlatform { .. } => {
-                "Detected that Warp is running in an isolated sandbox"
+                "Detected that Octomus is running in an isolated sandbox"
             }
             Self::AgentTipShown => "Selected an Agent Tip to show in the Agent Mode status bar",
             Self::AgentTipClicked => "User clicked a link or action in an Agent Tip",
@@ -7273,7 +7273,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::CodexModalOpened => "User opened the Codex modal",
             Self::CodexModalUseCodexClicked => "User clicked 'Use Codex' in the Codex modal",
             Self::LinearIssueLinkOpened => {
-                "User opened a warp://linear deeplink to work on an issue"
+                "User opened a octomus://linear deeplink to work on an issue"
             }
             Self::CloudAgentCapacityModalOpened => "User opened the cloud agent capacity modal",
             Self::CloudAgentCapacityModalDismissed => {
@@ -7347,7 +7347,7 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
     }
 }
 
-warp_core::register_telemetry_event!(TelemetryEvent);
+octomus_core::register_telemetry_event!(TelemetryEvent);
 
 #[cfg(test)]
 #[path = "events_tests.rs"]

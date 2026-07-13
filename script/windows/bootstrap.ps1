@@ -11,7 +11,7 @@ $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 function Show-Usage {
     Write-Output 'Usage: .\script\windows\bootstrap.ps1 [-Help] [-InstallCommonSkills] [-CommonSkillsTarget <project|global>]'
     Write-Output ''
-    Write-Output 'Prepare this checkout for Warp development on Windows.'
+    Write-Output 'Prepare this checkout for Octomus development on Windows.'
     Write-Output ''
     Write-Output 'Options:'
     Write-Output '  -Help                 Show this help message.'
@@ -42,7 +42,7 @@ function ConvertTo-CommonSkillsTarget {
 
 
 function Show-BootstrapPreview {
-    Write-Output 'Warp bootstrap is starting for Windows.'
+    Write-Output 'Octomus bootstrap is starting for Windows.'
     Write-Output 'It will:'
     Write-Output '  - Check for Git for Windows.'
     Write-Output '  - Install Rust if cargo is unavailable.'
@@ -104,7 +104,7 @@ function Resolve-CommonSkillsScript {
         "https://raw.githubusercontent.com/warpdotdev/common-skills/$commonSkillsRef/scripts"
     }
     $rawUrl = "$rawBaseUrl/$ScriptName"
-    $scriptPath = Join-Path $env:TEMP "warp-$ScriptName"
+    $scriptPath = Join-Path $env:TEMP "octomus-$ScriptName"
 
     Invoke-WebRequest -Uri $rawUrl -OutFile $scriptPath
     return $scriptPath

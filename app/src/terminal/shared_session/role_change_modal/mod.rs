@@ -1,8 +1,8 @@
 use session_sharing_protocol::common::{ParticipantId, Role, RoleRequestId};
-use warpui::elements::Empty;
-use warpui::presenter::ChildView;
-use warpui::ui_components::components::{Coords, UiComponentStyles};
-use warpui::{AppContext, Element, Entity, View, ViewContext, ViewHandle};
+use octomusui::elements::Empty;
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::components::{Coords, UiComponentStyles};
+use octomusui::{AppContext, Element, Entity, View, ViewContext, ViewHandle};
 
 use crate::modal::Modal;
 use crate::pane_group::TerminalPaneId;

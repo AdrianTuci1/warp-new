@@ -5,8 +5,8 @@ use async_channel::Sender;
 pub use cloud_object_client::ObjectUpdateMessage;
 use futures_util::stream::AbortHandle;
 use instant::Instant;
-use warpui::r#async::Timer;
-use warpui::{Entity, ModelContext, RequestState, SingletonEntity};
+use octomusui::r#async::Timer;
+use octomusui::{Entity, ModelContext, RequestState, SingletonEntity};
 
 use super::update_manager::UpdateManager;
 use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
@@ -58,7 +58,7 @@ pub struct Listener {
     /// Since we only want to start websocket connections if we know the user is
     /// on a team or has access to cloud objects, we keep track of whether
     /// or not we should be subscribing for updates. Once we start websockets, we don't stop
-    /// so that the user gets a snappier experience once they start using Warp Drive.
+    /// so that the user gets a snappier experience once they start using Octomus Drive.
     should_subscribe_to_updates: bool,
     /// Abort handle for the (retried) future that resolves when the subscription is done.
     current_subscription_abort_handle: Option<AbortHandle>,

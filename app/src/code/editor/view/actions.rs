@@ -14,13 +14,13 @@ use warp_editor::model::{CoreEditorModel, PlainTextEditorModel};
 use warp_editor::render::element::RichTextAction;
 use warp_editor::render::model::{ExpansionType, LineCount, Location};
 use warp_editor::selection::{TextDirection, TextUnit};
-use warp_util::user_input::UserInput;
-use warpui::actions::StandardAction;
-use warpui::elements::Axis;
-use warpui::event::ModifiersState;
-use warpui::keymap::{EditableBinding, FixedBinding, Keystroke, PerPlatformKeystroke};
-use warpui::units::Pixels;
-use warpui::{AppContext, TypedActionView, ViewContext, WeakViewHandle};
+use octomus_util::user_input::UserInput;
+use octomusui::actions::StandardAction;
+use octomusui::elements::Axis;
+use octomusui::event::ModifiersState;
+use octomusui::keymap::{EditableBinding, FixedBinding, Keystroke, PerPlatformKeystroke};
+use octomusui::units::Pixels;
+use octomusui::{AppContext, TypedActionView, ViewContext, WeakViewHandle};
 
 use crate::cmd_or_ctrl_shift;
 use crate::code::editor::line::EditorLineLocation;
@@ -42,7 +42,7 @@ lazy_static! {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     let text_entry = id!("CodeEditorView") & !id!("IMEOpen");
     // We use this to disable some keybindings that would conflict with the Agent Mode embedded editor.
@@ -1205,7 +1205,7 @@ impl RichTextAction<CodeEditorView> for CodeEditorViewAction {
             modifiers.shift
         );
 
-        // The first mouse down to bring focus to a Warp window will not have a corresponding mouse up.
+        // The first mouse down to bring focus to a Octomus window will not have a corresponding mouse up.
         // We ignore it, and they can click again.
         if is_first_mouse {
             return None;

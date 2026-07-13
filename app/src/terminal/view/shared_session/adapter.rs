@@ -7,9 +7,9 @@ use chrono::{DateTime, Local};
 use markdown_parser::FormattedTextFragment;
 use session_sharing_protocol::common::{ParticipantId, ParticipantList, Role, SessionId};
 use session_sharing_protocol::sharer::SessionSourceType;
-use warp_core::features::FeatureFlag;
-use warpui::elements::MouseStateHandle;
-use warpui::{AppContext, Element, ModelHandle, ViewContext, ViewHandle};
+use octomus_core::features::FeatureFlag;
+use octomusui::elements::MouseStateHandle;
+use octomusui::{AppContext, Element, ModelHandle, ViewContext, ViewHandle};
 
 use super::sharer::Sharer;
 use super::viewer::Viewer;

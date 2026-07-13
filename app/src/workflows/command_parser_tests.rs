@@ -195,7 +195,7 @@ fn test_compute_workflow_display_data_for_linked_history_command_with_multiple_i
     // This command should be parsed as a workflow-linked command.
     //
     // The workflow contains multiple instances of the same parameter
-    let linked_history_command = r#"echo warp warp warp"#;
+    let linked_history_command = r#"echo octomus octomus octomus"#;
     let display_data = compute_workflow_display_data_for_history_command(
         linked_history_command,
         &WORKFLOW_MULTIPLE_INSTANCES_SAME_PARAMETER,

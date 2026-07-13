@@ -1,8 +1,8 @@
 use comfy_table::Cell;
 use serde::Serialize;
-use warp_cli::agent::AgentProfileCommand;
-use warp_cli::GlobalOptions;
-use warpui::{AppContext, ModelContext, SingletonEntity};
+use octomus_cli::agent::AgentProfileCommand;
+use octomus_cli::GlobalOptions;
+use octomusui::{AppContext, ModelContext, SingletonEntity};
 
 use crate::ai::agent_sdk::output::{self, TableFormat};
 use crate::ai::execution_profiles::profiles::AIExecutionProfilesModel;
@@ -53,12 +53,12 @@ impl ProfilesCommandRunner {
 
             output::print_list(profiles, global_options.output_format);
 
-            ctx.terminate_app(warpui::platform::TerminationMode::ForceTerminate, None);
+            ctx.terminate_app(octomusui::platform::TerminationMode::ForceTerminate, None);
         });
     }
 }
 
-impl warpui::Entity for ProfilesCommandRunner {
+impl octomusui::Entity for ProfilesCommandRunner {
     type Event = ();
 }
 impl SingletonEntity for ProfilesCommandRunner {}

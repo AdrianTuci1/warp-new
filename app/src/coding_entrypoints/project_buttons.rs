@@ -2,22 +2,22 @@ use std::borrow::Cow;
 
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::Vector2F;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::color::blend::Blend as _;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::Icon;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::color::blend::Blend as _;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::Icon;
+use octomusui::elements::{
     ChildAnchor, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, DropShadow, Expanded,
     Flex, Hoverable, MouseStateHandle, OffsetPositioning, ParentAnchor, ParentElement as _,
     ParentOffsetBounds, Radius, Stack,
 };
-use warpui::fonts::Weight;
-use warpui::keymap::EditableBinding;
-use warpui::platform::file_picker::FilePickerError;
-use warpui::platform::{Cursor, FilePickerConfiguration};
-use warpui::ui_components::components::{UiComponent as _, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::Weight;
+use octomusui::keymap::EditableBinding;
+use octomusui::platform::file_picker::FilePickerError;
+use octomusui::platform::{Cursor, FilePickerConfiguration};
+use octomusui::ui_components::components::{UiComponent as _, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, SingletonEntity as _, TypedActionView, View, ViewContext,
 };
 
@@ -26,7 +26,7 @@ use crate::util::bindings::{keybinding_name_to_display_string, BindingGroup, Cus
 const BUTTON_MIN_WIDTH: f32 = 149.;
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_editable_bindings([
         EditableBinding::new(
@@ -108,7 +108,7 @@ impl ProjectButtons {
 
         Hoverable::new(mouse_state, move |state| {
             let icon_el = Container::new(
-                ConstrainedBox::new(icon.to_warpui_icon(icon_color).finish())
+                ConstrainedBox::new(icon.to_octomusui_icon(icon_color).finish())
                     .with_height(20.)
                     .with_width(20.)
                     .finish(),

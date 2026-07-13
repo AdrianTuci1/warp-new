@@ -1,9 +1,9 @@
 use fuzzy_match::FuzzyMatchResult;
 use ordered_float::OrderedFloat;
-use warpui::elements::{
+use octomusui::elements::{
     ConstrainedBox, Container, CrossAxisAlignment, Flex, Icon, ParentElement, Text,
 };
-use warpui::{AppContext, Element, SingletonEntity};
+use octomusui::{AppContext, Element, SingletonEntity};
 
 use crate::appearance::Appearance;
 use crate::code_review::diff_state::DiffMode;

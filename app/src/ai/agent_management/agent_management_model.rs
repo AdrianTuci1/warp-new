@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use warp_core::features::FeatureFlag;
-use warp_core::send_telemetry_from_ctx;
-use warpui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity, ViewHandle, WindowId};
+use octomus_core::features::FeatureFlag;
+use octomus_core::send_telemetry_from_ctx;
+use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity, ViewHandle, WindowId};
 
 use crate::ai::active_agent_views_model::{ActiveAgentViewsEvent, ActiveAgentViewsModel};
 use crate::ai::agent::conversation::{AIConversationId, ConversationStatus};
@@ -24,7 +24,7 @@ use crate::BlocklistAIHistoryModel;
 
 /// Singleton model responsible for triggering in-app notifications on blocking conversation
 /// status updates and tracking/storing these notifications for the notifications mailbox.
-/// Tracks and stores notifications for both warp agent conversations and other supported
+/// Tracks and stores notifications for both octomus agent conversations and other supported
 /// cli agent sessions.
 pub struct AgentNotificationsModel {
     notifications: NotificationItems,
@@ -453,7 +453,7 @@ impl AgentNotificationsModel {
 
 #[derive(Clone, Debug)]
 pub enum AgentManagementEvent {
-    /// A Warp-native conversation needs attention and is not visible in the current window/tab.
+    /// A Octomus-native conversation needs attention and is not visible in the current window/tab.
     ConversationNeedsAttention {
         window_id: WindowId,
         tab_index: usize,

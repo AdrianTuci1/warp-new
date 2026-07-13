@@ -11,21 +11,21 @@ use std::collections::HashMap;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::vec2f;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::theme::color::internal_colors;
-use warpui::elements::new_scrollable::{NewScrollable, ScrollableAppearance, SingleAxisConfig};
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::theme::color::internal_colors;
+use octomusui::elements::new_scrollable::{NewScrollable, ScrollableAppearance, SingleAxisConfig};
+use octomusui::elements::{
     Border, ChildAnchor, ChildView, Clipped, ClippedScrollStateHandle, ConstrainedBox, Container,
     CornerRadius, CrossAxisAlignment, DragAxis, Draggable, DraggableState, Empty, Expanded, Fill,
     Flex, Hoverable, MinSize, MouseStateHandle, OffsetPositioning, ParentAnchor, ParentElement,
     ParentOffsetBounds, Radius, SavePosition, ScrollbarWidth, Stack, Text,
     DEFAULT_UI_LINE_HEIGHT_RATIO,
 };
-use warpui::fonts::{Properties, Style, Weight};
-use warpui::platform::Cursor;
-use warpui::text_layout::ClipConfig;
-use warpui::ui_components::components::UiComponent;
-use warpui::{
+use octomusui::fonts::{Properties, Style, Weight};
+use octomusui::platform::Cursor;
+use octomusui::text_layout::ClipConfig;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{
     AppContext, BlurContext, Element, Entity, EntityId, FocusContext, ModelHandle, SingletonEntity,
     TypedActionView, View, ViewContext, ViewHandle,
 };
@@ -853,7 +853,7 @@ fn render_header(
     let ui_font_size = appearance.ui_font_size();
     Hoverable::new(header_mouse_state.clone(), move |_state| {
         let chevron =
-            ConstrainedBox::new(chevron_icon.to_warpui_icon(sub_text_color.into()).finish())
+            ConstrainedBox::new(chevron_icon.to_octomusui_icon(sub_text_color.into()).finish())
                 .with_height(16.)
                 .with_width(16.)
                 .finish();
@@ -988,7 +988,7 @@ fn render_row(props: RenderRowProps<'_>, app: &AppContext) -> Box<dyn Element> {
             Hoverable::new(drag_handle_tooltip_state.clone(), move |drag_state| {
                 let icon = ConstrainedBox::new(
                     TerminalIcon::DragIndicatorVertical
-                        .to_warpui_icon(disabled_color.into())
+                        .to_octomusui_icon(disabled_color.into())
                         .finish(),
                 )
                 .with_height(20.)
@@ -1015,7 +1015,7 @@ fn render_row(props: RenderRowProps<'_>, app: &AppContext) -> Box<dyn Element> {
         } else {
             ConstrainedBox::new(
                 TerminalIcon::DragIndicatorVertical
-                    .to_warpui_icon(theme.sub_text_color(theme.surface_1()))
+                    .to_octomusui_icon(theme.sub_text_color(theme.surface_1()))
                     .finish(),
             )
             .with_height(20.)

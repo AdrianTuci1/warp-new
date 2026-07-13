@@ -2,18 +2,18 @@ use std::fmt::Debug;
 use std::marker::PhantomData;
 
 use pathfinder_color::ColorU;
-use warpui::elements::{
+use octomusui::elements::{
     Border, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius, Element, Fill, Icon,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning, ParentElement,
     PositionedElementAnchor, PositionedElementOffsetBounds, SavePosition, Stack,
 };
-use warpui::fonts::FamilyId;
-use warpui::geometry::vector::vec2f;
-use warpui::scene::DropShadow;
-use warpui::text_layout::ClipConfig;
-use warpui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::FamilyId;
+use octomusui::geometry::vector::vec2f;
+use octomusui::scene::DropShadow;
+use octomusui::text_layout::ClipConfig;
+use octomusui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
     Action, AppContext, BlurContext, Entity, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle,
 };

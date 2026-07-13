@@ -5,9 +5,9 @@ use ai::api_keys::{ApiKeyManager, ApiKeyManagerEvent, CustomEndpoint, CustomEndp
 pub use ai::LLMId;
 use parking_lot::FairMutex;
 use serde::{de, Deserialize, Serialize};
-use warp_core::ui::icons::Icon;
-use warp_core::user_preferences::GetUserPreferences;
-use warpui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
+use octomus_core::ui::icons::Icon;
+use octomus_core::user_preferences::GetUserPreferences;
+use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
 
 use super::execution_profiles::profiles::AIExecutionProfilesModel;
 use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};
@@ -324,7 +324,7 @@ impl LLMInfo {
 /// The set of LLMs available for a feature.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct AvailableLLMs {
-    /// The Warp "default" LLM.
+    /// The Octomus "default" LLM.
     default_id: LLMId,
     choices: Vec<LLMInfo>,
 
@@ -1027,7 +1027,7 @@ impl LLMPreferences {
 
     pub fn new_choices_since_last_update(&self) -> Option<Vec<LLMInfo>> {
         self.last_update.as_ref().map(|update| {
-            // We don't want to display new choices if they are warp branded.
+            // We don't want to display new choices if they are octomus branded.
             let filter_choices: Vec<LLMInfo> = update
                 .new_choices
                 .clone()

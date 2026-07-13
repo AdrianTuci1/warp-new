@@ -8,24 +8,24 @@ use futures::stream::AbortHandle;
 use itertools::Itertools;
 #[cfg_attr(not(feature = "local_fs"), allow(unused_imports))]
 use parking_lot::{FairMutex, Mutex};
-use warp_completer::completer::{
+use octomus_completer::completer::{
     self, expand_command_aliases, AliasExpansionResult, CompleterOptions,
     CompletionsFallbackStrategy, MatchStrategy,
 };
-use warp_completer::meta::Spanned;
-use warp_completer::parsers::hir::{Command, Expression, FlagType};
-use warp_completer::parsers::ParsedExpression;
-use warp_core::features::FeatureFlag;
+use octomus_completer::meta::Spanned;
+use octomus_completer::parsers::hir::{Command, Expression, FlagType};
+use octomus_completer::parsers::ParsedExpression;
+use octomus_core::features::FeatureFlag;
 #[cfg(feature = "local_fs")]
-use warpui::r#async::FutureExt;
-use warpui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
+use octomusui::r#async::FutureExt;
+use octomusui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
 
 use super::generate_ai_input_suggestions::{
     create_generate_ai_input_suggestions_request, get_context_messages,
     GenerateAIInputSuggestionsRequest, GenerateAIInputSuggestionsResponseV2, NextCommandContext,
 };
 use crate::ai::block_context::BlockContext;
-use crate::ai_assistant::execution_context::WarpAiExecutionContext;
+use crate::ai_assistant::execution_context::OctomusAiExecutionContext;
 use crate::completer::SessionContext;
 #[cfg(feature = "local_fs")]
 use crate::persistence::{database_file_path_for_scope, establish_ro_connection, PersistenceScope};
@@ -42,7 +42,7 @@ cfg_if::cfg_if! {
     if #[cfg(feature = "local_fs")] {
         use diesel::SqliteConnection;
         use std::path::PathBuf;
-        use warp_completer::parsers::hir::ArgType;
+        use octomus_completer::parsers::hir::ArgType;
     }
 }
 
@@ -57,7 +57,7 @@ const NUM_ADDITIONAL_PREV_COMMAND_CONTEXT_LLM: usize = 2;
 #[cfg(feature = "local_fs")]
 const ARG_GENERATOR_VALIDATION_TIMEOUT: Duration = Duration::from_millis(150);
 
-pub fn is_next_command_enabled(app: &warpui::AppContext) -> bool {
+pub fn is_next_command_enabled(app: &octomusui::AppContext) -> bool {
     AISettings::as_ref(app).is_intelligent_autosuggestions_enabled(app)
         && UserWorkspaces::as_ref(app).is_next_command_enabled()
 }
@@ -263,7 +263,7 @@ impl NextCommandModel {
     fn get_next_command_context(
         terminal_model: Arc<FairMutex<TerminalModel>>,
         #[cfg(feature = "local_fs")] conn: Option<Arc<Mutex<SqliteConnection>>>,
-        ai_execution_context: WarpAiExecutionContext,
+        ai_execution_context: OctomusAiExecutionContext,
         block_completed: &UserBlockCompleted,
     ) -> NextCommandContext {
         #[cfg_attr(not(feature = "local_fs"), allow(unused_mut))]
@@ -289,7 +289,7 @@ impl NextCommandModel {
     pub fn generate_next_command_suggestion(
         &mut self,
         block_completed: UserBlockCompleted,
-        context: WarpAiExecutionContext,
+        context: OctomusAiExecutionContext,
         completer_data: CompleterData,
         block_context: Option<Box<BlockContext>>,
         previous_result: Option<IntelligentAutosuggestionResult>,
@@ -336,7 +336,7 @@ impl NextCommandModel {
         &mut self,
         prefix: Option<String>,
         block_completed: UserBlockCompleted,
-        context: WarpAiExecutionContext,
+        context: OctomusAiExecutionContext,
         completer_data: CompleterData,
         block_context: Option<Box<BlockContext>>,
         previous_result: Option<IntelligentAutosuggestionResult>,

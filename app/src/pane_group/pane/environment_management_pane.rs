@@ -1,4 +1,4 @@
-use warpui::{AppContext, ModelHandle, ViewContext, ViewHandle};
+use octomusui::{AppContext, ModelHandle, ViewContext, ViewHandle};
 
 use super::view::PaneView;
 use super::{

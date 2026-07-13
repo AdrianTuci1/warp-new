@@ -8,9 +8,9 @@
 #[cfg(feature = "local_fs")]
 use std::path::Path;
 
-use warp_core::HostId;
-use warp_util::standardized_path::StandardizedPath;
-use warpui_core::{AppContext, ModelContext, ModelHandle, SingletonEntity};
+use octomus_core::HostId;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui_core::{AppContext, ModelContext, ModelHandle, SingletonEntity};
 
 use crate::file_tree_store::FileTreeState;
 use crate::file_tree_update::{MetadataUpdateType, RepoMetadataUpdate};
@@ -405,7 +405,7 @@ impl RepoMetadataModel {
     }
 }
 
-impl warpui_core::Entity for RepoMetadataModel {
+impl octomusui_core::Entity for RepoMetadataModel {
     type Event = RepoMetadataEvent;
 }
 

@@ -5,28 +5,28 @@ use std::sync::Arc;
 use pathfinder_geometry::vector::vec2f;
 #[cfg(not(target_family = "wasm"))]
 use remote_server::manager::RemoteServerManager;
-use warp_core::ui::icons::ICON_DIMENSIONS;
+use octomus_core::ui::icons::ICON_DIMENSIONS;
 use warp_editor::model::CoreEditorModel;
 #[cfg(feature = "local_fs")]
-use warp_files::{FileModel, FileModelEvent};
+use octomus_files::{FileModel, FileModelEvent};
 #[cfg(feature = "local_fs")]
-use warp_util::file::FileId;
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warp_util::path::user_friendly_path;
-use warp_util::remote_path::RemotePath;
-use warpui::accessibility::{AccessibilityContent, WarpA11yRole};
+use octomus_util::file::FileId;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomus_util::path::user_friendly_path;
+use octomus_util::remote_path::RemotePath;
+use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
 #[cfg(feature = "local_fs")]
-use warpui::clipboard::ClipboardContent;
-use warpui::elements::{
+use octomusui::clipboard::ClipboardContent;
+use octomusui::elements::{
     Align, Container, CrossAxisAlignment, DispatchEventResult, Empty, EventHandler, Flex,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, SavePosition, Shrinkable,
     Stack, Text,
 };
-use warpui::keymap::EditableBinding;
-use warpui::presenter::ChildView;
-use warpui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::keymap::EditableBinding;
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
@@ -69,7 +69,7 @@ pub enum MarkdownDisplayMode {
     Raw,
 }
 
-/// View for a read-only notebook backed by a file, rather than Warp Drive.
+/// View for a read-only notebook backed by a file, rather than Octomus Drive.
 pub struct FileNotebookView {
     /// The location of the open file. This is cached for displaying the title and breadcrumbs.
     location: Option<FileLocation>,
@@ -111,7 +111,7 @@ pub enum FileNotebookEvent {
     OpenFileWithTarget {
         path: PathBuf,
         target: FileTarget,
-        line_col: Option<warp_util::path::LineAndColumnArg>,
+        line_col: Option<octomus_util::path::LineAndColumnArg>,
     },
 }
 
@@ -214,7 +214,7 @@ impl FileState {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_editable_bindings([
         EditableBinding::new(
@@ -870,7 +870,7 @@ impl FileNotebookView {
                             TextAndIcon::new(
                                 TextAndIconAlignment::TextFirst,
                                 "Try again".to_string(),
-                                Icon::Refresh.to_warpui_icon(error_text_color),
+                                Icon::Refresh.to_octomusui_icon(error_text_color),
                                 MainAxisSize::Min,
                                 MainAxisAlignment::Center,
                                 vec2f(16., 16.),
@@ -1194,14 +1194,14 @@ impl BackingView for FileNotebookView {
             let title_text = render_pane_header_title_text(
                 title,
                 appearance,
-                warpui::text_layout::ClipConfig::start(),
+                octomusui::text_layout::ClipConfig::start(),
             );
 
             // Wrap the title in a hoverable tooltip showing the full file path.
             let title_element: Box<dyn Element> =
                 if let Some(display_path) = self.file_state.path().map(|p| p.display_path()) {
                     use pathfinder_geometry::vector::vec2f;
-                    use warpui::elements::{
+                    use octomusui::elements::{
                         ChildAnchor, Hoverable, OffsetPositioning, ParentAnchor,
                         ParentOffsetBounds, Stack,
                     };
@@ -1251,7 +1251,7 @@ impl BackingView for FileNotebookView {
                 title,
                 title_secondary: None,
                 title_style: None,
-                title_clip_config: warpui::text_layout::ClipConfig::start(),
+                title_clip_config: octomusui::text_layout::ClipConfig::start(),
                 title_max_width: None,
                 left_of_title: None,
                 right_of_title: None,

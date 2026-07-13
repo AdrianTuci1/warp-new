@@ -13,17 +13,17 @@ use anyhow::{anyhow, ensure, Result};
 use itertools::Itertools;
 use session_sharing_protocol::common::SessionId;
 use url::Url;
-use warp_util::path::LineAndColumnArg;
-use warpui::notification::UserNotification;
-use warpui::platform::TerminationMode;
-use warpui::{AppContext, EntityId, SingletonEntity as _, TypedActionView, ViewHandle, WindowId};
+use octomus_util::path::LineAndColumnArg;
+use octomusui::notification::UserNotification;
+use octomusui::platform::TerminationMode;
+use octomusui::{AppContext, EntityId, SingletonEntity as _, TypedActionView, ViewHandle, WindowId};
 
 use self::docker::open_docker_container;
 use crate::ai::active_agent_views_model::{ActiveAgentViewsModel, ConversationOrTaskId};
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::ambient_agents::github_auth_notifier::GitHubAuthNotifier;
 use crate::cloud_object::ObjectType;
-use crate::drive::{OpenWarpDriveObjectArgs, OpenWarpDriveObjectSettings};
+use crate::drive::{OpenOctomusDriveObjectArgs, OpenOctomusDriveObjectSettings};
 use crate::features::FeatureFlag;
 use crate::launch_configs::launch_config::LaunchConfig;
 use crate::linear::{LinearAction, LinearIssueWork};
@@ -72,13 +72,13 @@ pub enum UriHost {
     Action,
     /// A host prefix for all actions that involve launch configurations
     Launch,
-    /// Supports joining shared sessions via a warp:// URI.
+    /// Supports joining shared sessions via a octomus:// URI.
     SharedSession,
-    /// Supports viewing AI conversations via a warp:// URI.
+    /// Supports viewing AI conversations via a octomus:// URI.
     Conversation,
     /// Supports WD object actions
     Drive,
-    /// Supports opening warp's settings panel via URI
+    /// Supports opening octomus's settings panel via URI
     Settings,
     /// A host prefix for a general-purpose home/landing page. Unlike other intent URIs, the home
     /// page behavior may change over time and vary from platform to platform.
@@ -206,7 +206,7 @@ impl UriHost {
             }
             UriHost::SharedSession => {
                 // We expect the uri to have the ID of the session to join as the last segment.
-                // e.g. warp://shared_session/{id}
+                // e.g. octomus://shared_session/{id}
                 let session_id = url
                     .path_segments()
                     .into_iter()
@@ -238,7 +238,7 @@ impl UriHost {
             }
             UriHost::Conversation => {
                 // We expect the uri to have the conversation ID as the last segment.
-                // e.g. warp://conversation/{conversation_id}
+                // e.g. octomus://conversation/{conversation_id}
                 let conversation_id: Option<ServerConversationToken> = url
                     .path_segments()
                     .into_iter()
@@ -272,7 +272,7 @@ impl UriHost {
             }
             UriHost::Drive => {
                 // We expect the uri to have the ID of the object we are trying to open and the object_type.
-                // e.g. warp://drive/{object_type}?id={UID}
+                // e.g. octomus://drive/{object_type}?id={UID}
                 // For folder links, we expect an additional query parameter primary_object_id which refers to the id object
                 // that should be opened
                 // When the user is directed here via the request access flow, we expect an additional query parameter invitee_email
@@ -300,10 +300,10 @@ impl UriHost {
                         ctx.root_view_id(window_id)
                             .map(|view_id| (window_id, view_id))
                     });
-                    let args = OpenWarpDriveObjectArgs {
+                    let args = OpenOctomusDriveObjectArgs {
                         object_type,
                         server_id,
-                        settings: OpenWarpDriveObjectSettings {
+                        settings: OpenOctomusDriveObjectSettings {
                             focused_folder_id,
                             invitee_email,
                         },
@@ -312,7 +312,7 @@ impl UriHost {
                     if let Some((primary_window_id, root_view_id)) = primary_window_and_view {
                         // `args` may contain user-identifiable fields
                         // (e.g. `invitee_email`), so avoid writing the full
-                        // debug representation to `warp.log` on non-dogfood
+                        // debug representation to `octomus.log` on non-dogfood
                         // release channels.
                         safe_info!(
                             safe: (
@@ -337,12 +337,12 @@ impl UriHost {
             }
             UriHost::Settings => {
                 // We support opening different settings pages through URI:
-                // - warp://settings/teams?invite={email} - opens team settings with invite modal
-                // - warp://settings/billing_and_usage - opens billing and usage settings page
-                // - warp://settings/environments - opens environments settings page
-                // - warp://settings/mcp - opens MCP servers settings page
-                // - warp://settings/platform - opens platform settings page
-                // - warp://settings/appearance - opens appearance settings page (themes, fonts, etc.)
+                // - octomus://settings/teams?invite={email} - opens team settings with invite modal
+                // - octomus://settings/billing_and_usage - opens billing and usage settings page
+                // - octomus://settings/environments - opens environments settings page
+                // - octomus://settings/mcp - opens MCP servers settings page
+                // - octomus://settings/platform - opens platform settings page
+                // - octomus://settings/appearance - opens appearance settings page (themes, fonts, etc.)
                 let settings_sub_page: Option<String> = url
                     .path_segments()
                     .into_iter()
@@ -394,7 +394,7 @@ impl UriHost {
                             }
                         }
                         "mcp" => {
-                            // warp://settings/mcp?autoinstall=<name> auto-installs a gallery MCP server.
+                            // octomus://settings/mcp?autoinstall=<name> auto-installs a gallery MCP server.
                             // The value is matched case-insensitively against gallery titles.
                             let autoinstall =
                                 query_string.get("autoinstall").map(|v| v.to_string());
@@ -728,13 +728,13 @@ fn find_matching_config_name<'a>(
         .find(|&config| config.name.to_lowercase() == target_name_lower)
 }
 
-/// Handles `warp://tab_config/<name>` deeplinks.
+/// Handles `octomus://tab_config/<name>` deeplinks.
 ///
 /// Resolution rules:
 /// - `<name>` is matched case-insensitively against each tab config's file
-///   stem, so both `warp://tab_config/my_tab` and
-///   `warp://tab_config/my_tab.toml` work.
-/// - When `?new_window=true` (or no Warp window is open) the tab config opens
+///   stem, so both `octomus://tab_config/my_tab` and
+///   `octomus://tab_config/my_tab.toml` work.
+/// - When `?new_window=true` (or no Octomus window is open) the tab config opens
 ///   in a brand-new window. Otherwise it opens as a new tab in the active
 ///   window.
 fn handle_tab_config_uri(primary_window_id: Option<WindowId>, url: &Url, ctx: &mut AppContext) {
@@ -1146,7 +1146,7 @@ impl Action {
             | Self::AutoHandoffToCloud { .. } => W::default(),
             Self::NewTab => W::ShowPrimaryWindow(WindowActivationFallbackBehavior::Notify {
                 title: "New tab created".to_owned(),
-                description: "Go to Warp to see your new tab.".to_owned(),
+                description: "Go to Octomus to see your new tab.".to_owned(),
             }),
             Self::NewWindow => W::Nothing,
         }
@@ -1158,7 +1158,7 @@ impl Action {
 pub fn handle_incoming_uri(url: &Url, ctx: &mut AppContext) {
     // Non-dogfood builds must never log the full URL here: URLs routed to this
     // handler can carry secrets in their query string (for example, the
-    // Firebase `refresh_token` on `warp://auth/desktop_redirect?...`). Log
+    // Firebase `refresh_token` on `octomus://auth/desktop_redirect?...`). Log
     // only the non-sensitive components (scheme, host, path) on release
     // channels; dogfood builds retain the full URL for local debugging.
     safe_info!(
@@ -1232,7 +1232,7 @@ fn get_primary_window(
 enum OpenFileAction {
     /// Open in the markdown notebook pane.
     Notebook,
-    /// Open in Warp's code/text editor pane.
+    /// Open in Octomus's code/text editor pane.
     Editor,
     /// Open a session at the parent directory and queue the file as the pending command,
     /// or just open a session at the directory path if `path` is a directory.
@@ -1291,11 +1291,11 @@ fn open_file(window_id: Option<WindowId>, path: PathBuf, ctx: &mut AppContext) {
             use crate::code::editor_management::CodeSource;
             use crate::root_view::{open_new_with_workspace_source, NewWorkspaceSource};
             use crate::util::file::external_editor::EditorSettings;
-            use crate::util::openable_file_type::resolve_file_target_to_open_in_warp;
+            use crate::util::openable_file_type::resolve_file_target_to_open_in_octomus;
 
-            // Open text/code files in Warp's code editor, respecting the user's layout preference.
+            // Open text/code files in Octomus's code editor, respecting the user's layout preference.
             let editor_settings = EditorSettings::as_ref(ctx);
-            let target = resolve_file_target_to_open_in_warp(&path, editor_settings, None);
+            let target = resolve_file_target_to_open_in_octomus(&path, editor_settings, None);
 
             let window_id = if let Some((wid, _)) = primary_window_and_view {
                 wid
@@ -1378,7 +1378,7 @@ fn open_file_editor(
         use crate::code::editor_management::CodeSource;
         use crate::root_view::{open_new_with_workspace_source, NewWorkspaceSource};
         use crate::util::file::external_editor::EditorSettings;
-        use crate::util::openable_file_type::resolve_file_target_to_open_in_warp;
+        use crate::util::openable_file_type::resolve_file_target_to_open_in_octomus;
 
         if !can_open_file_editor_path(&path) {
             log::warn!("open_file_editor action rejected non-openable path: {path:?}");
@@ -1386,7 +1386,7 @@ fn open_file_editor(
         }
 
         let editor_settings = EditorSettings::as_ref(ctx);
-        let target = resolve_file_target_to_open_in_warp(&path, editor_settings, None);
+        let target = resolve_file_target_to_open_in_octomus(&path, editor_settings, None);
 
         let window_id = if let Some((wid, _)) = primary_window_id.and_then(|window_id| {
             ctx.root_view_id(window_id)
@@ -1637,7 +1637,7 @@ fn validate_custom_uri(url: &Url) -> Result<UriHost> {
 /// The returned string contains only the URL's scheme, host, and path — never
 /// its query string, fragment, or userinfo component. URLs that reach
 /// [`handle_incoming_uri`] can carry secrets in their query (for example, the
-/// Firebase refresh token in `warp://auth/desktop_redirect?refresh_token=...`),
+/// Firebase refresh token in `octomus://auth/desktop_redirect?refresh_token=...`),
 /// so this helper exists to give [`safe_info!`] a redacted representation that
 /// still preserves enough signal for triage.
 ///

@@ -1,17 +1,17 @@
 use settings::Setting;
-use warp_core::report_if_error;
-use warp_core::ui::Icon;
-use warpui::elements::{
+use octomus_core::report_if_error;
+use octomus_core::ui::Icon;
+use octomusui::elements::{
     ChildAnchor, Container, CrossAxisAlignment, Flex, MainAxisSize, OffsetPositioning,
     ParentAnchor, ParentElement, ParentOffsetBounds, Shrinkable, Stack, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::keymap::Keystroke;
-use warpui::prelude::{vec2f, ConstrainedBox, Cursor, Empty, Hoverable, MouseStateHandle};
-use warpui::scene::{Border, CornerRadius, Radius};
-use warpui::ui_components::checkbox::Checkbox;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::keymap::Keystroke;
+use octomusui::prelude::{vec2f, ConstrainedBox, Cursor, Empty, Hoverable, MouseStateHandle};
+use octomusui::scene::{Border, CornerRadius, Radius};
+use octomusui::ui_components::checkbox::Checkbox;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
 
@@ -148,8 +148,8 @@ impl View for TerminalViewZeroStateBlock {
             .with_child(
                 Container::new(
                     ConstrainedBox::new(
-                        Icon::Warp
-                            .to_warpui_icon(theme.main_text_color(theme.background()))
+                        Icon::Octomus
+                            .to_octomusui_icon(theme.main_text_color(theme.background()))
                             .finish(),
                     )
                     .with_height(title_font_size)

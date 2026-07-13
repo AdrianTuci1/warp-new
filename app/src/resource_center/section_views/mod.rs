@@ -2,16 +2,16 @@ pub mod feature_section;
 pub use feature_section::FeatureSectionView;
 pub mod content_section;
 pub use content_section::ContentSectionView;
-use warp_core::features::FeatureFlag;
+use octomus_core::features::FeatureFlag;
 pub mod changelog_section;
 pub use changelog_section::ChangelogSectionView;
-use warpui::elements::{
+use octomusui::elements::{
     Align, Border, ConstrainedBox, Container, CrossAxisAlignment, Element, Flex, Hoverable, Icon,
     MouseStateHandle, ParentElement, ScrollbarWidth, Shrinkable,
 };
-use warpui::platform::Cursor;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{AppContext, ViewContext, ViewHandle};
+use octomusui::platform::Cursor;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{AppContext, ViewContext, ViewHandle};
 
 use crate::appearance::Appearance;
 use crate::resource_center::section_views::feature_section::FeatureSection;

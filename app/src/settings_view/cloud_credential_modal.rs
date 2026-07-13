@@ -1,11 +1,11 @@
-use warpui::elements::{
+use octomusui::elements::{
     ChildView, ConstrainedBox, Container, CornerRadius, Flex, MainAxisSize, MouseStateHandle,
     ParentElement, Radius, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::UiComponent;
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{
     AppContext, Element as WarpuiElement, Entity, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
@@ -378,7 +378,7 @@ impl View for CloudCredentialModal {
         // Buttons
         let mut button_row = Flex::row()
             .with_main_axis_size(MainAxisSize::Max)
-            .with_main_axis_alignment(warpui::elements::MainAxisAlignment::End)
+            .with_main_axis_alignment(octomusui::elements::MainAxisAlignment::End)
             .with_spacing(8.);
 
         let cancel_btn = appearance
@@ -386,7 +386,7 @@ impl View for CloudCredentialModal {
             .button(ButtonVariant::Basic, self.cancel_button_mouse_state.clone())
             .with_text_label("Cancel".to_string())
             .build()
-            .on_click(|ctx: &mut warpui::elements::EventContext, _, _| {
+            .on_click(|ctx: &mut octomusui::elements::EventContext, _, _| {
                 ctx.dispatch_typed_action(CloudCredentialModalAction::Cancel);
             })
             .finish();
@@ -401,7 +401,7 @@ impl View for CloudCredentialModal {
         }
         let save_btn = save_button
             .build()
-            .on_click(|ctx: &mut warpui::elements::EventContext, _, _| {
+            .on_click(|ctx: &mut octomusui::elements::EventContext, _, _| {
                 ctx.dispatch_typed_action(CloudCredentialModalAction::Save);
             })
             .finish();
@@ -438,7 +438,7 @@ fn render_editor_container(
             .with_width(INPUT_WIDTH)
             .finish(),
     )
-    .with_padding(warpui::elements::Padding::uniform(8.))
+    .with_padding(octomusui::elements::Padding::uniform(8.))
     .with_background(appearance.theme().surface_1())
     .with_corner_radius(CornerRadius::with_all(Radius::Pixels(6.)))
     .finish()

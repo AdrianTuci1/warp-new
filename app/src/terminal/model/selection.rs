@@ -11,10 +11,10 @@ use std::ops::RangeInclusive;
 pub use std::ops::{Range, RangeBounds};
 
 use vec1::Vec1;
-use warp_core::semantic_selection::SemanticSelection;
-use warp_terminal::model::grid::cell;
-use warpui::text::SelectionType;
-use warpui::units::Lines;
+use octomus_core::semantic_selection::SemanticSelection;
+use octomus_terminal::model::grid::cell;
+use octomusui::text::SelectionType;
+use octomusui::units::Lines;
 
 use super::index::{Direction, VisibleRow};
 use crate::terminal::model::ansi::CursorShape;

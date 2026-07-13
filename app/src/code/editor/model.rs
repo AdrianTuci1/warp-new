@@ -27,9 +27,9 @@ use vim::{
     vim_a_quote, vim_a_word, vim_find_char_on_line, vim_find_matching_bracket, vim_inner_block,
     vim_inner_paragraph, vim_inner_quote, vim_inner_word, vim_word_iterator_from_offset,
 };
-use warp_core::platform::SessionPlatform;
-use warp_core::semantic_selection::SemanticSelection;
-use warp_core::ui::theme::Fill;
+use octomus_core::platform::SessionPlatform;
+use octomus_core::semantic_selection::SemanticSelection;
+use octomus_core::ui::theme::Fill;
 use warp_editor::content::anchor::Anchor;
 use warp_editor::content::buffer::{
     AutoScrollBehavior, Buffer, BufferEditAction, BufferEvent, BufferSelectAction, EditOrigin,
@@ -52,15 +52,15 @@ use warp_editor::render::model::{
     UpdateDecorationAfterLayout, WidthSetting,
 };
 use warp_editor::selection::{SelectionMode, SelectionModel, TextDirection, TextUnit};
-use warp_util::standardized_path::StandardizedPath;
-use warpui::elements::{
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::elements::{
     AnchorPair, OffsetPositioning, OffsetType, PositionedElementOffsetBounds, PositioningAxis,
     XAxisAnchor, YAxisAnchor,
 };
-use warpui::text::point::Point;
-use warpui::text::TextBuffer;
-use warpui::units::{IntoPixels, Pixels};
-use warpui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
+use octomusui::text::point::Point;
+use octomusui::text::TextBuffer;
+use octomusui::units::{IntoPixels, Pixels};
+use octomusui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
 
 use super::super::DiffResult;
 use super::comments::{EditorCommentsModel, PendingComment, PendingCommentEvent};
@@ -3728,7 +3728,7 @@ impl CoreEditorModel for CodeEditorModel {
     }
 
     // TODO(kevin): Add validation to the content model.
-    fn validate(&self, _ctx: &impl warpui::ModelAsRef) {}
+    fn validate(&self, _ctx: &impl octomusui::ModelAsRef) {}
 
     // Since this is a plain text editor, there is no text styles.
     fn active_text_style(&self) -> warp_editor::content::text::TextStyles {

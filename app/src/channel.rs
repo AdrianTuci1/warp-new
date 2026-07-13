@@ -1,1 +1,1 @@
-pub use warp_core::channel::*;
+pub use octomus_core::channel::*;

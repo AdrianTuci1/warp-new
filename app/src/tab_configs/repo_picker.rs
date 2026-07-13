@@ -1,11 +1,11 @@
 use std::path::PathBuf;
 
-use warp_util::path::user_friendly_path;
-use warpui::elements::{Border, ChildView, Container, Hoverable, MouseStateHandle, Text};
-use warpui::platform::Cursor;
-use warpui::text_layout::ClipConfig;
-use warpui::ui_components::components::UiComponentStyles;
-use warpui::{
+use octomus_util::path::user_friendly_path;
+use octomusui::elements::{Border, ChildView, Container, Hoverable, MouseStateHandle, Text};
+use octomusui::platform::Cursor;
+use octomusui::text_layout::ClipConfig;
+use octomusui::ui_components::components::UiComponentStyles;
+use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
 

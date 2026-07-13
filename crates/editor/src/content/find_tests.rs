@@ -7,7 +7,7 @@ use itertools::Itertools;
 use rangemap::RangeSet;
 use string_offset::CharOffset;
 use sum_tree::SumTree;
-use warpui_core::App;
+use octomusui_core::App;
 
 use super::{Engine, Match, SearchConfig};
 use crate::content::buffer::Buffer;

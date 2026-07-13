@@ -1,4 +1,4 @@
-use warpui::{App, EntityId};
+use octomusui::{App, EntityId};
 
 use super::*;
 use crate::ai::blocklist::BlocklistAIHistoryModel;

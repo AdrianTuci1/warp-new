@@ -11,26 +11,26 @@ use lsp::{LspManagerModel, LspServerLogLevel, LspServerModel};
 use remote_server::manager::RemoteServerManager;
 use string_offset::{ByteOffset, CharOffset};
 use vec1::vec1;
-use warp_core::features::FeatureFlag;
-use warp_core::safe_error;
+use octomus_core::features::FeatureFlag;
+use octomus_core::safe_error;
 use warp_editor::content::buffer::{Buffer, ToBufferCharOffset};
 use warp_editor::content::diff::{text_diff, TextDiff};
 use warp_editor::content::edit::PreciseDelta;
 use warp_editor::content::version::BufferVersion;
-use warp_util::content_version::ContentVersion;
-use warp_util::file::{FileId, FileLoadError, FileSaveError};
-use warp_util::host_id::HostId;
-use warp_util::remote_path::RemotePath;
-use warp_util::standardized_path::StandardizedPath;
-use warpui::r#async::Timer;
-use warpui::{Entity, ModelContext, ModelHandle, SingletonEntity, WeakModelHandle};
+use octomus_util::content_version::ContentVersion;
+use octomus_util::file::{FileId, FileLoadError, FileSaveError};
+use octomus_util::host_id::HostId;
+use octomus_util::remote_path::RemotePath;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::r#async::Timer;
+use octomusui::{Entity, ModelContext, ModelHandle, SingletonEntity, WeakModelHandle};
 
 use super::buffer_location::{LocalOrRemotePath, SyncClock};
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "local_fs")] {
         use lsp::LspManagerModelEvent;
-        use warp_files::{FileModelEvent, FileModel};
+        use octomus_files::{FileModelEvent, FileModel};
         use warp_editor::content::text::IndentBehavior;
         use warp_editor::content::text::IndentUnit;
         use warp_editor::content::buffer::EditOrigin;
@@ -2020,7 +2020,7 @@ impl GlobalBufferModel {
     // ── Public accessors ──────────────────────────────────────────────
 
     /// Returns the buffer text content for a given `FileId`.
-    pub fn content_for_file(&self, file_id: FileId, ctx: &warpui::AppContext) -> Option<String> {
+    pub fn content_for_file(&self, file_id: FileId, ctx: &octomusui::AppContext) -> Option<String> {
         let state = self.buffers.get(&file_id)?;
         let buffer = state.buffer.upgrade(ctx)?;
         Some(buffer.as_ref(ctx).text().into_string())
@@ -2406,14 +2406,14 @@ impl GlobalBufferModel {
     pub(crate) fn seed_remote_buffer_for_test(
         &mut self,
         host_id: HostId,
-        path: warp_util::standardized_path::StandardizedPath,
+        path: octomus_util::standardized_path::StandardizedPath,
         content: &str,
         server_version: u64,
         ctx: &mut ModelContext<Self>,
     ) -> BufferState {
         let remote_path = RemotePath::new(host_id, path);
         let location = LocalOrRemotePath::Remote(remote_path.clone());
-        let file_id = warp_util::file::FileId::new();
+        let file_id = octomus_util::file::FileId::new();
         let buffer = ctx.add_model(|_| Buffer::default());
         let version = ContentVersion::new();
         buffer.update(ctx, |buf, ctx| {

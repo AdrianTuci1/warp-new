@@ -4,16 +4,16 @@ use anyhow::{anyhow, Result};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
 use url::Url;
-use warp_core::errors::ErrorExt;
-use warp_core::features::FeatureFlag;
-use warpui::actions::StandardAction;
-use warpui::elements::{
+use octomus_core::errors::ErrorExt;
+use octomus_core::features::FeatureFlag;
+use octomusui::actions::StandardAction;
+use octomusui::elements::{
     ChildAnchor, ChildView, Container, Fill, HighlightedHyperlink, MouseStateHandle,
     OffsetPositioning, ParentAnchor, ParentElement, ParentOffsetBounds, Stack,
 };
-use warpui::keymap::FixedBinding;
-use warpui::ui_components::components::{Coords, UiComponentStyles};
-use warpui::{
+use octomusui::keymap::FixedBinding;
+use octomusui::ui_components::components::{Coords, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
@@ -31,7 +31,7 @@ use crate::server::server_api::auth::UserAuthenticationError;
 use crate::util::bindings::CustomAction;
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([
         // Bindings for paste require the StandardAction and CustomAction binding to work on all platforms.
@@ -96,7 +96,7 @@ pub struct AuthRedirectPayload {
 }
 
 impl AuthRedirectPayload {
-    /// Attempts to parse the `AuthRedirectPayload` from URL sent to Warp. To parse successfully, the URL
+    /// Attempts to parse the `AuthRedirectPayload` from URL sent to Octomus. To parse successfully, the URL
     /// must be of format {scheme}://auth/desktop_redirect?refresh_token={token}.
     pub fn from_url(url: Url) -> Result<Self> {
         if url.host_str() != Some(AUTH_URL_HOST) {
@@ -233,7 +233,7 @@ impl AuthView {
     }
 
     /// Parses the given 'clipboard_content' string into a URL which is assumed to represent the
-    /// OAuth redirect URL containing the user's refresh token after the user authenticated Warp.
+    /// OAuth redirect URL containing the user's refresh token after the user authenticated Octomus.
     fn handle_pasted_auth_url(&mut self, pasted_url: String, ctx: &mut ViewContext<Self>) {
         self.set_auth_token_input_editable(false, ctx);
         match AuthRedirectPayload::from_raw_url(pasted_url) {

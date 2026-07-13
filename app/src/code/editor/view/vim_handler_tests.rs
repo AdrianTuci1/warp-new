@@ -3,19 +3,19 @@ use std::sync::Arc;
 use pathfinder_geometry::vector::Vector2F;
 use unindent::Unindent;
 use vim::vim::{MotionType, VimMode};
-use warp_core::features::FeatureFlag;
-use warp_core::settings::Setting;
-use warp_core::ui::appearance::Appearance;
+use octomus_core::features::FeatureFlag;
+use octomus_core::settings::Setting;
+use octomus_core::ui::appearance::Appearance;
 use warp_editor::content::buffer::{InitialBufferState, ToBufferCharOffset, ToBufferPoint};
 use warp_editor::model::CoreEditorModel;
 use warp_editor::render::element::VerticalExpansionBehavior;
 use warp_editor::render::model::viewport::SizeInfo;
-use warp_util::user_input::UserInput;
-use warpui::keymap::Keystroke;
-use warpui::platform::WindowStyle;
-use warpui::text::point::Point;
-use warpui::units::IntoPixels;
-use warpui::{App, SingletonEntity, TypedActionView, UpdateModel, ViewHandle};
+use octomus_util::user_input::UserInput;
+use octomusui::keymap::Keystroke;
+use octomusui::platform::WindowStyle;
+use octomusui::text::point::Point;
+use octomusui::units::IntoPixels;
+use octomusui::{App, SingletonEntity, TypedActionView, UpdateModel, ViewHandle};
 
 use crate::auth::AuthStateProvider;
 use crate::cloud_object::model::persistence::CloudModel;
@@ -1055,7 +1055,7 @@ fn test_vim_delete_word_dge() {
 
     App::test((), |mut app| async move {
         initialize_code_editor_app(&mut app);
-        let editor = add_code_editor("echo hello-hi warp-dev", &mut app);
+        let editor = add_code_editor("echo hello-hi octomus-dev", &mut app);
 
         set_cursor_position(&editor, 1, 20, &mut app);
         vim_user_insert(&editor, "dge", &mut app);

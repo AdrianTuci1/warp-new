@@ -2,7 +2,7 @@ use std::ptr::NonNull;
 
 use objc2_core_foundation::{CFRetained, CFString};
 use objc2_foundation::NSBundle;
-use warp_core::channel::{Channel, ChannelState};
+use octomus_core::channel::{Channel, ChannelState};
 
 // Launch Services constants
 type LSRolesMask = u32;
@@ -54,7 +54,7 @@ pub fn is_warp_default_terminal() -> bool {
 }
 
 pub fn set_warp_as_default_terminal() -> Result<(), String> {
-    log::debug!("Setting Warp as default terminal");
+    log::debug!("Setting Octomus as default terminal");
 
     let bundle_id = get_warp_bundle_id().ok_or("No bundle ID".to_string())?;
 
@@ -84,7 +84,7 @@ fn set_default_terminal(bundle_id: &str) -> Result<(), String> {
     }
 }
 
-/// Gets Warp's bundle identifier. This may be `None` if not running as a bundle, i.e. through
+/// Gets Octomus's bundle identifier. This may be `None` if not running as a bundle, i.e. through
 /// `cargo run` without `cargo bundle`.
 fn get_warp_bundle_id() -> Option<String> {
     Some(NSBundle::mainBundle().bundleIdentifier()?.to_string())

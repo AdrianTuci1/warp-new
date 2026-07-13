@@ -1,19 +1,19 @@
 use std::sync::Arc;
 
 use pathfinder_geometry::vector::vec2f;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::Icon;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::Icon;
+use octomusui::elements::{
     Border, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     Empty, Fill, Flex, Hoverable, MouseStateHandle, OffsetPositioning, ParentAnchor, ParentElement,
     ParentOffsetBounds, Radius, SavePosition, Stack, Text, DEFAULT_UI_LINE_HEIGHT_RATIO,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::platform::Cursor;
-use warpui::ui_components::components::UiComponent;
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::platform::Cursor;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{
     AppContext, Element, Entity, EntityId, ModelHandle, SingletonEntity as _, TypedActionView,
     View, ViewContext, ViewHandle,
 };
@@ -207,7 +207,7 @@ impl PlanAndTodoListView {
         let icon_element = Container::new(
             ConstrainedBox::new(
                 Icon::Compass
-                    .to_warpui_icon(if self.is_in_agent_view {
+                    .to_octomusui_icon(if self.is_in_agent_view {
                         theme.sub_text_color(blended_colors::neutral_1(theme).into())
                     } else {
                         internal_colors::fg_overlay_7(appearance.theme())
@@ -430,8 +430,8 @@ impl PlanAndTodoListView {
                     OffsetPositioning::offset_from_save_position_element(
                         TODO_BUTTON_SAVE_POSITION_ID,
                         vec2f(0., 4.),
-                        warpui::elements::PositionedElementOffsetBounds::WindowByPosition,
-                        warpui::elements::PositionedElementAnchor::BottomLeft,
+                        octomusui::elements::PositionedElementOffsetBounds::WindowByPosition,
+                        octomusui::elements::PositionedElementAnchor::BottomLeft,
                         ChildAnchor::TopLeft,
                     )
                 }
@@ -439,8 +439,8 @@ impl PlanAndTodoListView {
                     OffsetPositioning::offset_from_save_position_element(
                         TODO_BUTTON_SAVE_POSITION_ID,
                         vec2f(0., -4.),
-                        warpui::elements::PositionedElementOffsetBounds::WindowByPosition,
-                        warpui::elements::PositionedElementAnchor::TopLeft,
+                        octomusui::elements::PositionedElementOffsetBounds::WindowByPosition,
+                        octomusui::elements::PositionedElementAnchor::TopLeft,
                         ChildAnchor::BottomLeft,
                     )
                 }
@@ -464,7 +464,7 @@ impl View for PlanAndTodoListView {
         "PlanAndTodoListView"
     }
 
-    fn render(&self, app: &AppContext) -> Box<dyn warpui::Element> {
+    fn render(&self, app: &AppContext) -> Box<dyn octomusui::Element> {
         let appearance = Appearance::as_ref(app);
 
         // Calculate icon size

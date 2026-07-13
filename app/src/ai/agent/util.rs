@@ -9,7 +9,7 @@ use markdown_parser::{
 };
 use mermaid_to_svg::is_mermaid_diagram;
 use regex::Regex;
-use warp_util::path::LineAndColumnArg;
+use octomus_util::path::LineAndColumnArg;
 
 use super::{
     AIAgentTextSection, AgentOutputImage, AgentOutputImageLayout, AgentOutputMermaidDiagram,

@@ -4,7 +4,7 @@ Linear: [APP-4386](https://linear.app/warpdotdev/issue/APP-4386)
 ## Context
 When a user SSHes into a remote host, the client installs the remote server binary by piping `install_remote_server.sh` through `bash -s` on the remote. The script unconditionally uses `curl` (line 43) to download the tarball. On minimal hosts (Alpine, BusyBox, stripped Docker images), `curl` is absent → `bash: line 43: curl: command not found` (exit 127), and the install fails with no recovery path.
 
-Other remote-development editors solve this with a multi-tier fallback strategy: try `curl` on the remote → fall back to `wget` → fall back to downloading locally and uploading via SCP. Warp currently has a single tier: curl only, no fallback.
+Other remote-development editors solve this with a multi-tier fallback strategy: try `curl` on the remote → fall back to `wget` → fall back to downloading locally and uploading via SCP. Octomus currently has a single tier: curl only, no fallback.
 
 ### Relevant code
 - `crates/remote_server/src/install_remote_server.sh` — the install script; line 43 is the sole `curl` invocation

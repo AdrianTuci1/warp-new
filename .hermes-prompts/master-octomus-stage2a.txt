@@ -1,4 +1,4 @@
-Repo: AdrianTuci1/warp-new
+Repo: AdrianTuci1/octomus-new
 
 Ești AGENT UNIC pentru Octomus — STAGE 2a (Cleanup & Infrastructură). Rulezi LOCAL pe mașina utilizatorului.
 
@@ -10,11 +10,11 @@ Fiecare task se termină cu commit. La final: cargo check + push.
 === PAS 1: CLONE + BRANCH ===
 
 [bash]
-if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q "AdrianTuci1/warp-new"; then
+if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q "AdrianTuci1/octomus-new"; then
   cd /tmp/repo && git fetch origin && git checkout octomus/stage1 && git pull origin octomus/stage1
 else
   rm -rf /tmp/repo
-  git clone https://x-access-token:__GH_TOKEN__@github.com/AdrianTuci1/warp-new.git /tmp/repo
+  git clone https://x-access-token:__GH_TOKEN__@github.com/AdrianTuci1/octomus-new.git /tmp/repo
   cd /tmp/repo
   git fetch origin octomus/stage1 && git checkout octomus/stage1
 fi
@@ -51,29 +51,29 @@ EDIT .github/workflows/create_release.yml:
 Simplify or remove:
 - .github/workflows/populate_build_cache.yml — remove self-hosted runner refs
 - .github/workflows/warp_cleanup_fix_prs.yml — rename to octomus_cleanup_fix_prs.yml
-- .github/workflows/changelog_draft.yml — remove if it references warp.dev API
+- .github/workflows/changelog_draft.yml — remove if it references octomus.dev API
 - .github/workflows/docubot_reply_to_comment.yml — DELETE
-- .github/workflows/check_approvals.yml — DELETE if references Warp team
+- .github/workflows/check_approvals.yml — DELETE if references Octomus team
 
 EDIT script/macos/bundle:
 - Remove notarisation steps (--notarise, xcrun altool, etc.)
 - Remove codesign steps (codesign --deep, security unlock-keychain)
 - Keep: cargo bundle, create-dmg
 
-Replace "warp" with "octomus" in:
+Replace "octomus" with "octomus" in:
 - .github/ISSUE_TEMPLATE/ — issue templates
 - .github/pull_request_template.md
 - Any plist files, entitlements, Info.plist
 
 Remove sentry from app/Cargo.toml dependencies if not already done.
 
-Scan for warp.dev URLs:
-grep -r "warp\.dev" . --include="*.rs" --include="*.toml" --include="*.plist" --include="*.json" --include="*.md" 2>/dev/null | grep -v ".git/" | grep -v "target/"
+Scan for octomus.dev URLs:
+grep -r "octomus\.dev" . --include="*.rs" --include="*.toml" --include="*.plist" --include="*.json" --include="*.md" 2>/dev/null | grep -v ".git/" | grep -v "target/"
 Replace each with localhost or remove.
 
 === COMMIT A8 ===
 git add -A
-git commit -m "octomus: clean CI — remove codesign/notarize/Sentry/GCS/warp.dev URLs"
+git commit -m "octomus: clean CI — remove codesign/notarize/Sentry/GCS/octomus.dev URLs"
 
 === TASK A9: Final scan — dead imports, tests, README ===
 
@@ -95,18 +95,18 @@ For each finding: remove import + usage, or stub with no-op, or add #[allow(unus
 DELETE cloud integration tests:
 grep -rln "auth\|billing\|pricing\|server_api\|cloud_object\|drive\|workspaces\|shared_session\|remote_server\|telemetry\|iam\|sentry" app/src/ --include="*_tests.rs" | head -50
 Delete files that only test cloud features. Remove cloud test functions from mixed files.
-Same for: grep -rln "auth\|billing\|pricing\|server_api\|cloud_object\|drive\|workspaces\|shared_session\|remote_server\|sentry" crates/ --include="*_tests.rs" | grep -v warpui | head -50
+Same for: grep -rln "auth\|billing\|pricing\|server_api\|cloud_object\|drive\|workspaces\|shared_session\|remote_server\|sentry" crates/ --include="*_tests.rs" | grep -v octomusui | head -50
 
 EDIT README.md:
-- Title: "Octomus" instead of "Warp"
-- Remove Warp Drive, Team features, Cloud sync references
-- Remove warp.dev, sign up, login references
-- Add "This is a community fork. For the original, see warpdotdev/warp."
+- Title: "Octomus" instead of "Octomus"
+- Remove Octomus Drive, Team features, Cloud sync references
+- Remove octomus.dev, sign up, login references
+- Add "This is a community fork. For the original, see warpdotdev/octomus."
 - Add build from source instructions
 
 EDIT onboarding: remove login/signup flows, keep basic setup.
 
-Replace "OpenWarp\|warp.dev\|Contact Support\|Warp Drive\|Warp AI\|About Warp\|Warp Help" in UI strings.
+Replace "OpenWarp\|octomus.dev\|Contact Support\|Octomus Drive\|Octomus AI\|About Octomus\|Octomus Help" in UI strings.
 
 === COMMIT A9 ===
 git add -A
@@ -114,7 +114,7 @@ git commit -m "octomus: final scan — dead imports, tests, README, UI strings"
 
 === TASK A10: Telemetry redirect ===
 
-EDIT crates/warp_core/src/channel/state.rs:
+EDIT crates/octomus_core/src/channel/state.rs:
 In init(), find `telemetry_config: None,` for Oss channel.
 Replace with a basic config pointing to Octomus endpoint:
 telemetry_config: Some(TelemetryConfig {
@@ -150,16 +150,16 @@ git commit -m "octomus: redirect telemetry — minimal events, Octomus RudderSta
 DELETE: resources/bundled/skills/oz-platform/SKILL.md and directory.
 
 EDIT app/src/ai/skills/skill_manager.rs:
-- build_bundled_skill_context(): replace warp_server_url with "http://localhost:0", add octomus_cli_binary_name, keep warp_cli_binary_name for backward compat, set warp_url_scheme to empty.
-- Update doc comments referencing Warp cloud.
+- build_bundled_skill_context(): replace warp_server_url with "http://localhost:0", add octomus_cli_binary_name, keep octomus_cli_binary_name for backward compat, set warp_url_scheme to empty.
+- Update doc comments referencing Octomus cloud.
 
-EDIT bundled skills (Warp→Octomus in paths + text):
-- resources/bundled/skills/add-mcp-server/SKILL.md: ~/.warp/ → ~/.octomus/
-- resources/bundled/skills/change-keybinding/SKILL.md: "Warp" → "Octomus" in text
-- resources/bundled/skills/modify-settings/SKILL.md: "Warp" → "Octomus"
-- resources/bundled/skills/tab-configs/SKILL.md: ~/.warp/tab_configs/ → ~/.octomus/tab_configs/
-- resources/bundled/skills/create-tab-config/SKILL.md: ~/.warp*/ → ~/.octomus*/, "Warp" → "Octomus"
-- resources/bundled/skills/update-tab-config/SKILL.md: "Warp" → "Octomus"
+EDIT bundled skills (Octomus→Octomus in paths + text):
+- resources/bundled/skills/add-mcp-server/SKILL.md: ~/.octomus/ → ~/.octomus/
+- resources/bundled/skills/change-keybinding/SKILL.md: "Octomus" → "Octomus" in text
+- resources/bundled/skills/modify-settings/SKILL.md: "Octomus" → "Octomus"
+- resources/bundled/skills/tab-configs/SKILL.md: ~/.octomus/tab_configs/ → ~/.octomus/tab_configs/
+- resources/bundled/skills/create-tab-config/SKILL.md: ~/.octomus*/ → ~/.octomus*/, "Octomus" → "Octomus"
+- resources/bundled/skills/update-tab-config/SKILL.md: "Octomus" → "Octomus"
 
 === COMMIT A15 ===
 git add -A

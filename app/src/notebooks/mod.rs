@@ -14,15 +14,15 @@ use anyhow::Result;
 use async_trait::async_trait;
 pub use cloud_object_models::{CloudNotebook, CloudNotebookModel, NotebookId, SerializedNotebook};
 use serde::{Deserialize, Serialize};
-use warpui::AppContext;
+use octomusui::AppContext;
 
 use crate::appearance::Appearance;
 use crate::cloud_object::{
     CloudModelType, CloudObjectEventEntrypoint, CloudObjectUpsertParams, CreateCloudObjectResult,
     CreateObjectRequest, GenericServerObject, ObjectType, Owner, Revision, UpdateCloudObjectResult,
 };
-use crate::drive::items::notebook::WarpDriveNotebook;
-use crate::drive::items::WarpDriveItem;
+use crate::drive::items::notebook::OctomusDriveNotebook;
+use crate::drive::items::OctomusDriveItem;
 use crate::drive::CloudObjectTypeAndId;
 use crate::persistence::ModelEvent;
 use crate::server::cloud_objects::update_manager::InitiatedBy;
@@ -148,7 +148,7 @@ impl CloudModelType for CloudNotebookModel {
             .await
     }
 
-    fn renders_in_warp_drive(&self) -> bool {
+    fn renders_in_octomus_drive(&self) -> bool {
         true
     }
 
@@ -156,13 +156,13 @@ impl CloudModelType for CloudNotebookModel {
         true
     }
 
-    fn to_warp_drive_item(
+    fn to_octomus_drive_item(
         &self,
         id: SyncId,
         _appearance: &Appearance,
         notebook: &CloudNotebook,
-    ) -> Option<Box<dyn WarpDriveItem>> {
-        Some(Box::new(WarpDriveNotebook::new(
+    ) -> Option<Box<dyn OctomusDriveItem>> {
+        Some(Box::new(OctomusDriveNotebook::new(
             self.cloud_object_type_and_id(id),
             notebook.clone(),
             notebook.model().ai_document_id.is_some(),

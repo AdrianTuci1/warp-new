@@ -5,22 +5,22 @@ use onboarding::{OnboardingIntention, AI_FEATURES, WARP_DRIVE_FEATURES};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
 use ui_components::{button, Component as _, Options as _};
-use warp_core::features::FeatureFlag;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::Icon;
-use warpui::actions::StandardAction;
-use warpui::clipboard::ClipboardContent;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::Icon;
+use octomusui::actions::StandardAction;
+use octomusui::clipboard::ClipboardContent;
+use octomusui::elements::{
     Align, Border, CacheOption, ChildAnchor, ClippedScrollStateHandle, ConstrainedBox, Container,
     CornerRadius, CrossAxisAlignment, Dismiss, Fill, Flex, FormattedTextElement,
     HighlightedHyperlink, Image, MainAxisAlignment, MainAxisSize, MouseStateHandle,
     OffsetPositioning, ParentAnchor, ParentElement, ParentOffsetBounds, Radius, Shrinkable, Stack,
 };
-use warpui::fonts::Weight;
-use warpui::keymap::{FixedBinding, Keystroke};
-use warpui::text_layout::TextAlignment;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::Weight;
+use octomusui::keymap::{FixedBinding, Keystroke};
+use octomusui::text_layout::TextAlignment;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, UpdateModel, View,
     ViewContext, ViewHandle,
 };
@@ -39,14 +39,14 @@ use crate::themes::theme::Fill as ThemeFill;
 use crate::util::bindings::CustomAction;
 use crate::{send_telemetry_from_ctx, send_telemetry_sync_from_ctx};
 
-const TOS_URL: &str = "https://www.warp.dev/terms-of-service";
+const TOS_URL: &str = "https://www.octomus.dev/terms-of-service";
 
 // ---------------------------------------------------------------------------
 // Init (keybindings)
 // ---------------------------------------------------------------------------
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([
         FixedBinding::new(
@@ -156,7 +156,7 @@ const AUTH_TOKEN_INPUT_BORDER_RADIUS: Radius = Radius::Pixels(4.);
 pub struct LoginSlideView {
     /// Whether AI will be enabled once onboarding is applied. Used to hide the
     /// cloud-conversation-storage toggle in the privacy settings step when the
-    /// user has disabled Warp Agent during onboarding (or is on the terminal
+    /// user has disabled Octomus Agent during onboarding (or is on the terminal
     /// intention path, which disables AI). The actual `AISettings` value may
     /// not have been written yet at this point, since onboarding settings are
     /// applied after login.
@@ -164,7 +164,7 @@ pub struct LoginSlideView {
     /// Onboarding intention selected by the user, used to render Drive-focused
     /// copy on the Terminal+Drive path. On the login slide, `intention ==
     /// OnboardingIntention::Terminal` is equivalent to "Terminal+Drive":
-    /// `RootView` only routes Terminal-intent users here when Warp Drive is
+    /// `RootView` only routes Terminal-intent users here when Octomus Drive is
     /// enabled.
     intention: OnboardingIntention,
     theme_visual_path: &'static str,
@@ -471,7 +471,7 @@ impl LoginSlideView {
 
         let is_terminal = matches!(self.intention, OnboardingIntention::Terminal);
         let title_text = if is_terminal {
-            "Get started with Warp Drive"
+            "Get started with Octomus Drive"
         } else {
             "Get started with AI"
         };
@@ -507,7 +507,7 @@ impl LoginSlideView {
         let tos_line = Flex::row()
             .with_child(
                 ui_builder
-                    .span("By continuing, you agree to Warp's ")
+                    .span("By continuing, you agree to Octomus's ")
                     .with_style(disclaimer_styles)
                     .build()
                     .finish(),
@@ -595,7 +595,7 @@ impl LoginSlideView {
 
         let cmd_enter = Keystroke::parse("cmdorctrl-enter").unwrap_or_default();
         let skip_label = if matches!(self.intention, OnboardingIntention::Terminal) {
-            "Disable Warp Drive"
+            "Disable Octomus Drive"
         } else {
             "Disable AI features"
         };
@@ -752,7 +752,7 @@ impl LoginSlideView {
             } else {
                 // First call (narrow layout fallback): placeholder.
                 editor_rendered.set(true);
-                Container::new(warpui::elements::Empty::new().finish())
+                Container::new(octomusui::elements::Empty::new().finish())
                     .with_padding_top(12.)
                     .with_padding_bottom(12.)
                     .with_padding_left(16.)
@@ -892,7 +892,7 @@ impl LoginSlideView {
 
         let is_terminal = matches!(self.intention, OnboardingIntention::Terminal);
         let title_text = if is_terminal {
-            "Are you sure you want to disable Warp Drive?"
+            "Are you sure you want to disable Octomus Drive?"
         } else {
             "Are you sure you want to disable AI features?"
         };
@@ -928,9 +928,9 @@ impl LoginSlideView {
             .finish();
 
         let body_text_str = if is_terminal {
-            "Warp Drive lets you save workflows and knowledge across devices and share them with your team. By continuing, you won't have access to the following features:"
+            "Octomus Drive lets you save workflows and knowledge across devices and share them with your team. By continuing, you won't have access to the following features:"
         } else {
-            "Warp is better with AI. By continuing, you won't have access to any of the following features:"
+            "Octomus is better with AI. By continuing, you won't have access to any of the following features:"
         };
         let body_text =
             FormattedTextElement::from_str(body_text_str, appearance.ui_font_family(), 14.)
@@ -949,7 +949,7 @@ impl LoginSlideView {
             AI_FEATURES
         };
         for &item in feature_items {
-            let icon_el = ConstrainedBox::new(Icon::X.to_warpui_icon(feature_x_fill).finish())
+            let icon_el = ConstrainedBox::new(Icon::X.to_octomusui_icon(feature_x_fill).finish())
                 .with_width(16.)
                 .with_height(16.)
                 .finish();
@@ -983,7 +983,7 @@ impl LoginSlideView {
             .finish();
 
         let cancel_label = if is_terminal {
-            "Enable Warp Drive"
+            "Enable Octomus Drive"
         } else {
             "Enable AI features"
         };
@@ -1103,13 +1103,13 @@ impl View for LoginSlideView {
             );
             let overlay_opacity = (100u8).saturating_sub(img.opacity);
             stack.add_child(
-                warpui::elements::Rect::new()
+                octomusui::elements::Rect::new()
                     .with_background(theme.background().with_opacity(overlay_opacity))
                     .finish(),
             );
         } else {
             stack.add_child(
-                Container::new(warpui::elements::Empty::new().finish())
+                Container::new(octomusui::elements::Empty::new().finish())
                     .with_background(theme.background())
                     .finish(),
             );

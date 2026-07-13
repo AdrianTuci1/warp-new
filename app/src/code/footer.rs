@@ -10,22 +10,22 @@ use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
 #[cfg(feature = "local_fs")]
 use repo_metadata::repositories::DetectedRepositories;
-use warp_core::send_telemetry_from_ctx;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::{AnsiColorIdentifier, Fill as ThemeFill, WarpTheme};
-use warp_core::ui::Icon;
+use octomus_core::send_telemetry_from_ctx;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::{AnsiColorIdentifier, Fill as ThemeFill, WarpTheme};
+use octomus_core::ui::Icon;
 #[cfg(feature = "local_fs")]
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warpui::elements::{
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomusui::elements::{
     Border, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     Dismiss, Empty, Fill, Flex, Hoverable, MainAxisAlignment, MainAxisSize, MouseStateHandle,
     OffsetPositioning, Padding, ParentAnchor, ParentElement, ParentOffsetBounds, Radius, Rect,
     Shrinkable, Stack,
 };
-use warpui::platform::Cursor;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::platform::Cursor;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakModelHandle,
 };
@@ -287,7 +287,7 @@ impl CodeFooterView {
         Container::new(
             ConstrainedBox::new(
                 Icon::Info
-                    .to_warpui_icon(theme.active_ui_text_color())
+                    .to_octomusui_icon(theme.active_ui_text_color())
                     .finish(),
             )
             .with_width(12.)
@@ -1169,7 +1169,7 @@ impl CodeFooterView {
             mouse_states.open_logs.clone(),
             move || {
                 Icon::Code1
-                    .to_warpui_icon(ThemeFill::Solid(text_color))
+                    .to_octomusui_icon(ThemeFill::Solid(text_color))
                     .finish()
             },
             "Open logs",
@@ -1191,7 +1191,7 @@ impl CodeFooterView {
             mouse_states.restart_server.clone(),
             move || {
                 Icon::RefreshCcw
-                    .to_warpui_icon(ThemeFill::Solid(text_color))
+                    .to_octomusui_icon(ThemeFill::Solid(text_color))
                     .finish()
             },
             "Restart server",
@@ -1236,7 +1236,7 @@ impl CodeFooterView {
             mouse_states.start_server.clone(),
             move || {
                 Icon::Play
-                    .to_warpui_icon(ThemeFill::Solid(text_color))
+                    .to_octomusui_icon(ThemeFill::Solid(text_color))
                     .finish()
             },
             "Start server",
@@ -1258,7 +1258,7 @@ impl CodeFooterView {
             mouse_states.remove_server.clone(),
             move || {
                 Icon::Trash
-                    .to_warpui_icon(ThemeFill::Solid(text_color))
+                    .to_octomusui_icon(ThemeFill::Solid(text_color))
                     .finish()
             },
             "Remove server",
@@ -1281,7 +1281,7 @@ impl CodeFooterView {
             mouse_states.restart_all.clone(),
             move || {
                 Icon::RefreshCcw
-                    .to_warpui_icon(ThemeFill::Solid(text_color))
+                    .to_octomusui_icon(ThemeFill::Solid(text_color))
                     .finish()
             },
             if is_plural {
@@ -1337,7 +1337,7 @@ impl CodeFooterView {
             mouse_states.start_all.clone(),
             move || {
                 Icon::Play
-                    .to_warpui_icon(ThemeFill::Solid(text_color))
+                    .to_octomusui_icon(ThemeFill::Solid(text_color))
                     .finish()
             },
             if !is_plural {
@@ -1365,7 +1365,7 @@ impl CodeFooterView {
             mouse_states.manage_servers.clone(),
             move || {
                 Icon::Gear
-                    .to_warpui_icon(ThemeFill::Solid(text_color))
+                    .to_octomusui_icon(ThemeFill::Solid(text_color))
                     .finish()
             },
             "Manage servers",

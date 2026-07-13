@@ -8,15 +8,15 @@ use enclose::enclose;
 use itertools::Itertools;
 use settings::manager::SettingsManager;
 use settings::Setting as _;
-use warp_core::context_flag::ContextFlag;
-use warp_util::path::user_friendly_path;
-use warpui::actions::StandardAction;
-use warpui::keymap::{Keystroke, Trigger};
-use warpui::platform::menu::{
+use octomus_core::context_flag::ContextFlag;
+use octomus_util::path::user_friendly_path;
+use octomusui::actions::StandardAction;
+use octomusui::keymap::{Keystroke, Trigger};
+use octomusui::platform::menu::{
     CustomMenuItem, Menu, MenuBar, MenuItem, MenuItemProperties, MenuItemPropertyChanges,
 };
-use warpui::windowing::WindowManager;
-use warpui::{AppContext, SingletonEntity};
+use octomusui::windowing::WindowManager;
+use octomusui::{AppContext, SingletonEntity};
 
 use crate::ai::persisted_workspace::PersistedWorkspace;
 use crate::auth::AuthStateProvider;
@@ -46,8 +46,8 @@ const DISABLE_SHELL_DEBUG_MODE_MENU_ITEM_NAME: &str =
 const ENABLE_IN_BAND_GENERATORS_MENU_ITEM_NAME: &str = "Enable In-band Generators for New Sessions";
 const DISABLE_IN_BAND_GENERATORS_MENU_ITEM_NAME: &str =
     "Disable in-band generators for new sessions";
-const ENABLE_PTY_RECORDING: &str = "Enable PTY Recording Mode (warp.pty.recording)";
-const DISABLE_PTY_RECORDING: &str = "Disable PTY Recording Mode (warp.pty.recording)";
+const ENABLE_PTY_RECORDING: &str = "Enable PTY Recording Mode (octomus.pty.recording)";
+const DISABLE_PTY_RECORDING: &str = "Disable PTY Recording Mode (octomus.pty.recording)";
 const SHOW_BOOTSTRAP_BLOCK_MENU_ITEM_NAME: &str = "Show Initialization Block";
 const HIDE_BOOTSTRAP_BLOCK_MENU_ITEM_NAME: &str = "Hide Initialization Block";
 const SHOW_IN_BAND_COMMAND_BLOCKS_MENU_ITEM_NAME: &str = "Show In-band Command Blocks";
@@ -375,7 +375,7 @@ fn make_new_edit_menu(ctx: &AppContext) -> Menu {
 
 fn make_new_view_menu(ctx: &AppContext) -> Menu {
     let mut items = vec![
-        updateable_custom_item_without_checkmark(CustomAction::ToggleWarpDrive, ctx),
+        updateable_custom_item_without_checkmark(CustomAction::ToggleOctomusDrive, ctx),
         MenuItem::Separator,
         updateable_custom_item_without_checkmark(CustomAction::CommandPalette, ctx),
         updateable_custom_item_without_checkmark(CustomAction::NavigationPalette, ctx),
@@ -605,7 +605,7 @@ fn make_new_drive_menu(ctx: &AppContext) -> Menu {
     ));
     items.extend([
         MenuItem::Separator,
-        updateable_custom_item_without_checkmark(CustomAction::ToggleWarpDrive, ctx),
+        updateable_custom_item_without_checkmark(CustomAction::ToggleOctomusDrive, ctx),
         updateable_custom_item_without_checkmark(CustomAction::SearchDrive, ctx),
         updateable_custom_item_without_checkmark(CustomAction::OpenTeamSettings, ctx),
         updateable_custom_item_without_checkmark(CustomAction::OpenAIFactCollection, ctx),
@@ -1073,7 +1073,7 @@ fn open_new_agent_tab_or_window(ctx: &mut AppContext) {
     }
 }
 
-/// Dispatch event to open a new Warp window
+/// Dispatch event to open a new Octomus window
 fn open_new_window(ctx: &mut AppContext) {
     ctx.dispatch_global_action("root_view:open_new", &());
     ctx.dispatch_global_action("workspace:save_app", &());

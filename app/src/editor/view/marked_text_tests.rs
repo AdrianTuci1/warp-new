@@ -1,8 +1,8 @@
 use vim::vim::VimMode;
-use warp_core::features::FeatureFlag;
-use warpui::keymap::Keystroke;
-use warpui::platform::WindowStyle;
-use warpui::App;
+use octomus_core::features::FeatureFlag;
+use octomusui::keymap::Keystroke;
+use octomusui::platform::WindowStyle;
+use octomusui::App;
 
 use super::initialize_app;
 use crate::editor::{DisplayPoint, EditorOptions, EditorView};

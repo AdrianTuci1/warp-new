@@ -11,11 +11,11 @@
 //! See [here](https://www.notion.so/warpdev/Server-side-experiments-dynamic-feature-enablement-c0fb9aed695d4178a19b8830e3269094)
 //! for a full guide on the server-side experiment framework.
 
-use warpui::AppContext;
+use octomusui::AppContext;
 #[cfg(not(test))]
-use warpui::SingletonEntity as _;
+use octomusui::SingletonEntity as _;
 #[cfg(test)]
-use warpui::SingletonEntity;
+use octomusui::SingletonEntity;
 
 use crate::features::FeatureFlag;
 use crate::workspaces::user_workspaces::UserWorkspaces;
@@ -36,8 +36,8 @@ pub enum ServerExperiment {
     EnvVarsEarlyAccessExperiment,
     AgentModeAnalyticsExperiment,
     WindowsLaunchExperiment,
-    TmuxSshWarpificationControl,
-    TmuxSshWarpificationExperiment,
+    TmuxSshOctomusificationControl,
+    TmuxSshOctomusificationExperiment,
     CodebaseContextExperiment,
     CodebaseContextControl,
     SuggestedCodeDiffsControl,
@@ -94,8 +94,8 @@ impl ServerExperiment {
                 // TODO(alokedesai): Clean this up now that we no longer gate access to the Windows
                 // build on an allowlist.
             }
-            Self::TmuxSshWarpificationControl => FeatureFlag::SSHTmuxWrapper.set_enabled(false),
-            Self::TmuxSshWarpificationExperiment => {
+            Self::TmuxSshOctomusificationControl => FeatureFlag::SSHTmuxWrapper.set_enabled(false),
+            Self::TmuxSshOctomusificationExperiment => {
                 // Only enable the TMUX-based experience if not on windows. ConPTY doesn't support
                 // DCS, which we need in order to use tmux control mode.
                 if cfg!(not(windows)) {

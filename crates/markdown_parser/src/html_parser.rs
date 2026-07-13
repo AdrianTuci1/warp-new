@@ -27,7 +27,7 @@ const PHRASING_ELEMENT_TAGS: &[&str] = &[
     "span", "i", "code", "strong", "em", "br", "a", "s", "u", "ins",
 ];
 
-pub const WARP_EMBED_ATTRIBUTE_NAME: &str = "data-warp-embedded-item";
+pub const WARP_EMBED_ATTRIBUTE_NAME: &str = "data-octomus-embedded-item";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct ListArg {

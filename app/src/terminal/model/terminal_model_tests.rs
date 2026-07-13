@@ -2,10 +2,10 @@ use std::sync::Arc;
 
 use chrono::{DateTime, Local};
 use vec1::vec1;
-use warp_core::command::ExitCode;
-use warp_terminal::model::ansi::ClearMode;
-use warpui::r#async::executor::Background;
-use warpui::text::{str_to_byte_vec, SelectionType};
+use octomus_core::command::ExitCode;
+use octomus_terminal::model::ansi::ClearMode;
+use octomusui::r#async::executor::Background;
+use octomusui::text::{str_to_byte_vec, SelectionType};
 
 use super::*;
 use crate::terminal::color;

@@ -4,20 +4,20 @@
 use pathfinder_color::ColorU;
 use warp_editor::editor::NavigationKey;
 use warp_editor::search::{SearchEvent, Searcher};
-pub use warpui::accessibility::{AccessibilityContent, WarpA11yRole};
-use warpui::elements::{
+pub use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
+use octomusui::elements::{
     Align, Border, ChildAnchor, Clipped, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, DropShadow, Element, Flex, Hoverable, MainAxisAlignment, MouseStateHandle,
     OffsetPositioning, ParentAnchor, ParentOffsetBounds, Radius, Rect, SavePosition, Shrinkable,
     Text,
 };
-pub use warpui::elements::{ParentElement as _, Stack};
-pub use warpui::geometry::vector::vec2f;
-use warpui::keymap::EditableBinding;
-use warpui::presenter::ChildView;
-use warpui::ui_components::components::UiComponent;
-pub use warpui::AppContext;
-use warpui::{
+pub use octomusui::elements::{ParentElement as _, Stack};
+pub use octomusui::geometry::vector::vec2f;
+use octomusui::keymap::EditableBinding;
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::components::UiComponent;
+pub use octomusui::AppContext;
+use octomusui::{
     Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
@@ -104,7 +104,7 @@ pub enum FindAction {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
     app.register_editable_bindings([
         EditableBinding::new(
             "find:find_next_occurrence",
@@ -490,7 +490,7 @@ impl CodeEditorFind {
             };
             let icon = Container::new(
                 ConstrainedBox::new(
-                    icon.to_warpui_icon(appearance.theme().active_ui_text_color())
+                    icon.to_octomusui_icon(appearance.theme().active_ui_text_color())
                         .finish(),
                 )
                 .with_height(size)
@@ -554,7 +554,7 @@ impl CodeEditorFind {
             appearance.theme().active_ui_text_color()
         };
         Container::new(
-            ConstrainedBox::new(match_icon.to_warpui_icon(icon_color).finish())
+            ConstrainedBox::new(match_icon.to_octomusui_icon(icon_color).finish())
                 .with_height(height)
                 .with_width(height)
                 .finish(),
@@ -581,7 +581,7 @@ impl CodeEditorFind {
             appearance.theme().active_ui_text_color()
         };
         Container::new(
-            ConstrainedBox::new(Icon::Search.to_warpui_icon(icon_color).finish())
+            ConstrainedBox::new(Icon::Search.to_octomusui_icon(icon_color).finish())
                 .with_height(height)
                 .with_width(height)
                 .finish(),
@@ -608,7 +608,7 @@ impl CodeEditorFind {
         };
         Container::new(
             ConstrainedBox::new(
-                icon.to_warpui_icon(appearance.theme().active_ui_text_color())
+                icon.to_octomusui_icon(appearance.theme().active_ui_text_color())
                     .finish(),
             )
             .with_height(height)
@@ -964,7 +964,7 @@ impl View for CodeEditorFind {
         }
     }
 
-    fn on_blur(&mut self, _blur_ctx: &warpui::BlurContext, ctx: &mut ViewContext<Self>) {
+    fn on_blur(&mut self, _blur_ctx: &octomusui::BlurContext, ctx: &mut ViewContext<Self>) {
         // Check if the currently focused view is one of our child components
         let focused_view_id = ctx.focused_view_id(ctx.window_id());
         let is_focus_within_find_bar = [

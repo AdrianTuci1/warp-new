@@ -1,6 +1,6 @@
-use warp_core::send_telemetry_from_ctx;
-use warpui::elements::{ChildView, Flex, ParentElement as _};
-use warpui::{
+use octomus_core::send_telemetry_from_ctx;
+use octomusui::elements::{ChildView, Flex, ParentElement as _};
+use octomusui::{
     AppContext, Element, Entity, FocusContext, TypedActionView, View, ViewContext, ViewHandle,
 };
 

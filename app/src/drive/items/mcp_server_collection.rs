@@ -1,7 +1,7 @@
-use warpui::elements::MouseStateHandle;
-use warpui::{AppContext, Element};
+use octomusui::elements::MouseStateHandle;
+use octomusui::{AppContext, Element};
 
-use super::{WarpDriveItem, WarpDriveItemId};
+use super::{OctomusDriveItem, OctomusDriveItemId};
 use crate::appearance::Appearance;
 use crate::cloud_object::CloudObjectMetadata;
 use crate::drive::index::DriveIndexAction;
@@ -10,11 +10,11 @@ use crate::server::ids::ClientId;
 use crate::themes::theme::Fill;
 
 #[derive(Clone)]
-pub struct WarpDriveMCPServerCollection {
+pub struct OctomusDriveMCPServerCollection {
     id: ClientId,
 }
 
-impl WarpDriveMCPServerCollection {
+impl OctomusDriveMCPServerCollection {
     pub fn new(id: ClientId) -> Self {
         Self { id }
     }
@@ -24,7 +24,7 @@ impl WarpDriveMCPServerCollection {
     }
 }
 
-impl WarpDriveItem for WarpDriveMCPServerCollection {
+impl OctomusDriveItem for OctomusDriveMCPServerCollection {
     fn display_name(&self) -> Option<String> {
         Some("MCP Servers".to_string())
     }
@@ -49,8 +49,8 @@ impl WarpDriveItem for WarpDriveMCPServerCollection {
         None
     }
 
-    fn warp_drive_id(&self) -> WarpDriveItemId {
-        WarpDriveItemId::MCPServerCollection
+    fn octomus_drive_id(&self) -> OctomusDriveItemId {
+        OctomusDriveItemId::MCPServerCollection
     }
 
     fn sync_status_icon(
@@ -66,7 +66,7 @@ impl WarpDriveItem for WarpDriveMCPServerCollection {
         None
     }
 
-    fn clone_box(&self) -> Box<dyn WarpDriveItem> {
+    fn clone_box(&self) -> Box<dyn OctomusDriveItem> {
         Box::new(self.clone())
     }
 }

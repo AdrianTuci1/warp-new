@@ -1,17 +1,17 @@
 use pathfinder_geometry::vector::vec2f;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::{
     ChildAnchor, ChildView, Clipped, ConstrainedBox, Container, Empty, Fill, MainAxisAlignment,
     MainAxisSize, MouseStateHandle, OffsetPositioning, ParentAnchor, ParentElement,
     ParentOffsetBounds, Shrinkable, Stack,
 };
-use warpui::fonts::Weight;
-use warpui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::fonts::Weight;
+use octomusui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 #[cfg(not(target_family = "wasm"))]
-use warpui::SingletonEntity;
-use warpui::{Element, ViewContext};
+use octomusui::SingletonEntity;
+use octomusui::{Element, ViewContext};
 
 use super::env_var_collection::{
     EnvVarCollectionAction, EnvVarCollectionView, VariableRowIndex, CORE_MAX_WIDTH, ROW_SPACING,
@@ -166,7 +166,7 @@ impl EnvVarCollectionView {
         let text_and_icon = TextAndIcon::new(
             TextAndIconAlignment::IconFirst,
             display_name,
-            icon.to_warpui_icon(appearance.theme().active_ui_text_color()),
+            icon.to_octomusui_icon(appearance.theme().active_ui_text_color()),
             MainAxisSize::Max,
             MainAxisAlignment::Center,
             vec2f(16., 16.),

@@ -3,16 +3,16 @@ use std::sync::Arc;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng as _};
-use warp_core::settings::ToggleableSetting;
-use warp_core::ui::appearance::Appearance;
-use warpui::elements::{
+use octomus_core::settings::ToggleableSetting;
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::{
     Align, ConstrainedBox, Container, CrossAxisAlignment, Expanded, Flex, FormattedTextElement,
     HighlightedHyperlink, MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement,
     SavePosition, Shrinkable, SizeConstraintCondition, SizeConstraintSwitch, Text,
 };
-use warpui::platform::Cursor;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::platform::Cursor;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
 };
 
@@ -169,7 +169,7 @@ impl SuggestedUnitTestsView {
     fn render_icon(&self, appearance: &Appearance) -> Box<dyn Element> {
         Container::new(
             ConstrainedBox::new(
-                warpui::elements::Icon::new(
+                octomusui::elements::Icon::new(
                     Icon::Code2.into(),
                     appearance
                         .theme()

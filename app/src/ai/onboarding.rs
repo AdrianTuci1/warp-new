@@ -3,8 +3,8 @@
 use ai::LLMId;
 use onboarding::slides::OnboardingModelInfo;
 use onboarding::OnboardingAuthState;
-use warp_core::ui::icons::Icon;
-use warpui::{AppContext, SingletonEntity};
+use octomus_core::ui::icons::Icon;
+use octomusui::{AppContext, SingletonEntity};
 
 use super::llms::{DisableReason, LLMInfo, LLMPreferences};
 use crate::auth::AuthStateProvider;

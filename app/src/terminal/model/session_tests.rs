@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use warpui::elements::Empty;
-use warpui::platform::WindowStyle;
-use warpui::{App, AppContext, Element, Entity, ModelHandle, TypedActionView, View, ViewContext};
+use octomusui::elements::Empty;
+use octomusui::platform::WindowStyle;
+use octomusui::{App, AppContext, Element, Entity, ModelHandle, TypedActionView, View, ViewContext};
 
 use super::{SessionId, Sessions, SessionsEvent};
 

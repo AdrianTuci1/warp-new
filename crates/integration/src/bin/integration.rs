@@ -5,13 +5,13 @@ use anyhow::Result;
 use clap::Parser;
 use integration::test::*;
 use integration::Builder;
-use warp_cli::WorkerCommand;
-use warp_core::channel::{Channel, ChannelConfig, ChannelState, OzConfig, WarpServerConfig};
-use warp_core::AppId;
+use octomus_cli::WorkerCommand;
+use octomus_core::channel::{Channel, ChannelConfig, ChannelState, OzConfig, WarpServerConfig};
+use octomus_core::AppId;
 
-/// The Warp integration test runner.
+/// The Octomus integration test runner.
 #[derive(Debug, Default, Parser, Clone)]
-#[command(name = "warp-integration-test")]
+#[command(name = "octomus-integration-test")]
 #[clap(args_conflicts_with_subcommands = true)]
 pub struct Args {
     #[command(subcommand)]
@@ -29,9 +29,9 @@ pub fn main() -> Result<()> {
         ChannelConfig {
             app_id: AppId::new(
                 "dev",
-                "warp",
+                "octomus",
                 if cfg!(target_os = "macos") {
-                    "Warp-Integration"
+                    "Octomus-Integration"
                 } else {
                     "WarpIntegration"
                 },
@@ -69,7 +69,7 @@ pub fn main() -> Result<()> {
                 // GUI application), do so.  This must occur before init_logging, as the
                 // terminal server sets up its own logger, and attempting to set a second
                 // logger leads to a panic.
-                warp::terminal::local_tty::server::run_terminal_server(args);
+                octomus::terminal::local_tty::server::run_terminal_server(args);
                 return Ok(());
             }
             // This is a catch-all to handle the plugin host, which the integration test crate doesn't have a feature flag for.
@@ -107,7 +107,7 @@ pub fn main() -> Result<()> {
     }
 
     #[cfg_attr(not(unix), allow(unreachable_code))]
-    warp::run_integration_test(driver)
+    octomus::run_integration_test(driver)
 }
 
 /// Type of a function that produces an integration test builder.
@@ -319,7 +319,7 @@ fn register_tests() -> HashMap<&'static str, BoxedBuilderFn> {
 
     register_test!(test_can_auto_bootstrap);
 
-    register_test!(test_ask_warp_ai_keybinding_for_selected_block);
+    register_test!(test_ask_octomus_ai_keybinding_for_selected_block);
     register_test!(test_create_folder_from_command_palette);
 
     register_test!(test_tab_behavior_setting);
@@ -368,7 +368,7 @@ fn register_tests() -> HashMap<&'static str, BoxedBuilderFn> {
 
     register_test!(test_notebook_pane_tracking);
     register_test!(test_close_notebook_tab);
-    register_test!(test_open_in_warp_banner);
+    register_test!(test_open_in_octomus_banner);
     register_test!(test_close_notebook_window);
     register_test!(test_backspace_inside_raw_mermaid_block_edits_text_without_removing_block);
 

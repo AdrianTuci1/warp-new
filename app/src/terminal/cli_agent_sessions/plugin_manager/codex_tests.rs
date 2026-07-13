@@ -20,7 +20,7 @@ fn can_auto_install_is_false_without_codex_plugin() {
 fn install_instructions_are_native_without_codex_plugin() {
     let _guard = FeatureFlag::CodexPlugin.override_enabled(false);
     let instructions = CodexPluginManager::new(None, None, None).install_instructions();
-    assert_eq!(instructions.title, "Enable Warp Notifications for Codex");
+    assert_eq!(instructions.title, "Enable Octomus Notifications for Codex");
     assert_eq!(
         instructions.steps[1].command,
         "[tui]\nnotification_condition = \"always\""
@@ -63,11 +63,11 @@ fn install_instructions_has_steps() {
     let instructions = CodexPluginManager::new(None, None, None).install_instructions();
     assert_eq!(
         instructions.steps[0].command,
-        "codex plugin marketplace add warpdotdev/codex-warp"
+        "codex plugin marketplace add warpdotdev/codex-octomus"
     );
     assert_eq!(
         instructions.steps[1].command,
-        "codex plugin add warp@codex-warp"
+        "codex plugin add octomus@codex-octomus"
     );
     assert!(!instructions.steps.is_empty());
     assert!(!instructions.title.is_empty());
@@ -79,11 +79,11 @@ fn update_instructions_has_steps() {
     let instructions = CodexPluginManager::new(None, None, None).update_instructions();
     assert_eq!(
         instructions.steps[0].command,
-        "codex plugin marketplace upgrade codex-warp"
+        "codex plugin marketplace upgrade codex-octomus"
     );
     assert_eq!(
         instructions.steps[1].command,
-        "codex plugin add warp@codex-warp"
+        "codex plugin add octomus@codex-octomus"
     );
     assert!(!instructions.steps.is_empty());
     assert!(!instructions.title.is_empty());
@@ -102,7 +102,7 @@ fn installed_when_config_enabled() {
     let dir = tempfile::tempdir().unwrap();
     fs::write(
         dir.path().join("config.toml"),
-        "[plugins.\"warp@codex-warp\"]\nenabled = true\n",
+        "[plugins.\"octomus@codex-octomus\"]\nenabled = true\n",
     )
     .unwrap();
 
@@ -114,7 +114,7 @@ fn not_installed_when_config_disabled() {
     let dir = tempfile::tempdir().unwrap();
     fs::write(
         dir.path().join("config.toml"),
-        "[plugins.\"warp@codex-warp\"]\nenabled = false\n",
+        "[plugins.\"octomus@codex-octomus\"]\nenabled = false\n",
     )
     .unwrap();
 
@@ -159,9 +159,9 @@ fn installed_version_returns_none_when_manifest_has_no_version() {
     let dir = tempfile::tempdir().unwrap();
     let manifest_dir = dir
         .path()
-        .join("plugins/cache/codex-warp/warp/1.0.0/.codex-plugin");
+        .join("plugins/cache/codex-octomus/octomus/1.0.0/.codex-plugin");
     fs::create_dir_all(&manifest_dir).unwrap();
-    fs::write(manifest_dir.join("plugin.json"), "{\"name\":\"warp\"}").unwrap();
+    fs::write(manifest_dir.join("plugin.json"), "{\"name\":\"octomus\"}").unwrap();
 
     assert_eq!(super::installed_version(dir.path()), None);
 }
@@ -256,7 +256,7 @@ fn needs_update_via_trait_when_installed_without_manifest() {
 fn write_enabled_config(dir: &std::path::Path) {
     fs::write(
         dir.join("config.toml"),
-        "[plugins.\"warp@codex-warp\"]\nenabled = true\n",
+        "[plugins.\"octomus@codex-octomus\"]\nenabled = true\n",
     )
     .unwrap();
 }
@@ -265,15 +265,15 @@ fn write_manifest(dir: &std::path::Path, version: &str) {
     let manifest_dir = dir
         .join("plugins")
         .join("cache")
-        .join("codex-warp")
-        .join("warp")
+        .join("codex-octomus")
+        .join("octomus")
         .join(version)
         .join(".codex-plugin");
     fs::create_dir_all(&manifest_dir).unwrap();
     fs::write(
         manifest_dir.join("plugin.json"),
         serde_json::json!({
-            "name": "warp",
+            "name": "octomus",
             "version": version
         })
         .to_string(),

@@ -1,11 +1,11 @@
-use warpui::elements::{
+use octomusui::elements::{
     Border, Container, CornerRadius, CrossAxisAlignment, Flex, MainAxisAlignment, MainAxisSize,
     MouseStateHandle, ParentElement, Radius, Shrinkable, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element as WarpuiElement, Entity, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
@@ -150,7 +150,7 @@ impl View for CloudSettingsPageView {
     }
 
     fn render(&self, app: &AppContext) -> Box<dyn WarpuiElement> {
-        let mut stack = warpui::elements::Stack::new();
+        let mut stack = octomusui::elements::Stack::new();
         stack.add_child(self.page.render(self, app));
 
         if self.modal_state.is_open() {

@@ -1,12 +1,12 @@
 # TECH.md — Per-tab theme overrides driven by directory and launch configurations
 
-Issue: https://github.com/warpdotdev/warp/issues/478
-Related: https://github.com/warpdotdev/warp/issues/2618
+Issue: https://github.com/warpdotdev/octomus/issues/478
+Related: https://github.com/warpdotdev/octomus/issues/2618
 Product spec: `specs/GH478/product.md`
 
 ## Context
 
-The Warp theme is currently a single global value derived from
+The Octomus theme is currently a single global value derived from
 `ThemeSettings`. The renderer reads it through the global `Appearance`
 singleton, which today owns exactly one resolved `WarpTheme`. Per-tab
 overrides therefore require changes in four layers — the launch
@@ -49,7 +49,7 @@ All file references are at HEAD on `master`.
 ### Renderer entry point
 
 - `app/src/appearance.rs:34` re-exports `Appearance` from
-  `warp_core::ui::appearance`.
+  `octomus_core::ui::appearance`.
 - `app/src/appearance.rs:40–47` — `AppearanceManager`; subscribes to
   `ThemeSettings` (line 51) and pushes changes into `Appearance`.
 - `Appearance` today owns one `WarpTheme`. Per-tab overrides require
@@ -328,7 +328,7 @@ define_settings_group!(DirectoryThemeOverrides, settings: [
                       active pane's cwd is matched against keys (longest \
                       prefix wins); the matched theme overrides the global \
                       theme for that tab. Stored locally; never synced to \
-                      Warp's cloud because path keys can leak employer or \
+                      Octomus's cloud because path keys can leak employer or \
                       project names.",
     },
 ]);
@@ -351,7 +351,7 @@ and `private`; the design rule applied here is:
   never logs path keys or theme names to remote telemetry pipelines.
 - **Local logs are also redacted.** Diagnostic output is routinely
   shared in bug reports and support sessions, so even the local
-  Warp log must not contain raw `directory_overrides` keys. The
+  Octomus log must not contain raw `directory_overrides` keys. The
   redaction rule and helper are specced in *Diagnostic redaction* below.
 - **No round-tripping into shareable artifacts.** A saved launch
   configuration does not emit `directory_overrides` entries (product
@@ -372,7 +372,7 @@ the raw key is dictionary-guessable — an adversary with a shared log
 can hash a list of plausible candidate paths and recover the key by
 collision. The fix is a **per-installation keyed hash**: a 32-byte
 random salt is generated on first launch, stored in a local-only,
-non-synced file (`~/.warp/redaction_salt`, mode `0600`), and never
+non-synced file (`~/.octomus/redaction_salt`, mode `0600`), and never
 leaves the machine.
 
 ```rust
@@ -382,7 +382,7 @@ leaves the machine.
 ///
 /// Implementation: HMAC-SHA256(installation_salt, raw_key), truncated
 /// to 6 hex chars (24 bits). The installation salt is read from
-/// `~/.warp/redaction_salt` (generated on first launch, mode 0600,
+/// `~/.octomus/redaction_salt` (generated on first launch, mode 0600,
 /// never synced). Because the salt is per-installation and never
 /// shared, an identifier leaked in a log file cannot be reversed by
 /// a dictionary attack against candidate paths — the attacker would
@@ -408,7 +408,7 @@ subsystem at startup and passed into `redacted_key_id` as a borrow;
 no global static is required.
 
 If the salt file is missing or unreadable at runtime — for example
-the user deleted it, or Warp is running in a container without write
+the user deleted it, or Octomus is running in a container without write
 access — the redaction helper emits `directory_overrides[unsalted]:
 ...` with no derived identifier from the path at all, which is the
 safest fallback and surfaces the configuration error to the user.
@@ -416,7 +416,7 @@ safest fallback and surfaces the configuration error to the user.
 **Even-stronger alternative considered and rejected**: storing an
 opaque local ID alongside each entry (e.g. a sidecar file mapping
 `key → uuid`). That removes the hash entirely but requires every
-settings edit to round-trip through Warp's runtime to allocate IDs
+settings edit to round-trip through Octomus's runtime to allocate IDs
 for new keys; users editing `settings.toml` directly in a text
 editor would not get an ID until next launch, so the diagnostic for
 a freshly-typed bad theme value would be
@@ -439,7 +439,7 @@ directory_overrides[id=8a3f9c]: unknown theme "Drakula" — matching this entry 
 ```
 
 The identifier is stable for a given key on a given machine, so the
-same warning recurs with the same id across Warp restarts and helps
+same warning recurs with the same id across Octomus restarts and helps
 the user correlate multiple diagnostics about the same entry. The
 identifier does **not** match between machines (different salts), so
 correlation across users in a shared bug-report channel is impossible
@@ -526,7 +526,7 @@ This addresses Oz concern 3 (`Appearance::theme_for` cannot return
 `&WarpTheme` for arbitrary overrides because `Appearance` only owns the
 global `WarpTheme` today).
 
-`Appearance` is extended in `warp_core::ui::appearance`:
+`Appearance` is extended in `octomus_core::ui::appearance`:
 
 ```rust
 pub struct Appearance {
@@ -643,7 +643,7 @@ CI hook: `./script/presubmit` gains
 after the existing `cargo clippy` step. The lint runs in parallel
 with clippy and adds well under a minute to presubmit time.
 
-**Fallback** if the Warp team would rather not introduce `dylint` as
+**Fallback** if the Octomus team would rather not introduce `dylint` as
 a new dependency: replace the lint library with a `ripgrep` check in
 `./script/presubmit` that matches `Appearance::*::theme()` calls
 under per-tab paths and exits non-zero on hit. This gives 90% of the
@@ -839,7 +839,7 @@ name to avoid typos.
 - `TabSnapshot::color()` returns the same value with and without
   `theme_state` populated (color and theme are independent — #19).
 
-`app/src/appearance.rs` (or `warp_core` tests):
+`app/src/appearance.rs` (or `octomus_core` tests):
 
 - `Appearance::theme_for(None)` returns the same `Arc` as
   `Appearance::theme()`.
@@ -968,7 +968,7 @@ name to avoid typos.
 - `DirectoryThemeOverrides` settings group has `private == true` and
   `sync_to_cloud == SyncToCloud::Never`. Pinned by a settings-system
   test analogous to the existing tests that gate which settings sync.
-- The redaction-salt file (`~/.warp/redaction_salt`) is created with
+- The redaction-salt file (`~/.octomus/redaction_salt`) is created with
   mode `0600` on first launch and is **not** included in any
   cloud-synced settings payload (verified by the same serializer test
   that asserts no path keys leak).

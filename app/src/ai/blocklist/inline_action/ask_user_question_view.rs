@@ -5,19 +5,19 @@ use std::time::Duration;
 use ai::agent::action::{AskUserQuestionItem, AskUserQuestionOption, AskUserQuestionType};
 use ai::agent::action_result::{AskUserQuestionAnswerItem, AskUserQuestionResult};
 use itertools::Itertools;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::WarpTheme;
-use warpui::elements::new_scrollable::SingleAxisConfig;
-use warpui::elements::{
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::WarpTheme;
+use octomusui::elements::new_scrollable::SingleAxisConfig;
+use octomusui::elements::{
     Border, ChildView, Clipped, ClippedScrollStateHandle, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, Expanded, Fill, Flex, FormattedTextElement, MainAxisAlignment,
     MainAxisSize, MouseStateHandle, ParentElement, Radius, Text, DEFAULT_UI_LINE_HEIGHT_RATIO,
 };
-use warpui::keymap::{FixedBinding, Keystroke};
-use warpui::r#async::{SpawnedFutureHandle, Timer};
-use warpui::ui_components::components::Coords;
-use warpui::units::Pixels;
-use warpui::{
+use octomusui::keymap::{FixedBinding, Keystroke};
+use octomusui::r#async::{SpawnedFutureHandle, Timer};
+use octomusui::ui_components::components::Coords;
+use octomusui::units::Pixels;
+use octomusui::{
     AppContext, Element, Entity, EntityId, FocusContext, ModelHandle, SingletonEntity,
     TypedActionView, View, ViewContext, ViewHandle,
 };
@@ -116,7 +116,7 @@ fn ask_user_question_auto_advance_enabled(is_multiselect: bool, is_last_question
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     // Scope these shortcuts to the active ask-user-question block so arrow/submit keys don't leak
     // into surrounding views.
@@ -343,7 +343,7 @@ struct AskUserQuestionInteractiveViews {
 /// Header state for the collapsed/expanded completion summary.
 struct AskUserQuestionCompletionState {
     label: String,
-    status_icon: warpui::elements::Icon,
+    status_icon: octomusui::elements::Icon,
 }
 
 /// Local questionnaire state machine used by the view.
@@ -1385,7 +1385,7 @@ impl AskUserQuestionView {
         questions: &[AskUserQuestionItem],
         answers: Option<&[AskUserQuestionAnswerItem]>,
         label: String,
-        status_icon: warpui::elements::Icon,
+        status_icon: octomusui::elements::Icon,
         appearance: &Appearance,
         app: &AppContext,
     ) -> Box<dyn Element> {
@@ -1500,7 +1500,7 @@ impl AskUserQuestionView {
             .with_child(self.render_options_list())
             .finish();
 
-        let scrollable = warpui::elements::NewScrollable::vertical(
+        let scrollable = octomusui::elements::NewScrollable::vertical(
             SingleAxisConfig::Clipped {
                 handle: self.options_scroll_state.clone(),
                 child: body,
@@ -1609,7 +1609,7 @@ impl View for AskUserQuestionView {
         }
     }
 
-    fn keymap_context(&self, app: &AppContext) -> warpui::keymap::Context {
+    fn keymap_context(&self, app: &AppContext) -> octomusui::keymap::Context {
         let mut context = Self::default_keymap_context();
         // These context flags are what activate the fixed bindings registered in init().
         if matches!(self.session.phase(), AskUserQuestionPhase::Editing)

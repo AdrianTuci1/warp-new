@@ -15,8 +15,8 @@ use tempfile::TempDir;
 use terminal::shared_session::permissions_manager::SessionPermissionsManager;
 use terminal::view::ActiveSessionState;
 use warp_editor::editor::NavigationKey;
-use warpui::platform::WindowStyle;
-use warpui::{AddSingletonModel, App, ViewHandle};
+use octomusui::platform::WindowStyle;
+use octomusui::{AddSingletonModel, App, ViewHandle};
 use watcher::HomeDirectoryWatcher;
 
 use super::*;
@@ -78,7 +78,7 @@ use crate::undo_close::UndoCloseSettings;
 use crate::user_config::tab_configs_dir;
 #[cfg(windows)]
 use crate::util::traffic_lights::windows::RendererState;
-use crate::warp_managed_paths_watcher::WarpManagedPathsWatcher;
+use crate::octomus_managed_paths_watcher::WarpManagedPathsWatcher;
 use crate::workflows::local_workflows::LocalWorkflows;
 use crate::workspaces::team_tester::TeamTesterStatus;
 use crate::workspaces::update_manager::TeamUpdateManager;
@@ -540,9 +540,9 @@ fn test_worktree_sidecar_search_editor_enter_executes_selection() {
 }
 
 /// RAII guard that removes tab config TOML files whose name starts with
-/// `prefix` from `~/.warp/tab_configs/` on drop. Because `Drop` runs even
+/// `prefix` from `~/.octomus/tab_configs/` on drop. Because `Drop` runs even
 /// when a test panics, this prevents stale worktree configs from leaking
-/// into Warp dev.
+/// into Octomus dev.
 #[cfg(feature = "local_fs")]
 struct TabConfigCleanupGuard {
     prefix: &'static str,
@@ -1529,7 +1529,7 @@ fn test_notebook_pane_tracking() {
                     owner: Owner::mock_current_user(),
                     initial_folder_id: None,
                 },
-                &OpenWarpDriveObjectSettings::default(),
+                &OpenOctomusDriveObjectSettings::default(),
                 ctx,
                 true,
             );
@@ -1569,7 +1569,7 @@ fn test_notebook_pane_tracking() {
             // Re-opening the notebook should not create a new view.
             workspace.open_notebook(
                 &NotebookSource::Existing(notebook_id),
-                &OpenWarpDriveObjectSettings::default(),
+                &OpenOctomusDriveObjectSettings::default(),
                 ctx,
                 true,
             );
@@ -1680,67 +1680,67 @@ fn test_terminal_model_isnt_leaked() {
 }
 
 #[test]
-fn test_open_or_toggle_warp_drive() {
+fn test_open_or_toggle_octomus_drive() {
     App::test((), |mut app| async move {
         initialize_app(&mut app);
 
         let workspace = mock_workspace(&mut app);
         workspace.update(&mut app, |workspace, ctx| {
-            // First, unconditionally open Warp Drive as a system action. WD should be open and welcome tips should not have opening warp drive.
-            workspace.open_or_toggle_warp_drive(
+            // First, unconditionally open Octomus Drive as a system action. WD should be open and welcome tips should not have opening octomus drive.
+            workspace.open_or_toggle_octomus_drive(
                 false, /* toggle */
                 false, /* explicit_user_action */
                 ctx,
             );
             assert!(
-                workspace.current_workspace_state.is_warp_drive_open,
-                "Warp Drive should be open"
+                workspace.current_workspace_state.is_octomus_drive_open,
+                "Octomus Drive should be open"
             );
             assert!(
                 !workspace
                     .tips_completed
                     .as_ref(ctx)
                     .features_used
-                    .contains(&Tip::Action(TipAction::OpenWarpDrive)),
-                "Warp drive welcome tip should not be completed"
+                    .contains(&Tip::Action(TipAction::OpenOctomusDrive)),
+                "Octomus drive welcome tip should not be completed"
             );
 
-            // Next, toggle warp drive as a user action. WD should be closed and tip should not be filled out.
-            workspace.open_or_toggle_warp_drive(
+            // Next, toggle octomus drive as a user action. WD should be closed and tip should not be filled out.
+            workspace.open_or_toggle_octomus_drive(
                 true, /* toggle */
                 true, /* explicit_user_action */
                 ctx,
             );
             assert!(
-                !workspace.current_workspace_state.is_warp_drive_open,
-                "Warp Drive should be closed"
+                !workspace.current_workspace_state.is_octomus_drive_open,
+                "Octomus Drive should be closed"
             );
             assert!(
                 !workspace
                     .tips_completed
                     .as_ref(ctx)
                     .features_used
-                    .contains(&Tip::Action(TipAction::OpenWarpDrive)),
-                "Warp drive welcome tip should not be completed"
+                    .contains(&Tip::Action(TipAction::OpenOctomusDrive)),
+                "Octomus drive welcome tip should not be completed"
             );
 
-            // Finally, toggle warp drive again as a user action. WD should be open and tip filled out.
-            workspace.open_or_toggle_warp_drive(
+            // Finally, toggle octomus drive again as a user action. WD should be open and tip filled out.
+            workspace.open_or_toggle_octomus_drive(
                 true, /* toggle */
                 true, /* explicit_user_action */
                 ctx,
             );
             assert!(
-                workspace.current_workspace_state.is_warp_drive_open,
-                "Warp Drive should be open"
+                workspace.current_workspace_state.is_octomus_drive_open,
+                "Octomus Drive should be open"
             );
             assert!(
                 workspace
                     .tips_completed
                     .as_ref(ctx)
                     .features_used
-                    .contains(&Tip::Action(TipAction::OpenWarpDrive)),
-                "Warp drive welcome tip should not be completed"
+                    .contains(&Tip::Action(TipAction::OpenOctomusDrive)),
+                "Octomus drive welcome tip should not be completed"
             );
         });
     });
@@ -1967,13 +1967,13 @@ fn test_switch_focus_panels() {
 
         // Shift focus from terminal to left panel when WD is open
         workspace.update(&mut app, |view, ctx| {
-            view.current_workspace_state.is_warp_drive_open = true;
+            view.current_workspace_state.is_octomus_drive_open = true;
             view.focus_left_panel(ctx);
         });
         workspace.update(&mut app, |view, ctx| {
             assert!(
                 view.left_panel_view.is_self_or_child_focused(ctx),
-                "Expected Warp Drive panel to be focused"
+                "Expected Octomus Drive panel to be focused"
             );
         });
 
@@ -3039,11 +3039,11 @@ fn test_worktree_sidecar_hides_linked_worktrees_from_repo_list() {
             let external_git_dir_canon = CanonicalizedPath::try_from(external_git_dir.as_path())
                 .expect("canonical external git dir");
 
-            let main_repo_std: warp_util::standardized_path::StandardizedPath =
+            let main_repo_std: octomus_util::standardized_path::StandardizedPath =
                 main_repo_canon.into();
-            let linked_worktree_std: warp_util::standardized_path::StandardizedPath =
+            let linked_worktree_std: octomus_util::standardized_path::StandardizedPath =
                 linked_worktree_canon.into();
-            let external_git_dir_std: warp_util::standardized_path::StandardizedPath =
+            let external_git_dir_std: octomus_util::standardized_path::StandardizedPath =
                 external_git_dir_canon.into();
 
             DetectedRepositories::handle(ctx).update(ctx, |repos, _ctx| {

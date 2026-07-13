@@ -1,13 +1,13 @@
 use pathfinder_color::ColorU;
-use warpui::elements::{
+use octomusui::elements::{
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Hoverable, Icon,
     MouseStateHandle, ParentElement, Radius, Text,
 };
-use warpui::platform::Cursor;
-use warpui::{Element, EventContext};
+use octomusui::platform::Cursor;
+use octomusui::{Element, EventContext};
 
 use crate::appearance::Appearance;
-use crate::drive::cloud_object_styling::warp_drive_icon_color;
+use crate::drive::cloud_object_styling::octomus_drive_icon_color;
 use crate::drive::DriveObjectType;
 use crate::search::{FilterChipRenderer as CommonFilterChipRenderer, QueryFilter};
 use crate::util::color::{ContrastingColor, MinimumAllowedContrast};
@@ -123,31 +123,31 @@ impl FilterChipRenderer for QueryFilter {
                 .theme()
                 .main_text_color(appearance.theme().surface_2())
                 .into_solid(),
-            QueryFilter::Workflows => warp_drive_icon_color(appearance, DriveObjectType::Workflow),
-            QueryFilter::Notebooks => warp_drive_icon_color(
+            QueryFilter::Workflows => octomus_drive_icon_color(appearance, DriveObjectType::Workflow),
+            QueryFilter::Notebooks => octomus_drive_icon_color(
                 appearance,
                 DriveObjectType::Notebook {
                     is_ai_document: false,
                 },
             ),
-            QueryFilter::Plans => warp_drive_icon_color(
+            QueryFilter::Plans => octomus_drive_icon_color(
                 appearance,
                 DriveObjectType::Notebook {
                     is_ai_document: true,
                 },
             ),
             QueryFilter::EnvironmentVariables => {
-                warp_drive_icon_color(appearance, DriveObjectType::EnvVarCollection)
+                octomus_drive_icon_color(appearance, DriveObjectType::EnvVarCollection)
             }
             QueryFilter::AgentModeWorkflows => {
-                warp_drive_icon_color(appearance, DriveObjectType::AgentModeWorkflow)
+                octomus_drive_icon_color(appearance, DriveObjectType::AgentModeWorkflow)
             }
         }
     }
 }
 
 mod styles {
-    use warpui::elements::{Border, MouseState};
+    use octomusui::elements::{Border, MouseState};
 
     use crate::themes::theme::{Blend, Fill, WarpTheme};
 

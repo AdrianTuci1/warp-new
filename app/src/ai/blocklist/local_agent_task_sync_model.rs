@@ -3,7 +3,7 @@ use std::sync::Arc;
 
 use session_sharing_protocol::common::SessionId;
 use warp_graphql::ai::{AgentTaskState, PlatformErrorCode};
-use warpui::{Entity, EntityId, ModelContext, SingletonEntity};
+use octomusui::{Entity, EntityId, ModelContext, SingletonEntity};
 
 use super::history_model::{
     BlocklistAIHistoryEvent, BlocklistAIHistoryModel, ConversationStatusUpdate,
@@ -374,7 +374,7 @@ pub(crate) fn classify_renderable_error(
         RenderableAIError::ServerOverloaded => (
             AgentTaskState::Error,
             Some(TaskStatusUpdate::with_error_code(
-                "Warp is temporarily overloaded. Please try again shortly.",
+                "Octomus is temporarily overloaded. Please try again shortly.",
                 PlatformErrorCode::ResourceUnavailable,
             )),
         ),

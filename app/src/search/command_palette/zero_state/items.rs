@@ -1,7 +1,7 @@
-use warpui::elements::{Container, Flex, ParentElement};
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::ui_components::text::WrappableText;
-use warpui::{AppContext, Element, Entity, ModelContext, SingletonEntity};
+use octomusui::elements::{Container, Flex, ParentElement};
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::ui_components::text::WrappableText;
+use octomusui::{AppContext, Element, Entity, ModelContext, SingletonEntity};
 
 use crate::appearance::Appearance;
 use crate::search::command_palette::mixer::CommandPaletteItemAction;

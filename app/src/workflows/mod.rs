@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 pub use cloud_object_models::{CloudWorkflow, CloudWorkflowModel, WorkflowId};
 use serde::{Deserialize, Serialize};
-use warp_core::context_flag::ContextFlag;
-use warp_core::features::FeatureFlag;
-use warpui::{AppContext, SingletonEntity};
+use octomus_core::context_flag::ContextFlag;
+use octomus_core::features::FeatureFlag;
+use octomusui::{AppContext, SingletonEntity};
 
 pub mod categories;
 use anyhow::Result;
@@ -29,8 +29,8 @@ use crate::cloud_object::{
     CloudModelType, CloudObjectEventEntrypoint, CloudObjectUpsertParams, CreateCloudObjectResult,
     CreateObjectRequest, GenericServerObject, ObjectType, Revision, UpdateCloudObjectResult,
 };
-use crate::drive::items::workflow::WarpDriveWorkflow;
-use crate::drive::items::WarpDriveItem;
+use crate::drive::items::workflow::OctomusDriveWorkflow;
+use crate::drive::items::OctomusDriveItem;
 use crate::drive::CloudObjectTypeAndId;
 use crate::notebooks::{NotebookId, NotebookLocation};
 use crate::persistence::ModelEvent;
@@ -60,14 +60,14 @@ pub enum WorkflowSource {
         location: NotebookLocation,
     },
 
-    /// A hardcoded workflow type that allows Warp to surface features as Workflows (e.g.
+    /// A hardcoded workflow type that allows Octomus to surface features as Workflows (e.g.
     /// a command to see our network log)
     App,
 }
 
 #[derive(Copy, Clone, Debug, Deserialize, Serialize, Eq, PartialEq, Hash, PartialOrd)]
 pub enum WorkflowSelectionSource {
-    WarpDrive,
+    OctomusDrive,
     CommandPalette,
     UniversalSearch,
     Voltron,
@@ -152,7 +152,7 @@ pub enum WorkflowType {
     Local(Workflow),
     /// Saved workflows from personal or team collections, saved using cloud-sync.
     Cloud(Box<CloudWorkflow>),
-    /// Ephemeral/transient workflows created from Warp AI output
+    /// Ephemeral/transient workflows created from Octomus AI output
     AIGenerated {
         workflow: Workflow,
         origin: AIWorkflowOrigin,
@@ -316,17 +316,17 @@ impl CloudModelType for CloudWorkflowModel {
             .await
     }
 
-    fn renders_in_warp_drive(&self) -> bool {
+    fn renders_in_octomus_drive(&self) -> bool {
         true
     }
 
-    fn to_warp_drive_item(
+    fn to_octomus_drive_item(
         &self,
         id: SyncId,
         _appearance: &Appearance,
         workflow: &CloudWorkflow,
-    ) -> Option<Box<dyn WarpDriveItem>> {
-        Some(Box::new(WarpDriveWorkflow::new(
+    ) -> Option<Box<dyn OctomusDriveItem>> {
+        Some(Box::new(OctomusDriveWorkflow::new(
             self.cloud_object_type_and_id(id),
             workflow.clone(),
         )))

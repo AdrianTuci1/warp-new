@@ -4,8 +4,8 @@ use std::path::{Path, PathBuf};
 #[cfg(feature = "local_fs")]
 use settings::Setting as _;
 #[cfg(feature = "local_fs")]
-use warpui::ModelContext;
-use warpui::{Entity, SingletonEntity};
+use octomusui::ModelContext;
+use octomusui::{Entity, SingletonEntity};
 #[cfg(feature = "local_fs")]
 use {
     crate::report_if_error,
@@ -25,7 +25,7 @@ use {
         collections::{HashMap, HashSet},
         time::Duration,
     },
-    warpui::{r#async::SpawnedFutureHandle, EntityId, ModelHandle, WeakModelHandle},
+    octomusui::{r#async::SpawnedFutureHandle, EntityId, ModelHandle, WeakModelHandle},
 };
 
 #[cfg(feature = "local_fs")]
@@ -381,7 +381,7 @@ impl GitRepoStatusModel {
         let repo_path = self.repo_path.clone();
         #[cfg(feature = "local_tty")]
         let path_future = {
-            // Use the shell's interactive PATH so `gh` can be found when Warp
+            // Use the shell's interactive PATH so `gh` can be found when Octomus
             // was launched outside of a login shell, e.g. from the macOS GUI.
             use crate::terminal::local_shell::LocalShellState;
             LocalShellState::handle(ctx).update(ctx, |shell_state, ctx| {
@@ -454,7 +454,7 @@ impl GitRepoStatusModel {
         let repo_path = self.repo_path.clone();
         #[cfg(feature = "local_tty")]
         let path_future = {
-            // Use the shell's interactive PATH so `gh` can be found when Warp
+            // Use the shell's interactive PATH so `gh` can be found when Octomus
             // was launched outside of a login shell, e.g. from the macOS GUI.
             use crate::terminal::local_shell::LocalShellState;
             LocalShellState::handle(ctx).update(ctx, |shell_state, ctx| {

@@ -4,10 +4,10 @@ use ai::api_keys::ApiKeyManager;
 use chrono::{DateTime, Local, Utc};
 use instant::Instant;
 use serde::{Deserialize, Serialize};
-use warp_core::user_preferences::GetUserPreferences as _;
+use octomus_core::user_preferences::GetUserPreferences as _;
 pub use warp_graphql::billing::BonusGrantType;
 use warp_graphql::scalars::time::ServerTimestamp;
-use warpui::{AppContext, Entity, ModelContext, SingletonEntity};
+use octomusui::{AppContext, Entity, ModelContext, SingletonEntity};
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::AIAgentExchangeId;
@@ -412,7 +412,7 @@ impl AIRequestUsageModel {
         });
 
         // If you have provided your own API key,
-        // it doesn't matter if you are out of warp-provided requests.
+        // it doesn't matter if you are out of octomus-provided requests.
         let has_byo_api_key = UserWorkspaces::as_ref(ctx).is_byo_api_key_enabled(ctx)
             && ApiKeyManager::as_ref(ctx).keys().has_any_key();
 

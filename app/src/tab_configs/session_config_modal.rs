@@ -1,16 +1,16 @@
 use std::path::PathBuf;
 
 use pathfinder_geometry::vector::vec2f;
-use warpui::elements::{
+use octomusui::elements::{
     ChildAnchor, ChildView, ConstrainedBox, Container, CrossAxisAlignment, Flex,
     FormattedTextElement, MouseStateHandle, OffsetPositioning, ParentAnchor, ParentElement,
     ParentOffsetBounds, Stack,
 };
-use warpui::fonts::Weight;
-use warpui::keymap::macros::id;
-use warpui::keymap::{FixedBinding, Keystroke};
-use warpui::platform::file_picker::FilePickerConfiguration;
-use warpui::{
+use octomusui::fonts::Weight;
+use octomusui::keymap::macros::id;
+use octomusui::keymap::{FixedBinding, Keystroke};
+use octomusui::platform::file_picker::FilePickerConfiguration;
+use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
@@ -23,7 +23,7 @@ use crate::view_components::action_button::{
     ActionButton, ButtonSize, KeystrokeSource, NakedTheme, PrimaryTheme,
 };
 
-pub fn init(app: &mut warpui::AppContext) {
+pub fn init(app: &mut octomusui::AppContext) {
     app.register_fixed_bindings([FixedBinding::new(
         "enter",
         SessionConfigModalAction::Submit,
@@ -37,7 +37,7 @@ const SECTION_GAP: f32 = 16.;
 pub enum SessionConfigModalAction {
     SelectSessionType(usize),
     OpenDirectoryPicker,
-    DirectorySelected(Result<String, warpui::platform::file_picker::FilePickerError>),
+    DirectorySelected(Result<String, octomusui::platform::file_picker::FilePickerError>),
     ToggleWorktree,
     ToggleAutogenerateWorktreeBranchName,
     Submit,

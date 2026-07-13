@@ -19,8 +19,8 @@ use super::*;
 fn pill_bar_data_layer_finds_restored_children_before_pane_creation() {
     use chrono::Utc;
     use uuid::Uuid;
-    use warp_core::features::FeatureFlag;
-    use warpui::App;
+    use octomus_core::features::FeatureFlag;
+    use octomusui::App;
 
     use crate::ai::blocklist::orchestration_topology::descendant_conversation_ids_in_spawn_order;
     use crate::ai::blocklist::BlocklistAIHistoryModel;

@@ -10,12 +10,12 @@ use repo_metadata::file_tree_update::RepoNodeMetadata;
 use repo_metadata::local_model::GetContentsArgs;
 use repo_metadata::{RepoContent, RepoMetadataModel, RepoMetadataUpdate, RepositoryIdentifier};
 use walkdir::{DirEntry, WalkDir};
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warp_util::remote_path::RemotePath;
-use warp_util::standardized_path::StandardizedPath;
-use warpui::AppContext;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomus_util::remote_path::RemotePath;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::AppContext;
 
-use crate::warp_managed_paths_watcher::warp_managed_skill_dirs;
+use crate::octomus_managed_paths_watcher::warp_managed_skill_dirs;
 
 fn local_or_remote_path_for_repo_path(
     repo_id: &RepositoryIdentifier,
@@ -266,7 +266,7 @@ pub fn is_home_skill_directory(path: &Path) -> bool {
 /// E.g. ~/.agents/skills
 pub fn is_home_provider_path(path: &Path) -> bool {
     SKILL_PROVIDER_DEFINITIONS.iter().any(|provider| {
-        if provider.provider == SkillProvider::Warp {
+        if provider.provider == SkillProvider::Octomus {
             return warp_managed_skill_dirs().iter().any(|dir| path == dir);
         }
         home_skills_path(provider.provider)

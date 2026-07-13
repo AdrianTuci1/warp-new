@@ -1,16 +1,16 @@
 use settings::Setting;
-use warp_core::send_telemetry_from_ctx;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::Icon;
-use warpui::elements::{
+use octomus_core::send_telemetry_from_ctx;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::Icon;
+use octomusui::elements::{
     ConstrainedBox, Container, CrossAxisAlignment, Flex, Hoverable, MainAxisSize, MouseStateHandle,
     ParentElement, Shrinkable, Text,
 };
-use warpui::fonts::Properties;
-use warpui::platform::Cursor;
-use warpui::prelude::Empty;
-use warpui::text_layout::ClipConfig;
-use warpui::{
+use octomusui::fonts::Properties;
+use octomusui::platform::Cursor;
+use octomusui::prelude::Empty;
+use octomusui::text_layout::ClipConfig;
+use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakModelHandle,
 };
@@ -257,7 +257,7 @@ impl View for AmbientAgentEntryBlock {
                 )
                 .with_color(theme.main_text_color(theme.background()).into_solid())
                 .with_style(Properties {
-                    weight: warpui::fonts::Weight::Bold,
+                    weight: octomusui::fonts::Weight::Bold,
                     ..Default::default()
                 })
                 .soft_wrap(false)
@@ -301,7 +301,7 @@ impl View for AmbientAgentEntryBlock {
             .with_child(
                 ConstrainedBox::new(
                     Icon::ChevronRight
-                        .to_warpui_icon(theme.sub_text_color(theme.background()))
+                        .to_octomusui_icon(theme.sub_text_color(theme.background()))
                         .finish(),
                 )
                 .with_height(20.)

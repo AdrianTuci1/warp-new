@@ -3,14 +3,14 @@
 use std::cell::Cell;
 use std::rc::Rc;
 
-use warp_cli::agent::Harness;
-use warp_core::features::FeatureFlag;
-use warp_core::send_telemetry_from_ctx;
-use warp_core::ui::appearance::Appearance;
-use warp_terminal::model::BlockId;
-use warpui::elements::Align;
-use warpui::prelude::{Empty, Vector2F};
-use warpui::{
+use octomus_cli::agent::Harness;
+use octomus_core::features::FeatureFlag;
+use octomus_core::send_telemetry_from_ctx;
+use octomus_core::ui::appearance::Appearance;
+use octomus_terminal::model::BlockId;
+use octomusui::elements::Align;
+use octomusui::prelude::{Empty, Vector2F};
+use octomusui::{
     AppContext, Element, EntityId, ModelHandle, SingletonEntity, ViewContext, ViewHandle,
 };
 
@@ -954,7 +954,7 @@ impl TerminalView {
     /// Prefers cloud `AmbientAgentTask` data when this terminal view has an
     /// associated task ID. Otherwise falls back to populating the panel from
     /// the active local `AIConversation`, so the same panel can surface
-    /// conversation metadata for non-cloud Warp Agent runs (APP-3595).
+    /// conversation metadata for non-cloud Octomus Agent runs (APP-3595).
     pub(in crate::terminal::view) fn fetch_and_update_conversation_details_panel(
         &mut self,
         ctx: &mut ViewContext<Self>,

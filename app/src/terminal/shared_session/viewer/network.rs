@@ -27,9 +27,9 @@ use session_sharing_protocol::viewer::{
     DownstreamMessage, InitPayload, RoleUpdatedReason, SessionEndedReason, UpstreamMessage,
     ViewerRemovedReason,
 };
-use warp_core::features::FeatureFlag;
-use warpui::r#async::{SpawnedFutureHandle, Timer};
-use warpui::{
+use octomus_core::features::FeatureFlag;
+use octomusui::r#async::{SpawnedFutureHandle, Timer};
+use octomusui::{
     Entity, ModelContext, ModelHandle, RequestState, RetryOption, SingletonEntity, WeakViewHandle,
 };
 use websocket::{Message, Sink, Stream, WebsocketMessage as _};
@@ -224,7 +224,7 @@ impl Network {
         let session_id = SessionId::new();
         let viewer_id = ParticipantId::new();
         let viewer_firebase_uid = UserUid::new("mock_firebase_uid");
-        let active_prompt = ActivePrompt::WarpPrompt("test warp prompt".to_owned());
+        let active_prompt = ActivePrompt::WarpPrompt("test octomus prompt".to_owned());
 
         let model = Network {
             heartbeat,

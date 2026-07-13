@@ -3,22 +3,22 @@ use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
 use thousands::Separable;
-use warp_core::send_telemetry_from_ctx;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::{Fill, WarpTheme};
+use octomus_core::send_telemetry_from_ctx;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::{Fill, WarpTheme};
 use warp_graphql::billing::{PlanPricing, StripeSubscriptionPlan};
-use warpui::elements::{
+use octomusui::elements::{
     Align, Border, CacheOption, ChildAnchor, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, DropShadow, Flex, FormattedTextElement, HighlightedHyperlink, Image,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning, ParentAnchor,
     ParentElement, ParentOffsetBounds, Radius, Stack,
 };
-use warpui::fonts::Weight;
-use warpui::keymap::FixedBinding;
-use warpui::platform::Cursor;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use octomusui::fonts::Weight;
+use octomusui::keymap::FixedBinding;
+use octomusui::platform::Cursor;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
 
 use crate::ai::{AIRequestUsageModel, AIRequestUsageModelEvent};
 use crate::auth::AuthStateProvider;
@@ -34,7 +34,7 @@ const LEFT_PANEL_WIDTH: f32 = 360.;
 const RIGHT_PANEL_WIDTH: f32 = 360.;
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([FixedBinding::new(
         "escape",
@@ -109,7 +109,7 @@ impl FreeTierLimitHitModal {
                 Container::new(
                     ConstrainedBox::new(
                         Icon::CheckCircleBroken
-                            .to_warpui_icon(Fill::Solid(theme.ansi_fg_green()))
+                            .to_octomusui_icon(Fill::Solid(theme.ansi_fg_green()))
                             .finish(),
                     )
                     .with_width(14.)
@@ -232,7 +232,7 @@ impl FreeTierLimitHitModal {
                                     FormattedTextFragment::plain_text("Access to "),
                                     FormattedTextFragment::hyperlink(
                                         "Reload Credits".to_string(),
-                                        "https://docs.warp.dev/support-and-community/plans-and-billing/add-on-credits".to_string(),
+                                        "https://docs.octomus.dev/support-and-community/plans-and-billing/add-on-credits".to_string(),
                                     ),
                                 ])]);
                                 Flex::row()
@@ -241,7 +241,7 @@ impl FreeTierLimitHitModal {
                                         Container::new(
                                             ConstrainedBox::new(
                                                 Icon::CheckCircleBroken
-                                                    .to_warpui_icon(Fill::Solid(theme.ansi_fg_green()))
+                                                    .to_octomusui_icon(Fill::Solid(theme.ansi_fg_green()))
                                                     .finish(),
                                             )
                                             .with_width(14.)
@@ -275,7 +275,7 @@ impl FreeTierLimitHitModal {
                                 let formatted_text = FormattedText::new([FormattedTextLine::Line(vec![
                                     FormattedTextFragment::hyperlink(
                                         "Extended cloud agents access".to_string(),
-                                        "https://www.warp.dev/oz".to_string(),
+                                        "https://www.octomus.dev/oz".to_string(),
                                     ),
                                 ])]);
                                 Flex::row()
@@ -284,7 +284,7 @@ impl FreeTierLimitHitModal {
                                         Container::new(
                                             ConstrainedBox::new(
                                                 Icon::CheckCircleBroken
-                                                    .to_warpui_icon(Fill::Solid(theme.ansi_fg_green()))
+                                                    .to_octomusui_icon(Fill::Solid(theme.ansi_fg_green()))
                                                     .finish(),
                                             )
                                             .with_width(14.)

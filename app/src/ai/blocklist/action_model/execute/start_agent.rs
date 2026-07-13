@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use futures::future::BoxFuture;
 use futures::FutureExt;
-use warp_cli::agent::Harness;
-use warp_core::features::FeatureFlag;
-use warpui::{Entity, ModelContext, SingletonEntity};
+use octomus_cli::agent::Harness;
+use octomus_core::features::FeatureFlag;
+use octomusui::{Entity, ModelContext, SingletonEntity};
 
 use super::{ActionExecution, AnyActionExecution, ExecuteActionInput, PreprocessActionInput};
 use crate::ai::agent::conversation::{AIConversationId, ConversationStatus};

@@ -13,14 +13,14 @@ use futures::stream::AbortHandle;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
-use warp_core::features::FeatureFlag;
-use warp_core::report_error;
+use octomus_core::features::FeatureFlag;
+use octomus_core::report_error;
 use warp_graphql::mcp_gallery_template::MCPGalleryTemplate;
 use warp_graphql::object_permissions::AccessLevel;
 use warp_graphql::scalars::time::ServerTimestamp;
-use warp_util::sync::Condition;
-use warpui::r#async::FutureId;
-use warpui::{AppContext, Entity, ModelContext, RequestState, RetryOption, SingletonEntity};
+use octomus_util::sync::Condition;
+use octomusui::r#async::FutureId;
+use octomusui::{AppContext, Entity, ModelContext, RequestState, RetryOption, SingletonEntity};
 
 use super::listener::ObjectUpdateMessage;
 use crate::ai::agent::conversation::AIConversationId;
@@ -2495,8 +2495,8 @@ impl UpdateManager {
         ctx: &mut ModelContext<Self>,
     ) where
         P: 'static + FnMut(Arc<dyn ObjectClient>) -> S,
-        S: warpui::r#async::Spawnable + Future<Output = anyhow::Result<R>>,
-        <S as Future>::Output: warpui::r#async::SpawnableOutput,
+        S: octomusui::r#async::Spawnable + Future<Output = anyhow::Result<R>>,
+        <S as Future>::Output: octomusui::r#async::SpawnableOutput,
         F: 'static + FnMut(R, &mut AppContext) -> Option<ServerPermissions>,
     {
         let object_client = self.object_client.clone();
@@ -2557,8 +2557,8 @@ impl UpdateManager {
         mut on_success: impl FnMut(&mut Self, M, &mut ModelContext<Self>) + 'static,
     ) where
         P: 'static + FnMut(Arc<dyn ObjectClient>) -> S,
-        S: warpui::r#async::Spawnable + Future<Output = anyhow::Result<M>>,
-        <S as Future>::Output: warpui::r#async::SpawnableOutput,
+        S: octomusui::r#async::Spawnable + Future<Output = anyhow::Result<M>>,
+        <S as Future>::Output: octomusui::r#async::SpawnableOutput,
     {
         let cloud_model = CloudModel::handle(ctx);
         let uid = server_id.uid();
@@ -3254,7 +3254,7 @@ impl UpdateManager {
         ctx: &mut ModelContext<Self>,
     ) {
         self.create_object(
-            // TODO(INT-789): support creating folders as warp packs
+            // TODO(INT-789): support creating folders as octomus packs
             CloudFolderModel::new(&name, false),
             owner,
             client_id,

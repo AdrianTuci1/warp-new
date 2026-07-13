@@ -30,14 +30,14 @@ fn item_action(item: &MenuItem<DropdownAction>) -> &DropdownAction {
 #[test]
 fn build_menu_items_with_no_defaults_shows_warp_and_custom() {
     let items = build_menu_items(None, None, &[]);
-    assert_eq!(items.len(), 2, "expected warp + custom-host entries");
+    assert_eq!(items.len(), 2, "expected octomus + custom-host entries");
     assert_eq!(item_label(&items[0]), ORCHESTRATION_WARP_WORKER_HOST);
     assert_eq!(item_label(&items[1]), "Custom host\u{2026}");
 }
 
 #[test]
 fn build_menu_items_promotes_default_to_top() {
-    // Workspace default sits above warp and gets the "Default" badge,
+    // Workspace default sits above octomus and gets the "Default" badge,
     // matching the Oz webapp's HostSelector layout.
     let items = build_menu_items(Some("my-corp"), None, &[]);
     assert_eq!(items.len(), 3);
@@ -65,15 +65,15 @@ fn build_menu_items_dedups_recent_when_it_matches_default_or_warp() {
     assert_eq!(item_label(&items[1]), ORCHESTRATION_WARP_WORKER_HOST);
     assert_eq!(item_label(&items[2]), "Custom host\u{2026}");
 
-    // Recent == "warp" is also skipped (warp is already a row).
-    let items = build_menu_items(Some("my-corp"), Some("warp"), &[]);
-    assert_eq!(items.len(), 3, "warp recent should not double-add");
+    // Recent == "octomus" is also skipped (octomus is already a row).
+    let items = build_menu_items(Some("my-corp"), Some("octomus"), &[]);
+    assert_eq!(items.len(), 3, "octomus recent should not double-add");
 }
 #[test]
 fn build_menu_items_adds_connected_hosts_before_recent_and_dedups_known_hosts() {
     let connected_hosts = vec![
         "alpha".to_string(),
-        "warp".to_string(),
+        "octomus".to_string(),
         "my-corp".to_string(),
         "alpha".to_string(),
         "beta".to_string(),

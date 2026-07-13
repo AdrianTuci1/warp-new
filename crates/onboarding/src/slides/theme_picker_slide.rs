@@ -1,21 +1,21 @@
 use pathfinder_color::ColorU;
 use ui_components::{button, Component as _, Options as _};
-use warp_core::features::FeatureFlag;
-use warp_core::send_telemetry_from_ctx;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::WarpTheme;
-use warpui_core::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::send_telemetry_from_ctx;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::WarpTheme;
+use octomusui_core::elements::{
     Border, ClippedScrollStateHandle, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     Empty, Flex, FormattedTextElement, Hoverable, MainAxisAlignment, MainAxisSize,
     MouseStateHandle, ParentElement, Radius, Text,
 };
-use warpui_core::fonts::{Properties, Weight};
-use warpui_core::keymap::Keystroke;
-use warpui_core::platform::Cursor;
-use warpui_core::text_layout::TextAlignment;
-use warpui_core::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui_core::{
+use octomusui_core::fonts::{Properties, Weight};
+use octomusui_core::keymap::Keystroke;
+use octomusui_core::platform::Cursor;
+use octomusui_core::text_layout::TextAlignment;
+use octomusui_core::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui_core::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
 
@@ -172,13 +172,13 @@ impl ThemePickerSlide {
         // Add the Privacy Settings / Terms of Service disclaimer block below the
         // theme options when the user has selected the terminal intention and
         // won't hit the login slide afterwards. The terminal-intent flow skips
-        // the login slide (which surfaces the same links) unless Warp Drive is
+        // the login slide (which surfaces the same links) unless Octomus Drive is
         // enabled — in that case the login slide will still run after the theme
         // step and show the disclaimer, so duplicating it here is unnecessary.
         let state = self.onboarding_state.as_ref(app);
         let is_terminal = matches!(state.intention(), OnboardingIntention::Terminal);
-        let warp_drive_enabled = state.ui_customization().show_warp_drive;
-        if is_terminal && !warp_drive_enabled && FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
+        let octomus_drive_enabled = state.ui_customization().show_octomus_drive;
+        if is_terminal && !octomus_drive_enabled && FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
         {
             content.push(self.render_disclaimer_section(appearance));
         }
@@ -603,7 +603,7 @@ impl ThemePickerSlide {
         let tos_line = Flex::row()
             .with_child(
                 ui_builder
-                    .span("By continuing, you agree to Warp's ")
+                    .span("By continuing, you agree to Octomus's ")
                     .with_style(disclaimer_styles)
                     .build()
                     .finish(),

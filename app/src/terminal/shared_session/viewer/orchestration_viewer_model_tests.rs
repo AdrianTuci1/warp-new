@@ -22,8 +22,8 @@
 use std::sync::Arc;
 
 use chrono::Utc;
-use warp_core::features::FeatureFlag;
-use warpui::{App, EntityId, SingletonEntity};
+use octomus_core::features::FeatureFlag;
+use octomusui::{App, EntityId, SingletonEntity};
 
 use super::*;
 use crate::ai::agent::task::TaskId;
@@ -1664,7 +1664,7 @@ fn child_spawned_with_malformed_run_id_is_dropped() {
 fn streamer_consumer_is_registered_when_constructed_under_flag() {
     // Flag ON: `OrchestrationViewerModel::new` registers the pane on the
     // shared streamer entry and kicks off the cold-start seed.
-    use warp_core::features::FeatureFlag;
+    use octomus_core::features::FeatureFlag;
 
     App::test((), |mut app| async move {
         let _v2_guard = FeatureFlag::OrchestrationV2.override_enabled(true);
@@ -1715,8 +1715,8 @@ fn viewer_model_retries_consumer_registration_on_set_active_conversation() {
     // `parent_conversation_id` (children get one through
     // `start_new_child_conversation`). The discriminator in
     // `register_viewer_mode_consumer_if_possible` must accept this shape.
-    use warp_core::features::FeatureFlag;
-    use warpui::SingletonEntity;
+    use octomus_core::features::FeatureFlag;
+    use octomusui::SingletonEntity;
 
     use crate::ai::blocklist::orchestration_event_streamer::OrchestrationEventStreamer;
 
@@ -1782,8 +1782,8 @@ fn viewer_model_does_not_register_when_active_conversation_is_a_child_placeholde
     // `SwapPaneToConversation` before the orchestrator placeholder is
     // activated — which would persist the orchestration cursor on the
     // wrong row.
-    use warp_core::features::FeatureFlag;
-    use warpui::SingletonEntity;
+    use octomus_core::features::FeatureFlag;
+    use octomusui::SingletonEntity;
 
     use crate::ai::blocklist::orchestration_event_streamer::OrchestrationEventStreamer;
 

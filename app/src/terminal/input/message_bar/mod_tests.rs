@@ -1,6 +1,6 @@
-use warp_core::ui::Icon;
-use warpui::assets::asset_cache::AssetSource;
-use warpui::elements::MouseStateHandle;
+use octomus_core::ui::Icon;
+use octomusui::assets::asset_cache::AssetSource;
+use octomusui::elements::MouseStateHandle;
 
 use super::{ChipHorizontalAlignment, MessageItem};
 

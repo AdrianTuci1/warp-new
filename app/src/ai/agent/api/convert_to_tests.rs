@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use warp_core::command::ExitCode;
+use octomus_core::command::ExitCode;
 use warp_multi_agent_api as api;
 
 use crate::ai::agent::task::TaskId;
@@ -17,7 +17,7 @@ fn git_context_converts_repository_and_pull_request_metadata() {
             branch: Some("feature/repo-pr".to_string()),
         },
         AIAgentContext::Repository {
-            name: "warp-internal".to_string(),
+            name: "octomus-internal".to_string(),
             owner: Some("warpdotdev".to_string()),
         },
         AIAgentContext::PullRequest {
@@ -34,7 +34,7 @@ fn git_context_converts_repository_and_pull_request_metadata() {
     assert_eq!(git.branch, "feature/repo-pr");
 
     let repository = git.repository.expect("expected repository context");
-    assert_eq!(repository.name, "warp-internal");
+    assert_eq!(repository.name, "octomus-internal");
     assert_eq!(repository.owner, "warpdotdev");
 
     let pull_request = git.pull_request.expect("expected pull request context");

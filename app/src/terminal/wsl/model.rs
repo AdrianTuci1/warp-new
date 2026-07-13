@@ -1,6 +1,6 @@
 use itertools::Itertools as _;
-use warpui::{Entity, ModelContext, SingletonEntity};
-use warpui_extras::user_preferences::registry_backed::KEY_NOT_FOUND_ERR;
+use octomusui::{Entity, ModelContext, SingletonEntity};
+use octomusui_extras::user_preferences::registry_backed::KEY_NOT_FOUND_ERR;
 use windows_registry::CURRENT_USER;
 use windows_result::Error as WindowsError;
 

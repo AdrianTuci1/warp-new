@@ -2,18 +2,18 @@ use std::rc::Rc;
 
 use strum::IntoEnumIterator;
 use strum_macros::{EnumIter, IntoStaticStr};
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
 use warp_editor::editor::NavigationKey;
-use warpui::elements::{
+use octomusui::elements::{
     Border, ClippedScrollStateHandle, ClippedScrollable, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, Empty, Fill, Flex, MainAxisAlignment, MainAxisSize, MouseStateHandle,
     ParentElement, Radius, ScrollbarWidth, Shrinkable,
 };
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::ui_components::toggle_menu::{ToggleMenuItem, ToggleMenuStateHandle};
-use warpui::{
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::ui_components::toggle_menu::{ToggleMenuItem, ToggleMenuStateHandle};
+use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
@@ -596,7 +596,7 @@ impl EnumCreationDialog {
             .with_centered_text_label(label_text.to_owned())
             .with_style(UiComponentStyles {
                 font_size: Some(BUTTON_FONT_SIZE),
-                font_weight: Some(warpui::fonts::Weight::Normal),
+                font_weight: Some(octomusui::fonts::Weight::Normal),
                 ..Default::default()
             });
 
@@ -607,7 +607,7 @@ impl EnumCreationDialog {
         button
             .build()
             .on_click(move |ctx, _, _| ctx.dispatch_typed_action(action.clone()))
-            .with_cursor(warpui::platform::Cursor::PointingHand)
+            .with_cursor(octomusui::platform::Cursor::PointingHand)
             .finish()
     }
 

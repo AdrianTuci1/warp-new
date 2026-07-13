@@ -8,11 +8,11 @@ Product spec: `specs/APP-3680/PRODUCT.md`
 
 **Tab replacement:** There is no existing "replace current tab" API. `add_tab_with_pane_layout` (`app/src/workspace/view.rs:8157`) always adds a new tab. `close_tab` (`app/src/workspace/view.rs:7805`) removes by index.
 
-**Tab config TOML writing:** `create_and_open_new_tab_config` (`app/src/workspace/view.rs:4739`) writes the template to `~/.warp/tab_configs/` via `find_unused_tab_config_path` (`app/src/user_config/mod.rs:173`). The filesystem watcher (`app/src/user_config/native.rs:266`) auto-reloads tab configs.
+**Tab config TOML writing:** `create_and_open_new_tab_config` (`app/src/workspace/view.rs:4739`) writes the template to `~/.octomus/tab_configs/` via `find_unused_tab_config_path` (`app/src/user_config/mod.rs:173`). The filesystem watcher (`app/src/user_config/native.rs:266`) auto-reloads tab configs.
 
 **DefaultSessionMode:** `DefaultSessionMode` (`app/src/settings/ai.rs:252`) has `Terminal` and `Agent` variants. Set during onboarding via `apply_agent_settings` (`app/src/settings/onboarding.rs:122`).
 
-**Feature flags:** `TabConfigs`, `AgentOnboarding`, `OpenWarpNewSettingsModes`, and `AgentView` are the relevant flags (`warp_core/src/features.rs`). We'll add a new flag for this modal.
+**Feature flags:** `TabConfigs`, `AgentOnboarding`, `OpenWarpNewSettingsModes`, and `AgentView` are the relevant flags (`octomus_core/src/features.rs`). We'll add a new flag for this modal.
 
 ## Relevant Code
 
@@ -98,7 +98,7 @@ Uses `toml::to_string_pretty(config)` (now possible with `Serialize`), finds an 
 
 Create `app/src/tab_configs/session_config_modal.rs`. This is a self-contained `View` that renders the Figma layout:
 - Session type pill buttons using `Wrap::row()` for flex-wrap (hardcoded list in order: Built in agent (Oz), Claude, Codex, Gemini, Terminal)
-- Directory picker button (opens native `FilePickerConfiguration::folders_only()`), displays `~` via `warp_util::path::user_friendly_path()`, left-aligned text with semibold weight, no folder icon
+- Directory picker button (opens native `FilePickerConfiguration::folders_only()`), displays `~` via `octomus_util::path::user_friendly_path()`, left-aligned text with semibold weight, no folder icon
 - "Enable worktree support" checkbox (disabled when directory is not a git repo)
 - "Get warping" button using `ActionButton` with `PrimaryTheme` and `with_full_width(true)`, includes Enter keystroke badge via `with_keybinding()`
 

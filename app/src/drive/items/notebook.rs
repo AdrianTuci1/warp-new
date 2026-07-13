@@ -1,9 +1,9 @@
-use warpui::elements::{Flex, MouseStateHandle, ParentElement};
-use warpui::fonts::Weight;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element};
+use octomusui::elements::{Flex, MouseStateHandle, ParentElement};
+use octomusui::fonts::Weight;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element};
 
-use super::{WarpDriveItem, WarpDriveItemId};
+use super::{OctomusDriveItem, OctomusDriveItemId};
 use crate::appearance::Appearance;
 use crate::cloud_object::CloudObjectMetadata;
 use crate::drive::index::DriveIndexAction;
@@ -12,13 +12,13 @@ use crate::notebooks::CloudNotebook;
 use crate::themes::theme::Fill;
 
 #[derive(Clone)]
-pub struct WarpDriveNotebook {
+pub struct OctomusDriveNotebook {
     id: CloudObjectTypeAndId,
     notebook: CloudNotebook,
     is_ai_document: bool,
 }
 
-impl WarpDriveNotebook {
+impl OctomusDriveNotebook {
     pub fn new(id: CloudObjectTypeAndId, notebook: CloudNotebook, is_ai_document: bool) -> Self {
         Self {
             id,
@@ -28,7 +28,7 @@ impl WarpDriveNotebook {
     }
 }
 
-impl WarpDriveItem for WarpDriveNotebook {
+impl OctomusDriveItem for OctomusDriveNotebook {
     fn display_name(&self) -> Option<String> {
         if self.notebook.model().title.is_empty() {
             None
@@ -82,8 +82,8 @@ impl WarpDriveItem for WarpDriveNotebook {
         Some(Flex::column().with_child(title).finish())
     }
 
-    fn warp_drive_id(&self) -> WarpDriveItemId {
-        WarpDriveItemId::Object(self.id)
+    fn octomus_drive_id(&self) -> OctomusDriveItemId {
+        OctomusDriveItemId::Object(self.id)
     }
 
     fn sync_status_icon(
@@ -103,7 +103,7 @@ impl WarpDriveItem for WarpDriveNotebook {
         None
     }
 
-    fn clone_box(&self) -> Box<dyn WarpDriveItem> {
+    fn clone_box(&self) -> Box<dyn OctomusDriveItem> {
         Box::new(self.clone())
     }
 }

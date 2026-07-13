@@ -5,18 +5,18 @@ use num_traits::Float as _;
 use parking_lot::FairMutex;
 use pathfinder_geometry::vector::vec2f;
 use vec1::Vec1;
-use warp_core::features::FeatureFlag;
-use warp_util::user_input::UserInput;
-use warpui::elements::new_scrollable::{NewScrollableElement, ScrollableAxis};
-use warpui::elements::{Axis, Point as UiPoint, ScrollData, ScrollableElement};
-use warpui::event::{DispatchedEvent, InBoundsExt, KeyState, ModifiersState};
-use warpui::fonts::Properties;
-use warpui::geometry::rect::RectF;
-use warpui::geometry::vector::Vector2F;
-use warpui::platform::keyboard::KeyCode;
-use warpui::text::SelectionType;
-use warpui::units::{IntoLines, IntoPixels, Lines, Pixels};
-use warpui::{
+use octomus_core::features::FeatureFlag;
+use octomus_util::user_input::UserInput;
+use octomusui::elements::new_scrollable::{NewScrollableElement, ScrollableAxis};
+use octomusui::elements::{Axis, Point as UiPoint, ScrollData, ScrollableElement};
+use octomusui::event::{DispatchedEvent, InBoundsExt, KeyState, ModifiersState};
+use octomusui::fonts::Properties;
+use octomusui::geometry::rect::RectF;
+use octomusui::geometry::vector::Vector2F;
+use octomusui::platform::keyboard::KeyCode;
+use octomusui::text::SelectionType;
+use octomusui::units::{IntoLines, IntoPixels, Lines, Pixels};
+use octomusui::{
     end_trace, record_trace_event, start_trace, AfterLayoutContext, AppContext, ClipBounds,
     Element, EntityId, Event, EventContext, LayoutContext, ModelHandle, PaintContext,
     SizeConstraint,
@@ -258,7 +258,7 @@ impl AltScreenElement {
         ctx.dispatch_typed_action(TerminalAction::Focus);
 
         // On mobile, request soft keyboard so users can input.
-        if warpui::platform::is_mobile_device() {
+        if octomusui::platform::is_mobile_device() {
             ctx.request_soft_keyboard();
         }
 

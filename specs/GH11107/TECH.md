@@ -27,7 +27,7 @@ The implementation should keep that boundary and only shorten the Agent Driven D
 ### 1. Collapse the four visible Agent Driven Development states into two rendered steps
 Keep two product concepts:
 - Terminal input with natural language support.
-- Warp's agent experience.
+- Octomus's agent experience.
 There are two reasonable implementation approaches:
 1. Remove the unused enum variants entirely.
 2. Keep the enum variants but skip the obsolete states.
@@ -185,4 +185,4 @@ Risk: Removing two callouts changes telemetry volume and may surprise dashboards
 Mitigation: Preserve the two retained callout names and intentionally stop emitting display events for removed callouts. Call out the expected telemetry change in the PR description.
 ## Parallelization
 Parallel sub-agents are not recommended for this implementation. The change is small and tightly coupled across one state machine, one view mapping, and one parent event consumer. Splitting it would create more coordination overhead than wall-clock savings.
-If this expands into visual redesign or new tests, a second local agent could independently add validation coverage in a separate worktree such as `../warp-gh11107-tests` on branch `agent/gh11107-tests`, while the main implementation remains on the feature branch. For the scoped two-callout change, a single branch and single PR is the simplest strategy.
+If this expands into visual redesign or new tests, a second local agent could independently add validation coverage in a separate worktree such as `../octomus-gh11107-tests` on branch `agent/gh11107-tests`, while the main implementation remains on the feature branch. For the scoped two-callout change, a single branch and single PR is the simplest strategy.

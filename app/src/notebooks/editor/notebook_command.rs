@@ -14,8 +14,8 @@ use syntect::highlighting::{self, Theme, ThemeSet};
 use syntect::parsing::SyntaxSet;
 use syntect::util::LinesWithEndings;
 use ui_components::lightbox::{LightboxImage, LightboxImageSource};
-use warp_completer::signatures::CommandRegistry;
-use warp_core::r#async::debounce;
+use octomus_completer::signatures::CommandRegistry;
+use octomus_core::r#async::debounce;
 use warp_editor::content::anchor::Anchor;
 use warp_editor::content::buffer::{Buffer, BufferEvent, EditOrigin};
 use warp_editor::content::mermaid_diagram::mermaid_asset_source;
@@ -25,17 +25,17 @@ use warp_editor::content::text::{
     CODE_BLOCK_SHELL_DISPLAY_LANG,
 };
 use warp_editor::editor::RunnableCommandModel;
-use warp_util::user_input::UserInput;
-use warpui::elements::{
+use octomus_util::user_input::UserInput;
+use octomusui::elements::{
     Align, Border, Container, CornerRadius, CrossAxisAlignment, Empty, Flex, MainAxisAlignment,
     MouseStateHandle, ParentElement, Radius, Shrinkable, Text,
 };
-use warpui::fonts::Properties;
-use warpui::platform::Cursor;
-use warpui::presenter::ChildView;
-use warpui::r#async::SpawnedFutureHandle;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::Properties;
+use octomusui::platform::Cursor;
+use octomusui::presenter::ChildView;
+use octomusui::r#async::SpawnedFutureHandle;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, AssetProvider as _, Element, Entity, ModelAsRef, ModelContext, ModelHandle,
     SingletonEntity, ViewHandle, WeakModelHandle, WindowId,
 };
@@ -633,7 +633,7 @@ impl RunnableCommandModel for NotebookCommand {
                         appearance.ui_font_size(),
                     )
                     .with_style(Properties {
-                        weight: warpui::fonts::Weight::Light,
+                        weight: octomusui::fonts::Weight::Light,
                         ..Default::default()
                     })
                     .with_color(

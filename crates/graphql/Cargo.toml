@@ -21,8 +21,8 @@ persistence.workspace = true
 reqwest.workspace = true
 serde.workspace = true
 thiserror.workspace = true
-warp_core.workspace = true
-warp_graphql_schema.workspace = true
+octomus_core.workspace = true
+octomus_graphql_schema.workspace = true
 websocket = {path = "../websocket"}
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]

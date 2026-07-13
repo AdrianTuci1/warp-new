@@ -1,5 +1,5 @@
-use warpui::prelude::ChildView;
-use warpui::{Element, EntityId, View, ViewContext, ViewHandle};
+use octomusui::prelude::ChildView;
+use octomusui::{Element, EntityId, View, ViewContext, ViewHandle};
 
 use super::{InitStepBlock, InitStepKind};
 use crate::ai::agent::conversation::AIConversationId;
@@ -15,13 +15,13 @@ use crate::terminal::model::rich_content::RichContentType;
 use crate::terminal::model::terminal_model::BlockIndex;
 use crate::terminal::ssh::error::SshErrorBlock;
 use crate::terminal::ssh::install_tmux::SshInstallTmuxBlock;
-use crate::terminal::ssh::warpify::SshWarpifyBlock;
+use crate::terminal::ssh::octomusify::SshOctomusifyBlock;
 use crate::terminal::view::ambient_agent::AmbientAgentEntryBlock;
 use crate::terminal::view::block_onboarding::onboarding_agentic_suggestions_block::OnboardingAgenticSuggestionsBlock;
 use crate::terminal::view::init_environment::InitEnvironmentBlock;
 use crate::terminal::view::ssh_remote_server_choice_view::SshRemoteServerChoiceView;
 use crate::terminal::view::ssh_remote_server_failed_banner::SshRemoteServerFailedBanner;
-use crate::terminal::warpify::success_block::WarpifySuccessBlock;
+use crate::terminal::octomusify::success_block::OctomusifySuccessBlock;
 use crate::terminal::TerminalView;
 
 /// Specifies where to insert rich content in the blocklist.
@@ -246,8 +246,8 @@ pub enum RichContentMetadata {
     EnvVarCollectionBlock {
         env_var_collection_block_handle: ViewHandle<EnvVarCollectionBlock>,
     },
-    SshWarpifyBlock {
-        ssh_warpify_block_handle: ViewHandle<SshWarpifyBlock>,
+    SshOctomusifyBlock {
+        ssh_octomusify_block_handle: ViewHandle<SshOctomusifyBlock>,
     },
     SshInstallTmuxBlock {
         ssh_install_tmux_block_handle: ViewHandle<SshInstallTmuxBlock>,
@@ -261,8 +261,8 @@ pub enum RichContentMetadata {
     SshRemoteServerFailedBanner {
         handle: ViewHandle<SshRemoteServerFailedBanner>,
     },
-    WarpifySuccessBlock {
-        bootstrap_success_block_handle: ViewHandle<WarpifySuccessBlock>,
+    OctomusifySuccessBlock {
+        bootstrap_success_block_handle: ViewHandle<OctomusifySuccessBlock>,
     },
     TelemetryBanner {
         telemetry_banner_handle: ViewHandle<TelemetryBanner>,

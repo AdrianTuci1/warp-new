@@ -1,8 +1,8 @@
 use ai::agent::action_result::StartAgentVersion;
-use warp_cli::agent::Harness;
-use warp_core::ui::appearance::Appearance;
-use warpui::elements::MouseStateHandle;
-use warpui::{App, EntityId};
+use octomus_cli::agent::Harness;
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::MouseStateHandle;
+use octomusui::{App, EntityId};
 
 use super::{
     agent_display_name_from_id, child_conversation_card_data_for_result, participant_for_agent_id,
@@ -262,7 +262,7 @@ fn participant_for_agent_id_uses_pill_style_child_agent_avatar() {
 fn participant_for_restored_child_run_id_resolves_to_agent_name() {
     use chrono::Utc;
     use uuid::Uuid;
-    use warp_core::features::FeatureFlag;
+    use octomus_core::features::FeatureFlag;
 
     use crate::persistence::model::{
         AgentConversation, AgentConversationData, AgentConversationRecord,

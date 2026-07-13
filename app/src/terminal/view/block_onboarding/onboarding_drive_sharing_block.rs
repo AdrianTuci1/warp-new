@@ -1,13 +1,13 @@
 use pathfinder_geometry::vector::vec2f;
-use warp_core::ui::appearance::Appearance;
-use warpui::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::{
     Border, Container, Flex, MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::platform::Cursor;
-use warpui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, Entity, SingletonEntity, View, ViewContext};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::platform::Cursor;
+use octomusui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, Entity, SingletonEntity, View, ViewContext};
 
 use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
 use crate::drive::CloudObjectTypeAndId;
@@ -15,7 +15,7 @@ use crate::terminal::view::telemetry::SharingDialogSource;
 use crate::ui_components::icons::Icon;
 use crate::workspace::WorkspaceAction;
 
-/// A rich onboarding block that prompts the user to share a newly-created personal Warp Drive
+/// A rich onboarding block that prompts the user to share a newly-created personal Octomus Drive
 /// object.
 pub struct OnboardingDriveSharingBlock {
     object_id: CloudObjectTypeAndId,
@@ -44,9 +44,9 @@ impl Entity for OnboardingDriveSharingBlock {
     type Event = ();
 }
 
-const TITLE_TEXT: &str = "Sharing in Warp Drive";
+const TITLE_TEXT: &str = "Sharing in Octomus Drive";
 const BODY_TEXT: &[&str] = &[
-    "You can now share drive objects, in Warp or on the web, with anyone - Warp user or not. Click Share in the Warp Drive menu or the pane header to share via link or email.",
+    "You can now share drive objects, in Octomus or on the web, with anyone - Octomus user or not. Click Share in the Octomus Drive menu or the pane header to share via link or email.",
     "You’ll be able to modify the access permissions any time.",
 ];
 
@@ -111,7 +111,7 @@ impl View for OnboardingDriveSharingBlock {
                 TextAndIcon::new(
                     TextAndIconAlignment::IconFirst,
                     button_label,
-                    Icon::Share.to_warpui_icon(appearance.theme().background()),
+                    Icon::Share.to_octomusui_icon(appearance.theme().background()),
                     MainAxisSize::Min,
                     MainAxisAlignment::SpaceEvenly,
                     vec2f(BUTTON_FONT_SIZE, BUTTON_FONT_SIZE),

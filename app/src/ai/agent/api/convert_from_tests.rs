@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use ai::agent::action::AskUserQuestionType;
 use ai::skills::{SkillPathOrigin, SkillReference};
 use warp_multi_agent_api as api;
-use warp_util::local_or_remote_path::LocalOrRemotePath;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
 
 use super::{
     convert_api_question, ConversionParams, ConvertAPIMessageToClientOutputMessage,

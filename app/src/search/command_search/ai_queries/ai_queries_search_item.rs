@@ -1,13 +1,13 @@
 use chrono::{DateTime, Local};
 use ordered_float::OrderedFloat;
-use warp_core::ui::builder::MIN_FONT_SIZE;
-use warpui::elements::{
+use octomus_core::ui::builder::MIN_FONT_SIZE;
+use octomusui::elements::{
     Align, ConstrainedBox, Container, CrossAxisAlignment, Flex, Highlight, Icon, MainAxisAlignment,
     MainAxisSize, ParentElement, Shrinkable, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, SingletonEntity};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, SingletonEntity};
 
 use crate::ai::blocklist::AIQueryHistoryOutputStatus;
 use crate::appearance::Appearance;

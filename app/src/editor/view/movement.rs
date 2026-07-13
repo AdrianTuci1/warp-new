@@ -1,5 +1,5 @@
 use anyhow::Result;
-use warpui::AppContext;
+use octomusui::AppContext;
 
 use super::{DisplayMap, DisplayPoint};
 

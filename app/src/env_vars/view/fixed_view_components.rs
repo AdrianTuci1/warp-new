@@ -1,14 +1,14 @@
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::Vector2F;
-use warp_core::features::FeatureFlag;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomusui::elements::{
     Align, ConstrainedBox, Container, CrossAxisAlignment, Empty, Flex, MainAxisAlignment,
     MainAxisSize, ParentElement, Rect, Shrinkable, Stack,
 };
-use warpui::fonts::Weight;
-use warpui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{Element, ViewContext};
+use octomusui::fonts::Weight;
+use octomusui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{Element, ViewContext};
 
 use crate::drive::sharing::{ContentEditability, SharingAccessLevel};
 use crate::env_vars::active_env_var_collection_data::TrashStatus;
@@ -67,7 +67,7 @@ impl EnvVarCollectionView {
                     .with_children([
                         ConstrainedBox::new(
                             Icon::Trash
-                                .to_warpui_icon(appearance.theme().foreground())
+                                .to_octomusui_icon(appearance.theme().foreground())
                                 .finish(),
                         )
                         .with_width(16.)
@@ -241,7 +241,7 @@ impl EnvVarCollectionView {
                 TextAndIcon::new(
                     TextAndIconAlignment::TextFirst,
                     "Load",
-                    Icon::TerminalInput.to_warpui_icon(appearance.theme().active_ui_text_color()),
+                    Icon::TerminalInput.to_octomusui_icon(appearance.theme().active_ui_text_color()),
                     MainAxisSize::Min,
                     MainAxisAlignment::SpaceBetween,
                     Vector2F::new(10., 10.),

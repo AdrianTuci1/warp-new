@@ -4,10 +4,10 @@ use std::collections::HashMap;
 use instant::{Duration, Instant};
 use log::debug;
 use url::Url;
-use warp_core::send_telemetry_from_ctx;
+use octomus_core::send_telemetry_from_ctx;
 use warp_editor::editor::NavigationKey;
 use warp_graphql::queries::user_github_info::UserGithubInfoResult;
-use warpui::elements::{
+use octomusui::elements::{
     Border, ChildAnchor, ChildView, Clipped, ClippedScrollStateHandle, ClippedScrollable,
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Dismiss, Element, Empty, Expanded,
     Fill, Flex, Hoverable, MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning,
@@ -15,13 +15,13 @@ use warpui::elements::{
     PositionedElementOffsetBounds, Radius, SavePosition, ScrollTarget, ScrollToPositionMode,
     ScrollbarWidth, SizeConstraintCondition, SizeConstraintSwitch, Stack, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::geometry::vector::vec2f;
-use warpui::keymap::FixedBinding;
-use warpui::platform::Cursor;
-use warpui::prelude::Coords;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::geometry::vector::vec2f;
+use octomusui::keymap::FixedBinding;
+use octomusui::platform::Cursor;
+use octomusui::prelude::Coords;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
@@ -54,7 +54,7 @@ use crate::ChannelState;
 const SUBMIT_BUTTON_FOCUSED: &str = "SubmitButtonFocused";
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([
         FixedBinding::new(
@@ -2102,7 +2102,7 @@ impl UpdateEnvironmentForm {
                         .with_child(
                             ConstrainedBox::new(
                                 Icon::Github
-                                    .to_warpui_icon(theme.active_ui_text_color())
+                                    .to_octomusui_icon(theme.active_ui_text_color())
                                     .finish(),
                             )
                             .with_width(icon_size)
@@ -2216,7 +2216,7 @@ impl UpdateEnvironmentForm {
                             .with_child(
                                 ConstrainedBox::new(
                                     Icon::Refresh
-                                        .to_warpui_icon(theme.active_ui_text_color())
+                                        .to_octomusui_icon(theme.active_ui_text_color())
                                         .finish(),
                                 )
                                 .with_width(icon_size)
@@ -3095,7 +3095,7 @@ impl UpdateEnvironmentForm {
             "Suggest image"
         };
 
-        let tooltip_text = "Warp will suggest a Docker image based on your selected repositories.";
+        let tooltip_text = "Octomus will suggest a Docker image based on your selected repositories.";
 
         let button = Hoverable::new(
             self.suggest_image_button_mouse_state.clone(),
@@ -3117,7 +3117,7 @@ impl UpdateEnvironmentForm {
                 };
 
                 let icon_size = appearance.ui_font_size();
-                let icon = ConstrainedBox::new(Icon::Lightbulb.to_warpui_icon(text_fill).finish())
+                let icon = ConstrainedBox::new(Icon::Lightbulb.to_octomusui_icon(text_fill).finish())
                     .with_width(icon_size)
                     .with_height(icon_size)
                     .finish();
@@ -3486,8 +3486,8 @@ impl TypedActionView for UpdateEnvironmentForm {
         &mut self,
         _action: &Self::Action,
         _ctx: &mut ViewContext<Self>,
-    ) -> warpui::accessibility::ActionAccessibilityContent {
-        warpui::accessibility::ActionAccessibilityContent::default()
+    ) -> octomusui::accessibility::ActionAccessibilityContent {
+        octomusui::accessibility::ActionAccessibilityContent::default()
     }
 }
 
@@ -3496,7 +3496,7 @@ impl View for UpdateEnvironmentForm {
         "UpdateEnvironmentForm"
     }
 
-    fn keymap_context(&self, app: &AppContext) -> warpui::keymap::Context {
+    fn keymap_context(&self, app: &AppContext) -> octomusui::keymap::Context {
         let mut context = Self::default_keymap_context();
         if self.submit_button.is_focused(app) {
             context.set.insert(SUBMIT_BUTTON_FOCUSED);

@@ -290,7 +290,7 @@ pub struct RemoteBackendSettings {
 }
 ```
 
-CREATE the page file with warpui components (TextField, Dropdown, Button, etc.) following existing settings page patterns (look at ai_page.rs for reference).
+CREATE the page file with octomusui components (TextField, Dropdown, Button, etc.) following existing settings page patterns (look at ai_page.rs for reference).
 
 === PART 7: Wire "Run Remote" button ===
 
@@ -308,7 +308,7 @@ If no backend is configured, show a dialog: "No remote backend configured. Go to
 - The agent_sdk/ directory is DELETED by agent-1 — you CANNOT import from it.
 - The agent_management/ directory is KEPT — you CAN import from it.
 - All new code must NOT depend on ServerApiProvider, CloudModel, AuthStateProvider, or any deleted modules.
-- Use warpui::AppContext for app state, not server API.
+- Use octomusui::AppContext for app state, not server API.
 - For SSH, use std::process::Command to call ssh/scp (available on all platforms Octomus targets).
 - For Modal, use their CLI (modal.com CLI tool) or raw HTTP to api.modal.com.
 - For Custom, use reqwest to POST to the configured endpoint.

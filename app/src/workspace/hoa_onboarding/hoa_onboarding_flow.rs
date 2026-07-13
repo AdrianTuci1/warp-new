@@ -5,20 +5,20 @@ use markdown_parser::{
 };
 use pathfinder_color::ColorU;
 use settings::Setting;
-use warp_core::ui::theme::phenomenon::PhenomenonStyle;
-use warp_core::ui::theme::Fill;
-use warpui::elements::{
+use octomus_core::ui::theme::phenomenon::PhenomenonStyle;
+use octomus_core::ui::theme::Fill;
+use octomusui::elements::{
     Align, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Empty, Flex,
     FormattedTextElement, MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Radius,
     Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::geometry::vector::Vector2F;
-use warpui::keymap::{FixedBinding, Keystroke};
-use warpui::platform::file_picker::{FilePickerConfiguration, FilePickerError};
-use warpui::platform::Cursor;
-use warpui::ui_components::components::UiComponent;
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::geometry::vector::Vector2F;
+use octomusui::keymap::{FixedBinding, Keystroke};
+use octomusui::platform::file_picker::{FilePickerConfiguration, FilePickerError};
+use octomusui::platform::Cursor;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{
     AppContext, Element, Entity, EventContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
@@ -117,8 +117,8 @@ impl HoaOnboardingStep {
     }
 }
 
-pub fn init(app: &mut warpui::AppContext) {
-    use warpui::keymap::macros::*;
+pub fn init(app: &mut octomusui::AppContext) {
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([FixedBinding::new(
         "enter",
@@ -469,7 +469,7 @@ impl HoaOnboardingFlow {
             styles: FormattedTextStyles {
                 underline: true,
                 hyperlink: Some(Hyperlink::Url(
-                    "https://docs.warp.dev/agent-platform/warp-agents/agent-notifications".into(),
+                    "https://docs.octomus.dev/agent-platform/octomus-agents/agent-notifications".into(),
                 )),
                 ..Default::default()
             },
@@ -477,7 +477,7 @@ impl HoaOnboardingFlow {
 
         let formatted = FormattedText::new([FormattedTextLine::Line(vec![
             FormattedTextFragment::plain_text(
-                "Warp pipes through notifications from any CLI coding agent into a unified notification center that works across all coding agents and harnesses. ",
+                "Octomus pipes through notifications from any CLI coding agent into a unified notification center that works across all coding agents and harnesses. ",
             ),
             learn_more_fragment,
         ])]);
@@ -567,7 +567,7 @@ impl View for HoaOnboardingFlow {
         "HoaOnboardingFlow"
     }
 
-    fn on_focus(&mut self, _focus_ctx: &warpui::FocusContext, ctx: &mut ViewContext<Self>) {
+    fn on_focus(&mut self, _focus_ctx: &octomusui::FocusContext, ctx: &mut ViewContext<Self>) {
         ctx.focus_self();
     }
 

@@ -1,8 +1,8 @@
-use warpui::elements::MouseStateHandle;
-use warpui::{AppContext, Element};
+use octomusui::elements::MouseStateHandle;
+use octomusui::{AppContext, Element};
 
-use super::cloud_object_styling::warp_drive_icon_color;
-use super::index::{warp_drive_section_header_position_id, DriveIndexAction, DriveIndexSection};
+use super::cloud_object_styling::octomus_drive_icon_color;
+use super::index::{octomus_drive_section_header_position_id, DriveIndexAction, DriveIndexSection};
 use super::{CloudObjectTypeAndId, DriveObjectType};
 use crate::appearance::Appearance;
 use crate::cloud_object::{CloudObjectMetadata, Space};
@@ -20,7 +20,7 @@ pub mod notebook;
 pub mod space;
 pub mod workflow;
 
-pub trait WarpDriveItem {
+pub trait OctomusDriveItem {
     /// The display name of the item. If the item is unnamed, this may return `None` - implementations
     /// should prefer this over `Some("")`, as it lets the index view use alternate styling.
     fn display_name(&self) -> Option<String>;
@@ -29,7 +29,7 @@ pub trait WarpDriveItem {
     fn secondary_icon(&self, color: Option<Fill>) -> Option<Box<dyn Element>>; // The optional icon to the right of the name
     fn click_action(&self) -> Option<DriveIndexAction>;
     fn preview(&self, appearance: &Appearance) -> Option<Box<dyn Element>>;
-    fn warp_drive_id(&self) -> WarpDriveItemId;
+    fn octomus_drive_id(&self) -> OctomusDriveItemId;
     fn sync_status_icon(
         &self,
         sync_queue_is_dequeueing: bool,
@@ -39,8 +39,8 @@ pub trait WarpDriveItem {
 
     fn icon(&self, appearance: &Appearance, color: Option<Fill>) -> Option<Box<dyn Element>> {
         let object_type = self.object_type()?;
-        let icon_fill = color.unwrap_or(warp_drive_icon_color(appearance, object_type).into());
-        Some(Icon::from(object_type).to_warpui_icon(icon_fill).finish())
+        let icon_fill = color.unwrap_or(octomus_drive_icon_color(appearance, object_type).into());
+        Some(Icon::from(object_type).to_octomusui_icon(icon_fill).finish())
     }
 
     /// If implemented, returns a string that summarizes the primary action history. For example, "Run 2 times in the last week"
@@ -51,26 +51,26 @@ pub trait WarpDriveItem {
         None
     }
 
-    fn clone_box(&self) -> Box<dyn WarpDriveItem>;
+    fn clone_box(&self) -> Box<dyn OctomusDriveItem>;
 }
 
-impl WarpDriveItemId {
+impl OctomusDriveItemId {
     pub fn drive_row_position_id(&self) -> String {
         match self {
             Self::AIFactCollection => "AI_fact_collection".to_string(),
             Self::MCPServerCollection => "MCP_server_collection".to_string(),
             Self::Object(object_id) => object_id.drive_row_position_id(),
             Self::Space(space) => {
-                warp_drive_section_header_position_id(&DriveIndexSection::Space(*space))
+                octomus_drive_section_header_position_id(&DriveIndexSection::Space(*space))
             }
             Self::Trash => "Trash".to_string(),
         }
     }
 }
-/// This uniquely identifies an item in Warp Drive index
+/// This uniquely identifies an item in Octomus Drive index
 /// Includes spaces (which CloudObjectTypeAndId does not entail)
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
-pub enum WarpDriveItemId {
+pub enum OctomusDriveItemId {
     AIFactCollection,
     MCPServerCollection,
     Object(CloudObjectTypeAndId),
@@ -78,7 +78,7 @@ pub enum WarpDriveItemId {
     Trash,
 }
 
-impl Clone for Box<dyn WarpDriveItem> {
+impl Clone for Box<dyn OctomusDriveItem> {
     fn clone(&self) -> Self {
         self.clone_box()
     }

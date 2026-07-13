@@ -1,15 +1,15 @@
 use pathfinder_geometry::vector::vec2f;
 use thousands::Separable;
 use uuid::Uuid;
-use warp_core::features::FeatureFlag;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomusui::elements::{
     ChildAnchor, ChildView, ConstrainedBox, Container, CrossAxisAlignment, Dismiss, Flex,
     Hoverable, MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning, ParentAnchor,
     ParentElement, ParentOffsetBounds, Shrinkable, Stack, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, SingletonEntity, ViewHandle};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, SingletonEntity, ViewHandle};
 
 use super::{ExecutionProfileEditorView, ExecutionProfileEditorViewAction};
 use crate::ai::blocklist::BlocklistAIPermissions;
@@ -177,7 +177,7 @@ fn render_info_section(
     let alert_icon = Container::new(
         ConstrainedBox::new(
             Icon::AlertCircle
-                .to_warpui_icon(
+                .to_octomusui_icon(
                     appearance
                         .theme()
                         .sub_text_color(appearance.theme().surface_2()),
@@ -220,7 +220,7 @@ fn render_permission_row<T: DropdownItemAction>(
 ) -> Box<dyn Element> {
     let icon_elem = Container::new(
         ConstrainedBox::new(
-            icon.to_warpui_icon(appearance.theme().active_ui_text_color())
+            icon.to_octomusui_icon(appearance.theme().active_ui_text_color())
                 .finish(),
         )
         .with_width(16.)
@@ -267,7 +267,7 @@ pub fn render_models_section(
         .with_child(render_filterable_dropdown_row(
             appearance,
             "Base model",
-            "This model serves as the primary engine behind the agent. It powers most interactions and invokes other models for tasks like planning or code generation when necessary. Warp may automatically switch to alternate models based on model availability or for auxiliary tasks such as conversation summarization.",
+            "This model serves as the primary engine behind the agent. It powers most interactions and invokes other models for tasks like planning or code generation when necessary. Octomus may automatically switch to alternate models based on model availability or for auxiliary tasks such as conversation summarization.",
             &view.base_model_dropdown,
         ));
 
@@ -444,7 +444,7 @@ pub fn render_permissions_section(
     appearance: &Appearance,
     view: &ExecutionProfileEditorView,
     profile_data: &AIExecutionProfile,
-    app: &warpui::AppContext,
+    app: &octomusui::AppContext,
 ) -> Box<dyn Element> {
     let ai_settings = AISettings::as_ref(app);
     let mut column = Flex::column().with_children([
@@ -715,7 +715,7 @@ fn render_directory_allowlist_section(
     view: &ExecutionProfileEditorView,
     profile_data: &AIExecutionProfile,
     appearance: &Appearance,
-    app: &warpui::AppContext,
+    app: &octomusui::AppContext,
 ) -> Box<dyn Element> {
     let ai_settings = AISettings::as_ref(app);
     let is_editable = ai_settings.is_directory_allowlist_editable(app);
@@ -740,7 +740,7 @@ fn render_command_allowlist_section(
     view: &ExecutionProfileEditorView,
     profile_data: &AIExecutionProfile,
     appearance: &Appearance,
-    app: &warpui::AppContext,
+    app: &octomusui::AppContext,
 ) -> Box<dyn Element> {
     let ai_settings = AISettings::as_ref(app);
     let is_editable = ai_settings.is_command_allowlist_editable(app);
@@ -766,7 +766,7 @@ fn render_command_denylist_section(
     view: &ExecutionProfileEditorView,
     profile_data: &AIExecutionProfile,
     appearance: &Appearance,
-    app: &warpui::AppContext,
+    app: &octomusui::AppContext,
 ) -> Box<dyn Element> {
     use crate::ai::blocklist::BlocklistAIPermissions;
 
@@ -833,7 +833,7 @@ fn display_mcp_name(uuid: &Uuid, app: &AppContext) -> String {
 fn render_mcp_allowlist_section(
     view: &ExecutionProfileEditorView,
     profile_data: &AIExecutionProfile,
-    app: &warpui::AppContext,
+    app: &octomusui::AppContext,
     appearance: &Appearance,
 ) -> Box<dyn Element> {
     let ai_settings = AISettings::as_ref(app);
@@ -859,7 +859,7 @@ fn render_mcp_allowlist_section(
 fn render_mcp_denylist_section(
     view: &ExecutionProfileEditorView,
     profile_data: &AIExecutionProfile,
-    app: &warpui::AppContext,
+    app: &octomusui::AppContext,
     appearance: &Appearance,
 ) -> Box<dyn Element> {
     let ai_settings = AISettings::as_ref(app);
@@ -890,7 +890,7 @@ pub fn render_plan_auto_sync_toggle(
     let icon_elem = Container::new(
         ConstrainedBox::new(
             Icon::Compass
-                .to_warpui_icon(appearance.theme().active_ui_text_color())
+                .to_octomusui_icon(appearance.theme().active_ui_text_color())
                 .finish(),
         )
         .with_width(icon_size)
@@ -909,7 +909,7 @@ pub fn render_plan_auto_sync_toggle(
     .finish();
 
     let desc_elem = Text::new(
-        "The plans this agent creates will be automatically added and synced to Warp Drive."
+        "The plans this agent creates will be automatically added and synced to Octomus Drive."
             .to_string(),
         appearance.ui_font_family(),
         11.,
@@ -922,7 +922,7 @@ pub fn render_plan_auto_sync_toggle(
     )
     .finish();
 
-    let current_value = profile_data.autosync_plans_to_warp_drive;
+    let current_value = profile_data.autosync_plans_to_octomus_drive;
     let switch = appearance
         .ui_builder()
         .switch(view.plan_auto_sync_switch.clone())
@@ -964,7 +964,7 @@ pub fn render_web_search_toggle(
     let icon_elem = Container::new(
         ConstrainedBox::new(
             Icon::Globe
-                .to_warpui_icon(appearance.theme().active_ui_text_color())
+                .to_octomusui_icon(appearance.theme().active_ui_text_color())
                 .finish(),
         )
         .with_width(icon_size)

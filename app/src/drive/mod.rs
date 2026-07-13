@@ -20,8 +20,8 @@ pub use cloud_objects::drive::CloudObjectTypeAndId;
 pub use index::DriveIndexVariant;
 pub use panel::{DrivePanel, DrivePanelEvent};
 use serde::{Deserialize, Serialize};
-use warp_core::user_preferences::GetUserPreferences as _;
-use warpui::AppContext;
+use octomus_core::user_preferences::GetUserPreferences as _;
+use octomusui::AppContext;
 
 use crate::cloud_object::model::view::{CloudViewModel, UpdateTimestamp};
 use crate::cloud_object::{CloudObject, ObjectType};
@@ -32,18 +32,18 @@ use crate::workflows::CloudWorkflow;
 type SortByComparator<'a> = dyn FnMut(&&dyn CloudObject, &&dyn CloudObject) -> Ordering + 'a;
 
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
-pub struct OpenWarpDriveObjectSettings {
-    /// The folder that should be focused in the Warp Drive when the object is opened.
+pub struct OpenOctomusDriveObjectSettings {
+    /// The folder that should be focused in the Octomus Drive when the object is opened.
     pub focused_folder_id: Option<ServerId>,
     /// The email of the user to invite to the object, if the object is being opened via the request access flow.
     pub invitee_email: Option<String>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-pub struct OpenWarpDriveObjectArgs {
+pub struct OpenOctomusDriveObjectArgs {
     pub object_type: ObjectType,
     pub server_id: ServerId,
-    pub settings: OpenWarpDriveObjectSettings,
+    pub settings: OpenOctomusDriveObjectSettings,
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -115,7 +115,7 @@ pub fn write_has_auto_opened_welcome_folder_to_user_defaults(app: &mut AppContex
         .write_value(settings::HAS_AUTO_OPENED_WELCOME_FOLDER, true.to_string());
 }
 
-/// Enum used for sorting elements in the Warp Drive Index (and potentially other places).
+/// Enum used for sorting elements in the Octomus Drive Index (and potentially other places).
 /// In the future it can be used to add other options (like, by name or by author), and exposed to
 /// users in the index.
 #[derive(
@@ -132,7 +132,7 @@ pub fn write_has_auto_opened_welcome_folder_to_user_defaults(app: &mut AppContex
     settings_value::SettingsValue,
 )]
 #[schemars(
-    description = "Sort order for Warp Drive items.",
+    description = "Sort order for Octomus Drive items.",
     rename_all = "snake_case"
 )]
 pub enum DriveSortOrder {

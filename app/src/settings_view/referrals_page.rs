@@ -7,16 +7,16 @@
 7|use pathfinder_geometry::vector::Vector2F;
 8|use thiserror::Error;
 9|use validator::ValidateEmail;
-10|use warpui::clipboard::ClipboardContent;
-11|use warpui::elements::{
+10|use octomusui::clipboard::ClipboardContent;
+11|use octomusui::elements::{
 12|    Align, Border, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Element, Fill,
 13|    Flex, FormattedTextElement, HighlightedHyperlink, Icon, MainAxisSize, MouseStateHandle,
 14|    ParentElement, Radius, Rect, Shrinkable,
 15|};
-16|use warpui::fonts::Weight;
-17|use warpui::ui_components::button::ButtonVariant;
-18|use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-19|use warpui::{
+16|use octomusui::fonts::Weight;
+17|use octomusui::ui_components::button::ButtonVariant;
+18|use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+19|use octomusui::{
 20|    AppContext, Entity, EventContext, FocusContext, SingletonEntity, TypedActionView, View,
 21|    ViewContext, ViewHandle,
 22|};
@@ -36,7 +36,7 @@
 36|
 37|const HEADER_FONT_SIZE: f32 = 18.;
 38|const HEADER_MARGIN_BOTTOM: f32 = 32.;
-39|const HEADER_TEXT: &str = "Invite a friend to Warp";
+39|const HEADER_TEXT: &str = "Invite a friend to Octomus";
 40|const ANONYMOUS_USER_HEADER_TEXT: &str = "Sign up to participate in Octomus' referral program";
 41|
 42|const INVITE_FIELD_LABEL_BOTTOM_MARGIN: f32 = 8.;
@@ -59,7 +59,7 @@
 59|const EMAIL_SUCCESS_TOAST: &str = "Successfully sent emails.";
 60|const EMAIL_FAILURE_TOAST: &str = "Failed to send emails. Please try again.";
 61|
-62|const REWARD_INTRO: &str = "Get exclusive Warp goodies when you refer someone*";
+62|const REWARD_INTRO: &str = "Get exclusive Octomus goodies when you refer someone*";
 63|const REWARD_INTRO_FONT_SIZE: f32 = 14.;
 64|const REWARD_SECTION_VERTICAL_SPACING: f32 = 24.;
 65|
@@ -92,9 +92,9 @@
 92|
 93|const TERMS_LINK_TEXT: &str = "Certain restrictions apply.";
 94|const TERMS_URL: &str =
-95|    "https://docs.warp.dev/support-and-community/community/refer-a-friend#referral-program-terms-and-conditions";
+95|    "https://docs.octomus.dev/support-and-community/community/refer-a-friend#referral-program-terms-and-conditions";
 96|const TERMS_CONTACT_TEXT: &str =
-97|    " If you have any questions about the referral program, please contact referrals@warp.dev.";
+97|    " If you have any questions about the referral program, please contact referrals@octomus.dev.";
 98|
 99|enum ApiState {
 100|    Loading,

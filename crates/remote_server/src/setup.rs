@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use anyhow::anyhow;
 pub use glibc::{GlibcVersion, RemoteLibc};
-use warp_core::channel::{Channel, ChannelState};
+use octomus_core::channel::{Channel, ChannelState};
 pub const REMOTE_SERVER_ARTIFACT_VERSION_UNPINNED: &str = "unversioned";
 
 /// State machine for the remote server install → launch → initialize flow.
@@ -334,22 +334,22 @@ pub fn parse_uname_output(
 
 /// Returns the remote directory where the binary is installed, keyed by channel.
 ///
-/// - stable:      `~/.warp/remote-server`
-/// - preview:     `~/.warp-preview/remote-server`
-/// - dev:         `~/.warp-dev/remote-server`
-/// - local:       `~/.warp-local/remote-server`
-/// - integration: `~/.warp-dev/remote-server`
-/// - warp-oss:    `~/.warp-oss/remote-server`
+/// - stable:      `~/.octomus/remote-server`
+/// - preview:     `~/.octomus-preview/remote-server`
+/// - dev:         `~/.octomus-dev/remote-server`
+/// - local:       `~/.octomus-local/remote-server`
+/// - integration: `~/.octomus-dev/remote-server`
+/// - octomus-oss:    `~/.octomus-oss/remote-server`
 pub fn remote_server_dir() -> String {
     let warp_dir = match ChannelState::channel() {
-        Channel::Stable => ".warp",
-        Channel::Preview => ".warp-preview",
-        Channel::Dev | Channel::Integration => ".warp-dev",
-        Channel::Local => ".warp-local",
+        Channel::Stable => ".octomus",
+        Channel::Preview => ".octomus-preview",
+        Channel::Dev | Channel::Integration => ".octomus-dev",
+        Channel::Local => ".octomus-local",
         Channel::Oss => {
-            // TODO(alokedesai): need to figure out how remote server works with warp-oss
+            // TODO(alokedesai): need to figure out how remote server works with octomus-oss
             // For now, return what Dev returns.
-            ".warp-dev"
+            ".octomus-dev"
         }
     };
     format!("~/{warp_dir}/remote-server")
@@ -592,7 +592,7 @@ fn download_channel() -> &'static str {
         Channel::Preview => "preview",
         Channel::Dev | Channel::Local | Channel::Integration => "dev",
         Channel::Oss => {
-            // TODO(alokedesai): need to figure out how remote server works with warp-oss
+            // TODO(alokedesai): need to figure out how remote server works with octomus-oss
             // For now, return what Dev returns.
             "dev"
         }

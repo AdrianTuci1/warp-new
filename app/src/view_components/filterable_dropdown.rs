@@ -1,17 +1,17 @@
 use std::marker::PhantomData;
 
 use warp_editor::editor::NavigationKey;
-use warpui::elements::{
+use octomusui::elements::{
     Align, Border, ChildAnchor, ChildView, Clipped, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, Dismiss, DispatchEventResult, Element, EventHandler, Flex,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning, ParentElement,
     PositionedElementAnchor, PositionedElementOffsetBounds, Radius, SavePosition, Shrinkable,
     Stack,
 };
-use warpui::geometry::vector::vec2f;
-use warpui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::geometry::vector::vec2f;
+use octomusui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, BlurContext, Entity, FocusContext, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WeakViewHandle,
 };
@@ -451,7 +451,7 @@ where
                     TextAndIconAlignment::TextFirst,
                     selected_item_text,
                     icons::Icon::ChevronDown
-                        .to_warpui_icon(appearance.theme().active_ui_text_color()),
+                        .to_octomusui_icon(appearance.theme().active_ui_text_color()),
                     self.main_axis_size,
                     MainAxisAlignment::SpaceBetween,
                     vec2f(15., 15.),
@@ -518,7 +518,7 @@ where
 
         let search_icon = ConstrainedBox::new(
             icons::Icon::SearchSmall
-                .to_warpui_icon(appearance.theme().active_ui_text_color())
+                .to_octomusui_icon(appearance.theme().active_ui_text_color())
                 .finish(),
         )
         .with_width(12.)

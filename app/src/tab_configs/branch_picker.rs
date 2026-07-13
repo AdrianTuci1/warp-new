@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 
-use warpui::elements::ChildView;
-use warpui::ui_components::components::UiComponentStyles;
-use warpui::{AppContext, Element, Entity, TypedActionView, View, ViewContext, ViewHandle};
+use octomusui::elements::ChildView;
+use octomusui::ui_components::components::UiComponentStyles;
+use octomusui::{AppContext, Element, Entity, TypedActionView, View, ViewContext, ViewHandle};
 
 use crate::tab_configs::PickerStyle;
 use crate::util::git::{

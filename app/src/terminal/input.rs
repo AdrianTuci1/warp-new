@@ -58,48 +58,48 @@ use settings::{Setting as _, ToggleableSetting};
 use string_offset::{ByteOffset, CharOffset};
 use vec1::Vec1;
 use vim::vim::{VimHandler, VimMode};
-use warp_cli::agent::Harness;
-use warp_completer::completer::{
+use octomus_cli::agent::Harness;
+use octomus_completer::completer::{
     self, CompleterOptions, CompletionContext, CompletionsFallbackStrategy, Description, Match,
     MatchStrategy, MatchType, PathSeparators, SuggestionResults,
 };
-use warp_completer::meta::{HasSpan, Spanned};
-use warp_completer::parsers::simple::command_at_cursor_position;
-use warp_completer::parsers::LiteCommand;
-use warp_completer::signatures::CommandRegistry;
-use warp_completer::util::parse_current_commands_and_tokens;
-use warp_core::context_flag::ContextFlag;
-use warp_core::r#async::debounce;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::AnsiColorIdentifier;
-use warp_core::user_preferences::GetUserPreferences as _;
+use octomus_completer::meta::{HasSpan, Spanned};
+use octomus_completer::parsers::simple::command_at_cursor_position;
+use octomus_completer::parsers::LiteCommand;
+use octomus_completer::signatures::CommandRegistry;
+use octomus_completer::util::parse_current_commands_and_tokens;
+use octomus_core::context_flag::ContextFlag;
+use octomus_core::r#async::debounce;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::AnsiColorIdentifier;
+use octomus_core::user_preferences::GetUserPreferences as _;
 use warp_editor::editor::NavigationKey;
-use warp_util::path::ShellFamily;
-use warpui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
-use warpui::clipboard::{ClipboardContent, ImageData};
-use warpui::clipboard_utils::CLIPBOARD_IMAGE_MIME_TYPES;
-use warpui::color::ColorU;
-use warpui::elements::{
+use octomus_util::path::ShellFamily;
+use octomusui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
+use octomusui::clipboard::{ClipboardContent, ImageData};
+use octomusui::clipboard_utils::CLIPBOARD_IMAGE_MIME_TYPES;
+use octomusui::color::ColorU;
+use octomusui::elements::{
     resizable_state_handle, Align, AnchorPair, ChildAnchor, Clipped, ConstrainedBox, Container,
     CornerRadius, CrossAxisAlignment, DispatchEventResult, DropTargetData, Element, EventHandler,
     Flex, MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning, OffsetType,
     ParentAnchor, ParentElement, PositionedElementOffsetBounds, PositioningAxis, Radius,
     ResizableStateHandle, SavePosition, SelectionHandle, Text, Wrap, XAxisAnchor, YAxisAnchor,
 };
-pub use warpui::elements::{ParentElement as _, Stack};
-pub use warpui::geometry::vector::{vec2f, Vector2F};
-use warpui::keymap::{BindingDescription, EditableBinding, FixedBinding, Keystroke};
-use warpui::platform::OperatingSystem;
-use warpui::presenter::ChildView;
+pub use octomusui::elements::{ParentElement as _, Stack};
+pub use octomusui::geometry::vector::{vec2f, Vector2F};
+use octomusui::keymap::{BindingDescription, EditableBinding, FixedBinding, Keystroke};
+use octomusui::platform::OperatingSystem;
+use octomusui::presenter::ChildView;
 #[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
-use warpui::r#async::FutureExt as _;
-use warpui::r#async::SpawnedFutureHandle;
-use warpui::text_layout::TextStyle;
-use warpui::ui_components::chip::Chip;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::units::IntoPixels;
-pub use warpui::WindowId;
-use warpui::{
+use octomusui::r#async::FutureExt as _;
+use octomusui::r#async::SpawnedFutureHandle;
+use octomusui::text_layout::TextStyle;
+use octomusui::ui_components::chip::Chip;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::units::IntoPixels;
+pub use octomusui::WindowId;
+use octomusui::{
     end_trace, start_trace, AppContext, Entity, EntityId, FocusContext, ModelAsRef, ModelHandle,
     SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, WeakViewHandle,
 };
@@ -141,7 +141,7 @@ use super::view::queued_prompts_panel::{QueuedPromptsPanelEvent, QueuedPromptsPa
 use super::view::{
     ExecuteCommandEvent, SyncInputType, TerminalAction, PADDING_LEFT as TERMINAL_VIEW_PADDING_LEFT,
 };
-use super::warpify::SubshellSource;
+use super::octomusify::SubshellSource;
 use super::{prompt, History, HistoryEntry, SizeInfo, TerminalModel, UpArrowHistoryConfig};
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::{AIAgentContext, AIAgentExchangeId, CancellationReason, EntrypointType};
@@ -197,7 +197,7 @@ use crate::ai::predict::prompt_suggestions::{
 };
 use crate::ai::skills::{SkillManager, SkillOpenOrigin, SkillTelemetryEvent};
 use crate::ai::AIRequestUsageModel;
-use crate::ai_assistant::execution_context::WarpAiExecutionContext;
+use crate::ai_assistant::execution_context::OctomusAiExecutionContext;
 use crate::appearance::{Appearance, AppearanceEvent};
 use crate::channel::{Channel, ChannelState};
 use crate::cloud_object::model::actions::ObjectActionType;
@@ -406,26 +406,26 @@ const AGENT_MODE_AI_DISABLED_AUTODETECTION_DISABLED_HINT_TEXT: &str = "Run comma
 
 // Rotating hint text options for new Agent Mode conversations
 const AGENT_MODE_HINT_OPTIONS: &[&str] = &[
-    "Warp anything e.g. Deploy my React app to Vercel and set up environment variables",
-    "Warp anything e.g. Help me debug why my Python tests are failing in CI",
-    "Warp anything e.g. Set up a new microservice with Docker and create the deployment pipeline",
-    "Warp anything e.g. Find and fix the memory leak in my Node.js application",
-    "Warp anything e.g. Create a backup script for my PostgreSQL database and schedule it",
-    "Warp anything e.g. Help me migrate my data from MySQL to PostgreSQL",
-    "Warp anything e.g. Set up monitoring and alerts for my AWS infrastructure",
-    "Warp anything e.g. Build a REST API for my mobile app using FastAPI",
-    "Warp anything e.g. Help me optimize my SQL queries that are running slowly",
-    "Warp anything e.g. Create a GitHub Actions workflow to automatically deploy on merge",
-    "Warp anything e.g. Set up Redis caching for my web application",
-    "Warp anything e.g. Help me troubleshoot why my Kubernetes pods keep crashing",
-    "Warp anything e.g. Build a data pipeline to process CSV files and load them into BigQuery",
-    "Warp anything e.g. Set up SSL certificates and configure HTTPS for my domain",
-    "Warp anything e.g. Help me refactor this legacy code to use modern design patterns",
-    "Warp anything e.g. Create unit tests for my authentication service",
-    "Warp anything e.g. Set up log aggregation with ELK stack for my distributed system",
-    "Warp anything e.g. Help me implement OAuth2 authentication in my Express.js app",
-    "Warp anything e.g. Optimize my Docker images to reduce build times and size",
-    "Warp anything e.g. Set up A/B testing infrastructure for my web application",
+    "Octomus anything e.g. Deploy my React app to Vercel and set up environment variables",
+    "Octomus anything e.g. Help me debug why my Python tests are failing in CI",
+    "Octomus anything e.g. Set up a new microservice with Docker and create the deployment pipeline",
+    "Octomus anything e.g. Find and fix the memory leak in my Node.js application",
+    "Octomus anything e.g. Create a backup script for my PostgreSQL database and schedule it",
+    "Octomus anything e.g. Help me migrate my data from MySQL to PostgreSQL",
+    "Octomus anything e.g. Set up monitoring and alerts for my AWS infrastructure",
+    "Octomus anything e.g. Build a REST API for my mobile app using FastAPI",
+    "Octomus anything e.g. Help me optimize my SQL queries that are running slowly",
+    "Octomus anything e.g. Create a GitHub Actions workflow to automatically deploy on merge",
+    "Octomus anything e.g. Set up Redis caching for my web application",
+    "Octomus anything e.g. Help me troubleshoot why my Kubernetes pods keep crashing",
+    "Octomus anything e.g. Build a data pipeline to process CSV files and load them into BigQuery",
+    "Octomus anything e.g. Set up SSL certificates and configure HTTPS for my domain",
+    "Octomus anything e.g. Help me refactor this legacy code to use modern design patterns",
+    "Octomus anything e.g. Create unit tests for my authentication service",
+    "Octomus anything e.g. Set up log aggregation with ELK stack for my distributed system",
+    "Octomus anything e.g. Help me implement OAuth2 authentication in my Express.js app",
+    "Octomus anything e.g. Optimize my Docker images to reduce build times and size",
+    "Octomus anything e.g. Set up A/B testing infrastructure for my web application",
 ];
 
 fn get_agent_mode_new_conversation_hint_text() -> &'static str {
@@ -855,7 +855,7 @@ struct ViewerCommandExecutionRequest {
 /// Where a command execution request originates from.
 #[derive(Clone)]
 pub enum CommandExecutionSource {
-    /// A non-shared command execution request from Warp AI++.
+    /// A non-shared command execution request from Octomus AI++.
     /// Shared commands use the SharedSession variant instead.
     AI {
         /// Metadata associated with the execution.
@@ -1763,7 +1763,7 @@ impl DeferredRemoteOperations {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     if cfg!(feature = "integration_tests") {
         app.register_fixed_bindings([
@@ -1800,7 +1800,7 @@ pub fn init(app: &mut AppContext) {
 
     app.register_editable_bindings([EditableBinding::new(
         "input:insert_network_logging_workflow",
-        "Show Warp network log",
+        "Show Octomus network log",
         WorkspaceAction::OpenNetworkLogPane,
     )
     .with_enabled(|| ContextFlag::NetworkLogConsole.is_enabled())]);
@@ -1929,7 +1929,7 @@ pub fn init(app: &mut AppContext) {
                 & id!(flags::IS_ANY_AI_ENABLED)
                 & !id!("AIInput"),
         )
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_custom_action(CustomAction::AISearch),
         EditableBinding::new(
             START_NEW_CONVERSATION_KEYBINDING_NAME,
@@ -1937,7 +1937,7 @@ pub fn init(app: &mut AppContext) {
             InputAction::StartNewAgentConversation,
         )
         .with_enabled(|| !FeatureFlag::AgentView.is_enabled())
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_context_predicate(
             id!("Input") & id!(flags::IS_ANY_AI_ENABLED) & id!("TerminalView_NonEmptyBlockList"),
         )
@@ -1949,7 +1949,7 @@ pub fn init(app: &mut AppContext) {
             InputAction::EnableAutoDetection,
         )
         .with_enabled(|| FeatureFlag::AgentMode.is_enabled())
-        .with_group(bindings::BindingGroup::WarpAi.as_str())
+        .with_group(bindings::BindingGroup::OctomusAi.as_str())
         .with_context_predicate(
             id!("Input")
                 & id!("UniversalDeveloperInput")
@@ -5958,7 +5958,7 @@ impl Input {
             }
             (InputType::AI, _) => {
                 // Follow the `agent_indicator` pattern (see `app/src/tab.rs`):
-                //  * `None` (no conversation, empty, passive, or untitled) => new conversation => "Warp anything"
+                //  * `None` (no conversation, empty, passive, or untitled) => new conversation => "Octomus anything"
                 //  * `InProgress`                                           => agent running    => "Steer"
                 //  * Any other status                                       => finished         => "Ask a follow up"
                 match self
@@ -6348,7 +6348,7 @@ impl Input {
         });
     }
 
-    /// Predicts the next action using an AI model and past context on blocks within Warp.
+    /// Predicts the next action using an AI model and past context on blocks within Octomus.
     /// Populates the autosuggestion with the predicted action, if any. Otherwise, falls back to
     /// existing autosuggestion logic.
     #[cfg_attr(target_family = "wasm", allow(unused_variables))]
@@ -6387,7 +6387,7 @@ impl Input {
         let Some(session) = self.active_session(ctx) else {
             return;
         };
-        let context = WarpAiExecutionContext::new(&session);
+        let context = OctomusAiExecutionContext::new(&session);
         let completer_data = self.completer_data();
         let block_context = Some(BlockContext::from_completed_block(&block_completed));
         let previous_result = self.last_intelligent_autosuggestion_result.take();
@@ -7585,7 +7585,7 @@ impl Input {
             .string_model;
 
         if shell_type == ShellType::Fish {
-            // Warp currently doesn't support newlines in Fish, just prepend the vars
+            // Octomus currently doesn't support newlines in Fish, just prepend the vars
             let mut command = env_vars.export_variables_for_shell(ShellType::Fish);
             command.push(' ');
             Some(command)
@@ -8989,7 +8989,7 @@ impl Input {
             let Some(session) = self.active_session(ctx) else {
                 return;
             };
-            let context = WarpAiExecutionContext::new(&session);
+            let context = OctomusAiExecutionContext::new(&session);
             if let Some(last_user_block_completed) =
                 completer_data.last_user_block_completed.clone()
             {
@@ -9948,7 +9948,7 @@ impl Input {
                             // the completions finish quickly, since that causes a jittery UX.
                             let _ = ctx.spawn(
                                 async move {
-                                    warpui::r#async::Timer::after(Duration::from_millis(750)).await;
+                                    octomusui::r#async::Timer::after(Duration::from_millis(750)).await;
                                     old_buffer_text_original
                                 },
                                 move |input, old_buffer_text_original, ctx| {
@@ -10564,7 +10564,7 @@ impl Input {
                                     .and_then(|pwd| {
                                         // Find git repo and construct absolute path
                                         use repo_metadata::repositories::DetectedRepositories;
-                                        use warp_util::local_or_remote_path::LocalOrRemotePath;
+                                        use octomus_util::local_or_remote_path::LocalOrRemotePath;
                                         let git_repo_path = DetectedRepositories::as_ref(ctx)
                                             .get_root_for_path(&LocalOrRemotePath::Local(
                                                 Path::new(pwd).to_path_buf(),
@@ -10578,7 +10578,7 @@ impl Input {
                                             .map(|session| session.is_wsl())
                                             .unwrap_or(false);
 
-                                        let relative_path = warp_util::path::to_relative_path(
+                                        let relative_path = octomus_util::path::to_relative_path(
                                             is_wsl,
                                             &absolute_path,
                                             Path::new(pwd),
@@ -10655,7 +10655,7 @@ impl Input {
                         None => image_filepaths.clone(),
                     };
                     let paths_str =
-                        warpui::clipboard_utils::escaped_paths_str(&transformed, shell_family);
+                        octomusui::clipboard_utils::escaped_paths_str(&transformed, shell_family);
 
                     self.editor.update(ctx, |editor, ctx| {
                         editor.user_insert(&paths_str, ctx);
@@ -10705,7 +10705,7 @@ impl Input {
 
         // Check if we should insert clipboard text in advance
         let mut already_inserted_text = false;
-        if warpui::clipboard::should_insert_text_on_paste(&content) {
+        if octomusui::clipboard::should_insert_text_on_paste(&content) {
             self.insert_clipboard_text_content(ctx, content.clone());
             already_inserted_text = true;
         }
@@ -10717,7 +10717,7 @@ impl Input {
             self.handle_pasted_image_data(content.clone(), ctx) == 0
         } else if content.num_paths() > 0 {
             // Else, we check the pasted file paths for any images.
-            let image_filepaths = warpui::clipboard_utils::get_image_filepaths_from_paths(
+            let image_filepaths = octomusui::clipboard_utils::get_image_filepaths_from_paths(
                 content.paths.as_deref().unwrap_or(&[]),
             );
             let num_images_expected = image_filepaths.len();
@@ -13193,7 +13193,7 @@ impl Input {
         let Some(session) = self.active_session(ctx) else {
             return;
         };
-        let context = WarpAiExecutionContext::new(&session);
+        let context = OctomusAiExecutionContext::new(&session);
 
         let request = PredictAMQueriesRequest {
             context_messages: vec![json_message.to_string()],
@@ -13684,7 +13684,7 @@ impl Input {
         if let Some(workflow_state) = self.workflows_state.selected_workflow_state.as_ref() {
             if let WorkflowType::Cloud(workflow) = &workflow_state.workflow_type {
                 send_telemetry_from_ctx!(
-                    TelemetryEvent::ExecutedWarpDrivePrompt {
+                    TelemetryEvent::ExecutedOctomusDrivePrompt {
                         id: workflow.id.into_server().map(Into::into),
                         selection_source: workflow_state.workflow_selection_source,
                     },
@@ -14498,7 +14498,7 @@ impl Input {
                                 .cloned(),
                             workflow_selection_source: selected_workflow_state
                                 .workflow_selection_source,
-                            // This is only `Some()` for WarpDrive workflows; we don't track
+                            // This is only `Some()` for OctomusDrive workflows; we don't track
                             // ID for execution of local workflows because they have no such
                             // unique ID.
                             workflow_id: selected_workflow_state.workflow_type.server_id(),
@@ -14878,7 +14878,7 @@ impl Input {
                 ..Default::default()
             },
         )
-        .with_icon(icon.to_warpui_icon(
+        .with_icon(icon.to_octomusui_icon(
             blended_colors::text_main(appearance.theme(), appearance.theme().background()).into(),
         ))
         .with_close_button(close_button)
@@ -15391,7 +15391,7 @@ impl View for Input {
         }
     }
 
-    fn keymap_context(&self, app: &AppContext) -> warpui::keymap::Context {
+    fn keymap_context(&self, app: &AppContext) -> octomusui::keymap::Context {
         let mut ctx = Self::default_keymap_context();
         let ai_settings = AISettings::as_ref(app);
 

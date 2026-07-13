@@ -1,11 +1,11 @@
 # APP-3585: Setting for agent commit and PR attribution — Client Tech Spec
 Product spec: `specs/APP-3585/PRODUCT.md`.
 
-Server tech spec: `warp-server/specs/APP-3585/TECH.md` (PR https://github.com/warpdotdev/warp-server/pull/10476).
+Server tech spec: `octomus-server/specs/APP-3585/TECH.md` (PR https://github.com/warpdotdev/octomus-server/pull/10476).
 ## Problem
 The attribution setting (whether Oz adds a `Co-Authored-By` line to commits and PRs) is currently a binary team-level flag. We need to turn it into a two-level setting: team admins get a three-way `AdminEnablementSetting` (Enable / Disable / RespectUserSetting), and individual users get their own boolean preference that takes effect when the team delegates.
 
-This spec covers the warp-internal (client) changes. Anything about how the server stores or resolves the effective value lives in the server spec.
+This spec covers the octomus-internal (client) changes. Anything about how the server stores or resolves the effective value lives in the server spec.
 ## Relevant code
 - `app/src/settings/ai.rs` — `define_settings_group!(AISettings, ...)`: new user-level `agent_attribution_enabled` bool.
 - `app/src/workspaces/workspace.rs (631–776)` — domain types for team settings (`AdminEnablementSetting`, `WorkspaceSettings`); flat `enable_warp_attribution: AdminEnablementSetting` added directly on `WorkspaceSettings`.
@@ -13,11 +13,11 @@ This spec covers the warp-internal (client) changes. Anything about how the serv
 - `app/src/workspaces/gql_convert.rs` — `From<GqlAdminEnablementSetting>` mapping for the new field.
 - `crates/graphql/src/api/workspace.rs (124–146)` — `WorkspaceSettings` cynic fragment; new `AmbientAgentSettings` fragment.
 - `app/src/settings_view/ai_page.rs` — new `AgentAttributionWidget`; follows `CloudConversationStorageWidget` in `privacy_page.rs (1667–1770)` for team-override rendering.
-- `app/src/settings/cloud_preferences_syncer.rs` — existing syncer that publishes any `SyncToCloud::Globally(...)` setting to warp-server as a `JsonPreference` GSO. No changes required — reused as the user-preference transport.
+- `app/src/settings/cloud_preferences_syncer.rs` — existing syncer that publishes any `SyncToCloud::Globally(...)` setting to octomus-server as a `JsonPreference` GSO. No changes required — reused as the user-preference transport.
 ## Current state
 `AmbientAgentSettings` on the server exposes `enableWarpAttribution: Boolean!`; the client does not fetch it. There is no user-level attribution preference, and attribution instructions are unconditionally present or absent in the agent prompt based solely on the server-side team boolean.
 
-The client already has the transport we need for a user-level preference: any setting declared with `SyncToCloud::Globally(...)` via `define_settings_group!` is uploaded to warp-server by `CloudPreferencesSyncer` as a `JsonPreference` GSO with `unique_key = Global_<StorageKey>` (scoped per user). Other `AISettings` fields (e.g. `IncludeAgentCommandsInHistory`, `ShowConversationHistory`) already use this pattern, and warp-server reads them back by GSO lookup.
+The client already has the transport we need for a user-level preference: any setting declared with `SyncToCloud::Globally(...)` via `define_settings_group!` is uploaded to octomus-server by `CloudPreferencesSyncer` as a `JsonPreference` GSO with `unique_key = Global_<StorageKey>` (scoped per user). Other `AISettings` fields (e.g. `IncludeAgentCommandsInHistory`, `ShowConversationHistory`) already use this pattern, and octomus-server reads them back by GSO lookup.
 ## Proposed changes
 ### 1. New user-level client setting
 Add `agent_attribution_enabled` to `define_settings_group!(AISettings, ...)` in `app/src/settings/ai.rs`:
@@ -62,13 +62,13 @@ For the locked-toggle tooltip, the widget uses `WORKSPACE_OVERRIDE_TOOLTIP_MESSA
 3. Setting is `RespectUserSetting`, so the toggle is interactive and reflects `AISettings.agent_attribution_enabled` (default `true`, showing as checked).
 4. User clicks the toggle → `ToggleAgentAttribution` action sets `AISettings.agent_attribution_enabled` to `false` (persisted locally).
 5. `CloudPreferencesSyncer` picks up the change and upserts the user's `JsonPreference` GSO (`unique_key = {firebaseUID}_Global_AgentAttributionEnabled`, `serialized_model.value = false`).
-6. Next Oz run: warp-server resolves the effective setting (team = RespectUserSetting → read user GSO = false) and excludes attribution instructions from the prompt. Oz creates a commit without the `Co-Authored-By` line.
+6. Next Oz run: octomus-server resolves the effective setting (team = RespectUserSetting → read user GSO = false) and excludes attribution instructions from the prompt. Oz creates a commit without the `Co-Authored-By` line.
 
 ```mermaid
 flowchart TD
     A[User toggles off] --> B[AISettings.agent_attribution_enabled = false]
     B --> C[CloudPreferencesSyncer upsert]
-    C --> D[(warp-server generic_string_objects\nunique_key = firebaseUID_Global_AgentAttributionEnabled)]
+    C --> D[(octomus-server generic_string_objects\nunique_key = firebaseUID_Global_AgentAttributionEnabled)]
     D --> E[Next Oz run]
     E --> F{Team setting}
     F -->|Enable| G[Attribution included]
@@ -89,4 +89,4 @@ flowchart TD
 - UI manual test: verify each team-setting state renders the toggle in the correct locked/interactive state, in both the legacy and Oz subpages.
 - End-to-end (once the server branch merges): run an Oz agent task that creates a commit with the setting off → verify no attribution line. Run with team-level `Enable` and verify the client toggle is locked on; same for `Disable`.
 ## Follow-ups
-- Admin-panel UI (separate warp-server PR) to change the team-level control from a binary toggle to a three-way selector.
+- Admin-panel UI (separate octomus-server PR) to change the team-level control from a binary toggle to a three-way selector.

@@ -31,8 +31,8 @@ pub use noop_command_executor::NoOpCommandExecutor;
 #[cfg(feature = "local_tty")]
 pub use remote_command_executor::RemoteCommandExecutor;
 pub use shared::{shell_escape_single_quotes, ExecutorCommandEvent};
-use warp_completer::completer::CommandOutput;
-use warpui::ModelContext;
+use octomus_completer::completer::CommandOutput;
+use octomusui::ModelContext;
 
 use super::SessionInfo;
 use crate::terminal::event::ExecutedExecutorCommandEvent;
@@ -151,7 +151,7 @@ fn new_command_executor_for_local_tty_session(
     use remote_server_executor::RemoteServerCommandExecutor;
     use settings::Setting as _;
     use tmux_executor::TmuxCommandExecutor;
-    use warpui::SingletonEntity as _;
+    use octomusui::SingletonEntity as _;
     use wsl_command_executor::WslCommandExecutor;
 
     use super::IsLegacySSHSession;
@@ -193,7 +193,7 @@ fn new_command_executor_for_local_tty_session(
 
     if FeatureFlag::SSHTmuxWrapper.is_enabled()
         && session_info.tmux_control_mode
-        // We don't allow nested tmux warpification, so if our parent session is already warified using
+        // We don't allow nested tmux octomusification, so if our parent session is already warified using
         // tmux then we shouldn't.
         && !parent_session_info.is_some_and(|s| s.tmux_control_mode)
     {
@@ -228,7 +228,7 @@ fn new_command_executor_for_local_tty_session(
     //
     // TODO(advait): For production this should be a dedicated
     // `SandboxCommandExecutor` that runs generators via
-    // `sbx exec warp-sandbox-<id> -- sh -c "<cmd>"` (analogous to
+    // `sbx exec octomus-sandbox-<id> -- sh -c "<cmd>"` (analogous to
     // how `LocalCommandExecutor` spawns fresh subprocesses for the
     // host-shell path). That would avoid serializing generators
     // through the user's live PTY (slower, blocked by long-running
@@ -331,7 +331,7 @@ fn new_command_executor_for_local_tty_session(
                 // This code path exists as a fail-safe for disabling in-band
                 // generators if some unforeseen severe issue surfaces during or
                 // shortly after subshells launch. The setting that triggers this
-                // codepath is only accessible via a user defaults command that a Warp
+                // codepath is only accessible via a user defaults command that a Octomus
                 // engineer would have given to the user via some first-hand
                 // correspondence (e.g. GitHub issues).
                 log::info!("creating a no-op executor!");
@@ -366,7 +366,7 @@ fn new_command_executor_for_local_tty_session(
 pub mod testing {
     use anyhow::anyhow;
     use command::r#async::Command;
-    use warp_completer::completer::CommandOutput;
+    use octomus_completer::completer::CommandOutput;
 
     use super::*;
     use crate::terminal::shell::ShellType;

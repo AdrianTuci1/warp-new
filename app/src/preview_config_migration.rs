@@ -1,9 +1,9 @@
 //! One-time migration that gives the Preview channel its own config
-//! directory (`~/.warp-preview`) on macOS.
+//! directory (`~/.octomus-preview`) on macOS.
 //!
-//! Historically, Stable and Preview shared `~/.warp` on macOS. To give
+//! Historically, Stable and Preview shared `~/.octomus` on macOS. To give
 //! Preview its own directory without breaking existing users, this migration
-//! symlinks each top-level entry from `~/.warp` into `~/.warp-preview` on
+//! symlinks each top-level entry from `~/.octomus` into `~/.octomus-preview` on
 //! first launch, so existing configuration (keybindings, themes, workflows,
 //! etc.) remains available to Preview.
 //!
@@ -11,23 +11,23 @@
 
 use std::path::Path;
 
-use warp_core::channel::{Channel, ChannelState};
-use warp_core::paths::{data_dir, WARP_CONFIG_DIR};
+use octomus_core::channel::{Channel, ChannelState};
+use octomus_core::paths::{data_dir, WARP_CONFIG_DIR};
 
 /// Files that should not be symlinked during the Preview config directory
 /// migration. These are intentionally kept separate between Stable and
 /// Preview so each channel has independent settings.
 const MIGRATION_EXCLUDED_FILES: &[&str] = &["settings.toml"];
 
-/// Migrates Preview's config directory from the shared `.warp` location to
-/// `.warp-preview` by creating symlinks from each top-level entry in `.warp`
+/// Migrates Preview's config directory from the shared `.octomus` location to
+/// `.octomus-preview` by creating symlinks from each top-level entry in `.octomus`
 /// into the new directory.
 ///
 /// This runs once — on the first launch after the Preview channel is given
 /// its own config directory. It is a no-op if:
 /// - The channel is not Preview.
-/// - `~/.warp-preview` already exists.
-/// - `~/.warp` does not exist.
+/// - `~/.octomus-preview` already exists.
+/// - `~/.octomus` does not exist.
 pub(crate) fn migrate_preview_config_dir_if_needed() {
     if ChannelState::channel() != Channel::Preview {
         return;
@@ -39,7 +39,7 @@ pub(crate) fn migrate_preview_config_dir_if_needed() {
 
     let old_dir = home.join(WARP_CONFIG_DIR);
     // `data_dir()` is already channel-aware; for Preview it resolves to
-    // `~/.warp-preview`.
+    // `~/.octomus-preview`.
     let new_dir = data_dir();
 
     migrate_config_dir_via_symlinks(&old_dir, &new_dir);

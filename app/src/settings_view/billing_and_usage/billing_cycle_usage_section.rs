@@ -2,16 +2,16 @@ use chrono::{DateTime, Datelike, Local, Utc};
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
-use warp_core::ui::appearance::Appearance;
-use warpui::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::{
     Border, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     DropShadow, Empty, Flex, FormattedTextElement, HighlightedHyperlink, Hoverable, HyperlinkLens,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning, ParentAnchor,
     ParentElement, ParentOffsetBounds, Radius, Stack, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::platform::Cursor;
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::platform::Cursor;
+use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
 
@@ -514,7 +514,7 @@ impl BillingCycleUsageSectionView {
             );
             inner.add_child(
                 Container::new(
-                    ConstrainedBox::new(Icon::ChevronDown.to_warpui_icon(main_text).finish())
+                    ConstrainedBox::new(Icon::ChevronDown.to_octomusui_icon(main_text).finish())
                         .with_width(12.)
                         .with_height(12.)
                         .finish(),
@@ -708,7 +708,7 @@ impl BillingCycleUsageSectionView {
         })
         .finish();
 
-        let icon = ConstrainedBox::new(leading_icon.to_warpui_icon(sub_text).finish())
+        let icon = ConstrainedBox::new(leading_icon.to_octomusui_icon(sub_text).finish())
             .with_width(14.)
             .with_height(14.)
             .finish();

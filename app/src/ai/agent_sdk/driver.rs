@@ -21,17 +21,17 @@ use repo_metadata::local_model::IndexedRepoState;
 use repo_metadata::{RepoMetadataModel, RepositoryIdentifier};
 use session_sharing_protocol::sharer::SessionRetentionReason;
 use uuid::Uuid;
-use warp_cli::agent::{Harness, OutputFormat};
-use warp_cli::mcp::MCPSpec;
-use warp_cli::share::ShareRequest;
-use warp_cli::skill::SkillSpec;
-use warp_core::features::FeatureFlag;
-use warp_core::{report_error, report_if_error, safe_debug, safe_error, safe_info};
+use octomus_cli::agent::{Harness, OutputFormat};
+use octomus_cli::mcp::MCPSpec;
+use octomus_cli::share::ShareRequest;
+use octomus_cli::skill::SkillSpec;
+use octomus_core::features::FeatureFlag;
+use octomus_core::{report_error, report_if_error, safe_debug, safe_error, safe_info};
 use warp_graphql::ai::AgentTaskState;
 use warp_managed_secrets::ManagedSecretValue;
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warpui::r#async::{FutureExt, TimeoutError};
-use warpui::{AppContext, Entity, ModelContext, ModelHandle, ModelSpawner, SingletonEntity};
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomusui::r#async::{FutureExt, TimeoutError};
+use octomusui::{AppContext, Entity, ModelContext, ModelHandle, ModelSpawner, SingletonEntity};
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::{
@@ -114,17 +114,17 @@ const SETUP_FAILED_IDLE_TIMEOUT: Duration = Duration::from_secs(120);
 /// If no follow-up status arrives within this window, the driver terminates with the
 /// original error so the CLI does not hang indefinitely.
 const AUTO_RESUME_TIMEOUT: Duration = Duration::from_secs(120);
-/// Signals to Claude child-harness hooks that Warp already owns the background
+/// Signals to Claude child-harness hooks that Octomus already owns the background
 /// message-listener lifecycle, so the plugin should reuse the shared state
 /// files instead of spawning and cleaning up its own listener.
 ///
 /// When this variable is absent, the Claude plugin falls back to its legacy
-/// self-managed listener path so older Warp builds and standalone plugin
+/// self-managed listener path so older Octomus builds and standalone plugin
 /// invocations keep working.
 pub(crate) const OZ_MESSAGE_LISTENER_MANAGED_EXTERNALLY_ENV: &str =
     "OZ_MESSAGE_LISTENER_MANAGED_EXTERNALLY";
 /// Optional root directory for the per-session Claude message-listener state
-/// that Warp and the Claude hook scripts share.
+/// that Octomus and the Claude hook scripts share.
 pub(crate) const OZ_MESSAGE_LISTENER_STATE_ROOT_ENV: &str = "OZ_MESSAGE_LISTENER_STATE_ROOT";
 // Keep exporting the legacy `OZ_PARENT_*` names to child hooks until the
 // external Claude plugin has fully migrated to the canonical
@@ -264,7 +264,7 @@ pub struct AgentDriverOptions {
     pub skip_initial_turn: bool,
 }
 
-/// `AgentDriver` is a model for driving an ambient Warp agent to completion.
+/// `AgentDriver` is a model for driving an ambient Octomus agent to completion.
 ///
 /// Its primary responsibility is to configure a headless terminal pane and execute an AI query within it.
 pub struct AgentDriver {
@@ -429,8 +429,8 @@ pub enum AgentDriverError {
         #[source]
         error: terminal::ShareSessionError,
     },
-    #[error("Error syncing Warp Drive")]
-    WarpDriveSyncFailed,
+    #[error("Error syncing Octomus Drive")]
+    OctomusDriveSyncFailed,
     #[error("Requested environment not found: {0}")]
     EnvironmentNotFound(String),
     #[error("Environment setup failed: {0}")]
@@ -515,8 +515,8 @@ pub enum AgentDriverError {
     },
 }
 
-impl From<warpui::ModelDropped> for AgentDriverError {
-    fn from(_: warpui::ModelDropped) -> Self {
+impl From<octomusui::ModelDropped> for AgentDriverError {
+    fn from(_: octomusui::ModelDropped) -> Self {
         AgentDriverError::InvalidRuntimeState
     }
 }
@@ -849,7 +849,7 @@ impl AgentDriver {
                         log::info!(
                             "Environment setup failed; keeping session alive for {timeout:?}"
                         );
-                        warpui::r#async::Timer::after(timeout).await;
+                        octomusui::r#async::Timer::after(timeout).await;
                     }
                 }
             }
@@ -1960,7 +1960,7 @@ impl AgentDriver {
                 // and then call stop_sharing_session when they're done. To know when streams are finished, we would need to modify start_ordered_terminal_events_listener
                 // to send a message when the streams are finished, flushed, and the websocket is disconnected. For now, we'll just sleep for a second, as this seems
                 // to be enough time for the streams to be finished and the events to be flushed.
-                warpui::r#async::Timer::after(Duration::from_secs(1)).await;
+                octomusui::r#async::Timer::after(Duration::from_secs(1)).await;
 
                 conversation_status.into_result()
             }
@@ -2109,7 +2109,7 @@ impl AgentDriver {
     }
 
     /// Sets up the third-party harness by subscribing to CLI session events and
-    /// installing the Warp plugin and platform plugin, if applicable.
+    /// installing the Octomus plugin and platform plugin, if applicable.
     ///
     /// Returns a oneshot receiver that fires when the harness should exit
     /// (either immediately on completion or after the idle-on-complete timeout).
@@ -2325,7 +2325,7 @@ impl AgentDriver {
         let command_result = loop {
             futures::select! {
                 exit_code = command_handle => break exit_code,
-                _ = warpui::r#async::Timer::after(HARNESS_SAVE_INTERVAL).fuse() => {
+                _ = octomusui::r#async::Timer::after(HARNESS_SAVE_INTERVAL).fuse() => {
                     log::debug!("Triggering periodic save of harness conversation data");
                     report_if_error!(runner
                         .save_conversation(SavePoint::Periodic, foreground)
@@ -2350,7 +2350,7 @@ impl AgentDriver {
                         let telemetry_pattern = error.pattern.clone();
                         let _ = foreground
                             .spawn(move |_, ctx| {
-                                use warp_core::telemetry::TelemetryEvent as _;
+                                use octomus_core::telemetry::TelemetryEvent as _;
                                 let event =
                                     ThirdPartyHarnessTelemetryEvent::RuntimeErrorDetected {
                                         harness: telemetry_harness,
@@ -2741,7 +2741,7 @@ impl AgentDriver {
                             | SDKConversationOutputStatus::Blocked { .. }
                             | SDKConversationOutputStatus::Cancelled { .. } => {
                                 // Whether to keep the process alive after completion is controlled by
-                                // the `warp agent run --idle-on-complete[=<DURATION>]` flag.
+                                // the `octomus agent run --idle-on-complete[=<DURATION>]` flag.
                                 if let Some(idle_timeout) = me.idle_on_complete {
                                     log::info!(
                                         "Ambient agent idle lifecycle: event=idle_timeout_scheduled task_id={:?} terminal_view_id={terminal_id:?} timeout={idle_timeout:?} outcome=non_error_completion",
@@ -2810,7 +2810,7 @@ impl AgentDriver {
             }
         });
 
-        // Subscribe to document model events to emit artifact_created when plans sync to Warp Drive.
+        // Subscribe to document model events to emit artifact_created when plans sync to Octomus Drive.
         ctx.subscribe_to_model(&AIDocumentModel::handle(ctx), move |me, event, ctx| {
             let AIDocumentModelEvent::DocumentSaveStatusUpdated(document_id) = event else {
                 return;
@@ -2830,7 +2830,7 @@ impl AgentDriver {
 
             // Get the notebook link from the document model
             let Some(notebook_link) =
-                doc_model.get_document_warp_drive_object_link(document_id, ctx)
+                doc_model.get_document_octomus_drive_object_link(document_id, ctx)
             else {
                 return;
             };
@@ -3047,7 +3047,7 @@ impl AgentDriver {
         match event {
             TerminalDriverEvent::SlowBootstrap => {
                 eprintln!(
-                    "Warning: Terminal session is slow to bootstrap. See https://docs.warp.dev/support-and-community/troubleshooting-and-support/known-issues#shells to troubleshoot."
+                    "Warning: Terminal session is slow to bootstrap. See https://docs.octomus.dev/support-and-community/troubleshooting-and-support/known-issues#shells to troubleshoot."
                 );
             }
             TerminalDriverEvent::EstablishedSharedSession {

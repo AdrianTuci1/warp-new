@@ -1,16 +1,16 @@
 use ui_components::{button, Component as _, Options as _};
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::color::internal_colors;
-use warpui_core::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::color::internal_colors;
+use octomusui_core::elements::{
     ClippedScrollStateHandle, Container, CrossAxisAlignment, Flex, FormattedTextElement,
     MainAxisSize, MouseStateHandle, ParentElement,
 };
-use warpui_core::fonts::Weight;
-use warpui_core::keymap::Keystroke;
-use warpui_core::prelude::Align;
-use warpui_core::text_layout::TextAlignment;
-use warpui_core::ui_components::components::{UiComponent as _, UiComponentStyles};
-use warpui_core::{
+use octomusui_core::fonts::Weight;
+use octomusui_core::keymap::Keystroke;
+use octomusui_core::prelude::Align;
+use octomusui_core::text_layout::TextAlignment;
+use octomusui_core::ui_components::components::{UiComponent as _, UiComponentStyles};
+use octomusui_core::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity as _, TypedActionView, View,
     ViewContext,
 };

@@ -1,8 +1,8 @@
 use std::sync::mpsc;
 
-use warp_core::ui::appearance::Appearance;
-use warpui::platform::WindowStyle;
-use warpui::{AddSingletonModel, App, EntityId, ModelHandle, ViewContext, ViewHandle};
+use octomus_core::ui::appearance::Appearance;
+use octomusui::platform::WindowStyle;
+use octomusui::{AddSingletonModel, App, EntityId, ModelHandle, ViewContext, ViewHandle};
 
 use super::NotebookManager;
 use crate::ai::blocklist::BlocklistAIHistoryModel;

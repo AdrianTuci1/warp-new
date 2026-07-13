@@ -4,8 +4,8 @@ use ai::agent::action::{RunAgentsAgentRunConfig, RunAgentsExecutionMode};
 use ai::agent::action_result::StartAgentVersion;
 use ai::skills::SkillReference;
 use settings::Setting;
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warpui::{App, SingletonEntity};
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomusui::{App, SingletonEntity};
 
 use super::{
     default_collapsible_state_for_orchestration_action, received_message_collapsible_id,
@@ -278,7 +278,7 @@ fn remote_arm_propagates_skills_into_skill_references() {
     let mode = run_agents_to_start_agent_mode(
         &RunAgentsExecutionMode::Remote {
             environment_id: "env-1".to_string(),
-            worker_host: "warp".to_string(),
+            worker_host: "octomus".to_string(),
             computer_use_enabled: true,
         },
         "oz",
@@ -303,7 +303,7 @@ fn remote_arm_propagates_skills_into_skill_references() {
     };
     assert_eq!(skill_references, skills);
     assert_eq!(environment_id, "env-1");
-    assert_eq!(worker_host, "warp");
+    assert_eq!(worker_host, "octomus");
     assert_eq!(harness_type, "oz");
     assert_eq!(model_id, "auto");
     assert!(computer_use_enabled);
@@ -316,7 +316,7 @@ fn remote_arm_with_empty_skills_propagates_empty_vec() {
     let mode = run_agents_to_start_agent_mode(
         &RunAgentsExecutionMode::Remote {
             environment_id: "env-1".to_string(),
-            worker_host: "warp".to_string(),
+            worker_host: "octomus".to_string(),
             computer_use_enabled: false,
         },
         "claude",
@@ -340,7 +340,7 @@ fn remote_arm_rejects_opencode() {
     let err = run_agents_to_start_agent_mode(
         &RunAgentsExecutionMode::Remote {
             environment_id: "env-1".to_string(),
-            worker_host: "warp".to_string(),
+            worker_host: "octomus".to_string(),
             computer_use_enabled: false,
         },
         "opencode",
@@ -392,7 +392,7 @@ fn remote_arm_propagates_claude_auth_secret_into_mode() {
     let mode = run_agents_to_start_agent_mode(
         &RunAgentsExecutionMode::Remote {
             environment_id: "env-1".to_string(),
-            worker_host: "warp".to_string(),
+            worker_host: "octomus".to_string(),
             computer_use_enabled: false,
         },
         "claude",
@@ -416,7 +416,7 @@ fn remote_arm_filters_whitespace_auth_secret_name_to_none() {
     let mode = run_agents_to_start_agent_mode(
         &RunAgentsExecutionMode::Remote {
             environment_id: "env-1".to_string(),
-            worker_host: "warp".to_string(),
+            worker_host: "octomus".to_string(),
             computer_use_enabled: false,
         },
         "codex",

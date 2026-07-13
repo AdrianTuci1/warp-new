@@ -5,28 +5,28 @@ use lsp::LspManagerModel;
 use pathfinder_color::ColorU;
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::vec2f;
-use warp_core::channel::{Channel, ChannelState};
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::icons::ICON_DIMENSIONS;
+use octomus_core::channel::{Channel, ChannelState};
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::icons::ICON_DIMENSIONS;
 use warp_editor::render::element::VerticalExpansionBehavior;
-use warp_util::path::LineAndColumnArg;
+use octomus_util::path::LineAndColumnArg;
 #[cfg(feature = "local_fs")]
-use warpui::clipboard::ClipboardContent;
-use warpui::elements::{
+use octomusui::clipboard::ClipboardContent;
+use octomusui::elements::{
     AcceptedByDropTarget, Align, Border, ChildAnchor, ChildView, Clipped, ConstrainedBox,
     Container, CornerRadius, CrossAxisAlignment, Draggable, DraggableState, DropTarget, Empty,
     Expanded, Flex, Hoverable, MainAxisAlignment, MainAxisSize, MouseStateHandle,
     OffsetPositioning, Padding, ParentAnchor, ParentElement, ParentOffsetBounds, Radius, Rect,
     SavePosition, Shrinkable, Stack, Text,
 };
-use warpui::fonts::{Properties, Style, Weight};
-use warpui::keymap::EditableBinding;
-use warpui::text::point::Point;
-use warpui::text_layout::ClipConfig;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::UiComponent;
-use warpui::{
+use octomusui::fonts::{Properties, Style, Weight};
+use octomusui::keymap::EditableBinding;
+use octomusui::text::point::Point;
+use octomusui::text_layout::ClipConfig;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{
     id, AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WindowId,
 };
@@ -388,8 +388,8 @@ impl CodeView {
                             ctx,
                         )
                         .with_horizontal_scrollbar_appearance(
-                            warpui::elements::new_scrollable::ScrollableAppearance::new(
-                                warpui::elements::ScrollbarWidth::Auto,
+                            octomusui::elements::new_scrollable::ScrollableAppearance::new(
+                                octomusui::elements::ScrollbarWidth::Auto,
                                 true,
                             ),
                         )
@@ -432,8 +432,8 @@ impl CodeView {
                 ctx,
             )
             .with_horizontal_scrollbar_appearance(
-                warpui::elements::new_scrollable::ScrollableAppearance::new(
-                    warpui::elements::ScrollbarWidth::Auto,
+                octomusui::elements::new_scrollable::ScrollableAppearance::new(
+                    octomusui::elements::ScrollbarWidth::Auto,
                     true,
                 ),
             )

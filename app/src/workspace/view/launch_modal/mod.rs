@@ -8,22 +8,22 @@ use markdown_parser::{parse_markdown, FormattedText, FormattedTextLine};
 // Re-export slide types for convenience
 pub use oz_launch::OzLaunchSlide;
 use pathfinder_color::ColorU;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::Fill;
-use warpui::assets::asset_cache::AssetSource;
-use warpui::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::Fill;
+use octomusui::assets::asset_cache::AssetSource;
+use octomusui::elements::{
     Align, Border, CacheOption, ChildAnchor, Clipped, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, DropShadow, Empty, Expanded, Flex, FormattedTextElement,
     HighlightedHyperlink, Hoverable, HyperlinkLens, Image, MainAxisAlignment, MainAxisSize,
     MouseStateHandle, OffsetPositioning, ParentAnchor, ParentElement, ParentOffsetBounds, Radius,
     Shrinkable, SizeConstraintCondition, SizeConstraintSwitch, Stack,
 };
-use warpui::fonts::Weight;
-use warpui::keymap::FixedBinding;
-use warpui::platform::Cursor;
-use warpui::presenter::ChildView;
-use warpui::ui_components::components::UiComponent;
-use warpui::{
+use octomusui::fonts::Weight;
+use octomusui::keymap::FixedBinding;
+use octomusui::platform::Cursor;
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
 
@@ -34,7 +34,7 @@ use crate::view_components::action_button::{ActionButton, PrimaryTheme, Secondar
 use crate::workspace::view::launch_modal::cta_button::{CTAButton, CTAButtonAction};
 
 pub fn init<S: Slide>(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([
         FixedBinding::new("escape", LaunchModalAction::<S>::Close, id!("LaunchModal")),
@@ -372,7 +372,7 @@ impl<S: Slide> LaunchModal<S> {
                                         .with_child(
                                             Container::new(
                                                 ConstrainedBox::new(
-                                                    icon.to_warpui_icon(Fill::Solid(
+                                                    icon.to_octomusui_icon(Fill::Solid(
                                                         blended_colors::text_main(
                                                             theme,
                                                             blended_colors::neutral_2(theme),

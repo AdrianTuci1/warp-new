@@ -3,21 +3,21 @@ Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
 
 cd /tmp/worktree-agent-4-branding
 
-TASK: Replace "Warp" with "Octomus" in user-facing UI strings only. Do NOT touch:
+TASK: Replace "Octomus" with "Octomus" in user-facing UI strings only. Do NOT touch:
 - Rust identifiers (struct names like AppState, enum variants, function names)
 - File paths or module names (mod auth, use crate::server::, etc.)
 - Internal constant names
 - Log/debug messages (log::info!, log::error!, safe_*! macros)
 - Cargo.toml package names
 - Comments (unless they describe the product name to the user)
-- Any "Warp" inside compiler directives like #[cfg(...)] or derive macros
-- Any "warp_" prefix (these are crate names: warpui, warp_core, etc.)
+- Any "Octomus" inside compiler directives like #[cfg(...)] or derive macros
+- Any "warp_" prefix (these are crate names: octomusui, octomus_core, etc.)
 
-Search ALL .rs files under app/src/ for occurrences of "Warp" in string literals.
+Search ALL .rs files under app/src/ for occurrences of "Octomus" in string literals.
 
-FILES TO CHECK (scan each for "Warp" or "warp" in string literals):
-- app/src/app_menus.rs — menu items like "About Warp", "Warp Help"
-- app/src/root_view.rs — window title "Warp"
+FILES TO CHECK (scan each for "Octomus" or "octomus" in string literals):
+- app/src/app_menus.rs — menu items like "About Octomus", "Octomus Help"
+- app/src/root_view.rs — window title "Octomus"
 - app/src/appearance.rs — display names
 - app/src/command_palette.rs — command labels
 - app/src/settings/ — settings labels, section names
@@ -38,16 +38,16 @@ FILES TO CHECK (scan each for "Warp" or "warp" in string literals):
 - app/src/ai/onboarding.rs — AI onboarding text
 
 SPECIFIC REPLACEMENTS (these are user-visible):
-- "Warp" (as standalone product name in UI) → "Octomus"
-- "Warp AI" → "Octomus AI"
-- "Warp Drive" → "Local Storage"
-- "About Warp" → "About Octomus"
-- "Warp Help" → "Octomus Help"
-- Window title "Warp" → "Octomus"
-- "Get Warp" → "Get Octomus"
+- "Octomus" (as standalone product name in UI) → "Octomus"
+- "Octomus AI" → "Octomus AI"
+- "Octomus Drive" → "Local Storage"
+- "About Octomus" → "About Octomus"
+- "Octomus Help" → "Octomus Help"
+- Window title "Octomus" → "Octomus"
+- "Get Octomus" → "Get Octomus"
 
 DO NOT change:
-- warpui::, warp_core::, warp_* crate paths
+- octomusui::, octomus_core::, warp_* crate paths
 - struct names, enum names, function names
 - File paths like app/src/warp_managed_paths_watcher.rs
 - Constants like WARP_MANAGED_PATHS
@@ -59,6 +59,6 @@ Be conservative: only change literal strings that are visible to the user in the
 After done:
 ```
 git add -A
-git commit -m "octomus: rename Warp to Octomus in UI strings"
+git commit -m "octomus: rename Octomus to Octomus in UI strings"
 git push origin octomus/agent-4-branding
 ```

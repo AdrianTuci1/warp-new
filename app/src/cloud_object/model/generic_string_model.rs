@@ -6,7 +6,7 @@ use async_trait::async_trait;
 use cloud_objects::cloud_object::CloudObjectUpsertParams;
 // Re-exported from cloud_objects.
 pub use cloud_objects::cloud_object::{GenericStringModel, Serializer};
-pub use warp_server_client::ids::GenericStringObjectId;
+pub use octomus_server_client::ids::GenericStringObjectId;
 
 use crate::appearance::Appearance;
 use crate::cloud_object::{
@@ -14,7 +14,7 @@ use crate::cloud_object::{
     CreateObjectRequest, GenericCloudObject, GenericServerObject, GenericStringObjectFormat,
     GenericStringObjectUniqueKey, ObjectType, Revision, UpdateCloudObjectResult,
 };
-use crate::drive::items::WarpDriveItem;
+use crate::drive::items::OctomusDriveItem;
 use crate::drive::CloudObjectTypeAndId;
 use crate::persistence::ModelEvent;
 use crate::server::cloud_objects::update_manager::InitiatedBy;
@@ -71,8 +71,8 @@ pub trait StringModel: Clone + Debug + PartialEq + Send + Sync + 'static {
     /// Returns the display name for this model.
     fn display_name(&self) -> String;
 
-    /// Returns whether to render this model as a WarpDriveItem.
-    fn renders_in_warp_drive(&self) -> bool {
+    /// Returns whether to render this model as a OctomusDriveItem.
+    fn renders_in_octomus_drive(&self) -> bool {
         false
     }
 
@@ -89,14 +89,14 @@ pub trait StringModel: Clone + Debug + PartialEq + Send + Sync + 'static {
     /// Sets the display name for this model
     fn set_display_name(&mut self, _name: &str) {}
 
-    /// Creates a new warp drive item for this model type. Returns None
-    /// if this object does not render in Warp Drive.
-    fn to_warp_drive_item(
+    /// Creates a new octomus drive item for this model type. Returns None
+    /// if this object does not render in Octomus Drive.
+    fn to_octomus_drive_item(
         &self,
         _id: SyncId,
         _appearance: &Appearance,
         _object: &Self::CloudObjectType,
-    ) -> Option<Box<dyn WarpDriveItem>> {
+    ) -> Option<Box<dyn OctomusDriveItem>> {
         None
     }
 
@@ -313,16 +313,16 @@ where
         })
     }
 
-    fn renders_in_warp_drive(&self) -> bool {
-        self.string_model.renders_in_warp_drive()
+    fn renders_in_octomus_drive(&self) -> bool {
+        self.string_model.renders_in_octomus_drive()
     }
 
-    fn to_warp_drive_item(
+    fn to_octomus_drive_item(
         &self,
         id: SyncId,
         appearance: &Appearance,
         object: &GenericCloudObject<GenericStringObjectId, Self>,
-    ) -> Option<Box<dyn WarpDriveItem>> {
-        self.string_model.to_warp_drive_item(id, appearance, object)
+    ) -> Option<Box<dyn OctomusDriveItem>> {
+        self.string_model.to_octomus_drive_item(id, appearance, object)
     }
 }

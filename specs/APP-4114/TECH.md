@@ -466,7 +466,7 @@ If snapshot literal churn is large, add small helper constructors for test snaps
 - In `View as = Tabs`, double-click the representative row title and verify it opens tab rename, not pane rename.
 - Hover a named pane row and verify details sidecar content remains generated.
 - Move a named pane to another tab and verify the name moves with it.
-- Restart Warp and verify restored panes keep their custom names.
+- Restart Octomus and verify restored panes keep their custom names.
 
 ### Suggested command validation
 

@@ -3,9 +3,9 @@ use std::collections::{HashMap, HashSet};
 use anyhow::Error;
 use serde::{Deserialize, Serialize};
 use settings_value::SettingsValue;
-use warp_core::define_settings_group;
-use warp_core::settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
-use warpui::{AppContext, ModelContext, SingletonEntity};
+use octomus_core::define_settings_group;
+use octomus_core::settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
+use octomusui::{AppContext, ModelContext, SingletonEntity};
 
 use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
 use crate::cloud_object::CloudObject as _;
@@ -24,7 +24,7 @@ define_settings_group!(WorkflowAliases, settings: [
 ]);
 
 #[derive(Debug, PartialEq, Serialize, Deserialize, Clone, schemars::JsonSchema, SettingsValue)]
-#[schemars(description = "A shortcut alias for a Warp Drive workflow.")]
+#[schemars(description = "A shortcut alias for a Octomus Drive workflow.")]
 pub struct WorkflowAlias {
     #[schemars(description = "The alias text that triggers this workflow.")]
     pub alias: String,

@@ -2,7 +2,7 @@ use std::future::Future;
 use std::sync::Arc;
 
 use chrono::{DateTime, Utc};
-use warpui::r#async::executor::Background;
+use octomusui::r#async::executor::Background;
 
 use crate::ai::ambient_agents::AmbientAgentTaskId;
 use crate::server::server_api::ai::{AIClient, AgentRunClientEventRequest};
@@ -155,7 +155,7 @@ impl SetupTimelineEvent {
 #[derive(Clone, Copy)]
 pub(crate) enum SetupStep {
     TeamMetadataRefresh,
-    WarpDriveSync,
+    OctomusDriveSync,
     TaskDataFetch,
     EnvironmentResolution,
     SkillRepoClone,
@@ -183,7 +183,7 @@ impl SetupStep {
     fn as_event_name(self) -> &'static str {
         match self {
             Self::TeamMetadataRefresh => "setup_team_metadata_refresh",
-            Self::WarpDriveSync => "setup_warp_drive_sync",
+            Self::OctomusDriveSync => "setup_octomus_drive_sync",
             Self::TaskDataFetch => "setup_task_metadata_secrets_attachments_git_credentials_fetch",
             Self::EnvironmentResolution => "setup_environment_resolution",
             Self::SkillRepoClone => "setup_skill_repo_clone",

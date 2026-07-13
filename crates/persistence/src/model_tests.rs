@@ -306,7 +306,7 @@ fn model_token_usage_replays_custom_endpoint_usage_by_model_id() {
 #[test]
 fn model_token_usage_replay_skips_non_custom_endpoint_entries() {
     let warp_only = ModelTokenUsage {
-        model_id: "warp-model".to_string(),
+        model_id: "octomus-model".to_string(),
         warp_tokens: 4,
         ..Default::default()
     };

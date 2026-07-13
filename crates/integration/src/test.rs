@@ -81,40 +81,40 @@ use sysinfo::{Pid, ProcessesToUpdate, System};
 pub use typeahead::*;
 use version_compare::Cmp;
 pub use video_recording::*;
-use warp::appearance::Appearance;
-use warp::features::FeatureFlag;
-use warp::integration_testing::assertions::{
+use octomus::appearance::Appearance;
+use octomus::features::FeatureFlag;
+use octomus::integration_testing::assertions::{
     assert_binding_display_string, go_offline, go_online, join_a_workspace,
 };
-use warp::integration_testing::block::{
+use octomus::integration_testing::block::{
     assert_block_visible, assert_bottom_of_block_approx_at, assert_num_blocks_in_model,
     BlockPosition, LinePosition,
 };
-use warp::integration_testing::clipboard::assert_clipboard_contains_string;
-use warp::integration_testing::command_palette::{
+use octomus::integration_testing::clipboard::assert_clipboard_contains_string;
+use octomus::integration_testing::command_palette::{
     close_command_palette, open_command_palette, open_command_palette_and_run_action, TestStepsExt,
 };
-use warp::integration_testing::context_chips::assert_working_dir_is_present;
-use warp::integration_testing::find::{Find, FindWithinBlockState};
-use warp::integration_testing::input::{
+use octomus::integration_testing::context_chips::assert_working_dir_is_present;
+use octomus::integration_testing::find::{Find, FindWithinBlockState};
+use octomus::integration_testing::input::{
     input_contains_string, input_is_empty, open_input_context_menu,
 };
-use warp::integration_testing::navigation_palette::{
+use octomus::integration_testing::navigation_palette::{
     check_recency, navigate_to_other_session_step, open_navigation_palette_step, RecentSession,
 };
-use warp::integration_testing::pane_group::assert_focused_pane_index;
-use warp::integration_testing::settings::{
+use octomus::integration_testing::pane_group::assert_focused_pane_index;
+use octomus::integration_testing::settings::{
     assert_theme_chooser_contains, set_window_custom_size, toggle_setting,
 };
-use warp::integration_testing::step::{
+use octomus::integration_testing::step::{
     assert_no_pending_model_events, new_step_with_default_assertions,
     new_step_with_default_assertions_for_pane,
 };
-use warp::integration_testing::tab::{assert_pane_title, assert_tab_title, tab_title_step};
-use warp::integration_testing::terminal::util::{
+use octomus::integration_testing::tab::{assert_pane_title, assert_tab_title, tab_title_step};
+use octomus::integration_testing::terminal::util::{
     current_shell_starter_and_version, ExactLine, ExpectedExitStatus,
 };
-use warp::integration_testing::terminal::{
+use octomus::integration_testing::terminal::{
     assert_active_block_output, assert_active_block_output_for_single_terminal_in_tab,
     assert_active_block_received_precmd, assert_alt_grid_active, assert_alt_screen_output,
     assert_command_executed_for_single_terminal_in_tab, assert_context_menu_is_open,
@@ -133,56 +133,56 @@ use warp::integration_testing::terminal::{
     open_context_menu_for_selected_block, performance_test, run_alt_grid_program, run_completer,
     validate_git_branch, wait_until_bootstrapped_pane, wait_until_bootstrapped_single_pane_for_tab,
 };
-use warp::integration_testing::view_getters::{
+use octomus::integration_testing::view_getters::{
     pane_group_view, single_input_suggestions_view_for_tab, single_input_view_for_tab,
     single_terminal_pane_view_for_tab, single_terminal_view, single_terminal_view_for_tab,
     workspace_view,
 };
-use warp::integration_testing::warp_drive::{
-    assert_is_left_panel_open, assert_warp_drive_is_closed, assert_warp_drive_is_open,
+use octomus::integration_testing::octomus_drive::{
+    assert_is_left_panel_open, assert_octomus_drive_is_closed, assert_octomus_drive_is_open,
 };
-use warp::integration_testing::window::{
+use octomus::integration_testing::window::{
     add_and_save_window, add_window, add_window_and_check_bounds, close_window,
     save_active_window_id,
 };
-use warp::integration_testing::workspace::assert_tab_count;
-use warp::integration_testing::{self, view_of_type};
-use warp::pane_group::AGENT_MODE_PANE_DEFAULT_MINIMUM_WIDTH;
-use warp::settings::{
+use octomus::integration_testing::workspace::assert_tab_count;
+use octomus::integration_testing::{self, view_of_type};
+use octomus::pane_group::AGENT_MODE_PANE_DEFAULT_MINIMUM_WIDTH;
+use octomus::settings::{
     CompletionsOpenWhileTyping, CtrlTabBehavior, MonospaceFontSize, TabBehavior, INPUT_MODE,
 };
-use warp::settings_view::keybindings::KeybindingsView;
-use warp::settings_view::{FeaturesPageAction, SettingsAction, SettingsSection, SettingsView};
-use warp::terminal::alt_screen_reporting::MouseReportingEnabled;
-use warp::terminal::available_shells::AvailableShells;
-use warp::terminal::block_list_viewport::{InputMode, ScrollLines, ScrollPosition};
-use warp::terminal::find::TerminalFindModel;
-use warp::terminal::input::{Input, InputSuggestionsMode};
-use warp::terminal::keys_settings::KeysSettings;
-use warp::terminal::model::ansi::{Handler, InitShellValue};
-use warp::terminal::model::blocks::{BlockHeightItem, BlockHeightSummary, TotalIndex};
-use warp::terminal::model::grid::grid_handler::TermMode;
-use warp::terminal::model::grid::Dimensions;
-use warp::terminal::model::terminal_model::BlockIndex;
-use warp::terminal::session_settings::{HonorPS1, SessionSettings, StartupShellOverride};
-use warp::terminal::view::{
+use octomus::settings_view::keybindings::KeybindingsView;
+use octomus::settings_view::{FeaturesPageAction, SettingsAction, SettingsSection, SettingsView};
+use octomus::terminal::alt_screen_reporting::MouseReportingEnabled;
+use octomus::terminal::available_shells::AvailableShells;
+use octomus::terminal::block_list_viewport::{InputMode, ScrollLines, ScrollPosition};
+use octomus::terminal::find::TerminalFindModel;
+use octomus::terminal::input::{Input, InputSuggestionsMode};
+use octomus::terminal::keys_settings::KeysSettings;
+use octomus::terminal::model::ansi::{Handler, InitShellValue};
+use octomus::terminal::model::blocks::{BlockHeightItem, BlockHeightSummary, TotalIndex};
+use octomus::terminal::model::grid::grid_handler::TermMode;
+use octomus::terminal::model::grid::Dimensions;
+use octomus::terminal::model::terminal_model::BlockIndex;
+use octomus::terminal::session_settings::{HonorPS1, SessionSettings, StartupShellOverride};
+use octomus::terminal::view::{
     BlockVisibilityMode, TerminalAction, TerminalViewState, ALIAS_EXPANSION_BANNER_SEEN_KEY,
 };
-use warp::terminal::{shell, TerminalView};
-use warp::util::bindings::CustomAction;
-use warp::workflows::categories::CategoriesView;
-use warp::workspace::{
+use octomus::terminal::{shell, TerminalView};
+use octomus::util::bindings::CustomAction;
+use octomus::workflows::categories::CategoriesView;
+use octomus::workspace::{
     Workspace, WorkspaceAction, NEW_SESSION_MENU_BUTTON_POSITION_ID, NEW_TAB_BUTTON_POSITION_ID,
 };
-use warp::{cmd_or_ctrl_shift, AgentModeEntrypoint};
-use warpui_core::event::KeyState;
-use warpui_core::integration::{AssertionOutcome, StepData, TestStep};
-use warpui_core::keymap::{Keystroke, PerPlatformKeystroke, Trigger};
-use warpui_core::platform::keyboard::KeyCode;
-use warpui_core::platform::{OperatingSystem, TerminationMode};
-use warpui_core::units::Lines;
-use warpui_core::windowing::WindowManager;
-use warpui_core::{
+use octomus::{cmd_or_ctrl_shift, AgentModeEntrypoint};
+use octomusui_core::event::KeyState;
+use octomusui_core::integration::{AssertionOutcome, StepData, TestStep};
+use octomusui_core::keymap::{Keystroke, PerPlatformKeystroke, Trigger};
+use octomusui_core::platform::keyboard::KeyCode;
+use octomusui_core::platform::{OperatingSystem, TerminationMode};
+use octomusui_core::units::Lines;
+use octomusui_core::windowing::WindowManager;
+use octomusui_core::{
     async_assert, async_assert_eq, AssetProvider, Event, SingletonEntity, UpdateView, ViewHandle,
 };
 pub use websockets::*;
@@ -215,7 +215,7 @@ fn new_builder() -> Builder {
     Builder::new()
 }
 
-/// Adds a workflow file, containing two workflows, to the mocked out warp
+/// Adds a workflow file, containing two workflows, to the mocked out octomus
 /// config directory and verifies that the workflows appear in the workflow menu.
 pub fn test_add_workflows_to_warp_config() -> Builder {
     new_builder()
@@ -285,7 +285,7 @@ pub fn test_launch_warp_with_theme_in_warp_config() -> Builder {
         .with_step(assert_theme_chooser_contains("Test Theme", 1))
 }
 
-/// Adds a theme to the mocked out warp config directory and verifies that
+/// Adds a theme to the mocked out octomus config directory and verifies that
 /// the theme appears in the theme picker.
 pub fn test_add_theme_to_warp_config() -> Builder {
     new_builder()
@@ -574,7 +574,7 @@ pub fn test_suggestions_menu_positioning() -> Builder {
                 ),
         )
         .with_step(
-            new_step_with_default_assertions("Open Warp Drive")
+            new_step_with_default_assertions("Open Octomus Drive")
                 .with_click_on_saved_position("workspace:toggle_left_panel")
                 .add_assertion(assert_is_left_panel_open()),
         )
@@ -2003,7 +2003,7 @@ pub fn test_add_and_close_session() -> Builder {
                                     .expect("pane at index 0 is a terminal pane")
                                     .as_ref(ctx)
                                     .as_any()
-                                    .downcast_ref::<warp::terminal::local_tty::TerminalManager>()
+                                    .downcast_ref::<octomus::terminal::local_tty::TerminalManager>()
                                     .expect("terminal pane at index 0 contains a local session")
                                     .pid()
                                     .expect("shell should be spawned")
@@ -2433,7 +2433,7 @@ precmd_functions+=(_p9k_precmd)
         )
         .with_step(wait_until_bootstrapped_single_pane_for_tab(1))
         .with_step(check_banner_open(1, true))
-        // If the user then switches back to the Warp prompt, we should close the banner.
+        // If the user then switches back to the Octomus prompt, we should close the banner.
         .with_step(
             new_step_with_default_assertions("Disable honor_ps1").with_action(|app, _, _| {
                 SessionSettings::handle(app).update(app, |session_settings, ctx| {
@@ -3333,7 +3333,7 @@ pub fn test_custom_ps1_expansion_bash() -> Builder {
         )
 }
 
-/// Default auto title. We test that Warp's auto title is used and verify that
+/// Default auto title. We test that Octomus's auto title is used and verify that
 /// DISABLE_AUTO_TITLE is set correctly.
 pub fn test_auto_title() -> Builder {
     new_builder()
@@ -3355,7 +3355,7 @@ pub fn test_auto_title() -> Builder {
         ))
 }
 
-/// Validate that disabling Warp's auto title feature will not mess with oh-my-zsh settings.
+/// Validate that disabling Octomus's auto title feature will not mess with oh-my-zsh settings.
 pub fn test_warp_auto_title_disabled() -> Builder {
     new_builder()
         .set_should_run_test(|| {
@@ -3384,7 +3384,7 @@ WARP_DISABLE_AUTO_TITLE="true"
             );
         })
         .with_step(wait_until_bootstrapped_single_pane_for_tab(0))
-        // If Warp title is disabled, we don't set the DISABLE_AUTO_TITLE env variable
+        // If Octomus title is disabled, we don't set the DISABLE_AUTO_TITLE env variable
         .with_step(execute_command_for_single_terminal_in_tab(
             0,
             "echo $DISABLE_AUTO_TITLE".to_string(),
@@ -3396,7 +3396,7 @@ WARP_DISABLE_AUTO_TITLE="true"
         ))
 }
 
-/// Checks that the tab title set by the user takes precedence over the Warp's default title and
+/// Checks that the tab title set by the user takes precedence over the Octomus's default title and
 /// doesn't require any additional setting from the user's POV. This is bash-specific test.
 pub fn test_warp_honors_user_title_bash() -> Builder {
     new_builder()
@@ -3428,7 +3428,7 @@ PROMPT_COMMAND='echo -en "\033]0;TEST_TAB_TITLE\a"'
         ))
 }
 
-/// Checks that the tab title set by the user takes precedence over the Warp's default title and
+/// Checks that the tab title set by the user takes precedence over the Octomus's default title and
 /// doesn't require any additional setting from the user's POV. This is zsh-specific test.
 pub fn test_warp_honors_user_title_zsh() -> Builder {
     new_builder()
@@ -3462,7 +3462,7 @@ precmd_functions+=(set_title)
 /// Checks that an OSC 7 escape sequence (`\e]7;file://host/path\a`) emitted by
 /// the running command updates the block's current working directory mid-command
 /// without waiting for the next prompt. This lets external tools that change
-/// directory (for example `wt switch` from worktrunk) keep Warp's per-block CWD
+/// directory (for example `wt switch` from worktrunk) keep Octomus's per-block CWD
 /// in sync with the shell. See issue #9125.
 pub fn test_osc7_updates_current_working_directory() -> Builder {
     new_builder()
@@ -5508,7 +5508,7 @@ pub fn test_preferred_shell() -> Builder {
 pub fn test_git_prompt() -> Builder {
     let (starter, _) = current_shell_starter_and_version();
     // Note that we can't use the OUT_DIR for the temp directory
-    // here because that would put us in the warp repo. We need to
+    // here because that would put us in the octomus repo. We need to
     // be in a place in the filesystem that's not already a git repo.
     new_builder()
         // TODO(CORE-2734): Unknown failure for Powershell
@@ -5582,7 +5582,7 @@ pub fn test_terminal_announces_capabilities_to_shell() -> Builder {
     };
 
     // Note that we can't use the OUT_DIR for the temp directory
-    // here because that would put us in the warp repo. We need to
+    // here because that would put us in the octomus repo. We need to
     // be in a place in the filesystem that's not already a git repo.
     new_builder()
         .with_step(wait_until_bootstrapped_single_pane_for_tab(0))
@@ -6703,7 +6703,7 @@ pub fn test_agent_mode_pane_minimum_size() -> Builder {
 }
 
 // cheating a little bit in this test; it's hard to tell if the create folder dialog is open from
-// the workspace view, but we DO force warp drive open to show the dialog, so we can look for that
+// the workspace view, but we DO force octomus drive open to show the dialog, so we can look for that
 pub fn test_create_folder_from_command_palette() -> Builder {
     new_builder()
         .with_step(wait_until_bootstrapped_single_pane_for_tab(0))
@@ -6711,20 +6711,20 @@ pub fn test_create_folder_from_command_palette() -> Builder {
         .with_step(go_offline())
         .with_steps(
             open_command_palette_and_run_action("Create a New Team Folder")
-                .add_assertion(assert_warp_drive_is_closed()),
+                .add_assertion(assert_octomus_drive_is_closed()),
         )
         .with_steps(
             open_command_palette_and_run_action("Create a New Personal Folder")
-                .add_assertion(assert_warp_drive_is_closed()),
+                .add_assertion(assert_octomus_drive_is_closed()),
         )
         .with_step(go_online())
         .with_steps(
             open_command_palette_and_run_action("Create a New Team Folder")
-                .add_assertion(assert_warp_drive_is_open()),
+                .add_assertion(assert_octomus_drive_is_open()),
         )
         .with_steps(
             open_command_palette_and_run_action("Create a New Personal Folder")
-                .add_assertion(assert_warp_drive_is_open()),
+                .add_assertion(assert_octomus_drive_is_open()),
         )
 }
 
@@ -6772,7 +6772,7 @@ pub fn test_context_chips_prompt_at_bootstrap() -> Builder {
             (String::from("SavedPrompt"), String::from("Default")),
         ]))
         .with_step(
-            new_step_with_default_assertions("Check Warp prompt")
+            new_step_with_default_assertions("Check Octomus prompt")
                 .add_assertion(assert_working_dir_is_present(0)),
         )
 }

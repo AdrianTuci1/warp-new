@@ -1,9 +1,9 @@
-use warpui::elements::MouseStateHandle;
-use warpui::fonts::Weight;
-use warpui::platform::Cursor;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use octomusui::elements::MouseStateHandle;
+use octomusui::fonts::Weight;
+use octomusui::platform::Cursor;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
 
 use crate::appearance::Appearance;
 use crate::ui_components::dialog::{dialog_styles, Dialog};

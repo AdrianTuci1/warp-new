@@ -1,4 +1,4 @@
-use warpui::AppContext;
+use octomusui::AppContext;
 
 use crate::channel::ChannelState;
 use crate::server::ids::ServerId;
@@ -20,12 +20,12 @@ impl AdminActions {
 
     /// Open the support email link
     pub fn contact_support(ctx: &mut AppContext) {
-        ctx.open_url("mailto:support@warp.dev");
+        ctx.open_url("mailto:support@octomus.dev");
     }
 
     /// Open the contact sales page
     pub fn contact_sales(ctx: &mut AppContext) {
-        ctx.open_url("https://warp.dev/contact-sales");
+        ctx.open_url("https://octomus.dev/contact-sales");
     }
 }
 

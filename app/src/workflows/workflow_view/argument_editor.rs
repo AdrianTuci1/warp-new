@@ -2,17 +2,17 @@ use std::cmp::Ordering;
 
 use itertools::Itertools;
 use pathfinder_color::ColorU;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
 use warp_editor::editor::NavigationKey;
-use warpui::elements::{
+use octomusui::elements::{
     ChildView, ConstrainedBox, Container, CrossAxisAlignment, Fill, Flex, MainAxisAlignment,
     MainAxisSize, ParentElement, Shrinkable,
 };
-use warpui::text_layout::TextStyle;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, SingletonEntity as _, ViewContext, ViewHandle};
+use octomusui::text_layout::TextStyle;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, SingletonEntity as _, ViewContext, ViewHandle};
 
 use super::alias_argument_selector::{AliasArgumentSelector, AliasArgumentSelectorEvent};
 use super::{

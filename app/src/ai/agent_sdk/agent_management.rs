@@ -6,14 +6,14 @@ use std::io::Write as _;
 use anyhow::anyhow;
 use comfy_table::Cell;
 use serde::Serialize;
-use warp_cli::agent::{
+use octomus_cli::agent::{
     AgentCreateArgs, AgentDeleteArgs, AgentGetArgs, AgentListArgs, AgentSortByArg, AgentUpdateArgs,
     OutputFormat,
 };
-use warp_cli::json_filter::JsonOutput;
-use warp_cli::SortOrderArg;
-use warpui::platform::TerminationMode;
-use warpui::{AppContext, ModelContext, SingletonEntity};
+use octomus_cli::json_filter::JsonOutput;
+use octomus_cli::SortOrderArg;
+use octomusui::platform::TerminationMode;
+use octomusui::{AppContext, ModelContext, SingletonEntity};
 
 use super::output::TableFormat;
 use crate::server::server_api::ai::{
@@ -71,7 +71,7 @@ pub fn delete_agent(
 impl AgentManagementRunner {
     fn spawn_command(
         &self,
-        future: impl warpui::r#async::Spawnable<Output = anyhow::Result<()>>,
+        future: impl octomusui::r#async::Spawnable<Output = anyhow::Result<()>>,
         ctx: &mut ModelContext<Self>,
     ) {
         ctx.spawn(future, |_, result, ctx| match result {
@@ -450,7 +450,7 @@ fn print_single_agent(agent: &AgentResponse, output_format: OutputFormat) -> any
 }
 
 fn print_skills_hint() {
-    let binary_name = warp_cli::binary_name().unwrap_or_else(|| "warp".to_string());
+    let binary_name = octomus_cli::binary_name().unwrap_or_else(|| "octomus".to_string());
     println!("\n\nLooking for your agent skills? Use `{binary_name} agent skills` instead.");
 }
 
@@ -504,7 +504,7 @@ fn display_list<'a>(values: impl IntoIterator<Item = &'a str>) -> String {
     }
 }
 
-impl warpui::Entity for AgentManagementRunner {
+impl octomusui::Entity for AgentManagementRunner {
     type Event = ();
 }
 

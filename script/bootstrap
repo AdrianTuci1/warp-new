@@ -18,7 +18,7 @@ usage() {
   cat <<EOF
 Usage: ./script/bootstrap [options]
 
-Prepare this checkout for Warp development by running the platform-specific bootstrap steps.
+Prepare this checkout for Octomus development by running the platform-specific bootstrap steps.
 
 Options:
   -h, --help               Show this help message.
@@ -48,7 +48,7 @@ EOF
 print_bootstrap_preview() {
   local platform="$1"
 
-  echo "Warp bootstrap is starting for ${platform}."
+  echo "Octomus bootstrap is starting for ${platform}."
   echo "It will:"
 
   if [[ "${platform}" = "macOS" ]]; then
@@ -57,7 +57,7 @@ print_bootstrap_preview() {
     echo "  - Add the aarch64-apple-darwin Rust target."
   elif [[ "${platform}" = "Linux" ]]; then
     echo "  - Update apt package metadata."
-    echo "  - Install dependencies needed to build, run, and test Warp."
+    echo "  - Install dependencies needed to build, run, and test Octomus."
     echo "  - Install linuxdeploy and check gcloud authentication."
   fi
 

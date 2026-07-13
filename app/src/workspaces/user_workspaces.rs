@@ -2,10 +2,10 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use regex::Regex;
-use warp_core::features::FeatureFlag;
-use warp_core::settings::{ChangeEventReason, Setting};
+use octomus_core::features::FeatureFlag;
+use octomus_core::settings::{ChangeEventReason, Setting};
 use warp_graphql::workspace::FeatureModelChoice;
-use warpui::{AppContext, Entity, ModelContext, SingletonEntity, Tracked};
+use octomusui::{AppContext, Entity, ModelContext, SingletonEntity, Tracked};
 
 use super::team::{DiscoverableTeam, MembershipRole, Team};
 #[cfg(test)]
@@ -247,7 +247,7 @@ impl UserWorkspaces {
         }
     }
 
-    pub fn is_at_tier_limit_for_some_warp_drive_objects(
+    pub fn is_at_tier_limit_for_some_octomus_drive_objects(
         team_uid: ServerId,
         ctx: &AppContext,
     ) -> bool {
@@ -395,7 +395,7 @@ impl UserWorkspaces {
 
     /// Returns `true` if the current team's enterprise status allows AI features that have an
     /// enterprise gate. Non-enterprise teams always pass; enterprise teams pass only if they
-    /// are on the Warp Plan or the build is dogfood (both our internal Warp team and dogfood
+    /// are on the Octomus Plan or the build is dogfood (both our internal Octomus team and dogfood
     /// team are billed as enterprise).
     pub fn ai_allowed_for_current_team(&self) -> bool {
         !self
@@ -484,7 +484,7 @@ impl UserWorkspaces {
             .unwrap_or(FeatureFlag::SoloUserByok.is_enabled())
     }
     /// Whether custom inference endpoints are enabled for the current user.
-    /// Enterprise workspaces require the enterprise custom inference flag, Warp Plan, or dogfood.
+    /// Enterprise workspaces require the enterprise custom inference flag, Octomus Plan, or dogfood.
     pub fn is_custom_inference_enabled(&self, _app: &AppContext) -> bool {
         self.current_workspace()
             .map(|workspace| {

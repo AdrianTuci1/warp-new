@@ -1,7 +1,7 @@
-use warpui::elements::MouseStateHandle;
-use warpui::Element;
+use octomusui::elements::MouseStateHandle;
+use octomusui::Element;
 
-use super::{WarpDriveItem, WarpDriveItemId};
+use super::{OctomusDriveItem, OctomusDriveItemId};
 use crate::appearance::Appearance;
 use crate::cloud_object::{CloudObjectMetadata, Space};
 use crate::drive::index::DriveIndexAction;
@@ -9,18 +9,18 @@ use crate::drive::DriveObjectType;
 use crate::themes::theme::Fill;
 
 #[derive(Clone)]
-pub struct WarpDriveSpace {
+pub struct OctomusDriveSpace {
     space: Space,
 }
 
-impl WarpDriveSpace {
+impl OctomusDriveSpace {
     #[allow(dead_code)]
     pub fn new(space: Space) -> Self {
         Self { space }
     }
 }
 
-impl WarpDriveItem for WarpDriveSpace {
+impl OctomusDriveItem for OctomusDriveSpace {
     fn display_name(&self) -> Option<String> {
         None
     }
@@ -45,8 +45,8 @@ impl WarpDriveItem for WarpDriveSpace {
         None
     }
 
-    fn warp_drive_id(&self) -> WarpDriveItemId {
-        WarpDriveItemId::Space(self.space)
+    fn octomus_drive_id(&self) -> OctomusDriveItemId {
+        OctomusDriveItemId::Space(self.space)
     }
 
     fn sync_status_icon(
@@ -58,11 +58,11 @@ impl WarpDriveItem for WarpDriveSpace {
         None
     }
 
-    fn clone_box(&self) -> Box<dyn WarpDriveItem> {
+    fn clone_box(&self) -> Box<dyn OctomusDriveItem> {
         Box::new(self.clone())
     }
 
-    fn action_summary(&self, _app: &warpui::AppContext) -> Option<String> {
+    fn action_summary(&self, _app: &octomusui::AppContext) -> Option<String> {
         None
     }
 }

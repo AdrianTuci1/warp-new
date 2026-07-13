@@ -1,7 +1,7 @@
-use warp_core::ui::appearance::Appearance;
-use warpui::elements::Empty;
-use warpui::platform::WindowStyle;
-use warpui::{
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::Empty;
+use octomusui::platform::WindowStyle;
+use octomusui::{
     AddSingletonModel, App, AppContext, Element, Entity, TypedActionView, View, WindowId,
 };
 

@@ -1,5 +1,5 @@
-use warpui::elements::{MouseStateHandle, Text};
-use warpui::Element;
+use octomusui::elements::{MouseStateHandle, Text};
+use octomusui::Element;
 
 use super::{
     render_inline_block_list_banner, InlineBannerButtonState, InlineBannerCloseButton,
@@ -88,7 +88,7 @@ pub fn render_alias_expansion_banner(
         InlineBannerStyle::VeryLowPriority,
         appearance,
         InlineBannerContent {
-            title: "Warp can auto-expand aliases.".into(),
+            title: "Octomus can auto-expand aliases.".into(),
             buttons,
             content: Some(content),
             close_button: Some(close_button),

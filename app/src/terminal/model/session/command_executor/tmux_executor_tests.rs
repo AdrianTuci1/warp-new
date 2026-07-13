@@ -1,4 +1,4 @@
-use warpui::App;
+use octomusui::App;
 
 use super::*;
 use crate::terminal::model::session::ExecuteCommandOptions;

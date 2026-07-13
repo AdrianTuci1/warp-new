@@ -6,14 +6,14 @@
 //! without a LayoutContext. Use the exported BLOCK_BANNER_HEIGHT const when the banner height
 //! needs to be taken into account.
 
-mod warpify;
+mod octomusify;
 
-pub use warpify::*;
-use warpui::elements::{
+pub use octomusify::*;
+use octomusui::elements::{
     ConstrainedBox, Container, CornerRadius, Hoverable, MouseState, MouseStateHandle,
     ParentElement, Radius, Stack,
 };
-use warpui::Element;
+use octomusui::Element;
 
 use crate::themes::theme::WarpTheme;
 
@@ -26,22 +26,22 @@ pub const BLOCK_BANNER_HEIGHT: f32 = CONSTRAINED_BANNER_HEIGHT + BANNER_TOP_MARG
 pub const BLOCK_BANNER_DESCRIPTION_MAX_HEIGHT: f32 = 24.;
 
 pub enum WithinBlockBanner {
-    WarpifyBanner(WarpifyBannerState),
+    OctomusifyBanner(OctomusifyBannerState),
 }
 
 impl WithinBlockBanner {
     pub fn banner_height(&self) -> f32 {
-        match self.warpify_mode() {
-            Some(WarpificationMode::Ssh { .. }) => {
+        match self.octomusify_mode() {
+            Some(OctomusificationMode::Ssh { .. }) => {
                 BLOCK_BANNER_HEIGHT + BLOCK_BANNER_DESCRIPTION_MAX_HEIGHT
             }
-            Some(WarpificationMode::Subshell { .. }) | None => BLOCK_BANNER_HEIGHT,
+            Some(OctomusificationMode::Subshell { .. }) | None => BLOCK_BANNER_HEIGHT,
         }
     }
 
-    pub fn warpify_mode(&self) -> Option<&WarpificationMode> {
+    pub fn octomusify_mode(&self) -> Option<&OctomusificationMode> {
         match self {
-            WithinBlockBanner::WarpifyBanner(state) => Some(&state.mode),
+            WithinBlockBanner::OctomusifyBanner(state) => Some(&state.mode),
         }
     }
 }

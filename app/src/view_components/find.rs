@@ -1,18 +1,18 @@
 use pathfinder_color::ColorU;
 use serde::Serialize;
-pub use warpui::accessibility::{AccessibilityContent, WarpA11yRole};
-use warpui::elements::{
+pub use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
+use octomusui::elements::{
     Align, Border, ChildAnchor, Clipped, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, DropShadow, Element, Flex, Hoverable, MouseStateHandle, OffsetPositioning,
     ParentAnchor, ParentOffsetBounds, Radius, SavePosition, Shrinkable, Text,
 };
-pub use warpui::elements::{ParentElement as _, Stack};
-pub use warpui::geometry::vector::vec2f;
-use warpui::keymap::EditableBinding;
-use warpui::presenter::ChildView;
-use warpui::ui_components::components::UiComponent;
-pub use warpui::AppContext;
-use warpui::{
+pub use octomusui::elements::{ParentElement as _, Stack};
+pub use octomusui::geometry::vector::vec2f;
+use octomusui::keymap::EditableBinding;
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::components::UiComponent;
+pub use octomusui::AppContext;
+use octomusui::{
     Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
@@ -129,7 +129,7 @@ pub enum FindAction {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_editable_bindings([
         EditableBinding::new(
@@ -381,7 +381,7 @@ impl<T: FindModel + Entity<Event = FindEvent> + 'static> Find<T> {
             };
             let icon = Container::new(
                 ConstrainedBox::new(
-                    icon.to_warpui_icon(appearance.theme().active_ui_text_color())
+                    icon.to_octomusui_icon(appearance.theme().active_ui_text_color())
                         .finish(),
                 )
                 .with_height(size)
@@ -445,7 +445,7 @@ impl<T: FindModel + Entity<Event = FindEvent> + 'static> Find<T> {
             appearance.theme().active_ui_text_color()
         };
         Container::new(
-            ConstrainedBox::new(match_icon.to_warpui_icon(icon_color).finish())
+            ConstrainedBox::new(match_icon.to_octomusui_icon(icon_color).finish())
                 .with_height(height)
                 .with_width(height)
                 .finish(),
@@ -472,7 +472,7 @@ impl<T: FindModel + Entity<Event = FindEvent> + 'static> Find<T> {
         Container::new(
             ConstrainedBox::new(
                 Icon::X
-                    .to_warpui_icon(appearance.theme().active_ui_text_color())
+                    .to_octomusui_icon(appearance.theme().active_ui_text_color())
                     .finish(),
             )
             .with_height(height)

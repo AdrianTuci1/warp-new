@@ -1,15 +1,15 @@
 use std::time::Duration;
 
-use warp_core::ui::appearance::Appearance;
-use warpui::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::{
     ChildView, Container, CrossAxisAlignment, Flex, MouseStateHandle, ParentElement, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::platform::Cursor;
-use warpui::r#async::Timer;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::platform::Cursor;
+use octomusui::r#async::Timer;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
 

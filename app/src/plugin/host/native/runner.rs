@@ -1,7 +1,7 @@
 use anyhow::{Context as AnyhowContext, Result};
 use async_channel::Receiver;
 use rquickjs::{Context, Function, Runtime};
-use warp_js::JsFunctionId;
+use octomus_js::JsFunctionId;
 
 use super::js_api;
 use super::plugin::{AppServiceCallers, PluginHandle};
@@ -47,7 +47,7 @@ impl PluginRunner {
     /// incoming [`PluginRequest`]s.
     ///
     /// After compiling the plugin module, its exported 'activate()' function is called with an
-    /// instance of the warp API object.
+    /// instance of the octomus API object.
     ///
     /// After `activate()`, listens for incoming [`PluginRequest`]s from the host main thread and
     /// serves corresponding responses.
@@ -61,7 +61,7 @@ impl PluginRunner {
 
             ctx.globals().set("console", js_api::console(ctx))?;
 
-            let warp_api = js_api::warp(plugin, ctx);
+            let warp_api = js_api::octomus(plugin, ctx);
 
             let activate_fn: Function = plugin_module
                 .get("activate")

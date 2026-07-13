@@ -3,7 +3,7 @@ use std::fmt;
 use bounded_vec_deque::BoundedVecDeque;
 use chrono::{DateTime, FixedOffset};
 use enclose::enclose;
-use warpui::{Entity, ModelContext, SingletonEntity};
+use octomusui::{Entity, ModelContext, SingletonEntity};
 
 use crate::server::server_api::ServerApiProvider;
 

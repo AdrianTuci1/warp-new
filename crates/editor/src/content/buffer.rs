@@ -20,14 +20,14 @@ use serde_yaml::Mapping;
 use string_offset::{ByteOffset, CharOffset};
 use sum_tree::{SeekBias, SumTree};
 use vec1::{Vec1, vec1};
-use warp_core::platform::SessionPlatform;
-use warp_core::safe_error;
-use warp_util::content_version::ContentVersion;
-use warpui_core::elements::ListIndentLevel;
-use warpui_core::fonts::Weight;
-use warpui_core::text::point::Point;
-use warpui_core::text::{TextBuffer, char_slice};
-use warpui_core::{AppContext, Entity, EntityId, ModelContext, ModelHandle};
+use octomus_core::platform::SessionPlatform;
+use octomus_core::safe_error;
+use octomus_util::content_version::ContentVersion;
+use octomusui_core::elements::ListIndentLevel;
+use octomusui_core::fonts::Weight;
+use octomusui_core::text::point::Point;
+use octomusui_core::text::{TextBuffer, char_slice};
+use octomusui_core::{AppContext, Entity, EntityId, ModelContext, ModelHandle};
 
 use super::anchor::{Anchor, AnchorSide, Anchors};
 use super::cursor::BufferCursor;
@@ -833,7 +833,7 @@ impl Buffer {
         selection_model: ModelHandle<BufferSelectionModel>,
         ctx: &mut ModelContext<Self>,
     ) -> Self {
-        let parse_fn = if warp_core::features::FeatureFlag::MarkdownTables.is_enabled() {
+        let parse_fn = if octomus_core::features::FeatureFlag::MarkdownTables.is_enabled() {
             parse_markdown_with_gfm_tables
         } else {
             parse_markdown

@@ -1,5 +1,5 @@
-use warpui::async_assert;
-use warpui::integration::AssertionCallback;
+use octomusui::async_assert;
+use octomusui::integration::AssertionCallback;
 
 use crate::integration_testing::view_getters::{command_palette_view, workspace_view};
 

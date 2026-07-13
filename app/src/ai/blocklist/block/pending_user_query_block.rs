@@ -1,14 +1,14 @@
 use std::sync::Arc;
 
 use parking_lot::RwLock;
-use warp_core::features::FeatureFlag;
-use warp_core::semantic_selection::SemanticSelection;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::semantic_selection::SemanticSelection;
+use octomusui::elements::{
     get_rich_content_position_id, ChildView, Container, CrossAxisAlignment, Expanded, Flex,
     ParentElement, SavePosition, SelectableArea, SelectionHandle, Text,
 };
-use warpui::fonts::{Properties, Style, Weight};
-use warpui::{
+use octomusui::fonts::{Properties, Style, Weight};
+use octomusui::{
     AppContext, Element, Entity, EntityId, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };

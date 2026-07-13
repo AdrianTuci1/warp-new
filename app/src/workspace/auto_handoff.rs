@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use warpui::{
+use octomusui::{
     AppContext, Entity, EntityId, ModelContext, SingletonEntity, TypedActionView, ViewHandle,
     WindowId,
 };

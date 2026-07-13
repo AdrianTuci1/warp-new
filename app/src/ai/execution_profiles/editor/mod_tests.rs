@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use warp_core::features::FeatureFlag;
-use warpui::App;
+use octomus_core::features::FeatureFlag;
+use octomusui::App;
 
 use super::ui_helpers::context_window_snap_values;
 use crate::ai::execution_profiles::profiles::AIExecutionProfilesModel;

@@ -15,9 +15,9 @@ use regex::Regex;
 use string_offset::CharOffset;
 use url::Url;
 use vec1::{vec1, Vec1};
-use warp_core::features::FeatureFlag;
-use warp_core::r#async::debounce;
-use warp_core::semantic_selection::SemanticSelection;
+use octomus_core::features::FeatureFlag;
+use octomus_core::r#async::debounce;
+use octomus_core::semantic_selection::SemanticSelection;
 use warp_editor::content::buffer::{
     AutoScrollBehavior, Buffer, BufferEditAction, BufferEvent, BufferSelectAction, EditOrigin,
     SelectionOffsets, ShouldAutoscroll,
@@ -33,10 +33,10 @@ use warp_editor::render::model::{
 };
 use warp_editor::search::Searcher;
 use warp_editor::selection::{SelectionMode, SelectionModel, TextDirection, TextUnit};
-use warpui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
-use warpui::clipboard::ClipboardContent;
-use warpui::elements::ListIndentLevel;
-use warpui::{
+use octomusui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
+use octomusui::clipboard::ClipboardContent;
+use octomusui::elements::ListIndentLevel;
+use octomusui::{
     AppContext, Entity, ModelAsRef, ModelContext, ModelHandle, SingletonEntity, WindowId,
 };
 

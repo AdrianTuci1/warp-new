@@ -12,12 +12,12 @@ use instant::SystemTime;
 use selection::BlockListSelection;
 pub use selection::SelectionRange;
 use sum_tree::{Dimension, Item, SeekBias, SumTree};
-use warp_core::features::FeatureFlag;
-use warp_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
-use warpui::color::ColorU;
-use warpui::r#async::executor::Background;
-use warpui::units::{IntoLines, IntoPixels, Lines};
-use warpui::{record_trace_event, AppContext, EntityId, ViewHandle};
+use octomus_core::features::FeatureFlag;
+use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
+use octomusui::color::ColorU;
+use octomusui::r#async::executor::Background;
+use octomusui::units::{IntoLines, IntoPixels, Lines};
+use octomusui::{record_trace_event, AppContext, EntityId, ViewHandle};
 
 use super::ansi::{Handler, InputBufferValue};
 use super::block::{BlockId, BlockSize, BlockState, SerializedAIMetadata};
@@ -2443,7 +2443,7 @@ impl BlockList {
                 let next_block = self.block_at(next_block_index)?;
                 let next_command_is_empty = next_block.is_command_empty();
                 // NOTE: there is a semantic difference here of seeking down to the next "prompt" (in the PS1 case)
-                // vs the next "command" (in the Warp prompt case), when using the combined grid, rather than
+                // vs the next "command" (in the Octomus prompt case), when using the combined grid, rather than
                 // directly going to the next "command" in both cases.
                 let grid_type = GridType::PromptAndCommand;
 
@@ -3579,10 +3579,10 @@ impl ansi::Handler for BlockList {
             }
             ClearMode::All => {
                 // TODO(alokedesai): Investigate how we can call `clear_visible_screen` here to have
-                // Warp's custom logic for "clear". It's not immediately straightforward because a
+                // Octomus's custom logic for "clear". It's not immediately straightforward because a
                 // a running program that writes output, clears the visible screen, and then writes
                 // more output should all be encapsulated within a single block, which wouldn't be
-                // quite right with Warp's custom clear screen logic.
+                // quite right with Octomus's custom clear screen logic.
             }
             _ => {}
         }

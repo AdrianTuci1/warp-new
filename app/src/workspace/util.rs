@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
-use warpui::elements::MouseStateHandle;
-use warpui::{AppContext, EntityId, SingletonEntity, ViewContext, ViewHandle, WindowId};
+use octomusui::elements::MouseStateHandle;
+use octomusui::{AppContext, EntityId, SingletonEntity, ViewContext, ViewHandle, WindowId};
 
 use super::OneTimeModalModel;
 use crate::appearance::Appearance;
@@ -98,7 +98,7 @@ pub struct WorkspaceState {
     pub is_launch_config_save_modal_open: bool,
     pub is_resource_center_open: bool,
     pub is_command_search_open: bool,
-    pub is_warp_drive_open: bool,
+    pub is_octomus_drive_open: bool,
     pub is_ai_assistant_panel_open: bool,
     pub is_agent_management_popup_open: bool,
     pub is_auth_override_modal_open: bool,
@@ -139,7 +139,7 @@ impl WorkspaceState {
             || self.is_theme_chooser_open
             || self.is_ai_assistant_panel_open
             || self.is_workflow_modal_open
-            || self.is_warp_drive_open
+            || self.is_octomus_drive_open
     }
 
     pub fn is_any_non_palette_modal_open(&self, app: &AppContext) -> bool {
@@ -223,7 +223,7 @@ impl WorkspaceState {
     }
 
     pub fn close_all_left_panels(&mut self) {
-        self.is_warp_drive_open = false;
+        self.is_octomus_drive_open = false;
         self.is_theme_chooser_open = false;
     }
 
@@ -314,7 +314,7 @@ pub enum TerminalSessionFallbackBehavior {
 /// Given a [`WindowId`], see if its [`Workspace`] contains an active [`TerminalView`] and return
 /// that.
 ///
-/// Note that "active" is not the same as "focused" in Warp's pane management.
+/// Note that "active" is not the same as "focused" in Octomus's pane management.
 pub fn active_terminal_in_window<T, F>(
     window_id: WindowId,
     ctx: &mut AppContext,
@@ -392,7 +392,7 @@ pub fn get_context_target_terminal_view(
 pub fn get_terminal_background_fill(
     window_id: WindowId,
     app: &AppContext,
-) -> warpui::elements::Fill {
+) -> octomusui::elements::Fill {
     let theme = Appearance::as_ref(app).theme();
     let terminal_opacity = get_terminal_background_opacity(window_id, app);
     theme.background().with_opacity(terminal_opacity).into()

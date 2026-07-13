@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
 use strum_macros::IntoStaticStr;
-use warp_util::path::LineAndColumnArg;
-use warpui::keymap::BindingId;
-use warpui::{EntityId, WindowId};
+use octomus_util::path::LineAndColumnArg;
+use octomusui::keymap::BindingId;
+use octomusui::{EntityId, WindowId};
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::drive::CloudObjectTypeAndId;
@@ -28,7 +28,7 @@ pub enum CommandPaletteItemAction {
     OpenNotebook {
         id: SyncId,
     },
-    ViewInWarpDrive {
+    ViewInOctomusDrive {
         id: CloudObjectTypeAndId,
     },
     InvokeEnvironmentVariables {
@@ -116,7 +116,7 @@ impl CommandPaletteItemAction {
             CommandPaletteItemAction::OpenLaunchConfiguration { .. } => {
                 ItemSummary::LaunchConfiguration
             }
-            CommandPaletteItemAction::ViewInWarpDrive { id } => match id {
+            CommandPaletteItemAction::ViewInOctomusDrive { id } => match id {
                 CloudObjectTypeAndId::Notebook(_)
                 | CloudObjectTypeAndId::Folder(_)
                 | CloudObjectTypeAndId::GenericStringObject { .. } => ItemSummary::CloudObject,

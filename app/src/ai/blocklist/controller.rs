@@ -23,10 +23,10 @@ use parking_lot::FairMutex;
 use pending_response_streams::PendingResponseStreams;
 use session_sharing_protocol::common::ParticipantId;
 pub use slash_command::*;
-use warp_core::assertions::safe_assert;
+use octomus_core::assertions::safe_assert;
 use warp_multi_agent_api::{message, Task, ToolType};
-use warpui::r#async::{SpawnedFutureHandle, Timer};
-use warpui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
+use octomusui::r#async::{SpawnedFutureHandle, Timer};
+use octomusui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 
 use self::response_stream::{ResponseStream, ResponseStreamEvent};
 use super::action_model::{BlocklistAIActionEvent, BlocklistAIActionModel};
@@ -111,7 +111,7 @@ impl SessionContext {
 
     /// Returns the remote host ID if this is a `WarpifiedRemote` session with
     /// a connected `RemoteServerClient`.
-    pub fn host_id(&self) -> Option<&warp_core::HostId> {
+    pub fn host_id(&self) -> Option<&octomus_core::HostId> {
         match &self.session_type {
             Some(SessionType::WarpifiedRemote { host_id }) => host_id.as_ref(),
             Some(SessionType::Local) | None => None,
@@ -327,12 +327,12 @@ pub struct BlocklistAIController {
     shared_session_state: shared_session::SharedSessionState,
 
     /// Ambient agent task ID attached to this controller. This is a property of the controller, and not an individual
-    /// conversation, because the ambient agent task driver owns the entire Warp window working on a task, and any
+    /// conversation, because the ambient agent task driver owns the entire Octomus window working on a task, and any
     /// sessions within it. In the future, one task may span several sessions with background processes.
     ambient_agent_task_id: Option<AmbientAgentTaskId>,
 
     /// Per-session directory for downloading file attachments.
-    /// Set by the agent driver based on the workspace directory (e.g. `{working_dir}/.warp/attachments`).
+    /// Set by the agent driver based on the workspace directory (e.g. `{working_dir}/.octomus/attachments`).
     attachments_download_dir: Option<std::path::PathBuf>,
 
     /// Pending auto-resume tasks that are waiting for network connectivity.

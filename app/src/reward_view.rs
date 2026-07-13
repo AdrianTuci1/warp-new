@@ -1,10 +1,10 @@
-use warp_core::ui::builder::UiBuilder;
-use warpui::accessibility::{AccessibilityContent, WarpA11yRole};
-use warpui::elements::{Align, Container, Element, Flex, MouseStateHandle, ParentElement};
-use warpui::keymap::FixedBinding;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use octomus_core::ui::builder::UiBuilder;
+use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
+use octomusui::elements::{Align, Container, Element, Flex, MouseStateHandle, ParentElement};
+use octomusui::keymap::FixedBinding;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext};
 
 use crate::appearance::Appearance;
 
@@ -21,9 +21,9 @@ const TITLE_FONT_SIZE: f32 = 20.;
 const TITLE_MARGIN_BOTTOM: f32 = 25.;
 // Constants for the subtitle
 const SUBTITLE_SENT_REFERRAL: &str =
-    "You earned an exclusive Warp theme for referring someone to Warp.";
+    "You earned an exclusive Octomus theme for referring someone to Octomus.";
 const SUBTITLE_RECEIVED_REFERRAL: &str =
-    "You earned an exclusive Warp theme for being referred to Warp.";
+    "You earned an exclusive Octomus theme for being referred to Octomus.";
 const SUBTITLE_FONT_SIZE: f32 = 14.;
 const SUBTITLE_MARGIN_BOTTOM: f32 = 40.;
 // Constants for the button
@@ -35,7 +35,7 @@ const BUTTON_MARGIN_BOTTOM: f32 = 14.;
 const ACCESSIBILITY_HELP: &str = "Press enter to open the theme chooser or escape to dismiss.";
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([FixedBinding::new(
         "enter",

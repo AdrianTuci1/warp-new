@@ -5,13 +5,13 @@ use std::time::Duration;
 
 use futures::{pin_mut, FutureExt as _};
 use itertools::Itertools;
-use warp_completer::completer::CommandExitStatus;
-use warp_core::r#async::debounce;
-use warp_core::user_preferences::GetUserPreferences;
-use warpui::r#async::{SpawnedFutureHandle, Timer};
+use octomus_completer::completer::CommandExitStatus;
+use octomus_core::r#async::debounce;
+use octomus_core::user_preferences::GetUserPreferences;
+use octomusui::r#async::{SpawnedFutureHandle, Timer};
 #[cfg(feature = "local_fs")]
-use warpui::WeakModelHandle;
-use warpui::{
+use octomusui::WeakModelHandle;
+use octomusui::{
     AppContext, Entity, ModelAsRef, ModelContext, ModelHandle, SingletonEntity, ViewHandle,
 };
 
@@ -150,7 +150,7 @@ pub struct CurrentPrompt {
     renderable_chips: HashSet<ContextChipKind>,
 
     same_line_prompt_enabled: bool,
-    /// The separator to use as a trailing character at the end of Warp prompt, if any.
+    /// The separator to use as a trailing character at the end of Octomus prompt, if any.
     separator: WarpPromptSeparator,
 
     latest_context: Option<PromptContext>,
@@ -247,7 +247,7 @@ impl CurrentPrompt {
         // A WeakViewHandle is used here to avoid leaking the terminal model
         let weak_editor_handle = editor.downgrade();
         ctx.subscribe_to_view(&editor, move |me, _, ctx| {
-            // CurrentPrompt exists and this fn is called even if we're not using warp prompt.
+            // CurrentPrompt exists and this fn is called even if we're not using octomus prompt.
             // We don't need to do anything if we're honoring PS1 unless universal developer input
             // or AgentView is enabled (agent view needs chips regardless of PS1 setting).
             if *SessionSettings::as_ref(ctx).honor_ps1
@@ -310,12 +310,12 @@ impl CurrentPrompt {
             .collect()
     }
 
-    /// Whether same line prompt is enabled for the Warp prompt.
+    /// Whether same line prompt is enabled for the Octomus prompt.
     pub fn same_line_prompt_enabled(&self) -> bool {
         self.same_line_prompt_enabled
     }
 
-    /// The separator for the current Warp prompt.
+    /// The separator for the current Octomus prompt.
     pub fn separator(&self) -> WarpPromptSeparator {
         self.separator
     }
@@ -584,7 +584,7 @@ impl CurrentPrompt {
         current_dir_path: Option<String>,
         environment_variables: Option<HashMap<String, String>>,
         timeout: Option<Duration>,
-    ) -> (Option<warp_completer::completer::CommandOutput>, bool) {
+    ) -> (Option<octomus_completer::completer::CommandOutput>, bool) {
         let command_future = session
             .execute_command(
                 &command,
@@ -1171,7 +1171,7 @@ impl CurrentPrompt {
     #[cfg(test)]
     pub fn await_generators(
         &self,
-        ctx: &mut warpui::AppContext,
+        ctx: &mut octomusui::AppContext,
     ) -> futures_util::future::BoxFuture<'static, ()> {
         use futures_util::FutureExt;
         use itertools::Itertools;

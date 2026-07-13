@@ -9,7 +9,7 @@ use session_sharing_protocol::common::{
     SessionId,
 };
 use session_sharing_protocol::sharer::{DownstreamMessage, ReconnectToken, UpstreamMessage};
-use warpui::{App, ModelHandle};
+use octomusui::{App, ModelHandle};
 use websocket::{Message, WebsocketMessage as _};
 
 use super::{Network, PtyBytesBatchStatus, Stage};
@@ -384,7 +384,7 @@ fn test_ignore_duplicate_prompt_updates() {
         // First prompt update should go through.
         network.update(&mut app, |network, _ctx| {
             network.send_active_prompt_update_if_changed(ActivePrompt::WarpPrompt(
-                "test warp prompt".to_owned(),
+                "test octomus prompt".to_owned(),
             ));
         });
         assert_eq!(ws_proxy_rx.len(), 1);
@@ -392,13 +392,13 @@ fn test_ignore_duplicate_prompt_updates() {
         // Duplicate prompt updates should be ignored.
         network.update(&mut app, |network, _ctx| {
             network.send_active_prompt_update_if_changed(ActivePrompt::WarpPrompt(
-                "test warp prompt".to_owned(),
+                "test octomus prompt".to_owned(),
             ));
         });
         assert_eq!(ws_proxy_rx.len(), 1);
         network.update(&mut app, |network, _ctx| {
             network.send_active_prompt_update_if_changed(ActivePrompt::WarpPrompt(
-                "test warp prompt".to_owned(),
+                "test octomus prompt".to_owned(),
             ));
         });
         assert_eq!(ws_proxy_rx.len(), 1);
@@ -406,7 +406,7 @@ fn test_ignore_duplicate_prompt_updates() {
         // Different prompt should go through.
         network.update(&mut app, |network, _ctx| {
             network.send_active_prompt_update_if_changed(ActivePrompt::WarpPrompt(
-                "different warp prompt".to_owned(),
+                "different octomus prompt".to_owned(),
             ));
         });
         assert_eq!(ws_proxy_rx.len(), 2);
@@ -696,7 +696,7 @@ fn test_events_are_saved_on_send_and_removed_on_ack() {
         // Simulate receiving the EventsProcessedAck message from the server.
         network.update(
             &mut app,
-            |network, ctx: &mut warpui::ModelContext<'_, Network>| {
+            |network, ctx: &mut octomusui::ModelContext<'_, Network>| {
                 let downstream_message = DownstreamMessage::EventsProcessedAck {
                     latest_processed_event_no: 1,
                 };

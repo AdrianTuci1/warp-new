@@ -4,20 +4,20 @@ use std::ops::Range;
 use std::sync::Arc;
 
 use string_offset::{ByteOffset, CharOffset};
-use warp_completer::signatures::CommandRegistry;
+use octomus_completer::signatures::CommandRegistry;
 use warp_editor::content::anchor::Anchor;
 use warp_editor::content::buffer::Buffer;
 use warp_editor::content::selection_model::BufferSelectionModel;
 use warp_editor::editor::EmbeddedItemModel;
-use warp_util::user_input::UserInput;
-use warpui::elements::{
+use octomus_util::user_input::UserInput;
+use octomusui::elements::{
     Align, Border, Container, CrossAxisAlignment, Empty, Flex, MainAxisAlignment, MouseStateHandle,
     ParentElement, Shrinkable,
 };
-use warpui::platform::Cursor;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::UiComponent;
-use warpui::{AppContext, Element, Entity, ModelAsRef, ModelContext, ModelHandle, SingletonEntity};
+use octomusui::platform::Cursor;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{AppContext, Element, Entity, ModelAsRef, ModelContext, ModelHandle, SingletonEntity};
 
 use super::embedded_item::EmbeddedWorkflow;
 use super::keys::{custom_action_to_display, NotebookKeybindings};

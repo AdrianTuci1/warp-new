@@ -19,32 +19,32 @@ use reqwest::IntoUrl;
 use reqwest_eventsource::RequestBuilderExt;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
-use warp_core::channel::{Channel, ChannelState};
-use warp_core::operating_system_info::OperatingSystemInfo;
-use warp_core::{execution_mode, report_error};
+use octomus_core::channel::{Channel, ChannelState};
+use octomus_core::operating_system_info::OperatingSystemInfo;
+use octomus_core::{execution_mode, report_error};
 
 use crate::iap::{IapTokenProvider, proxy_auth_header};
 
 pub mod headers {
-    /// Custom Warp header indicating the version of the Warp app.
-    pub const CLIENT_RELEASE_VERSION_HEADER_KEY: &str = "X-Warp-Client-Version";
+    /// Custom Octomus header indicating the version of the Octomus app.
+    pub const CLIENT_RELEASE_VERSION_HEADER_KEY: &str = "X-Octomus-Client-Version";
 
-    /// Custom Warp header indicating the OS category the request was sent from.
-    pub(crate) const WARP_OS_CATEGORY: &str = "X-Warp-OS-Category";
-    /// Custom Warp header indicating the OS name the request was sent from. On Linux this is the
+    /// Custom Octomus header indicating the OS category the request was sent from.
+    pub(crate) const WARP_OS_CATEGORY: &str = "X-Octomus-OS-Category";
+    /// Custom Octomus header indicating the OS name the request was sent from. On Linux this is the
     /// name of the distribution. On all other platforms it should be equivalent to
     /// `WARP_OS_CATEGORY`.
-    pub(crate) const WARP_OS_NAME: &str = "X-Warp-OS-Name";
-    /// Custom Warp header indicating the version of the operating system. On Linux this is the
+    pub(crate) const WARP_OS_NAME: &str = "X-Octomus-OS-Name";
+    /// Custom Octomus header indicating the version of the operating system. On Linux this is the
     /// version of the distribution, not the Linux kernel version.
-    pub(crate) const WARP_OS_VERSION: &str = "X-Warp-OS-Version";
+    pub(crate) const WARP_OS_VERSION: &str = "X-Octomus-OS-Version";
 
-    /// Custom Warp header indicating the linux kernel version. This is only sent from Linux.
-    pub(crate) const WARP_OS_LINUX_KERNEL_VERSION: &str = "X-Warp-OS-Linux-Kernel-Version";
+    /// Custom Octomus header indicating the linux kernel version. This is only sent from Linux.
+    pub(crate) const WARP_OS_LINUX_KERNEL_VERSION: &str = "X-Octomus-OS-Linux-Kernel-Version";
 
-    /// Custom Warp header indicating the client role. We don't use the User-Agent header
+    /// Custom Octomus header indicating the client role. We don't use the User-Agent header
     /// because it can't be set from WASM.
-    pub(crate) const WARP_CLIENT_ID: &str = "X-Warp-Client-ID";
+    pub(crate) const WARP_CLIENT_ID: &str = "X-Octomus-Client-ID";
 }
 
 /// The environment variable containing extra HTTP headers to attach to requests.
@@ -67,7 +67,7 @@ pub struct Client {
     after_response_received: Option<ResponseHookFn>,
 
     /// If set, provides IAP bearer tokens to attach as `Proxy-Authorization`
-    /// headers on outbound requests to the Warp staging server. Wired in by
+    /// headers on outbound requests to the Octomus staging server. Wired in by
     /// the app layer on IAP-enabled builds (staging).
     iap_token_provider: Option<Arc<dyn IapTokenProvider>>,
 }
@@ -237,7 +237,7 @@ impl Client {
     }
 
     /// Returns the IAP bearer token to attach to a request targeting
-    /// `url`, scoped to the Warp server's origin.
+    /// `url`, scoped to the Octomus server's origin.
     fn iap_token_for<U: IntoUrl>(&self, url: U) -> Option<String> {
         let provider = self.iap_token_provider.as_ref()?;
         let url = url.into_url().ok()?;
@@ -616,7 +616,7 @@ impl<'a> RequestBuilder<'a> {
 }
 
 /// An error returned from `Response::error_for_status` that includes response metadata.
-/// This allows callers to inspect headers (like X-Warp-Error-Code) and the response body when
+/// This allows callers to inspect headers (like X-Octomus-Error-Code) and the response body when
 /// handling errors.
 #[derive(Debug)]
 pub struct ResponseError {

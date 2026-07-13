@@ -1,9 +1,9 @@
 use std::sync::LazyLock;
 
-use warp_core::ui::appearance::Appearance;
-use warpui_core::elements::{MouseStateHandle, Rect};
-use warpui_core::prelude::stack::*;
-use warpui_core::prelude::*;
+use octomus_core::ui::appearance::Appearance;
+use octomusui_core::elements::{MouseStateHandle, Rect};
+use octomusui_core::prelude::stack::*;
+use octomusui_core::prelude::*;
 
 use crate::{Component, MouseEventHandler, Renderable};
 

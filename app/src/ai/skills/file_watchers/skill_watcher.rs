@@ -16,8 +16,8 @@ use repo_metadata::repository::{Repository, SubscriberId};
 use repo_metadata::{
     DirectoryWatcher, MetadataUpdateType, RepoMetadataModel, RepositoryIdentifier, RepositoryUpdate,
 };
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warpui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomusui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
 use watcher::{BulkFilesystemWatcherEvent, HomeDirectoryWatcher, HomeDirectoryWatcherEvent};
 
 use super::subscribers::{
@@ -29,7 +29,7 @@ use super::utils::{
     read_skills_from_files, update_might_affect_project_skills,
 };
 use crate::remote_server::manager::RemoteServerManager;
-use crate::warp_managed_paths_watcher::{
+use crate::octomus_managed_paths_watcher::{
     filter_repository_update_by_prefix, warp_managed_skill_dirs, WarpManagedPathsWatcher,
     WarpManagedPathsWatcherEvent,
 };
@@ -161,7 +161,7 @@ impl SkillWatcher {
             Self::spawn_read_skills_from_directories(warp_managed_skill_dirs(), ctx);
             let skills_parent_paths: HashSet<PathBuf> = SKILL_PROVIDER_DEFINITIONS
                 .iter()
-                .filter(|provider| provider.provider != SkillProvider::Warp)
+                .filter(|provider| provider.provider != SkillProvider::Octomus)
                 .filter_map(|provider| {
                     home_skills_path(provider.provider)
                         .and_then(|skills_path| skills_path.parent().map(Path::to_path_buf))
@@ -766,7 +766,7 @@ impl SkillWatcher {
             }
 
             let Ok(std_dir_path) =
-                warp_util::standardized_path::StandardizedPath::from_local_canonicalized(
+                octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(
                     &canonical_dir,
                 )
             else {
@@ -905,7 +905,7 @@ impl SkillWatcher {
 
         let provider_root_paths: HashSet<String> = SKILL_PROVIDER_DEFINITIONS
             .iter()
-            .filter(|provider| provider.provider != SkillProvider::Warp)
+            .filter(|provider| provider.provider != SkillProvider::Octomus)
             .filter_map(|provider| {
                 let component = provider.skills_path.components().next();
                 component.map(|component| component.as_os_str().to_string_lossy().to_string())
@@ -1013,7 +1013,7 @@ impl SkillWatcher {
         ctx: &mut ModelContext<Self>,
     ) {
         let Ok(std_path) =
-            warp_util::standardized_path::StandardizedPath::from_local_canonicalized(path)
+            octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(path)
         else {
             return;
         };

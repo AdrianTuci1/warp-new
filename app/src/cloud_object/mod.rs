@@ -10,11 +10,11 @@ use derivative::Derivative;
 use lazy_static::lazy_static;
 use regex::Regex;
 use url::Url;
-use warp_core::channel::Channel;
-use warp_core::features::FeatureFlag;
+use octomus_core::channel::Channel;
+use octomus_core::features::FeatureFlag;
 use warp_graphql::queries::get_updated_cloud_objects::UpdatedObjectInput;
 use warp_graphql::scalars::time::ServerTimestamp;
-use warpui::{AppContext, SingletonEntity};
+use octomusui::{AppContext, SingletonEntity};
 
 use self::breadcrumbs::ContainingObject;
 use self::model::actions::ObjectActions;
@@ -25,8 +25,8 @@ use self::model::persistence::CloudModel;
 use crate::appearance::Appearance;
 use crate::auth::UserUid;
 use crate::channel::ChannelState;
-use crate::drive::items::WarpDriveItem;
-use crate::drive::{CloudObjectTypeAndId, OpenWarpDriveObjectArgs, OpenWarpDriveObjectSettings};
+use crate::drive::items::OctomusDriveItem;
+use crate::drive::{CloudObjectTypeAndId, OpenOctomusDriveObjectArgs, OpenOctomusDriveObjectSettings};
 use crate::persistence::ModelEvent;
 use crate::server::cloud_objects::update_manager::InitiatedBy;
 use crate::server::ids::{HashableId, HashedSqliteId, ObjectUid, ServerId, SyncId, ToServerId};
@@ -151,17 +151,17 @@ pub trait CloudObject: Debug {
     /// in the sync queue item.
     fn update_object_queue_item(&self, revision_ts: Option<Revision>) -> QueueItem;
 
-    /// Returns whether this model type should render as a warp drive item.
-    fn renders_in_warp_drive(&self) -> bool;
+    /// Returns whether this model type should render as a octomus drive item.
+    fn renders_in_octomus_drive(&self) -> bool;
 
     /// Returns whether this model type should show update toasts in the UI.
     fn should_show_activity_toasts(&self) -> bool {
         true
     }
 
-    /// Creates a new Warp Drive item for this object.  Returns None if this
-    /// object is not rendered in Warp Drive.
-    fn to_warp_drive_item(&self, appearance: &Appearance) -> Option<Box<dyn WarpDriveItem>>;
+    /// Creates a new Octomus Drive item for this object.  Returns None if this
+    /// object is not rendered in Octomus Drive.
+    fn to_octomus_drive_item(&self, appearance: &Appearance) -> Option<Box<dyn OctomusDriveItem>>;
 
     /// Returns the web link of this object. Will return none if we do not support web links
     /// for this particular object (i.e. if it's not yet sync'd to the server, or if we don't
@@ -432,8 +432,8 @@ pub trait CloudModelType: Debug + Clone + Send + Sync {
     /// Returns the ObjectType for this model.
     fn object_type(&self) -> ObjectType;
 
-    /// Returns whether this model type should render as a warp drive item.
-    fn renders_in_warp_drive(&self) -> bool;
+    /// Returns whether this model type should render as a octomus drive item.
+    fn renders_in_octomus_drive(&self) -> bool;
 
     /// Returns whether this model type should show update toasts in the UI.
     fn should_show_activity_toasts(&self) -> bool {
@@ -446,19 +446,19 @@ pub trait CloudModelType: Debug + Clone + Send + Sync {
         true
     }
 
-    /// Creates a new warp drive item for this model type. Returns None
-    /// if this object does not render in Warp Drive.
-    fn to_warp_drive_item(
+    /// Creates a new octomus drive item for this model type. Returns None
+    /// if this object does not render in Octomus Drive.
+    fn to_octomus_drive_item(
         &self,
         id: SyncId,
         appearance: &Appearance,
         object: &Self::CloudObjectType,
-    ) -> Option<Box<dyn WarpDriveItem>>;
+    ) -> Option<Box<dyn OctomusDriveItem>>;
 
-    /// Returns the display name for this model (e.g. to show in the Warp Drive index)
+    /// Returns the display name for this model (e.g. to show in the Octomus Drive index)
     fn display_name(&self) -> String;
 
-    /// Sets the display name to show in the Warp Drive Index.  Setting the name
+    /// Sets the display name to show in the Octomus Drive Index.  Setting the name
     /// is not currently supported by all object types, hence the default empty
     /// implementation.
     fn set_display_name(&mut self, _name: &str) {}
@@ -770,12 +770,12 @@ where
         self.model().update_object_queue_item(revision_ts, self)
     }
 
-    fn renders_in_warp_drive(&self) -> bool {
-        self.model().renders_in_warp_drive()
+    fn renders_in_octomus_drive(&self) -> bool {
+        self.model().renders_in_octomus_drive()
     }
 
-    fn to_warp_drive_item(&self, appearance: &Appearance) -> Option<Box<dyn WarpDriveItem>> {
-        self.model().to_warp_drive_item(self.id, appearance, self)
+    fn to_octomus_drive_item(&self, appearance: &Appearance) -> Option<Box<dyn OctomusDriveItem>> {
+        self.model().to_octomus_drive_item(self.id, appearance, self)
     }
 
     fn can_export(&self) -> bool {
@@ -796,11 +796,11 @@ where
 }
 
 /// Extracts the server id and object type from a (caller validated) Drive link.
-/// Intended use is deriving metadata from links such that Warp objects
-/// can be opened natively in Warp with no web interaction.
-pub fn extract_server_id_and_object_type_from_warp_drive_link(
+/// Intended use is deriving metadata from links such that Octomus objects
+/// can be opened natively in Octomus with no web interaction.
+pub fn extract_server_id_and_object_type_from_octomus_drive_link(
     url: &Url,
-) -> Option<OpenWarpDriveObjectArgs> {
+) -> Option<OpenOctomusDriveObjectArgs> {
     let server_id = url
         .path_segments()
         .and_then(|mut segments| segments.next_back())
@@ -809,7 +809,7 @@ pub fn extract_server_id_and_object_type_from_warp_drive_link(
 
     let object_type = url.path_segments().and_then(|mut segments| segments.nth(1));
 
-    // Parse the object portion of the path segment (warp.dev/drive/{object})
+    // Parse the object portion of the path segment (octomus.dev/drive/{object})
     // into an object type
     let object_type = match object_type {
         Some("notebook") => ObjectType::Notebook,
@@ -823,13 +823,13 @@ pub fn extract_server_id_and_object_type_from_warp_drive_link(
 
     let invitee_email: Option<String> = query_string.get("invitee_email").map(|s| s.to_string());
 
-    Some(OpenWarpDriveObjectArgs {
+    Some(OpenOctomusDriveObjectArgs {
         object_type,
         server_id: match server_id {
             Some(server_id) => server_id.try_into().ok()?,
             _ => return None,
         },
-        settings: OpenWarpDriveObjectSettings {
+        settings: OpenOctomusDriveObjectSettings {
             focused_folder_id,
             invitee_email,
         },
@@ -890,7 +890,7 @@ pub trait CloudObjectMetadataExt {
     /// Returns None if the revision and last_editor are None.
     fn semantic_editing_history(&self, app: &AppContext) -> Option<String>;
 
-    /// Returns a semantic summary of the object's creator. For example, "Alice" or "joan@warp.dev".
+    /// Returns a semantic summary of the object's creator. For example, "Alice" or "joan@octomus.dev".
     #[cfg_attr(target_family = "wasm", expect(dead_code))]
     fn semantic_creator(&self, app: &AppContext) -> Option<String>;
 
@@ -903,7 +903,7 @@ impl CloudObjectMetadataExt for CloudObjectMetadata {
     fn semantic_editing_history(&self, app: &AppContext) -> Option<String> {
         let user_profiles = UserProfiles::as_ref(app);
 
-        // First, the editor. For example, "Joan Didion" or "joan@warp.dev".
+        // First, the editor. For example, "Joan Didion" or "joan@octomus.dev".
         let editor_string = self
             .last_editor_uid
             .as_ref()
@@ -1016,7 +1016,7 @@ impl Space {
     }
 }
 
-/// Enum for specifying the location of a warp drive object.
+/// Enum for specifying the location of a octomus drive object.
 /// Objects can live in top level spaces, or a specific folder.
 #[derive(Eq, PartialEq, Copy, Clone, Debug, Hash)]
 pub enum CloudObjectLocation {

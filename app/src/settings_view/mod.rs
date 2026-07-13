@@ -18,23 +18,23 @@ use settings_page::{
     MatchData, SettingsPage, SettingsPageEvent, SettingsPageMeta, SettingsPageViewHandle,
     HEADER_PADDING,
 };
-use warp_core::channel::ChannelState;
-use warp_core::context_flag::ContextFlag;
-use warp_core::features::FeatureFlag;
-use warp_core::send_telemetry_from_ctx;
-use warp_core::settings::ToggleableSetting as _;
-use warp_core::ui::theme::color::internal_colors;
+use octomus_core::channel::ChannelState;
+use octomus_core::context_flag::ContextFlag;
+use octomus_core::features::FeatureFlag;
+use octomus_core::send_telemetry_from_ctx;
+use octomus_core::settings::ToggleableSetting as _;
+use octomus_core::ui::theme::color::internal_colors;
 use warp_editor::editor::NavigationKey;
-use warpui::elements::{
+use octomusui::elements::{
     Align, Border, ChildAnchor, ChildView, Clipped, ClippedScrollStateHandle, ClippedScrollable,
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, DispatchEventResult, Empty,
     EventHandler, Expanded, Fill, Flex, MainAxisSize, OffsetPositioning, ParentAnchor,
     ParentElement, ParentOffsetBounds, Radius, SavePosition, ScrollbarWidth, Shrinkable, Stack,
     Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::keymap::{ContextPredicate, EnabledPredicate, FixedBinding};
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::keymap::{ContextPredicate, EnabledPredicate, FixedBinding};
+use octomusui::{
     id, Action, AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView,
     UpdateView as _, View, ViewContext, ViewHandle,
 };
@@ -103,8 +103,8 @@ mod cloud_page;
 mod telemetry;
 mod transfer_ownership_confirmation_modal;
 pub mod update_environment_form;
-mod warp_drive_page;
-// mod warpify_page;
+mod octomus_drive_page;
+// mod octomusify_page;
 
 #[cfg(not(target_family = "wasm"))]
 pub(crate) use ai_page::cli_agent_settings_widget_id;
@@ -156,7 +156,7 @@ pub(super) fn editor_text_colors(appearance: &Appearance) -> TextColors {
 }
 
 /// Small inline pill rendered next to a settings label to mark a feature as beta.
-/// Used for experimental features (i.e. AsyncFind) that are enabled for Friends of Warp (i.e. Dogfood/Preview) and toggleable by others.
+/// Used for experimental features (i.e. AsyncFind) that are enabled for Friends of Octomus (i.e. Dogfood/Preview) and toggleable by others.
 pub(super) fn render_beta_chip(appearance: &Appearance) -> Box<dyn Element> {
     let theme = appearance.theme();
     let chip_color = theme.sub_text_color(theme.surface_3()).into_solid();
@@ -178,10 +178,10 @@ pub(super) fn render_beta_chip(appearance: &Appearance) -> Box<dyn Element> {
 pub(super) fn render_model_chips(
     labels: impl IntoIterator<Item = String>,
     appearance: &Appearance,
-    text_color: warp_core::ui::theme::Fill,
+    text_color: octomus_core::ui::theme::Fill,
 ) -> Box<dyn Element> {
-    use warpui::ui_components::chip::Chip;
-    use warpui::ui_components::components::{UiComponent, UiComponentStyles};
+    use octomusui::ui_components::chip::Chip;
+    use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 
     let theme = appearance.theme();
     let chip_border = internal_colors::neutral_4(theme).into();
@@ -401,9 +401,9 @@ pub mod flags {
     pub const MOUSE_REPORTING_CONTEXT_FLAG: &str = "Mouse_Reporting";
     pub const SCROLL_REPORTING_CONTEXT_FLAG: &str = "Scroll_Reporting";
     pub const FOCUS_REPORTING_CONTEXT_FLAG: &str = "Focus_Reporting";
-    #[deprecated = "Use `SSH_TMUX_WRAPPER_CONTEXT_FLAG` for new ssh warpification logic"]
+    #[deprecated = "Use `SSH_TMUX_WRAPPER_CONTEXT_FLAG` for new ssh octomusification logic"]
     pub const LEGACY_SSH_WRAPPER_CONTEXT_FLAG: &str = "SSH_Wrapper";
-    pub const SSH_WARPIFICATION_CONTEXT_FLAG: &str = "SSH_Warpification";
+    pub const SSH_WARPIFICATION_CONTEXT_FLAG: &str = "SSH_Octomusification";
     pub const SSH_TMUX_WRAPPER_CONTEXT_FLAG: &str = "SSH_Tmux_Wrapper";
     pub const NOTIFICATIONS_CONTEXT_FLAG: &str = "Notifications_Enabled";
     pub const LONG_RUNNING_NOTIFICATIONS_FLAG: &str = "Long_Running_Notifications";
@@ -516,7 +516,7 @@ pub mod flags {
     pub const IS_AUTOINDEXING_ENABLED: &str = "IsAutoIndexingEnabled";
     pub const LIGATURE_RENDERING_CONTEXT_FLAG: &str = "Ligature_Rendering_Enabled";
     pub const HAS_SETTINGS_TO_IMPORT_FLAG: &str = "HasSettingsToImport";
-    /// The user's setting enabled UDI, but we may show a classic input (e.g. ssh/subshell warpification)
+    /// The user's setting enabled UDI, but we may show a classic input (e.g. ssh/subshell octomusification)
     pub const UNIVERSAL_DEVELOPER_INPUT_ENABLED: &str = "UniversalDeveloperInputEnabled";
     pub const AGENT_MODE_INPUT: &str = "InputAgentMode";
     pub const TERMINAL_MODE_INPUT: &str = "InputTerminalMode";
@@ -547,7 +547,7 @@ pub mod flags {
     pub const AUTO_OPEN_RICH_INPUT_ON_CLI_AGENT_START_FLAG: &str =
         "AutoOpenRichInputOnCLIAgentStart";
     pub const AUTO_DISMISS_RICH_INPUT_AFTER_SUBMIT_FLAG: &str = "AutoDismissRichInputAfterSubmit";
-    pub const ENABLE_WARP_DRIVE: &str = "EnableWarpDrive";
+    pub const ENABLE_WARP_DRIVE: &str = "EnableOctomusDrive";
     // Tools panel settings
     pub const SHOW_CONVERSATION_HISTORY: &str = "ShowConversationHistory";
     pub const SHOW_PROJECT_EXPLORER: &str = "ShowProjectExplorer";
@@ -565,7 +565,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
     privacy_page::init_actions_from_parent_view(app, context, builder);
     ai_page::init_actions_from_parent_view(app, context, builder);
     code_page::init_actions_from_parent_view(app, context, builder);
-    warp_drive_page::init_actions_from_parent_view(app, context, builder);
+    octomus_drive_page::init_actions_from_parent_view(app, context, builder);
 
     if ChannelState::enable_debug_features() || cfg!(windows) {
         ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
@@ -721,7 +721,7 @@ impl<T: Action + Clone> ToggleSettingActionPair<T> {
         context_prefix: &ContextPredicate,
         context_boolean_flag: &'static str,
     ) -> Self {
-        use warpui::keymap::macros::id;
+        use octomusui::keymap::macros::id;
 
         ToggleSettingActionPair {
             descriptions: SettingActionPairDescriptions {
@@ -869,7 +869,7 @@ pub enum SettingsAction {
     PrivacyPageToggle(PrivacyPageAction),
     AI(AISettingsPageAction),
     Code(CodeSettingsPageAction),
-    OctomusDrive(warp_drive_page::WarpDriveSettingsPageAction),
+    OctomusDrive(octomus_drive_page::OctomusDriveSettingsPageAction),
     Tab,
     Split(Direction),
     ToggleMaximizePane,
@@ -1051,7 +1051,7 @@ pub struct SettingsView {
     /// Mirrored from `Workspace` via [`set_settings_error_state`].
     settings_error_banner_dismissed: bool,
     /// Mouse state handles for the nav-rail footer buttons. Constructed once
-    /// per `SettingsView` per `WARP.md`'s guidance that inline
+    /// per `SettingsView` per `OCTOMUS.md`'s guidance that inline
     /// `MouseStateHandle::default()` breaks hover/click tracking.
     footer_mouse_states: SettingsFooterMouseStates,
 }
@@ -1105,11 +1105,11 @@ impl SettingsView {
             me.handle_privacy_page_event(event, ctx);
         });
 
-        // Warp Drive page
-        let warp_drive_page_handle =
-            ctx.add_typed_action_view(warp_drive_page::WarpDriveSettingsPageView::new);
-        ctx.subscribe_to_view(&warp_drive_page_handle, |me, _, event, ctx| {
-            me.handle_warp_drive_page_event(event, ctx);
+        // Octomus Drive page
+        let octomus_drive_page_handle =
+            ctx.add_typed_action_view(octomus_drive_page::OctomusDriveSettingsPageView::new);
+        ctx.subscribe_to_view(&octomus_drive_page_handle, |me, _, event, ctx| {
+            me.handle_octomus_drive_page_event(event, ctx);
         });
 
         // MCP Servers page
@@ -1157,7 +1157,7 @@ impl SettingsView {
             SettingsPage::new(appearance_page_handle),
             SettingsPage::new(features_page_handle),
             SettingsPage::new(keybindings_handle),
-            SettingsPage::new(warp_drive_page_handle),
+            SettingsPage::new(octomus_drive_page_handle),
         ];
 
         settings_pages.extend(vec![
@@ -1595,7 +1595,7 @@ impl SettingsView {
         }
     }
 
-    fn handle_warpify_page_event(
+    fn handle_octomusify_page_event(
         &mut self,
         event: &SettingsPageEvent,
         ctx: &mut ViewContext<Self>,
@@ -1660,9 +1660,9 @@ impl SettingsView {
         }
     }
 
-    fn handle_warp_drive_page_event(
+    fn handle_octomus_drive_page_event(
         &mut self,
-        _event: &warp_drive_page::WarpDriveSettingsPageEvent,
+        _event: &octomus_drive_page::OctomusDriveSettingsPageEvent,
         _ctx: &mut ViewContext<Self>,
     ) {
     }
@@ -1806,7 +1806,7 @@ impl SettingsView {
 
         #[cfg(feature = "crash_reporting")]
         {
-            crate::crash_reporting::set_tag("warp.settings_page", section.to_string());
+            crate::crash_reporting::set_tag("octomus.settings_page", section.to_string());
         }
 
         if let Some(settings_page) = self.current_settings_page() {
@@ -2058,7 +2058,7 @@ impl SettingsView {
                     Container::new(
                         ConstrainedBox::new(
                             icons::Icon::SearchSmall
-                                .to_warpui_icon(appearance.theme().active_ui_text_color())
+                                .to_octomusui_icon(appearance.theme().active_ui_text_color())
                                 .finish(),
                         )
                         .with_width(16.)
@@ -2426,12 +2426,12 @@ impl TypedActionView for SettingsView {
                     }
                 }
             }
-            SettingsAction::OctomusDrive(warp_drive_action) => {
-                if let Some(warp_drive_page) = self.settings_page(SettingsSection::OctomusDrive) {
-                    if let SettingsPageViewHandle::OctomusDrive(view) = &warp_drive_page.view_handle
+            SettingsAction::OctomusDrive(octomus_drive_action) => {
+                if let Some(octomus_drive_page) = self.settings_page(SettingsSection::OctomusDrive) {
+                    if let SettingsPageViewHandle::OctomusDrive(view) = &octomus_drive_page.view_handle
                     {
                         view.update(ctx, |view, ctx| {
-                            view.handle_action(warp_drive_action, ctx);
+                            view.handle_action(octomus_drive_action, ctx);
                         })
                     }
                 }
@@ -2475,16 +2475,16 @@ impl BackingView for SettingsView {
     fn handle_pane_header_overflow_menu_action(
         &mut self,
         action: &Self::PaneHeaderOverflowMenuAction,
-        ctx: &mut warpui::ViewContext<Self>,
+        ctx: &mut octomusui::ViewContext<Self>,
     ) {
         self.handle_action(action, ctx)
     }
 
-    fn close(&mut self, ctx: &mut warpui::ViewContext<Self>) {
+    fn close(&mut self, ctx: &mut octomusui::ViewContext<Self>) {
         ctx.emit(SettingsViewEvent::Pane(PaneEvent::Close));
     }
 
-    fn focus_contents(&mut self, ctx: &mut warpui::ViewContext<Self>) {
+    fn focus_contents(&mut self, ctx: &mut octomusui::ViewContext<Self>) {
         ctx.focus(&self.search_editor)
     }
 

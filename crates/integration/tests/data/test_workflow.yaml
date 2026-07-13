@@ -1,18 +1,18 @@
 ---
-name: "Run Warp locally with shell"
+name: "Run Octomus locally with shell"
 command: "WARP_SHELL_PATH={{shell}} cargo run"
-description: "Runs warp with the particular shell so devs don't need to change their login shell to test a different shell locally"
+description: "Runs octomus with the particular shell so devs don't need to change their login shell to test a different shell locally"
 arguments:
   - name: shell
     description: path of shell to use
-author: Warp Team
+author: Octomus Team
 shells: []
 ---
-name: "Run Warp locally with shell 2: Electric Boogaloo"
+name: "Run Octomus locally with shell 2: Electric Boogaloo"
 command: "WARP_SHELL_PATH={{shell}} cargo run"
-description: "Runs warp with the particular shell so devs don't need to change their login shell to test a different shell locally"
+description: "Runs octomus with the particular shell so devs don't need to change their login shell to test a different shell locally"
 arguments:
   - name: shell
     description: path of shell to use
-author: Warp Team
+author: Octomus Team
 shells: []

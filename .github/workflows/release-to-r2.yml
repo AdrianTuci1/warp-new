@@ -44,10 +44,10 @@ jobs:
           aws-secret-access-key: ${{ env.R2_SECRET_ACCESS_KEY }}
 
       - name: Upload DMG to R2 (aarch64)
-        run: aws s3 cp target/release/warp-oss-arm64.dmg s3://${{ env.R2_BUCKET }}/oss/${{ inputs.version }}/WarpOss-arm64.dmg --endpoint-url ${{ env.R2_ENDPOINT }}
+        run: aws s3 cp target/release/octomus-oss-arm64.dmg s3://${{ env.R2_BUCKET }}/oss/${{ inputs.version }}/WarpOss-arm64.dmg --endpoint-url ${{ env.R2_ENDPOINT }}
 
       - name: Upload DMG to R2 (universal)
-        run: aws s3 cp target/release/warp-oss-arm64.dmg s3://${{ env.R2_BUCKET }}/oss/${{ inputs.version }}/WarpOss.dmg --endpoint-url ${{ env.R2_ENDPOINT }}
+        run: aws s3 cp target/release/octomus-oss-arm64.dmg s3://${{ env.R2_BUCKET }}/oss/${{ inputs.version }}/WarpOss.dmg --endpoint-url ${{ env.R2_ENDPOINT }}
 
   upload-channel-versions:
     needs: build-and-upload-macos

@@ -1,8 +1,8 @@
 use std::ops::Deref;
 
 use serde::{Serialize, Serializer};
-use warpui::platform::Cursor;
-use warpui::ViewContext;
+use octomusui::platform::Cursor;
+use octomusui::ViewContext;
 
 use crate::send_telemetry_from_ctx;
 use crate::server::telemetry::{LinkOpenMethod, TelemetryEvent};
@@ -21,8 +21,8 @@ cfg_if::cfg_if! {
             util::openable_file_type::FileTarget,
         };
         use std::path::PathBuf;
-        use warp_util::path::CleanPathResult;
-        use warp_util::path::LineAndColumnArg;
+        use octomus_util::path::CleanPathResult;
+        use octomus_util::path::LineAndColumnArg;
     }
 }
 

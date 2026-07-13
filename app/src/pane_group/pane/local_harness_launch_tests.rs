@@ -3,7 +3,7 @@ use std::fs;
 use std::sync::Arc;
 
 use tempfile::TempDir;
-use warp_cli::agent::Harness;
+use octomus_cli::agent::Harness;
 
 use super::{
     build_local_claude_child_command, build_local_codex_child_command,

@@ -1,5 +1,5 @@
-use warp_core::features::FeatureFlag;
-use warpui::{SingletonEntity, ViewContext};
+use octomus_core::features::FeatureFlag;
+use octomusui::{SingletonEntity, ViewContext};
 
 use super::rich_content::RichContentMetadata;
 use crate::ai::agent::conversation::AIConversationId;

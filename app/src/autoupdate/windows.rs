@@ -11,8 +11,8 @@ use command::blocking::Command;
 use lazy_static::lazy_static;
 use parking_lot::Mutex;
 use tempfile::TempPath;
-use warp_core::channel::{Channel, ChannelState};
-use warpui::AppContext;
+use octomus_core::channel::{Channel, ChannelState};
+use octomusui::AppContext;
 
 use super::{release_assets_directory_url, DownloadReady};
 use crate::server::telemetry::TelemetryEvent;
@@ -23,7 +23,7 @@ lazy_static! {
     static ref INSTALLER_PATH: Arc<Mutex<Option<TempPath>>> = Default::default();
 }
 
-/// Download the Inno Setup install wizard, the same one users run on the first Warp install, and
+/// Download the Inno Setup install wizard, the same one users run on the first Octomus install, and
 /// place it into the "data dir".
 pub(super) async fn download_update_and_cleanup(
     version_info: &VersionInfo,
@@ -75,7 +75,7 @@ pub(super) async fn download_update_and_cleanup(
 const UPDATE_LOG_FILENAME: &str = "warp_update.log";
 
 fn autoupdate_log_file() -> Result<PathBuf> {
-    warp_logging::log_directory().map(|dir| dir.join(UPDATE_LOG_FILENAME))
+    octomus_logging::log_directory().map(|dir| dir.join(UPDATE_LOG_FILENAME))
 }
 
 fn parse_exit_code_after_marker(contents_lowercase: &[u8], failed_marker: &[u8]) -> Option<i32> {
@@ -170,7 +170,7 @@ pub(super) fn check_and_report_update_errors(ctx: &mut AppContext) {
 
     // Fired when the mutex polling loop timed out and a force-kill was attempted.
     let has_mutex_timeout =
-        memchr::memmem::find(&contents_lowercase, b"warp mutex still held after timeout").is_some();
+        memchr::memmem::find(&contents_lowercase, b"octomus mutex still held after timeout").is_some();
     if has_mutex_timeout {
         crate::send_telemetry_sync_from_app_ctx!(TelemetryEvent::AutoupdateMutexTimeout, ctx);
     }
@@ -265,7 +265,7 @@ pub(super) fn relaunch() -> Result<()> {
         }
     };
 
-    // The Inno Setup install wizard will run without user input. It will re-launch Warp after
+    // The Inno Setup install wizard will run without user input. It will re-launch Octomus after
     // installing the update files.
     // https://jrsoftware.org/ishelp/index.php?topic=setupcmdline
     Command::new(&installer_path)
@@ -282,8 +282,8 @@ pub(super) fn relaunch() -> Result<()> {
             "/NORESTART",
             &log_arg,
             "/update=1",
-            // Do not forcibly kill Warp via RestartManager. The installer will wait for
-            // Warp to exit naturally by polling the single-instance mutex instead.
+            // Do not forcibly kill Octomus via RestartManager. The installer will wait for
+            // Octomus to exit naturally by polling the single-instance mutex instead.
             "/NOCLOSEAPPLICATIONS",
             &format!("/DIR={}", install_dir.display()),
         ])
@@ -310,12 +310,12 @@ fn installer_file_name() -> Result<String> {
 
 fn app_name_prefix(channel: Channel) -> &'static str {
     match channel {
-        Channel::Stable => "Warp",
+        Channel::Stable => "Octomus",
         Channel::Preview => "WarpPreview",
-        Channel::Local => "warp",
+        Channel::Local => "octomus",
         Channel::Integration => "integration",
         Channel::Dev => "WarpDev",
-        Channel::Oss => "warp-oss",
+        Channel::Oss => "octomus-oss",
     }
 }
 

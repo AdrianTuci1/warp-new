@@ -4,9 +4,9 @@ use parking_lot::FairMutex;
 use session_sharing_protocol::common::{
     OrderedTerminalEvent, OrderedTerminalEventType, Scrollback, ScrollbackBlock, WindowSize,
 };
-use warpui::platform::WindowStyle;
-use warpui::units::Lines;
-use warpui::{App, ViewHandle};
+use octomusui::platform::WindowStyle;
+use octomusui::units::Lines;
+use octomusui::{App, ViewHandle};
 
 use crate::ai::blocklist::agent_view::AgentViewState;
 use crate::terminal::event_listener::ChannelEventListener;

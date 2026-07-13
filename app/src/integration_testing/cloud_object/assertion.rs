@@ -1,5 +1,5 @@
-use warpui::async_assert;
-use warpui::integration::AssertionCallback;
+use octomusui::async_assert;
+use octomusui::integration::AssertionCallback;
 
 use crate::cloud_object::model::persistence::CloudModel;
 use crate::cloud_object::{CloudModelType, GenericCloudObject, Revision};

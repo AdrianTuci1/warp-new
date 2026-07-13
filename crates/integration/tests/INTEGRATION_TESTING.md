@@ -1,5 +1,5 @@
-# Integration tests in Warp
-This is a short guide into writing integration tests in Warp.
+# Integration tests in Octomus
+This is a short guide into writing integration tests in Octomus.
 
 ## When to add a new integration test?
 Our general philosophy around how we see unit vs integration testing can be summarized as follows:
@@ -102,7 +102,7 @@ This has helped us catch a lot of existing bugs in the system.
 Note that for `async_assert` to actually work, the `set_assertion` needs to **return** with the `async_assert`.
 
 ## How to add a sqlite snapshot?
-* You can copy over a warp.sqlite file from ~/Library/Application\ Support/{warp, dev.warp.Warp-(Dev|Preview|Stable)} directly
+* You can copy over a octomus.sqlite file from ~/Library/Application\ Support/{octomus, dev.octomus.Octomus-(Dev|Preview|Stable)} directly
 * You may want to sanitize some info that is specific to you (i.e. cwd https://staging.localhost:8080/block/FNBafyVtxvjmdNIx6HxUM5)
 
 

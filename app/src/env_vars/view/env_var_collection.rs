@@ -1,18 +1,18 @@
 use pathfinder_geometry::vector::{vec2f, Vector2F};
-use warp_core::features::FeatureFlag;
-use warpui::clipboard::ClipboardContent;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomusui::clipboard::ClipboardContent;
+use octomusui::elements::{
     Align, AnchorPair, ChildAnchor, Clipped, ClippedScrollStateHandle, ClippedScrollable,
     ConstrainedBox, Container, CrossAxisAlignment, DispatchEventResult, EventHandler, Fill, Flex,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning, OffsetType, ParentAnchor,
     ParentElement, ParentOffsetBounds, PositioningAxis, SavePosition, ScrollbarWidth, Shrinkable,
     Stack, XAxisAnchor, YAxisAnchor,
 };
-use warpui::keymap::EditableBinding;
-use warpui::platform::Cursor;
-use warpui::presenter::ChildView;
-use warpui::ui_components::components::UiComponent;
-use warpui::{
+use octomusui::keymap::EditableBinding;
+use octomusui::platform::Cursor;
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{
     id, AppContext, BlurContext, Element, Entity, FocusContext, ModelAsRef, ModelHandle,
     SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, WindowId,
 };
@@ -23,7 +23,7 @@ use crate::ai::blocklist::block::secret_redaction::find_secrets_in_text_with_lev
 use crate::cloud_object::breadcrumbs::ContainingObject;
 use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
 use crate::cloud_object::{CloudObjectEventEntrypoint, Owner};
-use crate::drive::items::WarpDriveItemId;
+use crate::drive::items::OctomusDriveItemId;
 use crate::drive::sharing::{ContentEditability, ShareableObject};
 use crate::editor::EditorView;
 use crate::env_vars::active_env_var_collection_data::{
@@ -69,7 +69,7 @@ const SECTION_SPACING: f32 = 16.;
 
 // Variable rows
 pub(super) const ROW_SPACING: f32 = 8.;
-pub const EDUCATION_TEXT: &str = "Add secret or command. Warp never stores external secrets";
+pub const EDUCATION_TEXT: &str = "Add secret or command. Octomus never stores external secrets";
 const VARIABLE_FONT_SIZE: f32 = 13.;
 const DESCRIPTION_EDITOR_CUTOFF: f32 = 30.;
 const DESCRIPTION_BOTTOM_MARGIN: f32 = 12.;
@@ -304,7 +304,7 @@ pub struct EnvVarCollectionView {
 pub enum EnvVarCollectionEvent {
     Pane(PaneEvent),
     UpdatedEnvVarCollection(SyncId),
-    ViewInWarpDrive(WarpDriveItemId),
+    ViewInOctomusDrive(OctomusDriveItemId),
     Invoke(EnvVarCollectionType),
 }
 #[derive(Debug, Clone)]
@@ -340,7 +340,7 @@ pub enum EnvVarCollectionAction {
     ForceClose,
     CloseUnsavedChangesDialog,
     // Breadcrumbs action
-    ViewInWarpDrive(WarpDriveItemId),
+    ViewInOctomusDrive(OctomusDriveItemId),
 }
 
 /// Defines the view for a collection of environment variables
@@ -662,7 +662,7 @@ impl EnvVarCollectionView {
         if let Some(server_id) = env_var_collection.id.into_server() {
             self.pane_configuration.update(ctx, |pane_config, ctx| {
                 pane_config
-                    .set_shareable_object(Some(ShareableObject::WarpDriveObject(server_id)), ctx);
+                    .set_shareable_object(Some(ShareableObject::OctomusDriveObject(server_id)), ctx);
             });
         }
 
@@ -958,7 +958,7 @@ impl EnvVarCollectionView {
                 self.update_breadcrumbs(ctx);
                 self.pane_configuration.update(ctx, |pane_config, ctx| {
                     pane_config.set_shareable_object(
-                        Some(ShareableObject::WarpDriveObject(*server_id)),
+                        Some(ShareableObject::OctomusDriveObject(*server_id)),
                         ctx,
                     );
                 });
@@ -1093,8 +1093,8 @@ impl EnvVarCollectionView {
             });
     }
 
-    fn view_in_warp_drive(&mut self, id: WarpDriveItemId, ctx: &mut ViewContext<Self>) {
-        ctx.emit(EnvVarCollectionEvent::ViewInWarpDrive(id));
+    fn view_in_octomus_drive(&mut self, id: OctomusDriveItemId, ctx: &mut ViewContext<Self>) {
+        ctx.emit(EnvVarCollectionEvent::ViewInOctomusDrive(id));
     }
 
     // This is a public re-export of close since it's a trait method
@@ -1281,7 +1281,7 @@ impl View for EnvVarCollectionView {
         }
     }
 
-    fn render(&self, app: &AppContext) -> Box<dyn warpui::Element> {
+    fn render(&self, app: &AppContext) -> Box<dyn octomusui::Element> {
         let appearance = Appearance::as_ref(app);
         let theme = appearance.theme();
         let mut content = Flex::column();
@@ -1304,7 +1304,7 @@ impl View for EnvVarCollectionView {
                             self.breadcrumbs.clone(),
                             appearance,
                             |ctx, _, breadcrumb| {
-                                ctx.dispatch_typed_action(EnvVarCollectionAction::ViewInWarpDrive(
+                                ctx.dispatch_typed_action(EnvVarCollectionAction::ViewInOctomusDrive(
                                     breadcrumb.kind.into_item_id(),
                                 ));
                             },
@@ -1534,7 +1534,7 @@ impl TypedActionView for EnvVarCollectionView {
                 self.update_open_modal_state(ctx);
                 ctx.notify();
             }
-            EnvVarCollectionAction::ViewInWarpDrive(id) => self.view_in_warp_drive(*id, ctx),
+            EnvVarCollectionAction::ViewInOctomusDrive(id) => self.view_in_octomus_drive(*id, ctx),
         }
     }
 }

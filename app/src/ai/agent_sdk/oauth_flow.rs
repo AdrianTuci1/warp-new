@@ -3,7 +3,7 @@ use std::time::Duration;
 
 use anyhow::{anyhow, Result};
 use warp_graphql::queries::get_oauth_connect_tx_status::OauthConnectTxStatus;
-use warpui::r#async::Timer;
+use octomusui::r#async::Timer;
 
 use crate::server::server_api::integrations::IntegrationsClient;
 

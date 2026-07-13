@@ -1,5 +1,5 @@
-use warp_core::features::FeatureFlag;
-use warp_core::HostId;
+use octomus_core::features::FeatureFlag;
+use octomus_core::HostId;
 use warp_multi_agent_api as api;
 
 use super::{
@@ -27,7 +27,7 @@ fn request_params_with_ask_user_question_enabled(ask_user_question_enabled: bool
         cli_agent_model: model.clone(),
         computer_use_model: model,
         is_memory_enabled: false,
-        warp_drive_context_enabled: false,
+        octomus_drive_context_enabled: false,
         context_window_limit: None,
         mcp_context: None,
         planning_enabled: true,

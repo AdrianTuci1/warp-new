@@ -4,20 +4,20 @@ use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
 use ui_components::button::Button as ButtonComponent;
 use ui_components::{button, Component, MouseEventHandler, Options as _};
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::color::coloru_with_opacity;
-use warp_core::ui::color::contrast::relative_luminance;
-use warp_core::ui::theme::phenomenon::PhenomenonStyle;
-use warp_core::ui::theme::Fill;
-use warpui_core::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::color::coloru_with_opacity;
+use octomus_core::ui::color::contrast::relative_luminance;
+use octomus_core::ui::theme::phenomenon::PhenomenonStyle;
+use octomus_core::ui::theme::Fill;
+use octomusui_core::elements::{
     Border, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, DropShadow, Flex,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Radius, Rect,
 };
-use warpui_core::fonts::Weight;
-use warpui_core::keymap::Keystroke;
-use warpui_core::prelude::*;
-use warpui_core::ui_components::checkbox::Checkbox as WarpCheckbox;
-use warpui_core::ui_components::components::{UiComponent as _, UiComponentStyles};
+use octomusui_core::fonts::Weight;
+use octomusui_core::keymap::Keystroke;
+use octomusui_core::prelude::*;
+use octomusui_core::ui_components::checkbox::Checkbox as WarpCheckbox;
+use octomusui_core::ui_components::components::{UiComponent as _, UiComponentStyles};
 
 const CALLOUT_WIDTH: f32 = 480.;
 const CALLOUT_BORDER_WIDTH: f32 = 1.;

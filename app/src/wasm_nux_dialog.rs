@@ -1,12 +1,12 @@
 use settings::Setting as _;
-use warpui::elements::{
+use octomusui::elements::{
     Align, CrossAxisAlignment, Flex, MainAxisSize, MouseStateHandle, ParentElement as _,
 };
-use warpui::fonts::Weight;
-use warpui::platform::Cursor;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use octomusui::fonts::Weight;
+use octomusui::platform::Cursor;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
 
 use crate::appearance::Appearance;
 use crate::report_if_error;
@@ -31,9 +31,9 @@ pub enum WasmNUXDialogAction {
     SetWebAndClose,
     /// Closes the dialog and open on the desktop
     OpenNativeAndClose,
-    /// Open the Warp download page
+    /// Open the Octomus download page
     OpenDownloadDesktopAppLink,
-    /// Open a link to learn more about Warp
+    /// Open a link to learn more about Octomus
     LearnMore,
 }
 
@@ -42,7 +42,7 @@ pub enum WasmNUXDialogEvent {
 }
 
 /// A dialog that prompts the user to:
-/// * Download Warp if they haven't already
+/// * Download Octomus if they haven't already
 /// * Explicitly choose between native and web.
 pub struct WasmNUXDialog {
     close_mouse_state: MouseStateHandle,
@@ -75,10 +75,10 @@ impl WasmNUXDialog {
     /// * The user hasn't dismissed the dialog
     ///
     /// If the user dismisses the dialog without choosing a preference, we'll continue to use the default autodetection
-    /// behavior: if Warp is installed, redirect to it; otherwise stay on the web.
+    /// behavior: if Octomus is installed, redirect to it; otherwise stay on the web.
     pub fn should_display(app: &AppContext) -> bool {
         // Don't show on mobile devices - they can't use the desktop app
-        if warpui::platform::wasm::is_mobile_device() {
+        if octomusui::platform::wasm::is_mobile_device() {
             return false;
         }
 
@@ -125,8 +125,8 @@ impl View for WasmNUXDialog {
         let appearance = Appearance::handle(app).as_ref(app);
 
         // There are two general cases with the dialog:
-        // 1. The user doesn't have Warp installed - treat them as a potential new user and encourage downloading Warp.
-        // 2. The user has Warp installed, but clicked through to the web - ask if they want to always default to web.
+        // 1. The user doesn't have Octomus installed - treat them as a potential new user and encourage downloading Octomus.
+        // 2. The user has Octomus installed, but clicked through to the web - ask if they want to always default to web.
         // As a sub-state of case 1, if the user clicks the download button, we provide an intent into the app.
 
         let close_button = appearance
@@ -152,18 +152,18 @@ impl View for WasmNUXDialog {
 
         let dialog = if self.requested_download {
             Dialog::new(
-                "Open in Warp Desktop?".to_string(),
+                "Open in Octomus Desktop?".to_string(),
                 Some("Future links will automatically open on desktop.".to_string()),
                 dialog_styles,
             )
             .with_bottom_row_child(Self::render_dialog_button(
-                "Open in Warp",
+                "Open in Octomus",
                 WasmNUXDialogAction::OpenNativeAndClose,
                 &self.confirm_mouse_state,
                 appearance,
             ))
         } else if app_install_detected == &UserAppInstallStatus::NotDetected {
-            Dialog::new("Download Warp Desktop?".to_string(), None, dialog_styles)
+            Dialog::new("Download Octomus Desktop?".to_string(), None, dialog_styles)
                 .with_child(
                     Flex::column()
                         .with_cross_axis_alignment(CrossAxisAlignment::Stretch)
@@ -171,7 +171,7 @@ impl View for WasmNUXDialog {
                         .with_child(
                             appearance
                                 .ui_builder()
-                                .span("Warp is the intelligent terminal with AI and your dev team's knowledge built-in.")
+                                .span("Octomus is the intelligent terminal with AI and your dev team's knowledge built-in.")
                                 .with_style(UiComponentStyles {
                                     font_weight: Some(Weight::Thin),
                                     font_color: Some(
@@ -216,9 +216,9 @@ impl View for WasmNUXDialog {
                 ))
         } else {
             let object_kind = match web_intent_parser::current_web_intent() {
-                Some(WebIntent::DriveObject(_)) => "Warp Drive objects",
+                Some(WebIntent::DriveObject(_)) => "Octomus Drive objects",
                 Some(WebIntent::SessionView(_)) => "shared sessions",
-                _ => "Warp links",
+                _ => "Octomus links",
             };
 
             Dialog::new(
@@ -260,8 +260,8 @@ impl TypedActionView for WasmNUXDialog {
                 ctx.emit(WasmNUXDialogEvent::Close);
             }
             WasmNUXDialogAction::OpenNativeAndClose => {
-                // We intentionally do not set the native preference here, in case the user hasn't actually installed Warp.
-                // If they have, on subsequent loads, we'll detect that Warp is installed and redirect to the desktop.
+                // We intentionally do not set the native preference here, in case the user hasn't actually installed Octomus.
+                // If they have, on subsequent loads, we'll detect that Octomus is installed and redirect to the desktop.
                 ctx.emit(WasmNUXDialogEvent::Close);
 
                 if let Some(url) = web_intent_parser::parse_web_intent_from_current_url() {
@@ -276,12 +276,12 @@ impl TypedActionView for WasmNUXDialog {
                 }
             }
             WasmNUXDialogAction::OpenDownloadDesktopAppLink => {
-                ctx.open_url("https://app.warp.dev/get_warp");
+                ctx.open_url("https://app.octomus.dev/get_warp");
                 self.requested_download = true;
                 ctx.notify();
             }
             WasmNUXDialogAction::LearnMore => {
-                ctx.open_url("https://www.warp.dev");
+                ctx.open_url("https://www.octomus.dev");
             }
         }
     }

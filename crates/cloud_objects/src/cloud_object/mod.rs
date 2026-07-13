@@ -7,18 +7,18 @@ use chrono::{DateTime, Utc};
 use derivative::Derivative;
 use pathfinder_geometry::vector::vec2f;
 use serde::{Deserialize, Serialize};
-use warp_core::features::FeatureFlag;
-use warp_core::ui::Icon;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::Fill;
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::Icon;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::Fill;
 use warp_graphql::object_permissions::AccessLevel;
 use warp_graphql::scalars::time::ServerTimestamp;
-use warpui_core::Element;
-use warpui_core::elements::{
+use octomusui_core::Element;
+use octomusui_core::elements::{
     Align, ChildAnchor, ConstrainedBox, Hoverable, MouseStateHandle, OffsetPositioning,
     ParentAnchor, ParentElement, ParentOffsetBounds, Stack,
 };
-use warpui_core::ui_components::components::UiComponent;
+use octomusui_core::ui_components::components::UiComponent;
 
 use crate::auth::UserUid;
 use crate::drive::sharing::{SharingAccessLevel, Subject, TeamKind, UserKind};
@@ -572,7 +572,7 @@ pub struct CloudObjectMetadata {
     pub trashed_ts: Option<ServerTimestamp>,
     pub folder_id: Option<SyncId>,
     /// Welcome objects are created on the server when a user first receives
-    /// access to Warp Drive as part of onboarding.
+    /// access to Octomus Drive as part of onboarding.
     pub is_welcome_object: bool,
     pub last_editor_uid: Option<String>,
     pub creator_uid: Option<String>,
@@ -738,17 +738,17 @@ impl CloudObjectStatuses {
 
         let icon_and_tooltip_text = if should_show_local_only_indicator {
             Some((
-                Icon::Laptop.to_warpui_icon(theme.main_text_color(theme.surface_1())),
+                Icon::Laptop.to_octomusui_icon(theme.main_text_color(theme.surface_1())),
                 SYNC_STATUS_TOOLTIP_LOCAL_ONLY,
             ))
         } else if should_show_syncing_indicator {
             Some((
-                Icon::Refresh.to_warpui_icon(theme.sub_text_color(theme.surface_2())),
+                Icon::Refresh.to_octomusui_icon(theme.sub_text_color(theme.surface_2())),
                 SYNC_STATUS_TOOLTIP_INFLIGHT,
             ))
         } else if should_show_error_indicator {
             Some((
-                Icon::AlertTriangle.to_warpui_icon(Fill::Solid(theme.ui_error_color())),
+                Icon::AlertTriangle.to_octomusui_icon(Fill::Solid(theme.ui_error_color())),
                 SYNC_STATUS_TOOLTIP_ERROR,
             ))
         } else {

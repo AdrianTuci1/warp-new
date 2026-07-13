@@ -3,11 +3,11 @@
 #[cfg(feature = "local_fs")]
 use std::path::Path;
 
-use warpui::elements::{
+use octomusui::elements::{
     Border, Container, CornerRadius, Flex, MouseStateHandle, ParentElement, Radius, Text,
 };
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, EventContext, SingletonEntity};
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, EventContext, SingletonEntity};
 
 use crate::appearance::Appearance;
 use crate::settings::PrivacySettings;
@@ -201,7 +201,7 @@ where
             .with_child(
                 appearance
                     .ui_builder()
-                    .span("*Secrets are not sent to Warp's server.")
+                    .span("*Secrets are not sent to Octomus's server.")
                     .with_style(UiComponentStyles {
                         font_size: Some(12.),
                         margin: Some(Coords::default().top(4.)),
@@ -234,15 +234,15 @@ where
         .finish()
 }
 
-/// Returns whether "Open in Warp" should be offered for the given file path.
+/// Returns whether "Open in Octomus" should be offered for the given file path.
 ///
 /// This checks:
-/// - Whether Warp is already the default editor (skip if so)
-/// - Whether this file is openable in Warp (skips binary files and directories)
-/// - Whether Warp is an OS-level default editor (skips Markdown files)
+/// - Whether Octomus is already the default editor (skip if so)
+/// - Whether this file is openable in Octomus (skips binary files and directories)
+/// - Whether Octomus is an OS-level default editor (skips Markdown files)
 #[cfg(feature = "local_fs")]
-pub fn should_show_open_in_warp_link(path: &Path, app: &AppContext) -> bool {
-    use warpui::SingletonEntity;
+pub fn should_show_open_in_octomus_link(path: &Path, app: &AppContext) -> bool {
+    use octomusui::SingletonEntity;
 
     use crate::code::view::is_binary_file;
     use crate::notebooks::file::is_markdown_file;
@@ -251,7 +251,7 @@ pub fn should_show_open_in_warp_link(path: &Path, app: &AppContext) -> bool {
 
     let settings = EditorSettings::as_ref(app);
 
-    if matches!(*settings.open_file_editor, EditorChoice::Warp) {
+    if matches!(*settings.open_file_editor, EditorChoice::Octomus) {
         return false;
     }
 
@@ -259,6 +259,6 @@ pub fn should_show_open_in_warp_link(path: &Path, app: &AppContext) -> bool {
 }
 
 #[cfg(not(feature = "local_fs"))]
-pub fn should_show_open_in_warp_link(_path: &std::path::Path, _app: &AppContext) -> bool {
+pub fn should_show_open_in_octomus_link(_path: &std::path::Path, _app: &AppContext) -> bool {
     false
 }

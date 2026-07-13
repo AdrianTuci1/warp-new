@@ -5,7 +5,7 @@ use warp_multi_agent_api as api;
 /// A citation listed in an AI response.
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum AIAgentCitation {
-    WarpDriveObject { uid: String },
+    OctomusDriveObject { uid: String },
     WarpDocumentation { path: String },
     WebPage { url: String },
 }
@@ -13,11 +13,11 @@ pub enum AIAgentCitation {
 impl Display for AIAgentCitation {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            AIAgentCitation::WarpDriveObject { uid } => {
-                write!(f, "Warp Drive Object: {uid}")
+            AIAgentCitation::OctomusDriveObject { uid } => {
+                write!(f, "Octomus Drive Object: {uid}")
             }
             AIAgentCitation::WarpDocumentation { path } => {
-                write!(f, "Warp Documentation: {path}")
+                write!(f, "Octomus Documentation: {path}")
             }
             AIAgentCitation::WebPage { url } => {
                 write!(f, "Web Page: {url}")
@@ -42,7 +42,7 @@ impl TryFrom<api::Citation> for AIAgentCitation {
             api::DocumentType::WarpDriveWorkflow
             | api::DocumentType::WarpDriveNotebook
             | api::DocumentType::WarpDriveEnvVar
-            | api::DocumentType::Rule => Ok(AIAgentCitation::WarpDriveObject {
+            | api::DocumentType::Rule => Ok(AIAgentCitation::OctomusDriveObject {
                 uid: citation.document_id,
             }),
             api::DocumentType::WarpDocumentation => Ok(AIAgentCitation::WarpDocumentation {

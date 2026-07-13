@@ -5,15 +5,15 @@ use std::sync::Arc;
 
 #[cfg(test)]
 use markdown_parser::FormattedTextInline;
-use warpui_core::color::ColorU;
-use warpui_core::fonts::TextLayoutSystem;
+use octomusui_core::color::ColorU;
+use octomusui_core::fonts::TextLayoutSystem;
 #[cfg(test)]
-use warpui_core::fonts::{Style, Weight};
-use warpui_core::text_layout::{
+use octomusui_core::fonts::{Style, Weight};
+use octomusui_core::text_layout::{
     ClipConfig, LayoutCache, Line, StyleAndFont, TextAlignment, TextBorder, TextFrame, TextStyle,
 };
-use warpui_core::units::{IntoPixels, Pixels};
-use warpui_core::{AppContext, LayoutContext};
+use octomusui_core::units::{IntoPixels, Pixels};
+use octomusui_core::{AppContext, LayoutContext};
 
 use super::model::{BlockSpacing, ParagraphStyles, RenderState, RichTextStyles};
 use crate::content::text::{BufferBlockStyle, TextStylesWithMetadata};

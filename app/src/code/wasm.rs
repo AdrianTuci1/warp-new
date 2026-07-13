@@ -1,9 +1,9 @@
 use std::path::{Path, PathBuf};
 
 use ai::diff_validation::DiffDelta;
-use warp_util::path::LineAndColumnArg;
-use warpui::elements::{DraggableState, Empty, MouseStateHandle};
-use warpui::{
+use octomus_util::path::LineAndColumnArg;
+use octomusui::elements::{DraggableState, Empty, MouseStateHandle};
+use octomusui::{
     AppContext, Element, Entity, ModelHandle, TypedActionView, View, ViewContext, ViewHandle,
 };
 

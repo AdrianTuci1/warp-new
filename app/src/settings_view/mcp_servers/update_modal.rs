@@ -1,18 +1,18 @@
 use chrono::{Local, TimeZone};
 use uuid::Uuid;
-use warp_core::ui::external_product_icon::ExternalProductIcon;
-use warp_core::ui::icons::Icon;
-use warp_core::ui::theme::color::internal_colors;
-use warpui::elements::{
+use octomus_core::ui::external_product_icon::ExternalProductIcon;
+use octomus_core::ui::icons::Icon;
+use octomus_core::ui::theme::color::internal_colors;
+use octomusui::elements::{
     Align, Border, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Empty,
     Flex, Hoverable, MainAxisAlignment, MouseStateHandle, Padding, ParentElement, Radius,
     Shrinkable, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::keymap::Keystroke;
-use warpui::platform::Cursor;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::keymap::Keystroke;
+use octomusui::platform::Cursor;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
 
@@ -169,7 +169,7 @@ impl UpdateModalBody {
                     let mut icon = Container::new(
                         ConstrainedBox::new(
                             Icon::X
-                                .to_warpui_icon(theme.active_ui_text_color())
+                                .to_octomusui_icon(theme.active_ui_text_color())
                                 .finish(),
                         )
                         .with_width(16.)

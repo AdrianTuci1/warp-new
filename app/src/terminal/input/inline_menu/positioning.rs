@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
 use settings::Setting as _;
-use warp_core::features::FeatureFlag;
-use warpui::units::{IntoPixels, Pixels};
-use warpui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity, WindowId};
+use octomus_core::features::FeatureFlag;
+use octomusui::units::{IntoPixels, Pixels};
+use octomusui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity, WindowId};
 
 use super::styles::{HEADER_BORDER, HEADER_ROW_HEIGHT};
 use crate::ai::blocklist::agent_view::AgentViewController;

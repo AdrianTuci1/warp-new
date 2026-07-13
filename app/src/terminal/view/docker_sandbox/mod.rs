@@ -2,16 +2,16 @@
 use std::sync::mpsc::SyncSender;
 
 #[cfg(not(target_family = "wasm"))]
-use warp_cli::agent::Harness;
+use octomus_cli::agent::Harness;
 #[cfg(feature = "local_tty")]
-use warpui::geometry::vector::Vector2F;
+use octomusui::geometry::vector::Vector2F;
 #[cfg(not(target_family = "wasm"))]
-use warpui::r#async::FutureExt;
+use octomusui::r#async::FutureExt;
 #[cfg(feature = "local_tty")]
-use warpui::ModelHandle;
-use warpui::ViewContext;
+use octomusui::ModelHandle;
+use octomusui::ViewContext;
 #[cfg(not(target_family = "wasm"))]
-use warpui::{SingletonEntity, View, ViewHandle};
+use octomusui::{SingletonEntity, View, ViewHandle};
 
 use super::TerminalView;
 #[cfg(not(target_family = "wasm"))]
@@ -216,14 +216,14 @@ impl TerminalView {
         let sync_future = UpdateManager::as_ref(ctx).initial_load_complete();
         ctx.spawn(
             async move {
-                // Wait for Warp Drive initial sync so environment lookup succeeds.
+                // Wait for Octomus Drive initial sync so environment lookup succeeds.
 
                 if sync_future
                     .with_timeout(WARP_DRIVE_SYNC_TIMEOUT)
                     .await
                     .is_err()
                 {
-                    return Err("Timed out waiting for Warp Drive to sync for docker sandbox");
+                    return Err("Timed out waiting for Octomus Drive to sync for docker sandbox");
                 }
 
                 // Wait for the terminal session to bootstrap.

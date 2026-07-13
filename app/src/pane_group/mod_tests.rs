@@ -14,11 +14,11 @@ use repo_metadata::RepoMetadataModel;
 use session_sharing_protocol::common::SessionId;
 use shared_session::permissions_manager::SessionPermissionsManager;
 use uuid::Uuid;
-use warp_core::features::FeatureFlag;
-use warpui::platform::{WindowBounds, WindowStyle};
-use warpui::windowing::state::ApplicationStage;
-use warpui::windowing::WindowManager;
-use warpui::{App, ModelHandle};
+use octomus_core::features::FeatureFlag;
+use octomusui::platform::{WindowBounds, WindowStyle};
+use octomusui::windowing::state::ApplicationStage;
+use octomusui::windowing::WindowManager;
+use octomusui::{App, ModelHandle};
 use watcher::HomeDirectoryWatcher;
 
 use super::child_agent::{
@@ -93,7 +93,7 @@ use crate::terminal::shared_session::{
 };
 use crate::test_util::settings::initialize_settings_for_tests;
 use crate::undo_close::UndoCloseStack;
-use crate::warp_managed_paths_watcher::WarpManagedPathsWatcher;
+use crate::octomus_managed_paths_watcher::WarpManagedPathsWatcher;
 use crate::workflows::local_workflows::LocalWorkflows;
 use crate::workspace::sync_inputs::SyncedInputState;
 use crate::workspace::{ActiveSession, OneTimeModalModel, WorkspaceRegistry};
@@ -2930,7 +2930,7 @@ fn test_terminal_pane_headers() {
 
 /// Tests that focusing two different panes in quick succession does not cause
 /// an infinite loop of focus changes, as outlined in this PR's description:
-/// https://github.com/warpdotdev/warp-internal/pull/8990
+/// https://github.com/warpdotdev/octomus-internal/pull/8990
 #[cfg_attr(windows, ignore = "TODO(CORE-3626)")]
 #[test]
 fn test_pane_focus_does_not_have_an_infinite_event_loop() {

@@ -8,7 +8,7 @@ use cloud_objects::ids::{GenericStringObjectId, ServerId, SyncId};
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value;
 
-/// Workflow model used by Warp and warp-internal.
+/// Workflow model used by Octomus and octomus-internal.
 #[derive(Clone, Debug, Serialize, Deserialize, Eq, PartialEq, Hash)]
 #[serde(tag = "type")]
 #[serde(rename_all = "snake_case")]
@@ -254,7 +254,7 @@ impl Workflow {
     }
 }
 
-/// Create a warp-internal Workflow model from a public-facing workflow
+/// Create a octomus-internal Workflow model from a public-facing workflow
 /// https://github.com/warpdotdev/workflows/blob/main/workflow-types/src/lib.rs
 impl From<warp_workflows::Workflow> for Workflow {
     fn from(workflow: warp_workflows::Workflow) -> Self {
@@ -273,7 +273,7 @@ impl From<warp_workflows::Workflow> for Workflow {
     }
 }
 
-/// Argument model to be used in `warp-internal`
+/// Argument model to be used in `octomus-internal`
 #[derive(Clone, Debug, Deserialize, Serialize, Eq, PartialEq, Hash, Default)]
 pub struct Argument {
     pub name: String,

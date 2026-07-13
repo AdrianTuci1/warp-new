@@ -1,11 +1,11 @@
 use ai::api_keys::ApiKeyManager;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use warp_core::ui::appearance::Appearance;
-use warpui::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::{
     ConstrainedBox, Container, CrossAxisAlignment, Flex, FormattedTextElement,
     HighlightedHyperlink, HyperlinkLens, MainAxisAlignment, MainAxisSize, ParentElement,
 };
-use warpui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
 
 use crate::ai::blocklist::error_color;
 use crate::ai::AIRequestUsageModel;
@@ -347,7 +347,7 @@ impl PromptAlertView {
                     } else {
                         text_fragments.push(FormattedTextFragment::hyperlink(
                             CONTACT_SUPPORT_TEXT,
-                            "mailto:support@warp.dev".to_owned(),
+                            "mailto:support@octomus.dev".to_owned(),
                         ));
                     }
                 } else {
@@ -479,7 +479,7 @@ impl View for PromptAlertView {
             chip_row.add_child(
                 ConstrainedBox::new(
                     Icon::AlertTriangle
-                        .to_warpui_icon(error_color(appearance.theme()).into())
+                        .to_octomusui_icon(error_color(appearance.theme()).into())
                         .finish(),
                 )
                 .with_width(icon_size)

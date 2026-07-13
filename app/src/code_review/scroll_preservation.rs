@@ -1,9 +1,9 @@
-use warp_core::features::FeatureFlag;
-use warpui::elements::ScrollOffset;
-use warpui::units::Pixels;
+use octomus_core::features::FeatureFlag;
+use octomusui::elements::ScrollOffset;
+use octomusui::units::Pixels;
 #[cfg(not(target_family = "wasm"))]
-use warpui::{AppContext, WeakViewHandle};
-use warpui::{ViewContext, ViewHandle};
+use octomusui::{AppContext, WeakViewHandle};
+use octomusui::{ViewContext, ViewHandle};
 
 #[cfg(not(target_family = "wasm"))]
 use super::FILE_HEADER_HEIGHT;
