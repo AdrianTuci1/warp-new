@@ -49,8 +49,40 @@ jobs:
       - name: Upload DMG to R2 (universal)
         run: aws s3 cp target/release/octomus-oss-arm64.dmg s3://${{ env.R2_BUCKET }}/oss/${{ inputs.version }}/WarpOss.dmg --endpoint-url ${{ env.R2_ENDPOINT }}
 
+  build-and-upload-linux-vps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Cargo registry and build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-vps-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-vps-
+
+      - name: Build octomus_vps_server release binary
+        run: cargo build -p octomus_vps_server --release
+
+      - name: Strip symbols
+        run: strip target/release/octomus-vps-server
+
+      - name: Configure AWS credentials for R2
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: auto
+          aws-access-key-id: ${{ env.R2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.R2_SECRET_ACCESS_KEY }}
+
+      - name: Upload octomus-vps-server binary to R2
+        run: aws s3 cp target/release/octomus-vps-server s3://${{ env.R2_BUCKET }}/oss/${{ inputs.version }}/octomus-vps-server-linux-x86_64 --endpoint-url ${{ env.R2_ENDPOINT }}
+
   upload-channel-versions:
-    needs: build-and-upload-macos
+    needs: [build-and-upload-macos, build-and-upload-linux-vps]
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials for R2
