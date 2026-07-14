@@ -31,8 +31,8 @@ This report covers the changes made to add a `--standalone` flag to the local `a
 
 ## Continuous Deployment
 
-- `.github/workflows/octomus_vps_server.yml` runs build and tests for `octomus_vps_server` on every push/PR to `master`.
-- `.github/workflows/release-to-r2.yml` now also builds and uploads a Linux x86_64 `octomus-vps-server` binary to R2 alongside the macOS DMG.
+- `.github/workflows/octomus_vps_server.yml` is a manual deployment workflow triggered via `workflow_dispatch`. It builds a release Linux x86_64 binary and uploads it to R2 at `oss/<version>/octomus-vps-server-linux-x86_64`.
+- `.github/workflows/release-to-r2.yml` also builds and uploads the same Linux VPS server binary as part of the coordinated release process.
 - The `upload-channel-versions` release step waits for both macOS and Linux VPS jobs.
 
 ## Known Issues / Pre-existing Failures
