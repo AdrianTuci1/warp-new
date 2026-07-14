@@ -6,7 +6,6 @@ use std::time::Duration;
 use anyhow::{anyhow, Context as _};
 use comfy_table::Cell;
 use futures::{future, StreamExt};
-use serde::Serialize;
 use octomus_cli::agent::{Harness, OutputFormat, Prompt, RunCloudArgs};
 use octomus_cli::json_filter::JsonOutput;
 use octomus_cli::task::{
@@ -20,6 +19,7 @@ use octomus_core::features::FeatureFlag;
 use octomusui::platform::TerminationMode;
 use octomusui::r#async::{Spawnable, Timer};
 use octomusui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use super::common::{parse_ambient_task_id, EnvironmentChoice, ResolveConfigurationError};
 use crate::ai::agent::{extract_user_query_mode, UserQueryMode};

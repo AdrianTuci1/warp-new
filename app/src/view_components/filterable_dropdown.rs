@@ -1,6 +1,5 @@
 use std::marker::PhantomData;
 
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     Align, Border, ChildAnchor, ChildView, Clipped, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, Dismiss, DispatchEventResult, Element, EventHandler, Flex,
@@ -15,6 +14,7 @@ use octomusui::{
     AppContext, BlurContext, Entity, FocusContext, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WeakViewHandle,
 };
+use warp_editor::editor::NavigationKey;
 
 use super::dropdown::{
     DropdownAction, DropdownItem, DropdownItemAction, MenuHeaderTextFormatter, DROPDOWN_PADDING,

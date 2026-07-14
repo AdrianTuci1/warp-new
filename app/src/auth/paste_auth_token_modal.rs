@@ -6,8 +6,6 @@
 //! This lives in the app crate (not the onboarding crate) because it reuses
 //! `EditorView` for the text input, which the onboarding crate doesn't
 //! depend on.
-use pathfinder_color::ColorU;
-use ui_components::{button, Component as _, Options as _};
 use octomus_core::ui::theme::color::internal_colors;
 use octomusui::actions::StandardAction;
 use octomusui::elements::{
@@ -23,6 +21,8 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_color::ColorU;
+use ui_components::{button, Component as _, Options as _};
 
 use crate::appearance::Appearance;
 use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};

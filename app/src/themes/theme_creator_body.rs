@@ -4,8 +4,6 @@ use std::path::PathBuf;
 #[cfg(feature = "local_fs")]
 use std::{fs::copy, io::Write};
 
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
 #[cfg(feature = "local_fs")]
 use octomus_core::ui::theme::WarpTheme;
 use octomusui::elements::{
@@ -21,6 +19,8 @@ use octomusui::ui_components::text_input::TextInput;
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::appearance::{Appearance, AppearanceManager};
 use crate::editor::{EditorView, Event as EditorEvent};

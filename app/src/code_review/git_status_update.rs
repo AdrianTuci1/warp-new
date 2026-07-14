@@ -2,10 +2,10 @@
 use std::path::{Path, PathBuf};
 
 #[cfg(feature = "local_fs")]
-use settings::Setting as _;
-#[cfg(feature = "local_fs")]
 use octomusui::ModelContext;
 use octomusui::{Entity, SingletonEntity};
+#[cfg(feature = "local_fs")]
+use settings::Setting as _;
 #[cfg(feature = "local_fs")]
 use {
     crate::report_if_error,
@@ -16,6 +16,7 @@ use {
         is_gh_auth_error, is_gh_missing_error,
     },
     async_channel::Sender,
+    octomusui::{r#async::SpawnedFutureHandle, EntityId, ModelHandle, WeakModelHandle},
     repo_metadata::{
         repositories::DetectedRepositories,
         repository::{RepositorySubscriber, SubscriberId},
@@ -25,7 +26,6 @@ use {
         collections::{HashMap, HashSet},
         time::Duration,
     },
-    octomusui::{r#async::SpawnedFutureHandle, EntityId, ModelHandle, WeakModelHandle},
 };
 
 #[cfg(feature = "local_fs")]

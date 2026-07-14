@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::color::coloru_with_opacity;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{
@@ -14,6 +13,7 @@ use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyle
 use octomusui::{
     AppContext, Element, Entity, EntityId, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::AIAgentExchangeId;

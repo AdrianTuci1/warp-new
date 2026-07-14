@@ -1,9 +1,6 @@
 #![cfg_attr(target_family = "wasm", allow(dead_code, unused_imports))]
 // Adding this file level gate as some of the code around editability is not used in WASM yet.
 
-use pathfinder_color::ColorU;
-use warp_editor::editor::NavigationKey;
-use warp_editor::search::{SearchEvent, Searcher};
 pub use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
 use octomusui::elements::{
     Align, Border, ChildAnchor, Clipped, ConstrainedBox, Container, CornerRadius,
@@ -21,6 +18,9 @@ use octomusui::{
     Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_color::ColorU;
+use warp_editor::editor::NavigationKey;
+use warp_editor::search::{SearchEvent, Searcher};
 
 use crate::appearance::Appearance;
 use crate::editor::{

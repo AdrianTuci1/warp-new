@@ -19,22 +19,10 @@ use lsp::{
 use lsp_types::FormattingOptions;
 use markdown_parser::FormattedText;
 use num_traits::SaturatingSub;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::Vector2F;
-use remote_server::manager::RemoteServerManager;
-#[cfg(feature = "local_fs")]
-use repo_metadata::repositories::DetectedRepositories;
-use string_offset::CharOffset;
-use vec1::Vec1;
-use vim::vim::{MotionType, VimMode};
 use octomus_core::features::FeatureFlag;
 use octomus_core::r#async::debounce;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::icons::Icon;
-use warp_editor::content::buffer::InitialBufferState;
-use warp_editor::content::text::IndentUnit;
-use warp_editor::render::model::{Decoration, LineCount};
 use octomus_util::content_version::ContentVersion;
 use octomus_util::file::{FileId, FileLoadError, FileSaveError};
 #[cfg(feature = "local_fs")]
@@ -57,6 +45,18 @@ use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WindowId,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::Vector2F;
+use remote_server::manager::RemoteServerManager;
+#[cfg(feature = "local_fs")]
+use repo_metadata::repositories::DetectedRepositories;
+use string_offset::CharOffset;
+use vec1::Vec1;
+use vim::vim::{MotionType, VimMode};
+use warp_editor::content::buffer::InitialBufferState;
+use warp_editor::content::text::IndentUnit;
+use warp_editor::render::model::{Decoration, LineCount};
 
 use crate::ai::persisted_workspace::{PersistedWorkspace, PersistedWorkspaceEvent};
 use crate::code::buffer_location::LocalOrRemotePath as BufferFileLocation;
@@ -649,7 +649,8 @@ impl LocalCodeEditorView {
                 let window_id = ctx.window_id();
 
                 // Create the on-click action based on whether we have a definition
-                let on_click: Box<dyn Fn(&mut octomusui::AppContext)> = if has_different_definition {
+                let on_click: Box<dyn Fn(&mut octomusui::AppContext)> = if has_different_definition
+                {
                     let target_location = definition_locations.first().unwrap().target.clone();
                     Box::new(move |app| {
                         app.dispatch_typed_action_for_view(

@@ -1,9 +1,9 @@
-use pathfinder_color::ColorU;
 use octomusui::elements::{
     CacheOption, ConstrainedBox, Flex, Icon, Image, MainAxisAlignment, MainAxisSize, ParentElement,
     Rect, Stack,
 };
 use octomusui::{AppContext, Element, Entity, TypedActionView, View};
+use pathfinder_color::ColorU;
 
 pub struct RootView {}
 

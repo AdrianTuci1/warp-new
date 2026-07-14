@@ -10,10 +10,12 @@ use firebase::FirebaseError;
 use instant::Duration;
 #[cfg(any(test, feature = "test-util"))]
 use mockall::automock;
+use octomus_core::errors::{AnyhowErrorExt, ErrorExt, register_error};
+use octomus_server_auth::credentials::{AuthToken, Credentials, FirebaseToken, LoginToken};
+pub use octomus_server_auth::user_uid;
 pub use session::*;
 use thiserror::Error;
 pub use user_uid::{TEST_USER_EMAIL, TEST_USER_UID, UserUid};
-use octomus_core::errors::{AnyhowErrorExt, ErrorExt, register_error};
 use warp_graphql::client::Operation;
 use warp_graphql::mutations::create_anonymous_user::{
     AnonymousUserType, CreateAnonymousUser, CreateAnonymousUserResult, CreateAnonymousUserVariables,
@@ -37,8 +39,6 @@ use warp_graphql::queries::api_keys::{
 };
 use warp_graphql::queries::get_user::{GetUser, GetUserVariables, UserOutput as GqlUserOutput};
 use warp_graphql::queries::get_user_settings::{GetUserSettings, GetUserSettingsVariables};
-use octomus_server_auth::credentials::{AuthToken, Credentials, FirebaseToken, LoginToken};
-pub use octomus_server_auth::user_uid;
 
 use crate::base_client::BaseClient;
 use crate::graphql_helpers::send_graphql_request;

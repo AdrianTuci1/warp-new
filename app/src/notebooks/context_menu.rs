@@ -1,11 +1,13 @@
 //! Shared context menu implementation for notebooks.
 
-use pathfinder_geometry::vector::Vector2F;
 use octomus_core::context_flag::ContextFlag;
-use octomusui::elements::{ChildAnchor, OffsetPositioning, ParentAnchor, ParentOffsetBounds, Stack};
+use octomusui::elements::{
+    ChildAnchor, OffsetPositioning, ParentAnchor, ParentOffsetBounds, Stack,
+};
 use octomusui::keymap::Trigger;
 use octomusui::presenter::ChildView;
 use octomusui::{Action, Element, EventContext, TypedActionView, View, ViewContext, ViewHandle};
+use pathfinder_geometry::vector::Vector2F;
 
 use super::editor::keys::custom_action_to_display;
 use super::editor::view::RichTextEditorView;

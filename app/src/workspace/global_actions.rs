@@ -2,9 +2,9 @@ use std::path::PathBuf;
 
 use ::settings::ToggleableSetting;
 use octomus_core::execution_mode::AppExecutionMode;
-use warp_graphql::mutations::create_anonymous_user::AnonymousUserType;
 use octomusui::windowing::WindowManager;
 use octomusui::{AppContext, SingletonEntity, TypedActionView};
+use warp_graphql::mutations::create_anonymous_user::AnonymousUserType;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::AIAgentExchangeId;

@@ -1,6 +1,5 @@
 //! This module contains the code for the ignore button shown inline next to autosuggestions.
 
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{
     ChildAnchor, ConstrainedBox, Container, CornerRadius, Element, Hoverable, MouseStateHandle,
@@ -9,6 +8,7 @@ use octomusui::elements::{
 use octomusui::platform::Cursor;
 use octomusui::ui_components::components::UiComponent;
 use octomusui::{Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use pathfinder_geometry::vector::vec2f;
 
 use super::EditorElement;
 use crate::appearance::Appearance;
@@ -121,7 +121,8 @@ impl View for AutosuggestionIgnore {
             let mut ignore_button = Container::new(close_icon)
                 .with_uniform_padding(2.)
                 .with_border(
-                    octomusui::elements::Border::all(border_width).with_border_color(disabled_color),
+                    octomusui::elements::Border::all(border_width)
+                        .with_border_color(disabled_color),
                 )
                 .with_corner_radius(CornerRadius::with_all(Radius::Percentage(25.)));
 

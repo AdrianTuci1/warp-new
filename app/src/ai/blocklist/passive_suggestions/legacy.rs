@@ -7,11 +7,11 @@ use std::time::Duration;
 use chrono::Utc;
 #[cfg(not(target_family = "wasm"))]
 use command::r#async::Command;
-use parking_lot::FairMutex;
-use serde_json::json;
 use octomus_core::features::FeatureFlag;
 use octomusui::r#async::{FutureExt as AsyncFutureExt, SpawnedFutureHandle, Timer};
 use octomusui::{Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
+use parking_lot::FairMutex;
+use serde_json::json;
 
 use super::static_prompt_suggestions::static_suggested_query;
 #[cfg(not(target_family = "wasm"))]

@@ -6,8 +6,6 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use futures::channel::oneshot;
-use repo_metadata::{DirectoryWatcher, RepoMetadataEvent, RepoMetadataModel, RepositoryIdentifier};
-use tempfile::TempDir;
 use octomus_cli::agent::Harness;
 use octomus_cli::skill::SkillSpec;
 use octomus_cli::{
@@ -15,9 +13,11 @@ use octomus_cli::{
     SESSION_SHARING_SERVER_URL_OVERRIDE_ENV, WS_SERVER_URL_OVERRIDE_ENV,
 };
 use octomus_core::channel::ChannelState;
-use warp_managed_secrets::ManagedSecretValue;
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui::{App, SingletonEntity as _};
+use repo_metadata::{DirectoryWatcher, RepoMetadataEvent, RepoMetadataModel, RepositoryIdentifier};
+use tempfile::TempDir;
+use warp_managed_secrets::ManagedSecretValue;
 
 use super::{
     build_secret_env_vars, AgentDriver, IdleTimeoutSender,

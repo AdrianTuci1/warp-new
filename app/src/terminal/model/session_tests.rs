@@ -2,7 +2,9 @@ use std::collections::HashMap;
 
 use octomusui::elements::Empty;
 use octomusui::platform::WindowStyle;
-use octomusui::{App, AppContext, Element, Entity, ModelHandle, TypedActionView, View, ViewContext};
+use octomusui::{
+    App, AppContext, Element, Entity, ModelHandle, TypedActionView, View, ViewContext,
+};
 
 use super::{SessionId, Sessions, SessionsEvent};
 

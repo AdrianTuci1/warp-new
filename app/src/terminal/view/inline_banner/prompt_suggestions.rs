@@ -1,7 +1,5 @@
 use std::rc::Rc;
 
-use pathfinder_geometry::vector::vec2f;
-use serde::Serialize;
 use octomus_core::channel::ChannelState;
 use octomus_core::ui::theme::color::internal_colors::{neutral_2, neutral_3};
 use octomusui::elements::{
@@ -17,6 +15,8 @@ use octomusui::{
     AppContext, Element, Entity, EventContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use serde::Serialize;
 
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::agent::conversation::AIConversationId;

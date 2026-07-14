@@ -1,7 +1,5 @@
 //! Integration tests for bootstrapping logic.
 
-use settings::Setting as _;
-use version_compare::Cmp;
 use octomus::cmd_or_ctrl_shift;
 use octomus::integration_testing::input::{
     input_contains_string, input_editor_is_focused, input_editor_is_not_focused, input_is_empty,
@@ -25,6 +23,8 @@ use octomus::workspace::Workspace;
 use octomusui_core::clipboard::ClipboardContent;
 use octomusui_core::integration::TestStep;
 use octomusui_core::{async_assert, async_assert_eq, ViewHandle};
+use settings::Setting as _;
+use version_compare::Cmp;
 
 use super::{new_builder, Builder};
 use crate::util::{write_all_rc_files_for_test, write_rc_files_for_test, ShellRcType};

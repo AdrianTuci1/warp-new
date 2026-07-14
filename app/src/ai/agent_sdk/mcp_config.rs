@@ -1,6 +1,6 @@
 use anyhow::Context as _;
-use serde_json::{Map, Value};
 use octomus_cli::mcp::MCPSpec;
+use serde_json::{Map, Value};
 
 use crate::ai::mcp::TemplatableMCPServer;
 

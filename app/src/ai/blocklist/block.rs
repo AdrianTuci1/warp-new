@@ -31,22 +31,9 @@ use find::FindState;
 use indexmap::IndexMap;
 use itertools::Itertools;
 use model::AIBlockOutputStatus;
-use parking_lot::{FairMutex, Mutex, RwLock};
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-pub use pending_user_query_block::{PendingUserQueryBlock, PendingUserQueryBlockEvent};
-#[cfg(not(target_family = "wasm"))]
-use repo_metadata::repositories::DetectedRepositories;
-use secret_redaction::*;
-use serde::Serialize;
-use settings::Setting as _;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::Fill;
-use warp_editor::content::buffer::InitialBufferState;
-#[cfg(feature = "local_fs")]
-use warp_editor::content::edit::resolve_asset_source_relative_to_directory;
-use warp_editor::render::element::VerticalExpansionBehavior;
 use octomus_util::local_or_remote_path::LocalOrRemotePath;
 use octomus_util::path::ShellFamily;
 use octomusui::assets::asset_cache::AssetCache;
@@ -66,6 +53,19 @@ use octomusui::{
     AppContext, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle, WindowId,
 };
+use parking_lot::{FairMutex, Mutex, RwLock};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+pub use pending_user_query_block::{PendingUserQueryBlock, PendingUserQueryBlockEvent};
+#[cfg(not(target_family = "wasm"))]
+use repo_metadata::repositories::DetectedRepositories;
+use secret_redaction::*;
+use serde::Serialize;
+use settings::Setting as _;
+use warp_editor::content::buffer::InitialBufferState;
+#[cfg(feature = "local_fs")]
+use warp_editor::content::edit::resolve_asset_source_relative_to_directory;
+use warp_editor::render::element::VerticalExpansionBehavior;
 
 #[cfg(feature = "agent_mode_debug")]
 use self::code_diff_view::FileDiff;

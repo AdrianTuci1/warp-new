@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
 use itertools::Itertools;
-use unindent::Unindent;
 use octomusui::platform::WindowStyle;
 use octomusui::{App, ViewHandle};
+use unindent::Unindent;
 
 use super::*;
 use crate::editor::EditorView;

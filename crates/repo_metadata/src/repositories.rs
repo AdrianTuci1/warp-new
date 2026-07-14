@@ -3,8 +3,6 @@ use std::future::Future;
 use std::path::{Path, PathBuf};
 
 use futures::future::{ready, Either};
-#[cfg(test)]
-use virtual_fs::{Stub, VirtualFS};
 use octomus_util::host_id::HostId;
 use octomus_util::local_or_remote_path::LocalOrRemotePath;
 use octomus_util::remote_path::{RemoteNavigationResult, RemotePath};
@@ -12,6 +10,8 @@ use octomus_util::standardized_path::StandardizedPath;
 #[cfg(test)]
 use octomusui_core::r#async::FutureId;
 use octomusui_core::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
+#[cfg(test)]
+use virtual_fs::{Stub, VirtualFS};
 
 use crate::{DirectoryWatcher, Repository};
 

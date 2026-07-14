@@ -4,9 +4,9 @@ mod model_impl;
 use chrono::TimeDelta;
 pub use helper::AIBlockModelHelper;
 pub use model_impl::*;
-use session_sharing_protocol::common::ParticipantId;
 use octomus_core::features::FeatureFlag;
 use octomusui::{AppContext, ViewContext};
+use session_sharing_protocol::common::ParticipantId;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::{

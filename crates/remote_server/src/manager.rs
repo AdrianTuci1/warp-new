@@ -7,8 +7,6 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use futures::channel::oneshot;
-use repo_metadata::RepoMetadataUpdate;
-use serde::Serialize;
 #[cfg(not(target_family = "wasm"))]
 use octomus_core::channel::ChannelState;
 use octomus_core::SessionId;
@@ -17,6 +15,8 @@ use octomus_util::standardized_path::StandardizedPath;
 #[cfg(not(target_family = "wasm"))]
 use octomusui_core::r#async::FutureExt as _;
 use octomusui_core::{Entity, ModelContext, ModelSpawner, SingletonEntity};
+use repo_metadata::RepoMetadataUpdate;
+use serde::Serialize;
 
 use crate::auth::RemoteServerAuthContext;
 #[cfg(not(target_family = "wasm"))]

@@ -4,9 +4,9 @@ use std::rc::Rc;
 use anyhow::anyhow;
 use chrono::{DateTime, Local, TimeDelta};
 use futures::channel::oneshot;
+use octomusui::{Entity, ModelContext, SingletonEntity};
 use uuid::Uuid;
 use warp_multi_agent_api::response_event;
-use octomusui::{Entity, ModelContext, SingletonEntity};
 
 use crate::ai::agent::api::{self, generate_multi_agent_output, ConvertToAPITypeError};
 use crate::ai::agent::conversation::AIConversationId;

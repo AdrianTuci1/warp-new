@@ -363,8 +363,8 @@ impl TypedActionView for ExternalSecretsMenu {
 }
 
 pub mod styles {
-    use pathfinder_color::ColorU;
     use octomusui::elements::{Border, DropShadow, ScrollbarWidth};
+    use pathfinder_color::ColorU;
 
     use crate::appearance::Appearance;
     use crate::themes::theme::Fill;

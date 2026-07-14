@@ -1,8 +1,6 @@
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 use ::ai::api_keys::CustomEndpoint;
-use url::Url;
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     Border, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Empty,
     Expanded, Flex, MainAxisSize, MouseStateHandle, ParentElement, Radius, Text,
@@ -13,6 +11,8 @@ use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyle
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use url::Url;
+use warp_editor::editor::NavigationKey;
 
 use crate::appearance::Appearance;
 use crate::editor::{

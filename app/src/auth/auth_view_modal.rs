@@ -1,9 +1,6 @@
 use std::collections::HashMap;
 
 use anyhow::{anyhow, Result};
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use url::Url;
 use octomus_core::errors::ErrorExt;
 use octomus_core::features::FeatureFlag;
 use octomusui::actions::StandardAction;
@@ -17,6 +14,9 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use url::Url;
 
 use super::auth_manager::{AuthManager, AuthManagerEvent};
 use super::auth_view_body::{AuthStep, AuthViewBodyEvent};

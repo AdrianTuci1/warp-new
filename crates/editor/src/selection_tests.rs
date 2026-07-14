@@ -1,14 +1,14 @@
 use std::sync::Arc;
 
-use serde_yaml::Value;
-use string_offset::CharOffset;
-use sum_tree::SumTree;
-use vec1::vec1;
 use octomus_core::features::FeatureFlag;
 use octomusui_core::assets::asset_cache::AssetSource;
 use octomusui_core::text::word_boundaries::WordBoundariesPolicy;
 use octomusui_core::units::IntoPixels;
 use octomusui_core::{App, ModelAsRef};
+use serde_yaml::Value;
+use string_offset::CharOffset;
+use sum_tree::SumTree;
+use vec1::vec1;
 
 use super::{SelectionModel, TextDirection, TextUnit};
 use crate::content::buffer::tests::TestEmbeddedItem;

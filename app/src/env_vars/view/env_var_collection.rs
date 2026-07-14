@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::{vec2f, Vector2F};
 use octomus_core::features::FeatureFlag;
 use octomusui::clipboard::ClipboardContent;
 use octomusui::elements::{
@@ -16,6 +15,7 @@ use octomusui::{
     id, AppContext, BlurContext, Element, Entity, FocusContext, ModelAsRef, ModelHandle,
     SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, WindowId,
 };
+use pathfinder_geometry::vector::{vec2f, Vector2F};
 
 use super::command_dialog::EnvVarCommandDialog;
 use super::menus::Menus;
@@ -661,8 +661,10 @@ impl EnvVarCollectionView {
         self.set_pane_title(if title.is_empty() { "Untitled" } else { &title }, ctx);
         if let Some(server_id) = env_var_collection.id.into_server() {
             self.pane_configuration.update(ctx, |pane_config, ctx| {
-                pane_config
-                    .set_shareable_object(Some(ShareableObject::OctomusDriveObject(server_id)), ctx);
+                pane_config.set_shareable_object(
+                    Some(ShareableObject::OctomusDriveObject(server_id)),
+                    ctx,
+                );
             });
         }
 
@@ -1304,9 +1306,11 @@ impl View for EnvVarCollectionView {
                             self.breadcrumbs.clone(),
                             appearance,
                             |ctx, _, breadcrumb| {
-                                ctx.dispatch_typed_action(EnvVarCollectionAction::ViewInOctomusDrive(
-                                    breadcrumb.kind.into_item_id(),
-                                ));
+                                ctx.dispatch_typed_action(
+                                    EnvVarCollectionAction::ViewInOctomusDrive(
+                                        breadcrumb.kind.into_item_id(),
+                                    ),
+                                );
                             },
                         ))
                         .with_horizontal_margin(CORE_HORIZONATAL_MARGIN)

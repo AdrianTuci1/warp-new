@@ -1,4 +1,3 @@
-use settings::{RespectUserSyncSetting, SyncToCloud};
 use octomus::features::FeatureFlag;
 use octomus::integration_testing::notebook::{
     assert_cloud_preference_exists, assert_notebook_contents, assert_notebook_metadata_revision,
@@ -21,6 +20,7 @@ use octomus::terminal::{History, ShellHost, TerminalView};
 use octomus::workspace::Workspace;
 use octomusui_core::integration::{AssertionOutcome, TestStep};
 use octomusui_core::{async_assert_eq, SingletonEntity, ViewHandle};
+use settings::{RespectUserSyncSetting, SyncToCloud};
 
 use super::{new_builder, Builder, TEST_ONLY_ASSETS};
 use crate::util::{get_local_user, tab_title_in_home_dir};
@@ -554,10 +554,7 @@ pub fn test_restore_snapshot_with_settings_page() -> Builder {
 
                     let settings_view = settings_views.first().expect("Settings view must exist");
                     settings_view.read(app, |view, _| {
-                        async_assert_eq!(
-                            view.current_settings_section(),
-                            SettingsSection::Account
-                        )
+                        async_assert_eq!(view.current_settings_section(), SettingsSection::Account)
                     })
                 }),
         )

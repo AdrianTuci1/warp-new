@@ -1,5 +1,5 @@
-use sum_tree::SumTree;
 use octomusui_core::elements::ListIndentLevel;
+use sum_tree::SumTree;
 
 use crate::content::cursor::BufferSumTree;
 use crate::content::text::{

@@ -1,13 +1,13 @@
 use std::ops::Range;
 
 use num_traits::SaturatingSub;
-use string_offset::CharOffset;
-use vec1::Vec1;
 use octomusui_core::text::TextBuffer;
 use octomusui_core::text::point::Point;
 use octomusui_core::text::word_boundaries::WordBoundariesPolicy;
 use octomusui_core::units::Pixels;
 use octomusui_core::{AppContext, Entity, ModelAsRef, ModelContext, ModelHandle};
+use string_offset::CharOffset;
+use vec1::Vec1;
 
 use crate::content::buffer::{
     AutoScrollBehavior, Buffer, BufferEvent, BufferSelectAction, SelectionOffsets,

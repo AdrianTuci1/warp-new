@@ -7,12 +7,12 @@ use std::path::{Path, PathBuf};
 use std::sync::LazyLock;
 
 use dirs::home_dir;
-use serde::{Deserialize, Serialize};
-use strum_macros::{Display, EnumString, VariantNames};
 use octomus_core::ui::color::CLAUDE_ORANGE;
 use octomus_core::ui::icons::Icon;
 use octomus_core::ui::theme::Fill;
 use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use serde::{Deserialize, Serialize};
+use strum_macros::{Display, EnumString, VariantNames};
 
 /// Represents a skill provider/origin (Agents, Claude, Codex, or Octomus).
 #[derive(

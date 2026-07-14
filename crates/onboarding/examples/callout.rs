@@ -1,12 +1,6 @@
 use std::borrow::Cow;
 
 use anyhow::{anyhow, Result};
-use onboarding::components::onboarding_callout::{
-    Button as CalloutButton, OnboardingCallout, Options as CalloutOptions, Params as CalloutParams,
-    StepStatus,
-};
-use rust_embed::RustEmbed;
-use ui_components::Component as _;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::{AnsiColor, AnsiColors, Details, Fill, TerminalColors, WarpTheme};
 use octomusui_core::color::ColorU;
@@ -14,6 +8,12 @@ use octomusui_core::elements::{Rect, Stack};
 use octomusui_core::fonts::{Cache, FamilyId, Weight};
 use octomusui_core::prelude::*;
 use octomusui_core::{platform, AddWindowOptions, AssetProvider, ModelContext};
+use onboarding::components::onboarding_callout::{
+    Button as CalloutButton, OnboardingCallout, Options as CalloutOptions, Params as CalloutParams,
+    StepStatus,
+};
+use rust_embed::RustEmbed;
+use ui_components::Component as _;
 
 #[derive(Clone, Copy, RustEmbed)]
 #[folder = "../../app/assets"]

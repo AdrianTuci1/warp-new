@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
 use futures_lite::future::yield_now;
-use ordered_float::OrderedFloat;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::fonts::FamilyId;
 use octomusui::{AppContext, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use super::{AcceptSlashCommandOrSavedPrompt, InlineItem};
 use crate::cloud_object::model::persistence::CloudModel;

@@ -3,7 +3,6 @@ use std::iter::FromIterator;
 use std::path::{Component, Path, PathBuf};
 
 use anyhow::Result;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
 pub use octomus_core::ui::color::blend::Blend;
 use octomus_core::ui::color::pick_foreground_color;
 pub use octomus_core::ui::theme::*;
@@ -14,6 +13,7 @@ use octomusui::elements::{
     Shrinkable, Stack, Text,
 };
 use octomusui::fonts::FamilyId;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use super::default_themes::*;
 use super::theme_creator::{pick_accent_color_from_options, top_colors_for_image};

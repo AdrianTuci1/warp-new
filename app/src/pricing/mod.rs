@@ -1,7 +1,7 @@
+use octomusui::{Entity, ModelContext, SingletonEntity};
 use warp_graphql::billing::{
     AddonCreditsOption, OveragesPricing, PlanPricing, PricingInfo, StripeSubscriptionPlan,
 };
-use octomusui::{Entity, ModelContext, SingletonEntity};
 
 /// A global model for maintaining pricing information from the server.
 #[derive(Debug)]

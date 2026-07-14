@@ -2,7 +2,9 @@ use std::collections::HashMap;
 
 use octomus_core::features::FeatureFlag;
 use octomus_core::send_telemetry_from_ctx;
-use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity, ViewHandle, WindowId};
+use octomusui::{
+    AppContext, Entity, EntityId, ModelContext, SingletonEntity, ViewHandle, WindowId,
+};
 
 use crate::ai::active_agent_views_model::{ActiveAgentViewsEvent, ActiveAgentViewsModel};
 use crate::ai::agent::conversation::{AIConversationId, ConversationStatus};

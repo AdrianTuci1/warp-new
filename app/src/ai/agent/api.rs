@@ -14,13 +14,13 @@ pub use convert_from::{
     MaybeAIAgentOutputMessage, MessageToAIAgentOutputMessageError,
 };
 use futures_lite::Stream;
-pub use r#impl::generate_multi_agent_output;
-use serde::Serialize;
 use octomus_core::channel::ChannelState;
 use octomus_core::execution_mode::AppExecutionMode;
 use octomus_core::features::FeatureFlag;
 use octomus_core::user_preferences::GetUserPreferences;
 use octomusui::{AppContext, EntityId, SingletonEntity as _};
+pub use r#impl::generate_multi_agent_output;
+use serde::Serialize;
 
 use super::{AIAgentInput, MCPContext, MCPServer, RequestMetadata, Suggestions};
 use crate::ai::agent::conversation::AIConversationId;

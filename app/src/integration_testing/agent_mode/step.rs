@@ -3,9 +3,9 @@ use std::io::Cursor;
 use std::path::Path;
 use std::time::Duration;
 
-use prost::Message;
 use octomusui::integration::TestStep;
 use octomusui::{async_assert, SingletonEntity};
+use prost::Message;
 
 use crate::ai::execution_profiles::profiles::AIExecutionProfilesModel;
 use crate::ai::execution_profiles::ActionPermission;
@@ -165,7 +165,8 @@ pub fn submit_ai_query(query: &str, timeout: Duration) -> TestStep {
 /// Returns an assertion that prints the conversation ID to stdout once available.
 /// This assertion will poll until the conversation token is received from the server.
 fn print_conversation_id_assertion(
-) -> impl FnMut(&mut octomusui::App, octomusui::WindowId) -> octomusui::integration::AssertionOutcome {
+) -> impl FnMut(&mut octomusui::App, octomusui::WindowId) -> octomusui::integration::AssertionOutcome
+{
     |app, window_id| {
         use octomusui::integration::AssertionOutcome;
 

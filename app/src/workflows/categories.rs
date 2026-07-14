@@ -8,8 +8,6 @@ use fuzzy_match::{match_indices_case_insensitive, FuzzyMatchResult};
 use itertools::Itertools;
 use octomus_core::ui::builder::UiBuilder;
 use octomus_core::ui::theme::color::internal_colors;
-use warp_editor::editor::NavigationKey;
-use warp_workflows::workflows as global_workflows;
 use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
 use octomusui::color::ColorU;
 use octomusui::elements::{
@@ -25,6 +23,8 @@ use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{
     AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, WeakViewHandle,
 };
+use warp_editor::editor::NavigationKey;
+use warp_workflows::workflows as global_workflows;
 
 use super::workflow::Workflow;
 use super::WorkflowSource;

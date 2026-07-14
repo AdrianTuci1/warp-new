@@ -7,11 +7,11 @@ use std::str::FromStr;
 use std::sync::Arc;
 
 use ai::project_context::model::ProjectContextModel;
-use parking_lot::FairMutex;
 use octomus_core::features::FeatureFlag;
 use octomusui::{
     AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity, WeakModelHandle,
 };
+use parking_lot::FairMutex;
 
 use super::agent_view::{AgentViewController, AgentViewEntryOrigin, EnterAgentViewError};
 use super::block::DirectoryContext;

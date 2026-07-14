@@ -5,10 +5,6 @@ use std::time::Duration;
 
 use float_cmp::ApproxEq;
 use instant::Instant;
-use parking_lot::Mutex;
-use string_offset::CharOffset;
-use temporary_block::RenderableTemporaryBlock;
-use vim::vim::VimMode;
 use octomus_core::ui::theme::Fill as ThemeFill;
 use octomusui_core::color::ColorU;
 use octomusui_core::elements::new_scrollable::{NewScrollableElement, ScrollableAxis};
@@ -24,6 +20,10 @@ use octomusui_core::{
     AfterLayoutContext, AppContext, Element, Event, EventContext, LayoutContext, ModelHandle,
     PaintContext, SizeConstraint, WeakViewHandle,
 };
+use parking_lot::Mutex;
+use string_offset::CharOffset;
+use temporary_block::RenderableTemporaryBlock;
+use vim::vim::VimMode;
 
 use self::empty::Empty;
 use self::header::RenderableHeader;

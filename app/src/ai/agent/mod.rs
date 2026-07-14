@@ -28,13 +28,13 @@ use chrono::{DateTime, Local, TimeDelta};
 use comment::ReviewComment;
 use derivative::Derivative;
 use markdown_parser::{parse_markdown, FormattedTable, FormattedText, FormattedTextInline};
+use octomus_core::features::FeatureFlag;
 use parking_lot::RwLock;
 use serde::{Deserialize, Serialize};
 use session_sharing_protocol::common::ParticipantId;
 use task::TaskId;
 pub use telemetry::AIIdentifiers;
 use uuid::Uuid;
-use octomus_core::features::FeatureFlag;
 use warp_editor::render::model::LineCount;
 use warp_multi_agent_api::{diff_hunk as diff_hunk_api, AgentEvent, AgentType};
 
@@ -693,7 +693,10 @@ impl Display for RenderableAIError {
                 }
             }
             Self::ServerOverloaded => {
-                write!(f, "Octomus is currently overloaded. Please try again later.")
+                write!(
+                    f,
+                    "Octomus is currently overloaded. Please try again later."
+                )
             }
             Self::InternalWarpError => write!(f, "Internal Octomus error."),
             Self::ContextWindowExceeded(message) => {

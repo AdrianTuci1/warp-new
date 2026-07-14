@@ -1,5 +1,10 @@
 use std::collections::HashSet;
 
+use octomus_util::host_id::HostId;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomus_util::remote_path::RemotePath;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::App;
 use repo_metadata::entry::{DirectoryEntry, Entry, FileMetadata};
 use repo_metadata::file_tree_store::FileTreeState;
 use repo_metadata::file_tree_update::{
@@ -10,11 +15,6 @@ use repo_metadata::{
     DirectoryWatcher, RepoMetadataModel, RepoMetadataUpdate, RepositoryIdentifier,
 };
 use virtual_fs::{Stub, VirtualFS};
-use octomus_util::host_id::HostId;
-use octomus_util::local_or_remote_path::LocalOrRemotePath;
-use octomus_util::remote_path::RemotePath;
-use octomus_util::standardized_path::StandardizedPath;
-use octomusui::App;
 
 use super::{
     extract_skill_parent_directory, find_project_skill_files_in_tree, is_home_provider_path,
@@ -528,8 +528,10 @@ fn find_skill_files_in_tree_finds_root_skills() {
             app.add_singleton_model(|_| DetectedRepositories::default());
             let repo_handle = watcher.update(&mut app, |w, ctx| {
                 w.add_directory(
-                    octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(&repo)
-                        .unwrap(),
+                    octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(
+                        &repo,
+                    )
+                    .unwrap(),
                     ctx,
                 )
                 .unwrap()
@@ -539,8 +541,10 @@ fn find_skill_files_in_tree_finds_root_skills() {
             let model_handle = app.add_singleton_model(RepoMetadataModel::new);
             model_handle.update(&mut app, |model, ctx| {
                 let key =
-                    octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(&repo)
-                        .unwrap();
+                    octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(
+                        &repo,
+                    )
+                    .unwrap();
                 model.insert_test_state(key, state, ctx);
             });
 
@@ -809,8 +813,10 @@ fn find_skill_files_in_tree_finds_subdirectory_skills() {
             app.add_singleton_model(|_| DetectedRepositories::default());
             let repo_handle = watcher.update(&mut app, |w, ctx| {
                 w.add_directory(
-                    octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(&repo)
-                        .unwrap(),
+                    octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(
+                        &repo,
+                    )
+                    .unwrap(),
                     ctx,
                 )
                 .unwrap()
@@ -820,8 +826,10 @@ fn find_skill_files_in_tree_finds_subdirectory_skills() {
             let model_handle = app.add_singleton_model(RepoMetadataModel::new);
             model_handle.update(&mut app, |model, ctx| {
                 let key =
-                    octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(&repo)
-                        .unwrap();
+                    octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(
+                        &repo,
+                    )
+                    .unwrap();
                 model.insert_test_state(key, state, ctx);
             });
 
@@ -986,8 +994,10 @@ fn find_skill_files_in_tree_empty_repo() {
         vfs.mkdir("repo/src");
 
         let src = Entry::Directory(DirectoryEntry {
-            path: octomus_util::standardized_path::StandardizedPath::try_from_local(&repo.join("src"))
-                .unwrap(),
+            path: octomus_util::standardized_path::StandardizedPath::try_from_local(
+                &repo.join("src"),
+            )
+            .unwrap(),
             children: vec![],
             ignored: false,
             loaded: true,
@@ -1004,8 +1014,10 @@ fn find_skill_files_in_tree_empty_repo() {
             app.add_singleton_model(|_| DetectedRepositories::default());
             let repo_handle = watcher.update(&mut app, |w, ctx| {
                 w.add_directory(
-                    octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(&repo)
-                        .unwrap(),
+                    octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(
+                        &repo,
+                    )
+                    .unwrap(),
                     ctx,
                 )
                 .unwrap()
@@ -1015,8 +1027,10 @@ fn find_skill_files_in_tree_empty_repo() {
             let model_handle = app.add_singleton_model(RepoMetadataModel::new);
             model_handle.update(&mut app, |model, ctx| {
                 let key =
-                    octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(&repo)
-                        .unwrap();
+                    octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(
+                        &repo,
+                    )
+                    .unwrap();
                 model.insert_test_state(key, state, ctx);
             });
 

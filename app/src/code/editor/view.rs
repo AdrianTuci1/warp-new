@@ -9,29 +9,7 @@ use std::rc::Rc;
 use ai::diff_validation::DiffDelta;
 use lazy_static::lazy_static;
 use num_traits::SaturatingSub;
-use pathfinder_geometry::vector::vec2f;
-use settings::Setting as _;
-use string_offset::CharOffset;
-use vec1::{vec1, Vec1};
-use vim::vim::{Direction, InsertPosition, VimMode, VimModel, VimState, VimSubscriber};
 use octomus_core::platform::SessionPlatform;
-use warp_editor::content::buffer::{
-    Buffer, BufferEditAction, EditOrigin, InitialBufferState, ToBufferCharOffset as _,
-    ToBufferPoint,
-};
-use warp_editor::content::text::IndentUnit;
-use warp_editor::content::version::BufferVersion;
-use warp_editor::model::{CoreEditorModel, PlainTextEditorModel};
-use warp_editor::multiline::AnyMultilineString;
-use warp_editor::render::element::lens_element::RichTextElementLens;
-use warp_editor::render::element::{
-    DisplayOptions, DisplayStateHandle, RichTextElement, VerticalExpansionBehavior,
-};
-use warp_editor::render::model::{
-    AutoScrollMode, BlockSpacing, Decoration, ExpansionType, LineCount, ParagraphStyles,
-    RichTextStyles, CODE_EDITOR_HIDDEN_SECTION_EXPANSION_LINES,
-};
-use warp_editor::search::{SearchEvent, Searcher, MATCH_FILL, SELECTED_MATCH_FILL};
 use octomus_util::content_version::ContentVersion;
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui::elements::new_scrollable::{
@@ -52,6 +30,28 @@ use octomusui::{
     AppContext, BlurContext, CursorInfo, Element, Entity, FocusContext, ModelHandle,
     SingletonEntity, View, ViewContext, ViewHandle, WeakViewHandle, WindowId,
 };
+use pathfinder_geometry::vector::vec2f;
+use settings::Setting as _;
+use string_offset::CharOffset;
+use vec1::{vec1, Vec1};
+use vim::vim::{Direction, InsertPosition, VimMode, VimModel, VimState, VimSubscriber};
+use warp_editor::content::buffer::{
+    Buffer, BufferEditAction, EditOrigin, InitialBufferState, ToBufferCharOffset as _,
+    ToBufferPoint,
+};
+use warp_editor::content::text::IndentUnit;
+use warp_editor::content::version::BufferVersion;
+use warp_editor::model::{CoreEditorModel, PlainTextEditorModel};
+use warp_editor::multiline::AnyMultilineString;
+use warp_editor::render::element::lens_element::RichTextElementLens;
+use warp_editor::render::element::{
+    DisplayOptions, DisplayStateHandle, RichTextElement, VerticalExpansionBehavior,
+};
+use warp_editor::render::model::{
+    AutoScrollMode, BlockSpacing, Decoration, ExpansionType, LineCount, ParagraphStyles,
+    RichTextStyles, CODE_EDITOR_HIDDEN_SECTION_EXPANSION_LINES,
+};
+use warp_editor::search::{SearchEvent, Searcher, MATCH_FILL, SELECTED_MATCH_FILL};
 
 use crate::appearance::Appearance;
 use crate::code::editor::comment_editor::{CommentEditor, CommentEditorEvent};

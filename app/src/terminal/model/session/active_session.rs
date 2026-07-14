@@ -124,7 +124,9 @@ impl ActiveSession {
 
     /// Returns the `OctomusAiExecutionContext` for the active session.
     pub fn ai_execution_environment(&self, app: &AppContext) -> Option<OctomusAiExecutionContext> {
-        self.session(app).as_ref().map(OctomusAiExecutionContext::new)
+        self.session(app)
+            .as_ref()
+            .map(OctomusAiExecutionContext::new)
     }
 }
 

@@ -2,6 +2,9 @@ use std::collections::HashMap;
 
 use anyhow::{anyhow, bail};
 use oauth2::{RefreshToken, TokenResponse as _};
+use octomus_core::channel::ChannelState;
+use octomusui::{ModelSpawner, SingletonEntity};
+use octomusui_extras::secure_storage::AppContextExt as _;
 use rmcp::transport::auth::{
     AuthClient, AuthorizationManager, CredentialStore, InMemoryCredentialStore, OAuthClientConfig,
     OAuthState, StoredCredentials,
@@ -11,9 +14,6 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
-use octomus_core::channel::ChannelState;
-use octomusui::{ModelSpawner, SingletonEntity};
-use octomusui_extras::secure_storage::AppContextExt as _;
 
 use super::{MCPServerState, TemplatableMCPServerManager};
 use crate::ai::mcp::FileBasedMCPManager;

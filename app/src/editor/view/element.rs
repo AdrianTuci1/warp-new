@@ -6,10 +6,6 @@ use std::{cmp, mem};
 
 use instant::Instant;
 use itertools::Itertools;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use smallvec::SmallVec;
-use vim::vim::{MotionType, VimMode};
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::DEFAULT_UI_FONT_SIZE;
 use octomus_util::user_input::UserInput;
@@ -30,6 +26,10 @@ use octomusui::text_selection_utils::{
 };
 use octomusui::ui_components::components::UiComponent;
 use octomusui::{AppContext, SingletonEntity, TaskId, ViewHandle};
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use smallvec::SmallVec;
+use vim::vim::{MotionType, VimMode};
 
 use super::super::soft_wrap::{
     ClampDirection, DisplayPointAndClampDirection, FrameLayouts, SoftWrapPoint, SoftWrapState,

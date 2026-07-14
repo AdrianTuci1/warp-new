@@ -1,4 +1,3 @@
-use pathfinder_color::ColorU;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::elements::{
     Border, ConstrainedBox, Container, CrossAxisAlignment, Flex, MainAxisAlignment, MainAxisSize,
@@ -6,6 +5,7 @@ use octomusui::elements::{
 };
 use octomusui::fonts::{Properties, Weight};
 use octomusui::Element;
+use pathfinder_color::ColorU;
 
 use crate::ui_components::blended_colors;
 

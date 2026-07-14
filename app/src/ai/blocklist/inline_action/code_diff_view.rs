@@ -12,9 +12,6 @@ use ai::diff_validation::{
 use anyhow::Result;
 use lazy_static::lazy_static;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_geometry::vector::vec2f;
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng as _};
 use octomus_core::features::FeatureFlag;
 use octomus_core::platform::SessionPlatform;
 use octomus_core::settings::ToggleableSetting;
@@ -23,8 +20,6 @@ use octomus_core::ui::color::CLAUDE_ORANGE;
 use octomus_core::ui::theme::color::internal_colors::{fg_overlay_6, neutral_1, neutral_4};
 use octomus_core::ui::theme::Fill;
 use octomus_core::HostId;
-use warp_editor::content::buffer::InitialBufferState;
-use warp_editor::render::element::VerticalExpansionBehavior;
 use octomus_util::file::FileSaveError;
 use octomus_util::local_or_remote_path::LocalOrRemotePath;
 use octomus_util::remote_path::RemotePath;
@@ -46,6 +41,11 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use rand::distributions::Alphanumeric;
+use rand::{thread_rng, Rng as _};
+use warp_editor::content::buffer::InitialBufferState;
+use warp_editor::render::element::VerticalExpansionBehavior;
 
 use super::malformed_line_heuristics::has_malformed_terminal_correction_signal;
 use crate::ai::agent::icons::{self, yellow_stop_icon};

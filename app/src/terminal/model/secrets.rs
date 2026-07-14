@@ -8,10 +8,10 @@ use std::sync::Arc;
 use anyhow::anyhow;
 use itertools::Itertools;
 use lazy_static::lazy_static;
-use parking_lot::Mutex;
-use rangemap::{RangeInclusiveMap, StepLite};
 use octomusui::elements::SecretRange;
 use octomusui::EntityId;
+use parking_lot::Mutex;
+use rangemap::{RangeInclusiveMap, StepLite};
 
 use super::grid::grid_handler::GridHandler;
 use super::grid::{Dimensions as _, RespectDisplayedOutput};

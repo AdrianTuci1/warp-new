@@ -1,4 +1,3 @@
-use pathfinder_color::ColorU;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::elements::{ChildView, Container, Fill};
 use octomusui::ui_components::components::{Coords, UiComponentStyles};
@@ -6,6 +5,7 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_color::ColorU;
 
 use super::auth_manager::{AuthManager, AuthManagerEvent};
 use super::auth_override_warning_body::AuthOverrideWarningBodyEvent;

@@ -6,6 +6,13 @@ use std::fmt::Debug;
 use std::ops::Range;
 
 use lazy_static::lazy_static;
+use octomus_util::user_input::UserInput;
+use octomusui::actions::StandardAction;
+use octomusui::elements::Axis;
+use octomusui::event::ModifiersState;
+use octomusui::keymap::{EditableBinding, FixedBinding, Keystroke, PerPlatformKeystroke};
+use octomusui::units::Pixels;
+use octomusui::{AppContext, TypedActionView, ViewContext, WeakViewHandle};
 use rangemap::RangeSet;
 use string_offset::CharOffset;
 use warp_editor::content::version::BufferVersion;
@@ -14,13 +21,6 @@ use warp_editor::model::{CoreEditorModel, PlainTextEditorModel};
 use warp_editor::render::element::RichTextAction;
 use warp_editor::render::model::{ExpansionType, LineCount, Location};
 use warp_editor::selection::{TextDirection, TextUnit};
-use octomus_util::user_input::UserInput;
-use octomusui::actions::StandardAction;
-use octomusui::elements::Axis;
-use octomusui::event::ModifiersState;
-use octomusui::keymap::{EditableBinding, FixedBinding, Keystroke, PerPlatformKeystroke};
-use octomusui::units::Pixels;
-use octomusui::{AppContext, TypedActionView, ViewContext, WeakViewHandle};
 
 use crate::cmd_or_ctrl_shift;
 use crate::code::editor::line::EditorLineLocation;

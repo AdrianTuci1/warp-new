@@ -1,7 +1,7 @@
-use settings::macros::define_settings_group;
-use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
 use octomusui::keymap::Keystroke;
 use octomusui::{AppContext, DisplayIdx, ModelContext};
+use settings::macros::define_settings_group;
+use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
 
 use crate::report_if_error;
 use crate::root_view::{update_quake_window_bounds, QuakeModePinPosition};

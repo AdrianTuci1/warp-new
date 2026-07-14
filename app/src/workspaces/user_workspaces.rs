@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
 use anyhow::Result;
-use regex::Regex;
 use octomus_core::features::FeatureFlag;
 use octomus_core::settings::{ChangeEventReason, Setting};
-use warp_graphql::workspace::FeatureModelChoice;
 use octomusui::{AppContext, Entity, ModelContext, SingletonEntity, Tracked};
+use regex::Regex;
+use warp_graphql::workspace::FeatureModelChoice;
 
 use super::team::{DiscoverableTeam, MembershipRole, Team};
 #[cfg(test)]

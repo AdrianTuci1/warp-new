@@ -1,16 +1,16 @@
 use chrono::{DateTime, Utc};
 use comfy_table::Cell;
 use futures::future;
-use serde::Serialize;
 use octomus_cli::agent::OutputFormat;
 use octomus_cli::schedule::{
     CreateScheduleArgs, DeleteScheduleArgs, GetScheduleArgs, PauseScheduleArgs, ScheduleCommand,
     ScheduleSubcommand, UnpauseScheduleArgs, UpdateScheduleArgs,
 };
 use octomus_cli::GlobalOptions;
-use warp_graphql::queries::get_scheduled_agent_history::ScheduledAgentHistory;
 use octomusui::platform::TerminationMode;
 use octomusui::{AppContext, SingletonEntity};
+use serde::Serialize;
+use warp_graphql::queries::get_scheduled_agent_history::ScheduledAgentHistory;
 
 use super::common::{EnvironmentChoice, ResolveConfigurationError};
 use super::output::{self, TableFormat};

@@ -2,7 +2,6 @@ use std::default::Default;
 use std::sync::Arc;
 
 use byte_unit::Byte;
-use parking_lot::FairMutex;
 use octomus_core::features::FeatureFlag;
 use octomusui::elements::{
     Container, Flex, MainAxisSize, MouseStateHandle, ParentElement, Shrinkable, Text,
@@ -14,6 +13,7 @@ use octomusui::ui_components::radio_buttons::{
     RadioButtonItem, RadioButtonLayout, RadioButtonStateHandle,
 };
 use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use parking_lot::FairMutex;
 
 use super::style::{self, BUTTON_GAP, MODAL_MARGIN};
 use crate::ai::blocklist::BlocklistAIHistoryModel;

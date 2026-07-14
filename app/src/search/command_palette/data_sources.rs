@@ -105,7 +105,10 @@ impl DataSourceStore {
                 if AISettings::as_ref(ctx).is_any_ai_enabled(ctx) {
                     octomus_drive_filters.insert(QueryFilter::AgentModeWorkflows);
                 }
-                mixer.add_sync_source(self.octomus_drive_data_source.clone(), octomus_drive_filters);
+                mixer.add_sync_source(
+                    self.octomus_drive_data_source.clone(),
+                    octomus_drive_filters,
+                );
             }
 
             mixer.add_sync_source(

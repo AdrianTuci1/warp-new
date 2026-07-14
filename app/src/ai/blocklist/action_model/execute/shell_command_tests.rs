@@ -2,8 +2,8 @@ use std::sync::Arc;
 
 use async_channel::unbounded;
 use futures::channel::oneshot;
-use parking_lot::FairMutex;
 use octomusui::{App, EntityId};
+use parking_lot::FairMutex;
 
 use super::{BlockSelector, ShellCommandExecutor};
 use crate::terminal::event::{BlockMetadataReceivedEvent, BlockWorkingDirectoryUpdatedEvent};

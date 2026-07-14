@@ -1,4 +1,3 @@
-use pathfinder_color::ColorU;
 use octomus_core::ui::theme::phenomenon::PhenomenonStyle;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{
@@ -8,6 +7,7 @@ use octomusui::elements::{
 use octomusui::ui_components::checkbox::Checkbox;
 use octomusui::ui_components::components::UiComponentStyles;
 use octomusui::Element;
+use pathfinder_color::ColorU;
 
 use crate::appearance::Appearance;
 use crate::ui_components::icons::Icon;

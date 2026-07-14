@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::Vector2F;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::Fill;
@@ -13,6 +12,7 @@ use octomusui_core::prelude::Align;
 use octomusui_core::presenter::EventContext;
 use octomusui_core::text_layout::TextAlignment;
 use octomusui_core::{AppContext, Element};
+use pathfinder_geometry::vector::Vector2F;
 
 pub(super) type ClickCallback = Box<dyn FnMut(&mut EventContext, &AppContext, Vector2F) + 'static>;
 pub(super) type HoverCallback =

@@ -1,4 +1,3 @@
-use settings::Setting as _;
 use octomus_core::ui::Icon;
 use octomusui::elements::{
     ChildView, ConstrainedBox, Container, CrossAxisAlignment, Flex, MainAxisAlignment,
@@ -10,6 +9,7 @@ use octomusui::{
     AppContext, Element, Entity, EventContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use settings::Setting as _;
 
 use super::inline_action_icons::icon_size;
 use crate::ai::blocklist::view_util::error_color;

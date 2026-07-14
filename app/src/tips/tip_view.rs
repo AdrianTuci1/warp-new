@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::vec2f;
 use octomusui::elements::{
     Align, Border, ChildAnchor, ClippedScrollStateHandle, ClippedScrollable, ConstrainedBox,
     Container, CornerRadius, CrossAxisAlignment, DispatchEventResult, Element, EventHandler, Flex,
@@ -14,6 +13,7 @@ use octomusui::{
     Action, AppContext, BlurContext, Entity, EntityId, ModelHandle, SingletonEntity,
     TypedActionView, View, ViewContext, WindowId,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use super::WELCOME_TIP_FEATURE_LENGTH;
 use crate::appearance::Appearance;

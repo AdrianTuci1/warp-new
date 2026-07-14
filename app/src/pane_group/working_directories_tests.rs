@@ -4,9 +4,9 @@ use std::collections::HashSet;
 use std::fs;
 use std::path::PathBuf;
 
+use octomusui::{App, EntityId};
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
-use octomusui::{App, EntityId};
 
 use super::PaneGroupRepositoryRoots;
 use crate::code::buffer_location::LocalOrRemotePath;
@@ -371,10 +371,11 @@ fn setup_repo(
     let canonical_repo = dunce::canonicalize(&repo_path).expect("canonical repo");
 
     detected_repos.update(app, |repos, _ctx| {
-        let canonical = octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(
-            canonical_repo.as_path(),
-        )
-        .expect("canonicalized path");
+        let canonical =
+            octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(
+                canonical_repo.as_path(),
+            )
+            .expect("canonicalized path");
         repos.insert_test_repo_root(canonical);
     });
 

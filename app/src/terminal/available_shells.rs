@@ -7,10 +7,10 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 #[cfg(feature = "local_tty")]
-use settings::Setting as _;
-#[cfg(feature = "local_tty")]
 use octomusui::{AppContext, ModelContext};
 use octomusui::{Entity, SingletonEntity};
+#[cfg(feature = "local_tty")]
+use settings::Setting as _;
 
 use super::session_settings::{NewSessionShell, StartupShell};
 use super::shell::ShellType;

@@ -2,8 +2,8 @@ use std::sync::Arc;
 
 use chrono::{Duration, Utc};
 use cloud_object_client::MockObjectClient;
-use settings::manager::SettingsManager;
 use octomusui::{App, SingletonEntity};
+use settings::manager::SettingsManager;
 
 use crate::auth::AuthStateProvider;
 use crate::cloud_object::model::persistence::CloudModel;

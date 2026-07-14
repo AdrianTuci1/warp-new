@@ -1,6 +1,5 @@
 /// Common functionality used across different AI Assistant components.
 use markdown_parser::{parse_markdown, CodeBlockText, FormattedText, FormattedTextLine};
-use pathfinder_color::ColorU;
 use octomusui::elements::{
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, HighlightedHyperlink, Icon,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Radius, Text,
@@ -9,6 +8,7 @@ use octomusui::platform::Cursor;
 use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, ModelHandle};
+use pathfinder_color::ColorU;
 
 use super::panel::AIAssistantAction;
 use super::requests::Requests;

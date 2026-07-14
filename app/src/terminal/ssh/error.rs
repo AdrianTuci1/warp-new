@@ -57,7 +57,9 @@ impl OctomusificationUnavailableReason {
             OctomusificationUnavailableReason::TmuxFailed => TMUX_FAILED_ERROR,
             OctomusificationUnavailableReason::Timeout { .. } => WARPIFY_TIMEOUT_ERROR,
             OctomusificationUnavailableReason::UnsupportedShell { .. } => UNSUPPORTED_SHELL_ERROR,
-            OctomusificationUnavailableReason::TmuxInstallFailed { .. } => TMUX_INSTALL_FAILED_ERROR,
+            OctomusificationUnavailableReason::TmuxInstallFailed { .. } => {
+                TMUX_INSTALL_FAILED_ERROR
+            }
         }
     }
 
@@ -279,7 +281,9 @@ impl View for SshErrorBlock {
                     .build()
                     .with_cursor(Cursor::PointingHand)
                     .on_click(move |ctx, _, _| {
-                        ctx.dispatch_typed_action(SshErrorBlockAction::ContinueWithoutOctomusification)
+                        ctx.dispatch_typed_action(
+                            SshErrorBlockAction::ContinueWithoutOctomusification,
+                        )
                     })
                     .finish(),
             );

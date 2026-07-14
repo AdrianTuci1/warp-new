@@ -3,9 +3,6 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use settings::ToggleableSetting as _;
-use strum::IntoEnumIterator;
-use uuid::Uuid;
 use octomus_core::features::FeatureFlag;
 use octomus_core::send_telemetry_from_ctx;
 use octomus_core::ui::appearance::AppearanceEvent;
@@ -21,6 +18,9 @@ use octomusui::ui_components::switch::SwitchStateHandle;
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use settings::ToggleableSetting as _;
+use strum::IntoEnumIterator;
+use uuid::Uuid;
 
 use crate::ai::mcp::gallery::MCPGalleryManagerEvent;
 use crate::ai::mcp::templatable::{GalleryData, TemplatableMCPServer};

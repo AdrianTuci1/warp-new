@@ -1,10 +1,8 @@
 use std::cmp::Ordering;
 
 use itertools::Itertools;
-use pathfinder_color::ColorU;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::Appearance;
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     ChildView, ConstrainedBox, Container, CrossAxisAlignment, Fill, Flex, MainAxisAlignment,
     MainAxisSize, ParentElement, Shrinkable,
@@ -13,6 +11,8 @@ use octomusui::text_layout::TextStyle;
 use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, SingletonEntity as _, ViewContext, ViewHandle};
+use pathfinder_color::ColorU;
+use warp_editor::editor::NavigationKey;
 
 use super::alias_argument_selector::{AliasArgumentSelector, AliasArgumentSelectorEvent};
 use super::{

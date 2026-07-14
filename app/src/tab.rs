@@ -2,10 +2,6 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use serde::{Deserialize, Serialize};
-use settings::Setting as _;
 use octomus_core::context_flag::ContextFlag;
 use octomus_core::ui::builder::UiBuilder;
 use octomus_core::ui::theme::color::internal_colors;
@@ -23,6 +19,10 @@ use octomusui::text_layout::ClipConfig;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::ui_components::text_input::TextInput;
 use octomusui::{AppContext, SingletonEntity, ViewHandle};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use serde::{Deserialize, Serialize};
+use settings::Setting as _;
 
 use crate::ai::agent::conversation::ConversationStatus;
 use crate::ai::conversation_status_ui::{render_status_element, STATUS_ELEMENT_PADDING};
@@ -1314,8 +1314,9 @@ impl<'a> TabComponent<'a> {
                 let mouse_state = self.tab.indicator_hover_state.clone();
                 Some(
                     Hoverable::new(mouse_state, move |state| {
-                        let mut stack = Stack::new()
-                            .with_child(Icon::OzCloud.to_octomusui_icon(icon_color.into()).finish());
+                        let mut stack = Stack::new().with_child(
+                            Icon::OzCloud.to_octomusui_icon(icon_color.into()).finish(),
+                        );
 
                         if state.is_hovered() {
                             let tooltip = ui_builder

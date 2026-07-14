@@ -5,12 +5,7 @@ use anyhow::Context;
 use async_channel::Sender;
 use futures_util::stream::AbortHandle;
 use lazy_static::lazy_static;
-use regex::Regex;
-use settings::Setting as _;
-use url::Url;
 use octomus_core::context_flag::ContextFlag;
-use warp_editor::editor::NavigationKey;
-use warp_editor::model::{CoreEditorModel, RichTextEditorModel};
 use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
 use octomusui::clipboard::ClipboardContent;
 use octomusui::elements::{
@@ -27,6 +22,11 @@ use octomusui::{
     AppContext, BlurContext, Element, Entity, FocusContext, ModelAsRef, ModelHandle,
     SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, WindowId,
 };
+use regex::Regex;
+use settings::Setting as _;
+use url::Url;
+use warp_editor::editor::NavigationKey;
+use warp_editor::model::{CoreEditorModel, RichTextEditorModel};
 
 use self::details_bar::DetailsBar;
 use super::active_notebook_data::{
@@ -588,8 +588,10 @@ impl NotebookView {
                     .and_then(SyncId::into_server)
                 {
                     self.pane_configuration.update(ctx, |pane_config, ctx| {
-                        pane_config
-                            .set_shareable_object(Some(ShareableObject::OctomusDriveObject(id)), ctx);
+                        pane_config.set_shareable_object(
+                            Some(ShareableObject::OctomusDriveObject(id)),
+                            ctx,
+                        );
                     })
                 }
             }

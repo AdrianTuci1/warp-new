@@ -4,12 +4,8 @@ use std::sync::Arc;
 use enclose::enclose;
 use itertools::Itertools as _;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::Icon;
-use warp_graphql::billing::AddonCreditsOption;
-use warp_graphql::error::BudgetExceededError;
 use octomusui::elements::{
     Align, Border, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, DropShadow, Expanded, Flex, FormattedTextElement, HighlightedHyperlink,
@@ -21,6 +17,10 @@ use octomusui::fonts::Weight;
 use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{Coords, UiComponent as _, UiComponentStyles};
 use octomusui::{AppContext, Element, Entity, SingletonEntity as _, View, ViewContext, ViewHandle};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use warp_graphql::billing::AddonCreditsOption;
+use warp_graphql::error::BudgetExceededError;
 
 use crate::ai::request_usage_model::{
     AIRequestUsageModel, AIRequestUsageModelEvent, BuyCreditsBannerDisplayState,

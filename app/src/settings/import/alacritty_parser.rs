@@ -4,11 +4,11 @@ use std::path::PathBuf;
 
 use async_recursion::async_recursion;
 use async_trait::async_trait;
-use pathfinder_color::ColorU;
-use serde::Deserialize;
 use octomus_core::ui::color::hex_color::coloru_from_hex_string;
 use octomus_core::ui::theme::{AnsiColor, AnsiColors, TerminalColors, WarpTheme};
 use octomusui::fonts::FontInfo;
+use pathfinder_color::ColorU;
+use serde::Deserialize;
 
 use super::config::{
     calculate_accent_color, Config, ConfigError, ImportableSetting, ParseableConfig, SettingType,

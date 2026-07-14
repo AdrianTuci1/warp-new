@@ -6,8 +6,6 @@ use std::sync::Arc;
 
 use chrono::{DateTime, Duration, Local};
 use instant::Instant;
-use parking_lot::RwLock;
-use pathfinder_color::ColorU;
 use octomus_cli::agent::Harness;
 use octomus_cli::skill::SkillSpec;
 use octomus_core::channel::ChannelState;
@@ -27,6 +25,8 @@ use octomusui::ui_components::components::UiComponent;
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use parking_lot::RwLock;
+use pathfinder_color::ColorU;
 
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::agent::conversation::{
@@ -1375,10 +1375,11 @@ impl ConversationDetailsPanel {
         let ui_font_size = appearance.ui_font_size();
         let sub_color = blended_colors::text_sub(theme, theme.surface_1());
 
-        let icon = ConstrainedBox::new(Icon::Octomus.to_octomusui_icon(theme.foreground()).finish())
-            .with_width(20.)
-            .with_height(20.)
-            .finish();
+        let icon =
+            ConstrainedBox::new(Icon::Octomus.to_octomusui_icon(theme.foreground()).finish())
+                .with_width(20.)
+                .with_height(20.)
+                .finish();
 
         let skill_name_text = Text::new(
             format!("/{skill_name}"),

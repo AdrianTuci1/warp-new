@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 
-use repo_metadata::{DirectoryWatcher, RepositoryUpdate, TargetFile};
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui::{App, ModelHandle};
+use repo_metadata::{DirectoryWatcher, RepositoryUpdate, TargetFile};
 
 use super::*;
 

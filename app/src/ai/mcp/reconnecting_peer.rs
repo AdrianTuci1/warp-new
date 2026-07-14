@@ -2,8 +2,8 @@
 
 use std::future::Future;
 
-use uuid::Uuid;
 use octomusui::ModelSpawner;
+use uuid::Uuid;
 
 use super::TemplatableMCPServerManager;
 

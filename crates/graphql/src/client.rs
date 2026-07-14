@@ -3,11 +3,11 @@ use std::borrow::Cow;
 use cynic::{GraphQlResponse, QueryFragment, QueryVariables};
 use http::StatusCode;
 use instant::Duration;
+use octomus_core::channel::ChannelState;
+use octomus_core::operating_system_info::OperatingSystemInfo;
 use reqwest::header::CONTENT_TYPE;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
-use octomus_core::channel::ChannelState;
-use octomus_core::operating_system_info::OperatingSystemInfo;
 
 use crate::error::{UserFacingError, UserFacingErrorInterface};
 use crate::request_context::{ClientContext, OsContext, RequestContext};

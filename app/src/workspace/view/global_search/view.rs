@@ -6,15 +6,12 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use async_channel::Sender;
-use pathfinder_geometry::vector::vec2f;
-use string_offset::{ByteOffset, CharCounter};
 use octomus_core::r#async::debounce;
 use octomus_core::send_telemetry_from_ctx;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::{AnsiColorIdentifier, Fill as ThemeFill};
 use octomus_core::ui::Icon;
-use warp_editor::editor::NavigationKey;
 use octomus_ripgrep::search::{Match as RipgrepMatch, Submatch};
 use octomusui::elements::{
     Border, ChildAnchor, ChildView, Clipped, ConstrainedBox, Container, CornerRadius,
@@ -34,6 +31,9 @@ use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use string_offset::{ByteOffset, CharCounter};
+use warp_editor::editor::NavigationKey;
 
 use crate::code::icon_from_file_path;
 use crate::coding_panel_enablement_state::CodingPanelEnablementState;

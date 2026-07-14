@@ -23,8 +23,6 @@ use std::sync::{Arc, LazyLock};
 use std::time::Duration;
 
 use anyhow::anyhow;
-use parking_lot::FairMutex;
-use pathfinder_color::ColorU;
 use octomus_core::features::FeatureFlag;
 use octomus_core::settings::Setting;
 use octomus_core::ui::appearance::Appearance;
@@ -45,6 +43,8 @@ use octomusui::{
     AppContext, Element, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use parking_lot::FairMutex;
+use pathfinder_color::ColorU;
 
 use super::{RichContentInsertionPosition, TerminalAction, TerminalView};
 use crate::ai::blocklist::agent_view::agent_view_bg_fill;
@@ -1232,7 +1232,8 @@ impl UseAgentToolbar {
     pub(in crate::terminal) fn notify_and_notify_children(&mut self, ctx: &mut ViewContext<Self>) {
         ctx.notify();
         self.agent_input_footer.update(ctx, |_, ctx| ctx.notify());
-        self.octomusify_footer_view.update(ctx, |_, ctx| ctx.notify());
+        self.octomusify_footer_view
+            .update(ctx, |_, ctx| ctx.notify());
         self.button.update(ctx, |_, ctx| ctx.notify());
         self.give_control_back_button
             .update(ctx, |_, ctx| ctx.notify());
@@ -1274,7 +1275,10 @@ impl UseAgentToolbar {
     }
 
     /// Returns the current octomusification mode, if set.
-    pub(in crate::terminal) fn octomusify_mode(&self, app: &AppContext) -> Option<OctomusificationMode> {
+    pub(in crate::terminal) fn octomusify_mode(
+        &self,
+        app: &AppContext,
+    ) -> Option<OctomusificationMode> {
         self.octomusify_footer_view.as_ref(app).mode().cloned()
     }
 

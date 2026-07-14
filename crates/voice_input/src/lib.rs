@@ -6,14 +6,14 @@ use base64::Engine;
 use cpal::traits::{DeviceTrait, HostTrait};
 use cpal::{Sample, StreamConfig};
 use futures::channel::oneshot;
+use octomusui_core::event::KeyState;
+use octomusui_core::platform::MicrophoneAccessState;
+use octomusui_core::{Entity, ModelContext, SingletonEntity};
 use parking_lot::Mutex;
 use rubato::{
     Resampler, SincFixedIn, SincInterpolationParameters, SincInterpolationType, WindowFunction,
 };
 use thiserror::Error;
-use octomusui_core::event::KeyState;
-use octomusui_core::platform::MicrophoneAccessState;
-use octomusui_core::{Entity, ModelContext, SingletonEntity};
 
 const DEFAULT_CHUNK_SIZE: u32 = 512;
 // We only support mono for now.

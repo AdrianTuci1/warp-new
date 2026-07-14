@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use ordered_float::OrderedFloat;
 use octomus_core::ui::builder;
 use octomusui::elements::{
     Align, ConstrainedBox, Container, CrossAxisAlignment, Flex, Highlight, Icon, MainAxisAlignment,
@@ -9,6 +8,7 @@ use octomusui::elements::{
 use octomusui::fonts::{Properties, Weight};
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::appearance::Appearance;
 use crate::search::command_search::searcher::{AcceptedHistoryItem, CommandSearchItemAction};

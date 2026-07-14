@@ -1,10 +1,10 @@
 use std::cmp::Ordering;
 
-use typed_path::TypedPathBuf;
 use octomus_completer::completer::{EngineDirEntry, EngineFileType, PathCompletionContext};
 use octomus_util::file_type::is_binary_file;
 use octomusui::r#async::SpawnedFutureHandle;
 use octomusui::{AppContext, Entity, ModelContext};
+use typed_path::TypedPathBuf;
 
 use super::display_menu::GenericMenuItem;
 use crate::completer::SessionContext;

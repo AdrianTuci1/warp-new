@@ -5,12 +5,12 @@ pub mod common;
 use std::borrow::Cow;
 use std::sync::Arc;
 
-use pathfinder_color::ColorU;
 use octomus_core::ui::Icon;
 use octomusui::assets::asset_cache::AssetSource;
 use octomusui::elements::MouseStateHandle;
 use octomusui::keymap::Keystroke;
 use octomusui::EventContext;
+use pathfinder_color::ColorU;
 /// A trait for types that can produce a message based on some contextual arguments.
 ///
 /// The generic `Args` parameter allows each call site to define its own

@@ -1,6 +1,5 @@
 use std::path::PathBuf;
 
-use uuid::Uuid;
 use octomus_core::features::FeatureFlag;
 use octomusui::elements::{
     ConstrainedBox, Container, CrossAxisAlignment, Flex, MainAxisAlignment, MainAxisSize,
@@ -10,6 +9,7 @@ use octomusui::fonts::{Properties, Weight};
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use uuid::Uuid;
 
 use crate::ai::blocklist::BlocklistAIPermissions;
 use crate::ai::execution_profiles::profiles::{
@@ -517,7 +517,9 @@ fn render_allowlist_denylist_row(
             .finish(),
     )
     .with_margin_left(8.)
-    .with_border(octomusui::elements::Border::left(1.).with_border_fill(appearance.theme().outline()))
+    .with_border(
+        octomusui::elements::Border::left(1.).with_border_fill(appearance.theme().outline()),
+    )
     .with_padding_left(8.)
     .finish()
 }

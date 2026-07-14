@@ -1,5 +1,4 @@
 use fuzzy_match::FuzzyMatchResult;
-use ordered_float::OrderedFloat;
 use octomus_core::ui::theme::Fill;
 use octomus_core::ui::Icon;
 use octomusui::elements::{ConstrainedBox, Container, Flex, Highlight, ParentElement as _, Text};
@@ -7,6 +6,7 @@ use octomusui::fonts::{Properties, Style, Weight};
 use octomusui::prelude::CrossAxisAlignment;
 use octomusui::text_layout::ClipConfig;
 use octomusui::{AppContext, Element, SingletonEntity as _};
+use ordered_float::OrderedFloat;
 
 use crate::ai::execution_profiles::profiles::ClientProfileId;
 use crate::appearance::Appearance;

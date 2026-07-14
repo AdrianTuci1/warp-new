@@ -1,4 +1,3 @@
-use settings::Setting as _;
 use octomusui::elements::{
     Align, CrossAxisAlignment, Flex, MainAxisSize, MouseStateHandle, ParentElement as _,
 };
@@ -7,6 +6,7 @@ use octomusui::platform::Cursor;
 use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use settings::Setting as _;
 
 use crate::appearance::Appearance;
 use crate::report_if_error;

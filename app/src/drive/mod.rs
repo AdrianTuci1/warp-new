@@ -18,10 +18,10 @@ use std::fmt;
 
 pub use cloud_objects::drive::CloudObjectTypeAndId;
 pub use index::DriveIndexVariant;
-pub use panel::{DrivePanel, DrivePanelEvent};
-use serde::{Deserialize, Serialize};
 use octomus_core::user_preferences::GetUserPreferences as _;
 use octomusui::AppContext;
+pub use panel::{DrivePanel, DrivePanelEvent};
+use serde::{Deserialize, Serialize};
 
 use crate::cloud_object::model::view::{CloudViewModel, UpdateTimestamp};
 use crate::cloud_object::{CloudObject, ObjectType};

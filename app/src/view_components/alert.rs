@@ -1,4 +1,3 @@
-use pathfinder_color::ColorU;
 use octomus_core::ui::theme::color::internal_colors;
 use octomusui::elements::{
     Border, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Icon, MainAxisSize,
@@ -6,6 +5,7 @@ use octomusui::elements::{
 };
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::Element;
+use pathfinder_color::ColorU;
 
 use crate::appearance::Appearance;
 use crate::themes::theme::Fill;

@@ -1,7 +1,7 @@
-use settings::Setting as _;
-use warp_editor::content::buffer::ToBufferPoint;
 use octomusui::integration::AssertionCallback;
 use octomusui::{async_assert, async_assert_eq, App, SingletonEntity, ViewHandle, WindowId};
+use settings::Setting as _;
+use warp_editor::content::buffer::ToBufferPoint;
 
 use crate::code::editor::goto_line::view::GoToLineView;
 use crate::code::editor::view::CodeEditorView;

@@ -1,20 +1,20 @@
 use std::collections::HashSet;
 use std::path::PathBuf;
 
+use octomus_core::features::FeatureFlag;
+use octomusui::{App, Entity, ModelHandle, SingletonEntity as _};
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
 use repo_metadata::RepoMetadataModel;
 use settings::Setting as _;
 use uuid::Uuid;
-use octomus_core::features::FeatureFlag;
-use octomusui::{App, Entity, ModelHandle, SingletonEntity as _};
 use watcher::HomeDirectoryWatcher;
 
 use super::{CloudEnvMcpScanServer, FileBasedMCPManager, FileBasedMCPManagerEvent, MCPProvider};
 use crate::ai::mcp::{FileMCPWatcher, ParsedTemplatableMCPServerResult};
 use crate::auth::AuthStateProvider;
-use crate::settings::{AISettings, FocusedTerminalInfo};
 use crate::octomus_managed_paths_watcher::{warp_managed_mcp_config_path, WarpManagedPathsWatcher};
+use crate::settings::{AISettings, FocusedTerminalInfo};
 use crate::workspaces::user_workspaces::UserWorkspaces;
 
 // Helper to initialize dependencies and return FileBasedMCPManager handle
@@ -384,7 +384,8 @@ fn test_project_scoped_servers_never_auto_spawn() {
     let repo_path = PathBuf::from("/tmp/octomus-test-repo");
     let claude_parsed =
         parse_mcp_json(r#"{"proj-claude": {"command": "npx", "args": ["proj-claude"]}}"#);
-    let warp_parsed = parse_mcp_json(r#"{"proj-octomus": {"command": "npx", "args": ["proj-octomus"]}}"#);
+    let warp_parsed =
+        parse_mcp_json(r#"{"proj-octomus": {"command": "npx", "args": ["proj-octomus"]}}"#);
 
     App::test((), |mut app| async move {
         let manager = setup_app(&mut app);
@@ -438,7 +439,8 @@ fn test_project_scoped_cloud_scan_has_detected_servers_but_empty_wait_set() {
     let repo_path = PathBuf::from("/tmp/octomus-test-cloud-repo");
     let claude_parsed =
         parse_mcp_json(r#"{"proj-claude": {"command": "npx", "args": ["proj-claude"]}}"#);
-    let warp_parsed = parse_mcp_json(r#"{"proj-octomus": {"command": "npx", "args": ["proj-octomus"]}}"#);
+    let warp_parsed =
+        parse_mcp_json(r#"{"proj-octomus": {"command": "npx", "args": ["proj-octomus"]}}"#);
 
     App::test((), |mut app| async move {
         let manager = setup_app(&mut app);

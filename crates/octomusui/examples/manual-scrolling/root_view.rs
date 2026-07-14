@@ -1,5 +1,3 @@
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
 use octomusui::color::ColorU;
 use octomusui::elements::new_scrollable::{
     AxisConfiguration, ClippedAxisConfiguration, DualAxisConfig, NewScrollableElement,
@@ -12,6 +10,8 @@ use octomusui::elements::{
 use octomusui::keymap::FixedBinding;
 use octomusui::units::Pixels;
 use octomusui::{AppContext, Element, Entity, TypedActionView, View, ViewContext, ViewHandle};
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
 
 pub fn init(ctx: &mut AppContext) {
     use octomusui::keymap::macros::*;
@@ -216,7 +216,12 @@ impl NewScrollableElement for ScrollableElement {
         }
     }
 
-    fn scroll(&mut self, delta: octomusui::units::Pixels, axis: Axis, ctx: &mut octomusui::EventContext) {
+    fn scroll(
+        &mut self,
+        delta: octomusui::units::Pixels,
+        axis: Axis,
+        ctx: &mut octomusui::EventContext,
+    ) {
         match axis {
             Axis::Horizontal => (),
             Axis::Vertical => {

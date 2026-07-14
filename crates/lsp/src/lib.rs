@@ -53,10 +53,10 @@ impl std::fmt::Display for LspServerLogLevel {
 use std::sync::Arc;
 
 use anyhow::Result;
-#[cfg(not(target_arch = "wasm32"))]
-use simple_logger::SimpleLogger;
 use octomusui_core::r#async::executor::Background;
 use octomusui_core::AppContext;
+#[cfg(not(target_arch = "wasm32"))]
+use simple_logger::SimpleLogger;
 
 pub struct LspServiceInitializationResult {
     pub service: LspService,

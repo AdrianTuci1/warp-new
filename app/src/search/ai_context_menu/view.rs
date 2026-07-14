@@ -4,9 +4,6 @@ use std::time::Duration;
 
 use async_channel::Sender;
 use itertools::Itertools;
-#[cfg(not(target_family = "wasm"))]
-use repo_metadata::repositories::DetectedRepositories;
-use settings::Setting as _;
 use octomus_core::features::FeatureFlag;
 use octomusui::elements::{
     AnchorPair, Border, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
@@ -21,6 +18,9 @@ use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle,
 };
+#[cfg(not(target_family = "wasm"))]
+use repo_metadata::repositories::DetectedRepositories;
+use settings::Setting as _;
 
 use super::styles;
 use crate::appearance::Appearance;

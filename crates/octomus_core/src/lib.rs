@@ -27,8 +27,8 @@ pub mod ui;
 pub mod user_preferences;
 
 pub use app_id::AppId;
-pub use session_id::SessionId;
 pub use octomus_util::host_id::HostId;
+pub use session_id::SessionId;
 // Re-export octomusui_core so that it can be referenced safely from the
 // telemetry macros.
 pub use octomusui_core;

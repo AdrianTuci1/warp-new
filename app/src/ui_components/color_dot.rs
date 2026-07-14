@@ -1,7 +1,3 @@
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use ui_components::tooltip::{Params as TooltipParams, Tooltip as TooltipComponent};
-use ui_components::{Component as _, Options as ComponentOptions};
 use octomus_core::ui::theme::{AnsiColorIdentifier, Fill as ThemeFill};
 use octomusui::elements::{
     Border, ChildAnchor, ConstrainedBox, Container, CornerRadius, Element, Hoverable,
@@ -9,6 +5,10 @@ use octomusui::elements::{
     Stack,
 };
 use octomusui::platform::Cursor;
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use ui_components::tooltip::{Params as TooltipParams, Tooltip as TooltipComponent};
+use ui_components::{Component as _, Options as ComponentOptions};
 
 use crate::appearance::Appearance;
 use crate::ui_components::icons::Icon;
@@ -40,7 +40,11 @@ pub(crate) fn render_color_dot(
 ) -> Hoverable {
     Hoverable::new(mouse_state, move |state| {
         let overlay: Option<Box<dyn Element>> = if is_no_color {
-            Some(Icon::SlashCircle.to_octomusui_icon(foreground_color).finish())
+            Some(
+                Icon::SlashCircle
+                    .to_octomusui_icon(foreground_color)
+                    .finish(),
+            )
         } else {
             None
         };

@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use parking_lot::FairMutex;
 use octomus_core::ui::appearance::Appearance;
 use octomus_terminal::model::BlockId;
 use octomusui::prelude::{Container, Empty, MouseStateHandle};
@@ -8,6 +7,7 @@ use octomusui::scene::{CornerRadius, Radius};
 use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use parking_lot::FairMutex;
 
 use crate::ai::agent::icons::{failed_icon, yellow_running_icon};
 use crate::ai::blocklist::inline_action::inline_action_header::{

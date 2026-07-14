@@ -1,5 +1,3 @@
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::theme::color::internal_colors;
 use octomusui::elements::{
     Border, ChildAnchor, ConstrainedBox, Container, CornerRadius, Expanded, Flex, Hoverable,
@@ -10,6 +8,8 @@ use octomusui::prelude::{Align, CrossAxisAlignment};
 use octomusui::text_layout::ClipConfig;
 use octomusui::ui_components::components::UiComponent;
 use octomusui::{AppContext, Element, SingletonEntity as _};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::llms::LLMSpec;
 use crate::appearance::Appearance;

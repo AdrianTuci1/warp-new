@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex};
 
-use remote_server::manager::RemoteServerManagerEvent;
 use octomus_util::remote_path::RemotePath;
+use remote_server::manager::RemoteServerManagerEvent;
 
 use super::InternalRemoteDiffState;
 use crate::auth::AuthStateProvider;

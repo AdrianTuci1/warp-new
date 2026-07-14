@@ -3,9 +3,13 @@
 use std::sync::Arc;
 
 use markdown_parser::markdown_parser::CODE_BLOCK_DEFAULT_MARKDOWN_LANG;
-use pathfinder_color::ColorU;
 use octomus_core::ui::builder::CHECK_SVG_PATH;
 use octomus_core::ui::theme::color::internal_colors;
+use octomus_util::user_input::UserInput;
+use octomusui::elements::{Border, ListIndentLevel};
+use octomusui::fonts::FamilyId;
+use octomusui::ui_components::checkbox::HOVER_BACKGROUND_COLOR;
+use pathfinder_color::ColorU;
 use warp_editor::content::text::{
     BlockHeaderSize, BlockType as ContentBlockType, BufferBlockStyle, CodeBlockType,
 };
@@ -13,10 +17,6 @@ use warp_editor::render::model::{
     BrokenLinkStyle, CheckBoxStyle, EmbeddedItem, HorizontalRuleStyle, InlineCodeStyle,
     ParagraphStyles, RichTextStyles, TableStyle,
 };
-use octomus_util::user_input::UserInput;
-use octomusui::elements::{Border, ListIndentLevel};
-use octomusui::fonts::FamilyId;
-use octomusui::ui_components::checkbox::HOVER_BACKGROUND_COLOR;
 
 use crate::appearance::Appearance;
 use crate::notebooks::editor::embedded_item::EmbeddedWorkflow;

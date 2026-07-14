@@ -14,7 +14,6 @@ use std::rc::Rc;
 
 use lazy_static::lazy_static;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_color::ColorU;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::color::internal_colors::neutral_2;
 use octomusui::elements::{
@@ -27,6 +26,7 @@ use octomusui::keymap::Keystroke;
 use octomusui::platform::Cursor;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, EventContext, SingletonEntity};
+use pathfinder_color::ColorU;
 
 use super::inline_action_header::HeaderConfig;
 use crate::ai::blocklist::block::view_impl::WithContentItemSpacing;

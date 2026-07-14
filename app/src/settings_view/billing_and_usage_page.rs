@@ -5,14 +5,9 @@ use std::sync::Arc;
 use chrono::Local;
 use itertools::Itertools;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use settings::Setting;
-use thousands::Separable;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::Fill;
-use warp_graphql::billing::AddonCreditsOption;
 use octomusui::elements::{
     Align, Border, ChildAnchor, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Empty,
     Flex, FormattedTextElement, HighlightedHyperlink, Hoverable, HyperlinkUrl, MainAxisAlignment,
@@ -29,6 +24,11 @@ use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, UpdateView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use settings::Setting;
+use thousands::Separable;
+use warp_graphql::billing::AddonCreditsOption;
 
 use super::admin_actions::AdminActions;
 use super::settings_page::{

@@ -149,7 +149,9 @@ impl App {
             // SAFETY: the app and its delegate are exclusively owned here, so writing
             // the `rustWrapper` ivar and messaging them is sound.
             unsafe {
-                let app_delegate = app.delegate().expect("the octomus app always has a delegate");
+                let app_delegate = app
+                    .delegate()
+                    .expect("the octomus app always has a delegate");
 
                 let self_ptr = Box::into_raw(Box::new(self));
                 (*app_ptr).set_ivar(RUST_WRAPPER_IVAR_NAME, self_ptr as *mut c_void);

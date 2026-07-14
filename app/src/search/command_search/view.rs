@@ -6,8 +6,6 @@ use std::time::Duration;
 use async_channel::Sender;
 use itertools::Itertools;
 use lazy_static::lazy_static;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::Vector2F;
 use octomus_core::features::FeatureFlag;
 use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
 use octomusui::elements::{
@@ -23,6 +21,8 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WeakViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::Vector2F;
 
 use super::ai_queries::AIQueriesDataSource;
 use super::env_var_collections::EnvVarCollectionDataSource;
@@ -1116,8 +1116,8 @@ impl CommandSearchView {
 
 pub mod styles {
     use lazy_static::lazy_static;
-    use pathfinder_color::ColorU;
     use octomusui::elements::{Border, DropShadow, ScrollbarWidth};
+    use pathfinder_color::ColorU;
 
     use crate::appearance::Appearance;
     use crate::themes::theme::Fill;

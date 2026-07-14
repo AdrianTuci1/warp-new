@@ -1,4 +1,3 @@
-use settings::Setting;
 use octomus_core::report_if_error;
 use octomus_core::ui::Icon;
 use octomusui::elements::{
@@ -14,6 +13,7 @@ use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use settings::Setting;
 
 use crate::ai::blocklist::agent_view::{
     AgentViewController, AgentViewControllerEvent, ENTER_AGENT_VIEW_NEW_CONVERSATION_KEYSTROKE,

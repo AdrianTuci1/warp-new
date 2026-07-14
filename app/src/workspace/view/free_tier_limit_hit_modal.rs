@@ -1,12 +1,8 @@
 use asset_macro::bundled_or_fetched_asset;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use thousands::Separable;
 use octomus_core::send_telemetry_from_ctx;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::{Fill, WarpTheme};
-use warp_graphql::billing::{PlanPricing, StripeSubscriptionPlan};
 use octomusui::elements::{
     Align, Border, CacheOption, ChildAnchor, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, DropShadow, Flex, FormattedTextElement, HighlightedHyperlink, Image,
@@ -19,6 +15,10 @@ use octomusui::platform::Cursor;
 use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use thousands::Separable;
+use warp_graphql::billing::{PlanPricing, StripeSubscriptionPlan};
 
 use crate::ai::{AIRequestUsageModel, AIRequestUsageModelEvent};
 use crate::auth::AuthStateProvider;

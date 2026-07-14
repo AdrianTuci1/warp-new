@@ -1,6 +1,3 @@
-use ordered_float::OrderedFloat;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::color::blend::Blend;
 use octomus_core::ui::color::coloru_with_opacity;
 use octomus_core::ui::icons::Icon;
@@ -14,6 +11,9 @@ use octomusui::fonts::{Properties, Weight};
 use octomusui::ui_components::button::ButtonTooltipPosition;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, Gradient, SingletonEntity};
+use ordered_float::OrderedFloat;
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::blocklist::history_model::BlocklistAIHistoryModel;

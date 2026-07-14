@@ -1,6 +1,6 @@
-use ordered_float::OrderedFloat;
 use octomusui::elements::{Empty, Text};
 use octomusui::{AppContext, Element, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::appearance::Appearance;
 use crate::search::command_palette::mixer::CommandPaletteItemAction;

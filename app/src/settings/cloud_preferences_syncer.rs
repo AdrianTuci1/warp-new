@@ -5,7 +5,6 @@ use std::time::Duration;
 
 use cloud_object_models::JsonSerializer;
 use lazy_static::lazy_static;
-use settings::{Setting as _, SyncToCloud};
 use octomus_core::execution_mode::AppExecutionMode;
 use octomus_core::r#async::debounce;
 use octomus_core::settings::ChangeEventReason;
@@ -13,6 +12,7 @@ use octomus_core::user_preferences::GetUserPreferences;
 use octomusui::r#async::Timer;
 use octomusui::{Entity, ModelContext, SingletonEntity};
 use octomusui_extras::user_preferences::toml_backed::TomlBackedUserPreferences;
+use settings::{Setting as _, SyncToCloud};
 
 use super::cloud_preferences::{CloudPreferencesSettings, CloudPreferencesSettingsChangedEvent};
 use super::manager::SettingsEvent;

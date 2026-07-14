@@ -9,8 +9,6 @@ pub(crate) use modal_shell::{
     render_chip_editor_modal, render_chip_editor_sections, ChipEditorModalConfig,
     ChipEditorMouseHandles, ChipEditorSectionsConfig,
 };
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{
     Border, ConstrainedBox, Container, CrossAxisAlignment, Dash, DispatchEventResult, Draggable,
@@ -21,6 +19,8 @@ use octomusui::fonts::Properties;
 use octomusui::platform::Cursor;
 use octomusui::ui_components::components::UiComponent;
 use octomusui::{Action, View, ViewContext};
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::blocklist::agent_view::toolbar_item::AgentToolbarItemKind;
 use crate::appearance::Appearance;

@@ -32,17 +32,17 @@ pub use active_session::ActiveSession;
 pub use global_actions::{
     ForkAIConversationParams, ForkFromExchange, ForkedConversationDestination,
 };
+use octomus_core::context_flag::ContextFlag;
+use octomusui::accessibility::AccessibilityVerbosity;
+use octomusui::elements::DropTargetData;
+use octomusui::keymap::{BindingDescription, EditableBinding, FixedBinding};
+use octomusui::AppContext;
 use serde::{Deserialize, Serialize};
 pub use util::{active_terminal_in_window, PaneViewLocator, TabMovement};
 pub use view::{
     Workspace, NEW_SESSION_MENU_BUTTON_POSITION_ID, NEW_TAB_BUTTON_POSITION_ID,
     PANEL_HEADER_HEIGHT, TAB_BAR_HEIGHT, TOTAL_TAB_BAR_HEIGHT, WORKSPACE_PADDING,
 };
-use octomus_core::context_flag::ContextFlag;
-use octomusui::accessibility::AccessibilityVerbosity;
-use octomusui::elements::DropTargetData;
-use octomusui::keymap::{BindingDescription, EditableBinding, FixedBinding};
-use octomusui::AppContext;
 
 use crate::ai::blocklist::NEW_AGENT_PANE_LABEL;
 use crate::channel::{Channel, ChannelState};

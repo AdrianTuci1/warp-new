@@ -21,12 +21,12 @@ use anyhow::Context as _;
 use command::blocking::Command;
 use crash_handler::{CrashContext, CrashHandler};
 use lazy_static::lazy_static;
+use octomus_core::report_error;
 use parking_lot::Mutex;
 use sentry::protocol::{Attachment, AttachmentType};
 use sentry::{Breadcrumb, Level};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use octomus_core::report_error;
 
 use super::ToSentryTags;
 

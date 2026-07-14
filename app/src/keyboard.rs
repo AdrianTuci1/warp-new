@@ -3,12 +3,12 @@ use std::env::var_os;
 
 use anyhow::Context;
 use itertools::Itertools;
-use serde::{Deserialize, Serialize};
-use vec1::{vec1, Vec1};
 use octomusui::keymap::Keystroke;
 #[cfg(not(test))]
 use octomusui::keymap::Trigger;
 use octomusui::AppContext;
+use serde::{Deserialize, Serialize};
+use vec1::{vec1, Vec1};
 
 /// Environment variable to disable saving keybindings to file (used in integration tests)
 pub const DISABLE_SAVE_ENV_VAR: &str = "WARP_TEST_DISABLE_KEYBINDING_SAVE";

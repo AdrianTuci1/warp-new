@@ -5,8 +5,8 @@ use std::ops::{Range, RangeInclusive};
 use std::sync::{Arc, OnceLock};
 
 use instant::Instant;
-use pathfinder_color::ColorU;
 use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
+use pathfinder_color::ColorU;
 
 use super::find::RegexDFAs;
 use super::grid::RespectDisplayedOutput;

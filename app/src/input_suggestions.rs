@@ -7,8 +7,6 @@ use async_channel::Sender;
 use chrono::{DateTime, Local};
 use fuzzy_match::match_indices;
 use itertools::Itertools;
-use pathfinder_geometry::vector::vec2f;
-use warp_command_signatures::IconType;
 use octomus_completer::completer::{
     MatchType, PathSeparators, Suggestion, SuggestionResults, SuggestionType,
 };
@@ -29,6 +27,8 @@ use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyle
 use octomusui::{
     AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, WeakViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use warp_command_signatures::IconType;
 
 use crate::ai::blocklist::{render_ai_agent_mode_icon, AIQueryHistory, AIQueryHistoryOutputStatus};
 use crate::appearance::Appearance;

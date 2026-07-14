@@ -1,14 +1,14 @@
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use repo_metadata::repositories::DetectedRepositories;
-use string_offset::CharOffset;
 use octomus_core::ui::appearance::Appearance;
-use warp_editor::content::buffer::InitialBufferState;
-use warp_editor::render::element::VerticalExpansionBehavior;
 use octomusui::elements::Empty;
 use octomusui::platform::WindowStyle;
 use octomusui::{App, Element as _, ModelHandle, ViewHandle};
+use repo_metadata::repositories::DetectedRepositories;
+use string_offset::CharOffset;
+use warp_editor::content::buffer::InitialBufferState;
+use warp_editor::render::element::VerticalExpansionBehavior;
 
 use super::*;
 use crate::auth::AuthStateProvider;

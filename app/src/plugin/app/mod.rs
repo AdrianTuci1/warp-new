@@ -4,8 +4,8 @@ use std::sync::Arc;
 
 use anyhow::{Context, Result};
 use command::blocking::Command;
-use service_impl::{LogServiceImpl, PluginHostBootstrapServiceImpl};
 use octomusui::{Entity, ModelContext, SingletonEntity};
+use service_impl::{LogServiceImpl, PluginHostBootstrapServiceImpl};
 
 use super::{PLUGIN_HOST_ADDRESS_ENV_VAR, PLUGIN_HOST_FLAG};
 

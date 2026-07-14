@@ -1,6 +1,4 @@
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::appearance::Appearance;
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     Align, Border, ChildAnchor, ChildView, ClippedScrollStateHandle, ClippedScrollable,
     ConstrainedBox, Container, CornerRadius, Flex, OffsetPositioning, ParentElement,
@@ -13,6 +11,8 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use warp_editor::editor::NavigationKey;
 
 use crate::ai::agent::SuggestedRule;
 use crate::ai::facts::{AIFact, AIMemory, CloudAIFactModel};

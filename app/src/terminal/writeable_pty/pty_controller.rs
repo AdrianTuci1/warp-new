@@ -3,10 +3,10 @@ use std::collections::VecDeque;
 use std::sync::Arc;
 
 use async_channel::{Receiver, Sender};
-use parking_lot::FairMutex;
-use thiserror::Error;
 use octomusui::r#async::block_on;
 use octomusui::{Entity, ModelContext, ModelHandle, SingletonEntity};
+use parking_lot::FairMutex;
+use thiserror::Error;
 
 use super::Message;
 use crate::ai::agent::AIAgentPtyWriteMode;
@@ -475,7 +475,9 @@ impl<T: EventLoopSender> PtyController<T> {
             let chunks: Vec<Vec<u8>> = bytes.chunks(CHUNK_SIZE).map(|c| c.to_vec()).collect();
             for (i, chunk) in chunks.into_iter().enumerate() {
                 ctx.spawn(
-                    octomusui::r#async::Timer::after(std::time::Duration::from_millis(i as u64 * 50)),
+                    octomusui::r#async::Timer::after(std::time::Duration::from_millis(
+                        i as u64 * 50,
+                    )),
                     move |me, _, ctx| me.write_bytes(chunk, ctx),
                 );
             }

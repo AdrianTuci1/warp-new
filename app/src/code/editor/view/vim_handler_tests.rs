@@ -1,21 +1,21 @@
 use std::sync::Arc;
 
-use pathfinder_geometry::vector::Vector2F;
-use unindent::Unindent;
-use vim::vim::{MotionType, VimMode};
 use octomus_core::features::FeatureFlag;
 use octomus_core::settings::Setting;
 use octomus_core::ui::appearance::Appearance;
-use warp_editor::content::buffer::{InitialBufferState, ToBufferCharOffset, ToBufferPoint};
-use warp_editor::model::CoreEditorModel;
-use warp_editor::render::element::VerticalExpansionBehavior;
-use warp_editor::render::model::viewport::SizeInfo;
 use octomus_util::user_input::UserInput;
 use octomusui::keymap::Keystroke;
 use octomusui::platform::WindowStyle;
 use octomusui::text::point::Point;
 use octomusui::units::IntoPixels;
 use octomusui::{App, SingletonEntity, TypedActionView, UpdateModel, ViewHandle};
+use pathfinder_geometry::vector::Vector2F;
+use unindent::Unindent;
+use vim::vim::{MotionType, VimMode};
+use warp_editor::content::buffer::{InitialBufferState, ToBufferCharOffset, ToBufferPoint};
+use warp_editor::model::CoreEditorModel;
+use warp_editor::render::element::VerticalExpansionBehavior;
+use warp_editor::render::model::viewport::SizeInfo;
 
 use crate::auth::AuthStateProvider;
 use crate::cloud_object::model::persistence::CloudModel;

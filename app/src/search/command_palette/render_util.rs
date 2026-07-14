@@ -1,7 +1,7 @@
-use pathfinder_color::ColorU;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{Align, ConstrainedBox, Container, Empty};
 use octomusui::Element;
+use pathfinder_color::ColorU;
 
 use crate::appearance::Appearance;
 use crate::search::result_renderer::ItemHighlightState;

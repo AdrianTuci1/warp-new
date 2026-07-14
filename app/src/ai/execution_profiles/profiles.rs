@@ -3,11 +3,11 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
-use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 use octomus_core::channel::ChannelState;
 use octomus_core::user_preferences::GetUserPreferences;
 use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 use super::{
     AIExecutionProfile, ActionPermission, CloudAIExecutionProfileModel, WriteToPtyPermission,

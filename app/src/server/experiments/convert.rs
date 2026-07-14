@@ -94,7 +94,9 @@ impl TryFrom<Experiment> for ServerExperiment {
             Experiment::EnvVarsEarlyAccessExperiment => Ok(Self::EnvVarsEarlyAccessExperiment),
             Experiment::AgentModeAnalyticsExperiment => Ok(Self::AgentModeAnalyticsExperiment),
             Experiment::TmuxSshWarpificationControl => Ok(Self::TmuxSshOctomusificationControl),
-            Experiment::TmuxSshWarpificationExperiment => Ok(Self::TmuxSshOctomusificationExperiment),
+            Experiment::TmuxSshWarpificationExperiment => {
+                Ok(Self::TmuxSshOctomusificationExperiment)
+            }
             Experiment::WindowsLaunchExperiment => Ok(Self::WindowsLaunchExperiment),
             Experiment::CodebaseContextControl => Ok(Self::CodebaseContextControl),
             Experiment::CodebaseContextExperiment => Ok(Self::CodebaseContextExperiment),

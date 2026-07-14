@@ -12,15 +12,6 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use ai::document::{AIDocumentId, AIDocumentVersion};
-use parking_lot::FairMutex;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use settings::{Setting, ToggleableSetting};
-#[cfg(not(target_family = "wasm"))]
-use tokio::fs;
-use toolbar_item::AgentToolbarItemKind;
-#[cfg(feature = "voice_input")]
-use voice_input::{StartListeningError, VoiceSessionResult};
 use octomus_cli::agent::Harness;
 use octomus_core::context_flag::ContextFlag;
 use octomus_core::report_if_error;
@@ -44,6 +35,15 @@ use octomusui::{
     AppContext, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use parking_lot::FairMutex;
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use settings::{Setting, ToggleableSetting};
+#[cfg(not(target_family = "wasm"))]
+use tokio::fs;
+use toolbar_item::AgentToolbarItemKind;
+#[cfg(feature = "voice_input")]
+use voice_input::{StartListeningError, VoiceSessionResult};
 
 #[cfg(feature = "local_fs")]
 pub(crate) use self::environment_selector::sort_environments_by_recency;
@@ -1539,10 +1539,12 @@ impl AgentInputFooter {
                     .unwrap_or_else(|| appearance.theme().foreground().into_solid());
                 left_buttons.add_child(
                     Container::new(
-                        ConstrainedBox::new(icon.to_octomusui_icon(Fill::Solid(icon_color)).finish())
-                            .with_width(cli_icon_size)
-                            .with_height(cli_icon_size)
-                            .finish(),
+                        ConstrainedBox::new(
+                            icon.to_octomusui_icon(Fill::Solid(icon_color)).finish(),
+                        )
+                        .with_width(cli_icon_size)
+                        .with_height(cli_icon_size)
+                        .finish(),
                     )
                     .with_padding_right(8.)
                     .finish(),

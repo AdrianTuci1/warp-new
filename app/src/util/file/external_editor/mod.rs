@@ -8,10 +8,10 @@ mod windows;
 
 use std::path::PathBuf;
 
-use serde::{Deserialize, Serialize};
-use settings::EditorChoice;
 use octomus_util::path::LineAndColumnArg;
 use octomusui::{AppContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
+use settings::EditorChoice;
 
 pub use self::settings::{EditorLayout, EditorSettings};
 

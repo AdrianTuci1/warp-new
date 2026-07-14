@@ -1,14 +1,14 @@
 use std::collections::HashMap;
 
-use serde::Serialize;
-use string_offset::CharCounter;
 use octomus_completer::signatures::CommandRegistry;
 use octomus_completer::util::parse_current_commands_and_tokens;
 use octomus_completer::ParsedTokensSnapshot;
 use octomus_core::report_error;
 use octomus_core::ui::theme::{AnsiColorIdentifier, AnsiColors};
 use octomusui::clipboard::ClipboardContent;
-use octomusui::elements::new_scrollable::{ClippedAxisConfiguration, DualAxisConfig, NewScrollable};
+use octomusui::elements::new_scrollable::{
+    ClippedAxisConfiguration, DualAxisConfig, NewScrollable,
+};
 use octomusui::elements::{
     Align, Border, ClippedScrollStateHandle, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, Element, Empty, Expanded, Flex, Highlight, HighlightedRange,
@@ -18,7 +18,11 @@ use octomusui::fonts::{Properties, Weight};
 use octomusui::prelude::ChildView;
 use octomusui::text_layout::TextStyle;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
-use octomusui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
+use octomusui::{
+    AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
+};
+use serde::Serialize;
+use string_offset::CharCounter;
 
 use crate::ai::agent_management::telemetry::{AgentManagementTelemetryEvent, SetupGuideStep};
 use crate::ai::blocklist::code_block::{

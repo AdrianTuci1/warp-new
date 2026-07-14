@@ -4,12 +4,12 @@ use std::sync::Arc;
 
 use ai::skills::{ParsedSkill, SkillProvider, SkillScope};
 use itertools::Itertools;
-use ui_components::lightbox::{LightboxImage, LightboxImageSource};
 use octomus_util::local_or_remote_path::LocalOrRemotePath;
 #[cfg(feature = "local_fs")]
 use octomusui::assets::asset_cache::AssetSource;
 use octomusui::elements::{Empty, MouseStateHandle};
 use octomusui::{App, Element};
+use ui_components::lightbox::{LightboxImage, LightboxImageSource};
 
 #[cfg(feature = "local_fs")]
 use super::{blocklist_image_asset_source, ResolvedBlocklistImageSources};

@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::{vec2f, Vector2F};
 use octomusui::elements::{
     ChildAnchor, ChildView, MouseStateHandle, OffsetPositioning, ParentAnchor, ParentElement,
     ParentOffsetBounds, Stack,
@@ -6,6 +5,7 @@ use octomusui::elements::{
 use octomusui::platform::Cursor;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, EventContext, View, ViewHandle};
+use pathfinder_geometry::vector::{vec2f, Vector2F};
 
 use super::buttons::{highlight, icon_button};
 use super::icons::Icon;

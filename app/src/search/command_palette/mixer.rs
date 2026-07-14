@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
-use strum_macros::IntoStaticStr;
 use octomus_util::path::LineAndColumnArg;
 use octomusui::keymap::BindingId;
 use octomusui::{EntityId, WindowId};
+use strum_macros::IntoStaticStr;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::drive::CloudObjectTypeAndId;

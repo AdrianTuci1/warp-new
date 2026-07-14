@@ -9,7 +9,6 @@ use std::path::PathBuf;
 use ai::skills::SkillReference;
 pub use cloud_mode_v2_view::{CloudModeV2SlashCommandView, Section as CloudModeV2Section};
 pub use data_source::*;
-pub use view::{CloseReason, InlineSlashCommandView, SlashCommandsEvent};
 #[cfg(not(target_family = "wasm"))]
 use octomus_cli::agent::Harness;
 use octomus_core::features::FeatureFlag;
@@ -20,6 +19,7 @@ use octomus_core::ui::theme::AnsiColorIdentifier;
 use octomus_util::path::{CleanPathResult, LineAndColumnArg};
 use octomusui::clipboard::ClipboardContent;
 use octomusui::{AppContext, SingletonEntity, ViewContext};
+pub use view::{CloseReason, InlineSlashCommandView, SlashCommandsEvent};
 
 #[cfg(not(target_family = "wasm"))]
 use crate::ai::agent::conversation::AIConversationId;

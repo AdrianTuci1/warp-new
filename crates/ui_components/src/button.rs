@@ -1,13 +1,13 @@
 mod params;
 pub mod themes;
 
-pub use params::*;
-pub use themes::Theme;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::color::ContrastingColor as _;
 use octomus_core::ui::color::contrast::MinimumAllowedContrast;
 use octomusui_core::elements::{MouseState, MouseStateHandle};
 use octomusui_core::prelude::*;
+pub use params::*;
+pub use themes::Theme;
 
 use crate::{keyboard_shortcut, tooltip};
 

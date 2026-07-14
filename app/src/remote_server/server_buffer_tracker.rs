@@ -1,8 +1,8 @@
 use std::collections::{HashMap, HashSet};
 
-use warp_editor::content::buffer::Buffer;
 use octomus_util::file::FileId;
 use octomusui::{ModelContext, ModelHandle, SingletonEntity};
+use warp_editor::content::buffer::Buffer;
 
 use super::server_model::{ConnectionId, ServerModel};
 use crate::code::global_buffer_model::GlobalBufferModel;

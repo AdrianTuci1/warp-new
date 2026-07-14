@@ -2,7 +2,6 @@ use std::borrow::Cow;
 use std::sync::Arc;
 
 use channel_versions::overrides::TargetOS;
-use parking_lot::RwLock;
 use octomus_core::semantic_selection::SemanticSelection;
 use octomus_core::ui::theme::WarpTheme;
 use octomusui::elements::{
@@ -11,6 +10,7 @@ use octomusui::elements::{
 };
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use parking_lot::RwLock;
 
 use super::render::{HORIZONTAL_TEXT_MARGIN, SSH_DOCS_URL, SUBSHELL_DOCS_URL};
 use super::settings::OctomusifySettings;
@@ -249,7 +249,9 @@ impl OctomusifySuccessBlock {
                         code_snippet.to_string(),
                     ));
 
-                    ctx.dispatch_typed_action(OctomusifySuccessBlockAction::ClearAutoOctomusifySnippet);
+                    ctx.dispatch_typed_action(
+                        OctomusifySuccessBlockAction::ClearAutoOctomusifySnippet,
+                    );
                 }
             })),
             Some(Box::new({

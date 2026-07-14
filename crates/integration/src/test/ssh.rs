@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 
-use regex::Regex;
-use settings::Setting as _;
 use octomus::features::FeatureFlag;
 use octomus::integration_testing::step::new_step_with_default_assertions;
 use octomus::integration_testing::subshell::{
@@ -18,12 +16,16 @@ use octomus::integration_testing::terminal::{
     execute_command_for_single_terminal_in_tab, validate_block_output,
     wait_until_bootstrapped_single_pane_for_tab,
 };
-use octomus::integration_testing::view_getters::{single_terminal_view, single_terminal_view_for_tab};
+use octomus::integration_testing::view_getters::{
+    single_terminal_view, single_terminal_view_for_tab,
+};
 use octomus::terminal::model::bootstrap::BootstrapStage;
 use octomus::terminal::session_settings::{StartupShell, StartupShellOverride};
 use octomus::terminal::shell::ShellType;
 use octomusui_core::integration::{AssertionCallback, AssertionOutcome, TestStep};
 use octomusui_core::{async_assert, async_assert_eq};
+use regex::Regex;
+use settings::Setting as _;
 
 use super::new_builder;
 use crate::Builder;

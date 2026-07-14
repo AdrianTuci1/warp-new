@@ -1,11 +1,11 @@
 //! Provider command for linking third-party services.
 use comfy_table::Cell;
-use serde::Serialize;
 use octomus_cli::provider::{ProviderCommand, ProviderType};
 use octomus_cli::GlobalOptions;
 use octomus_core::channel::ChannelState;
 use octomusui::platform::TerminationMode;
 use octomusui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use crate::ai::agent_sdk::output::{self, TableFormat};
 use crate::workspaces::user_workspaces::UserWorkspaces;

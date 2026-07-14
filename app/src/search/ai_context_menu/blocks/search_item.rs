@@ -1,12 +1,12 @@
 use chrono::{DateTime, Local};
 use fuzzy_match::FuzzyMatchResult;
-use ordered_float::OrderedFloat;
 use octomus_core::command::ExitCode;
 use octomusui::elements::{
     ConstrainedBox, Container, CrossAxisAlignment, Flex, Highlight, Icon, ParentElement, Text,
 };
 use octomusui::fonts::{Properties, Weight};
 use octomusui::{AppContext, Element, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::appearance::Appearance;
 use crate::search::ai_context_menu::mixer::AIContextMenuSearchableAction;

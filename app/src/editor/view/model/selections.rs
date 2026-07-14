@@ -2,12 +2,12 @@ use std::cmp::Ordering;
 use std::mem;
 use std::ops::Range;
 
+use octomusui::text::point::Point;
+use octomusui::AppContext;
 use pathfinder_geometry::vector::Vector2F;
 use serde::{Deserialize, Serialize};
 use string_offset::{ByteOffset, CharOffset};
 use vec1::Vec1;
-use octomusui::text::point::Point;
-use octomusui::AppContext;
 
 use super::buffer::{Anchor, Buffer, LamportValue, ToBufferOffset, ToCharOffset, ToPoint};
 use super::display_map::{DisplayMap, ToDisplayPoint};

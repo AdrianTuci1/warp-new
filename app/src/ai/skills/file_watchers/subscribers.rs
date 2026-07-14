@@ -3,9 +3,9 @@ use std::pin::Pin;
 use ai::skills::{read_skills, ParsedSkill, SKILL_PROVIDER_DEFINITIONS};
 use async_channel::Sender;
 use futures::Future;
+use octomusui::ModelContext;
 use repo_metadata::repository::RepositorySubscriber;
 use repo_metadata::{Repository, RepositoryUpdate};
-use octomusui::ModelContext;
 
 /// Messages sent from [`RepositorySubscriber`]s to [`SkillManager`].
 pub enum SkillRepositoryMessage {

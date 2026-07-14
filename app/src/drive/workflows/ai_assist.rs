@@ -1,9 +1,9 @@
 use itertools::Itertools;
+use octomusui::{SingletonEntity, ViewContext};
 use serde::{Deserialize, Serialize};
 use warp_graphql::mutations::generate_metadata_for_command::{
     GenerateMetadataForCommandFailureType, GenerateMetadataForCommandSuccess,
 };
-use octomusui::{SingletonEntity, ViewContext};
 
 use super::arguments::ArgumentsState;
 use super::modal::{AiAssistState, WorkflowModal, WorkflowModalEvent};

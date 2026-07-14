@@ -1,9 +1,5 @@
 use std::borrow::Cow;
 
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use ui_components::button::Button as ButtonComponent;
-use ui_components::{button, Component, MouseEventHandler, Options as _};
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::color::coloru_with_opacity;
 use octomus_core::ui::color::contrast::relative_luminance;
@@ -18,6 +14,10 @@ use octomusui_core::keymap::Keystroke;
 use octomusui_core::prelude::*;
 use octomusui_core::ui_components::checkbox::Checkbox as WarpCheckbox;
 use octomusui_core::ui_components::components::{UiComponent as _, UiComponentStyles};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use ui_components::button::Button as ButtonComponent;
+use ui_components::{button, Component, MouseEventHandler, Options as _};
 
 const CALLOUT_WIDTH: f32 = 480.;
 const CALLOUT_BORDER_WIDTH: f32 = 1.;

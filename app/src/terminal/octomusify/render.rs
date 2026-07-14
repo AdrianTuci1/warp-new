@@ -1,7 +1,4 @@
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_color::ColorU;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::Vector2F;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::{Fill, WarpTheme};
 use octomusui::elements::{
@@ -12,6 +9,9 @@ use octomusui::elements::{
 use octomusui::fonts::{FamilyId, Properties, Weight};
 use octomusui::ui_components::components::{UiComponent as _, UiComponentStyles};
 use octomusui::{AppContext, Element, EventContext, PaintContext, SingletonEntity as _};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::Vector2F;
 
 use super::settings::OctomusifySettings;
 use super::SubshellSource;

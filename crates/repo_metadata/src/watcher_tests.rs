@@ -7,10 +7,10 @@ use std::time::Duration;
 
 use futures::channel::mpsc;
 use futures::{FutureExt as _, StreamExt as _};
-use virtual_fs::{Stub, VirtualFS};
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui_core::r#async::Timer;
 use octomusui_core::{App, ModelContext, ModelHandle};
+use virtual_fs::{Stub, VirtualFS};
 
 use crate::repositories::stub_git_repository;
 use crate::repository::{RepositorySubscriber, TrackedRemoteRef};

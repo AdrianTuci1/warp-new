@@ -2,14 +2,14 @@
 
 use std::ops::Range;
 
-use string_offset::CharOffset;
-use vim::vim::VimMode;
 use octomus_core::ui::appearance::DEFAULT_UI_FONT_SIZE;
 use octomusui_core::PaintContext;
 use octomusui_core::elements::{CornerRadius, Point, Radius};
 use octomusui_core::geometry::rect::RectF;
 use octomusui_core::geometry::vector::{Vector2F, vec2f};
 use octomusui_core::text_layout::{Line, PaintStyleOverride, TextFrame};
+use string_offset::CharOffset;
+use vim::vim::VimMode;
 
 use crate::editor::TextDecoration;
 use crate::render::layout::line_height;

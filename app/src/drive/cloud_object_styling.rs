@@ -1,8 +1,8 @@
-use pathfinder_color::ColorU;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::color::contrast::MinimumAllowedContrast;
 use octomus_core::ui::color::ContrastingColor;
 use octomus_core::ui::theme::Fill;
+use pathfinder_color::ColorU;
 
 use super::DriveObjectType;
 use crate::ui_components::blended_colors;

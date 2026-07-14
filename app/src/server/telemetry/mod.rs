@@ -18,12 +18,12 @@ pub use collector::*;
 pub use context::telemetry_context;
 pub use events::*;
 use futures::FutureExt;
+use octomus_core::channel::RudderStackDestination;
+use octomusui::telemetry::Event;
 use rudder_message::{
     Batch as RudderBatch, BatchMessage as RudderBatchMessageWithMetadata,
     BatchMessageItem as RudderBatchMessage, Message as RudderMessage,
 };
-use octomus_core::channel::RudderStackDestination;
-use octomusui::telemetry::Event;
 
 use crate::auth::UserUid;
 use crate::features::FeatureFlag;

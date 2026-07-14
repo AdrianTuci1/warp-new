@@ -1,9 +1,9 @@
 use std::path::PathBuf;
 
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::Vector2F;
 use octomusui::elements::PositionedElementOffsetBounds;
 use octomusui::EntityId;
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::Vector2F;
 
 use super::{
     branch_label_display, coalesce_summary_branch_entries, code_detail_kind_label,
@@ -1098,7 +1098,10 @@ fn summary_search_fragments_include_hidden_overflow_values() {
             label("code review"),
             label("hidden work"),
         ],
-        working_directories: vec!["~/octomus-internal".to_string(), "~/octomus-server".to_string()],
+        working_directories: vec![
+            "~/octomus-internal".to_string(),
+            "~/octomus-server".to_string(),
+        ],
         branch_entries: vec![
             VerticalTabsSummaryBranchEntry {
                 repo_path: PathBuf::from("/tmp/repo-a"),

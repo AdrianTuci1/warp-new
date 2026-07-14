@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use parking_lot::FairMutex;
 use octomusui::elements::{
     ChildView, Container, CrossAxisAlignment, Expanded, Flex, MainAxisSize, ParentElement,
 };
 use octomusui::prelude::Empty;
 use octomusui::{AppContext, Element, Entity, TypedActionView, View, ViewContext, ViewHandle};
+use parking_lot::FairMutex;
 
 use super::{AgentFooterButtonTheme, USE_AGENT_KEYSTROKE};
 use crate::terminal::view::block_banner::OctomusificationMode;
@@ -75,7 +75,9 @@ impl OctomusifyFooterView {
             OctomusificationMode::Ssh { .. } => {
                 ("Octomusify SSH session", "terminal:octomusify_ssh_session")
             }
-            OctomusificationMode::Subshell { .. } => ("Octomusify subshell", "terminal:octomusify_subshell"),
+            OctomusificationMode::Subshell { .. } => {
+                ("Octomusify subshell", "terminal:octomusify_subshell")
+            }
         };
         self.octomusify_button.update(ctx, |button, ctx| {
             button.set_label(label, ctx);

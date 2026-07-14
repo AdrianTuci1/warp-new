@@ -7,13 +7,13 @@ use std::str::FromStr;
 use std::sync::Arc;
 
 use chrono::Local;
-use parking_lot::FairMutex;
-use session_sharing_protocol::common::CLIAgentSessionState;
 use octomus_cli::agent::Harness;
 use octomus_terminal::model::escape_sequences::{BRACKETED_PASTE_END, BRACKETED_PASTE_START, C0};
 use octomusui::notification::UserNotification;
 use octomusui::platform::WindowStyle;
 use octomusui::{App, Presenter, ReadModel, WindowInvalidation};
+use parking_lot::FairMutex;
+use session_sharing_protocol::common::CLIAgentSessionState;
 
 use super::*;
 use crate::ai::agent::conversation::ConversationStatus;

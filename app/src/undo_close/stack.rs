@@ -1,9 +1,9 @@
-use uuid::Uuid;
 use octomusui::r#async::SpawnedFutureHandle;
 use octomusui::{
     AppContext, ClosedWindowData, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity,
     ViewHandle, WeakViewHandle, WindowId,
 };
+use uuid::Uuid;
 
 use super::settings::UndoCloseSettingsChangedEvent;
 use super::UndoCloseSettings;

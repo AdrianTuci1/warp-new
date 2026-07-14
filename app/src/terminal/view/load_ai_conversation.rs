@@ -5,13 +5,13 @@ use std::sync::Arc;
 
 use chrono::{DateTime, Local};
 use itertools::Itertools;
-use prost::Message;
-use vec1::Vec1;
 use octomus_core::channel::ChannelState;
 use octomus_core::features::FeatureFlag;
-use warp_multi_agent_api as api;
 use octomusui::units::IntoPixels;
 use octomusui::{EntityId, ModelHandle, SingletonEntity, ViewContext};
+use prost::Message;
+use vec1::Vec1;
+use warp_multi_agent_api as api;
 
 use super::blocklist_filter::exchanges_for_blocklist;
 use super::DEFAULT_AI_BLOCK_HEIGHT;

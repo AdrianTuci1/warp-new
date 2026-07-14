@@ -14,15 +14,11 @@ use std::sync::Arc;
 
 use itertools::Itertools;
 use markdown_parser::{FormattedText, FormattedTextInline, TableAlignment};
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::channel::ChannelState;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::color::blend::Blend;
 use octomus_core::ui::theme::color::internal_colors;
-use warp_editor::content::edit::resolve_asset_source_relative_to_directory;
-use warp_editor::content::mermaid_diagram::mermaid_asset_source;
 use octomus_util::path::to_relative_path;
 use octomusui::assets::asset_cache::{AssetCache, AssetSource, AssetState};
 use octomusui::elements::new_scrollable::{ScrollableAppearance, SingleAxisConfig};
@@ -45,6 +41,10 @@ use octomusui::text_layout::{ClipConfig, TextAlignment, TextStyle};
 use octomusui::ui_components::button::Button;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{Action, AppContext, Element, EventContext, SingletonEntity, View, ViewHandle};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use warp_editor::content::edit::resolve_asset_source_relative_to_directory;
+use warp_editor::content::mermaid_diagram::mermaid_asset_source;
 
 use super::output::LinkActionConstructors;
 use super::{add_highlights_to_rich_text, add_highlights_to_text};
@@ -2274,10 +2274,11 @@ fn render_visual_card(
     let theme = appearance.theme();
     let header_background = theme.surface_2();
     let header_text_color = blended_colors::text_main(theme, header_background);
-    let header_icon = ConstrainedBox::new(icon.to_octomusui_icon(header_text_color.into()).finish())
-        .with_width(16.)
-        .with_height(16.)
-        .finish();
+    let header_icon =
+        ConstrainedBox::new(icon.to_octomusui_icon(header_text_color.into()).finish())
+            .with_width(16.)
+            .with_height(16.)
+            .finish();
     let header = Container::new(
         Flex::row()
             .with_cross_axis_alignment(CrossAxisAlignment::Center)

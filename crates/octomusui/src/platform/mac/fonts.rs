@@ -25,9 +25,6 @@ use font_kit::loaders::core_text::NativeFont;
 use futures::future::BoxFuture;
 use futures::FutureExt as _;
 use itertools::Itertools as _;
-use ordered_float::OrderedFloat;
-use pathfinder_geometry::rect::RectI;
-use pathfinder_geometry::vector::{Vector2F, Vector2I};
 use octomusui_core::fonts::canvas::RasterFormat;
 use octomusui_core::fonts::{
     FamilyId, FontId, FontInfo, GlyphId, Metrics, Properties, RasterizedGlyph, SubpixelAlignment,
@@ -35,6 +32,9 @@ use octomusui_core::fonts::{
 use octomusui_core::platform::{self, FontDB as _, LineStyle, TextLayoutSystem};
 use octomusui_core::rendering;
 use octomusui_core::text_layout::{ClipConfig, StyleAndFont, TextAlignment, TextFrame};
+use ordered_float::OrderedFloat;
+use pathfinder_geometry::rect::RectI;
+use pathfinder_geometry::vector::{Vector2F, Vector2I};
 
 use super::text_layout::{layout_line, layout_text};
 use crate::fonts::font_kit::{properties_to_font_kit, Rasterizer};

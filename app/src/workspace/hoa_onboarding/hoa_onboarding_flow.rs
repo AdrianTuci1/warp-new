@@ -3,8 +3,6 @@ use std::path::PathBuf;
 use markdown_parser::{
     FormattedText, FormattedTextFragment, FormattedTextLine, FormattedTextStyles, Hyperlink,
 };
-use pathfinder_color::ColorU;
-use settings::Setting;
 use octomus_core::ui::theme::phenomenon::PhenomenonStyle;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{
@@ -22,6 +20,8 @@ use octomusui::{
     AppContext, Element, Entity, EventContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_color::ColorU;
+use settings::Setting;
 
 use super::{tab_config_step, welcome_banner};
 use crate::appearance::Appearance;
@@ -469,7 +469,8 @@ impl HoaOnboardingFlow {
             styles: FormattedTextStyles {
                 underline: true,
                 hyperlink: Some(Hyperlink::Url(
-                    "https://docs.octomus.dev/agent-platform/octomus-agents/agent-notifications".into(),
+                    "https://docs.octomus.dev/agent-platform/octomus-agents/agent-notifications"
+                        .into(),
                 )),
                 ..Default::default()
             },

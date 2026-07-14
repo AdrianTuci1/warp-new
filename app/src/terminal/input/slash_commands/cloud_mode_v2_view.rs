@@ -1,7 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use std::sync::LazyLock;
 
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{
@@ -15,6 +14,7 @@ use octomusui::platform::Cursor;
 use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use crate::search::data_source::QueryFilter;
 use crate::search::item::SearchItemDetail;

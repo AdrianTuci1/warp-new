@@ -5,9 +5,9 @@ use pathfinder_geometry::vector::vec2f;
 pub mod root_view;
 
 extern crate octomusui;
-use rust_embed::RustEmbed;
 use octomusui::platform::WindowBounds;
 use octomusui::{platform, AssetProvider};
+use rust_embed::RustEmbed;
 
 #[derive(Clone, Copy, RustEmbed)]
 #[folder = "examples/assets"]

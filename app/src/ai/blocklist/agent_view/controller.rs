@@ -2,11 +2,11 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use instant::Instant;
-use parking_lot::FairMutex;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::keymap::Keystroke;
 use octomusui::r#async::SpawnedFutureHandle;
 use octomusui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
+use parking_lot::FairMutex;
 
 use super::{DismissalStrategy, EphemeralMessage, EphemeralMessageModel};
 use crate::ai::agent::conversation::AIConversationId;

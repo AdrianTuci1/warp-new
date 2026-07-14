@@ -8,8 +8,6 @@ use std::task::{Context, Poll};
 use std::time::Duration;
 
 use futures::channel::oneshot;
-use session_sharing_protocol::common::{Role, SessionId};
-use session_sharing_protocol::sharer::SessionRetentionReason;
 use octomus_cli::share::{ShareAccessLevel, ShareRequest, ShareSubject};
 use octomus_completer::completer::CommandOutput;
 use octomus_core::command::ExitCode;
@@ -19,6 +17,8 @@ use octomus_util::path::ShellFamily;
 use octomus_util::sync::Condition;
 use octomusui::r#async::FutureExt;
 use octomusui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity as _, ViewHandle};
+use session_sharing_protocol::common::{Role, SessionId};
+use session_sharing_protocol::sharer::SessionRetentionReason;
 
 use super::AgentDriverError;
 use crate::ai::ambient_agents::AmbientAgentTaskId;
@@ -189,8 +189,8 @@ impl TerminalDriver {
         // Create a oneshot channel for session sharing when sharing is expected.
         // When sharing is disabled (or running against ngrok), leave both halves
         // as None so that `wait_for_session_shared` returns immediately.
-        let sharing_expected =
-            should_share && !octomus_core::channel::ChannelState::server_root_url().contains("ngrok");
+        let sharing_expected = should_share
+            && !octomus_core::channel::ChannelState::server_root_url().contains("ngrok");
         let (mut session_share_tx, session_share_rx) = if sharing_expected {
             if !FeatureFlag::CreatingSharedSessions.is_enabled() {
                 // Session sharing was requested but the feature is not enabled for this

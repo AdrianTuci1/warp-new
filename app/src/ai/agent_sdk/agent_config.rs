@@ -1,10 +1,10 @@
 //! Commands to interact with available agents via the public API.
 
 use octomus_cli::agent::ListAgentSkillsArgs;
-use warp_graphql::queries::get_oauth_connect_tx_status::OauthConnectTxStatus;
-use warp_graphql::queries::user_repo_auth_status::UserRepoAuthStatusEnum;
 use octomusui::platform::TerminationMode;
 use octomusui::{AppContext, ModelContext, SingletonEntity};
+use warp_graphql::queries::get_oauth_connect_tx_status::OauthConnectTxStatus;
+use warp_graphql::queries::user_repo_auth_status::UserRepoAuthStatusEnum;
 
 use crate::ai::agent_sdk::oauth_flow::poll_oauth_until_terminal;
 use crate::ai::cloud_environments::GithubRepo;

@@ -2,7 +2,6 @@ use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 
 use anyhow::Result;
-use serde::{Deserialize, Serialize};
 use octomus_completer::parsers::simple::decompose_command;
 use octomus_core::execution_mode::AppExecutionMode;
 use octomus_core::features::FeatureFlag;
@@ -10,6 +9,7 @@ use octomus_core::settings::Setting;
 use octomus_core::user_preferences::GetUserPreferences;
 use octomus_util::path::EscapeChar;
 use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
 
 use super::BlocklistAIHistoryModel;
 use crate::ai::agent::conversation::AIConversationId;

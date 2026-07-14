@@ -1,10 +1,10 @@
 // The code in this file is adapted from the alacritty_terminal crate under the
 // Apache license; see: crates/octomus_terminal/src/model/LICENSE-ALACRITTY.
 
-use string_offset::ByteOffset;
 use octomus_terminal::model::grid::cell::{self, LineLength as _};
 use octomus_terminal::model::grid::Dimensions as _;
 use octomus_terminal::model::{Point, VisiblePoint, VisibleRow};
+use string_offset::ByteOffset;
 
 use super::{FullGridClearBehavior, GridHandler};
 use crate::terminal::model::grid::Cursor;

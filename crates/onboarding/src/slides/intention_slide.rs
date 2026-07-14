@@ -1,4 +1,3 @@
-use ui_components::{button, Component as _, Options as _};
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::color::internal_colors;
@@ -19,6 +18,7 @@ use octomusui_core::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity as _, TypedActionView, View,
     ViewContext,
 };
+use ui_components::{button, Component as _, Options as _};
 
 use super::OnboardingSlide;
 use crate::model::OnboardingStateModel;
@@ -263,10 +263,11 @@ impl IntentionSlide {
                 .with_main_axis_size(MainAxisSize::Min)
                 .with_cross_axis_alignment(CrossAxisAlignment::Start);
             for &item in items {
-                let icon_el = ConstrainedBox::new(Icon::Check.to_octomusui_icon(check_fill).finish())
-                    .with_width(16.)
-                    .with_height(16.)
-                    .finish();
+                let icon_el =
+                    ConstrainedBox::new(Icon::Check.to_octomusui_icon(check_fill).finish())
+                        .with_width(16.)
+                        .with_height(16.)
+                        .finish();
                 let text_el = appearance
                     .ui_builder()
                     .paragraph(item.to_string())

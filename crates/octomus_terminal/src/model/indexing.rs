@@ -4,8 +4,8 @@ use std::cmp::Ordering;
 use std::fmt;
 use std::ops::{Add, AddAssign, Range, Sub, SubAssign};
 
-use serde::{Deserialize, Serialize};
 use octomusui_core::units::Lines;
+use serde::{Deserialize, Serialize};
 
 use super::grid::Dimensions;
 

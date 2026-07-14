@@ -3,13 +3,13 @@
 use std::path::{Path, PathBuf};
 
 use fuzzy_match::FuzzyMatchResult;
-use ordered_float::OrderedFloat;
 use octomus_core::ui::theme::{AnsiColorIdentifier, Fill};
 use octomus_core::ui::Icon;
 use octomusui::elements::{ConstrainedBox, Container, Highlight, Text};
 use octomusui::fonts::{Properties, Weight};
 use octomusui::text_layout::ClipConfig;
 use octomusui::{AppContext, Element, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::appearance::Appearance;
 use crate::search::result_renderer::ItemHighlightState;

@@ -1,6 +1,6 @@
-use pathfinder_color::ColorU;
 use octomusui::elements::Rect;
 use octomusui::{AppContext, Element, Entity, TypedActionView, View};
+use pathfinder_color::ColorU;
 
 pub struct BlurredView {}
 

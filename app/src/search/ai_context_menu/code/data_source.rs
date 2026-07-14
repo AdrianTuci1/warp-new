@@ -14,14 +14,14 @@ use instant::Instant;
 #[cfg(not(target_family = "wasm"))]
 use itertools::Itertools;
 #[cfg(not(target_family = "wasm"))]
-use repo_metadata::repositories::DetectedRepositories;
-#[cfg(not(target_family = "wasm"))]
 use octomus_util::local_or_remote_path::LocalOrRemotePath;
 use octomusui::AppContext;
 #[cfg(not(target_family = "wasm"))]
 use octomusui::ModelSpawner;
 #[cfg(not(target_family = "wasm"))]
 use octomusui::SingletonEntity;
+#[cfg(not(target_family = "wasm"))]
+use repo_metadata::repositories::DetectedRepositories;
 
 #[cfg(not(target_family = "wasm"))]
 use super::search_item::CodeSearchItem;

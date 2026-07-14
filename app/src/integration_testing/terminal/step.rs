@@ -274,7 +274,8 @@ fn execute_command_step(
     tab_idx: usize,
     pane_idx: usize,
     command: String,
-    validate_output_fn: impl FnMut(&mut octomusui::App, octomusui::WindowId) -> AssertionOutcome + 'static,
+    validate_output_fn: impl FnMut(&mut octomusui::App, octomusui::WindowId) -> AssertionOutcome
+        + 'static,
 ) -> TestStep {
     let was_ai_mode = Arc::new(AtomicBool::new(false));
     let was_ai_mode_for_restore = was_ai_mode.clone();

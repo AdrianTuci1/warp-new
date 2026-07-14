@@ -11,9 +11,9 @@ use std::{
 };
 
 use chrono::{Local, SecondsFormat};
+use octomus_completer::completer::{CommandExitStatus, CommandOutput};
 #[cfg(test)]
 use parking_lot::Mutex;
-use octomus_completer::completer::{CommandExitStatus, CommandOutput};
 
 use super::ContextChipKind;
 use crate::terminal::shell::ShellType;

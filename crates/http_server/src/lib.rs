@@ -1,8 +1,8 @@
 use std::net::SocketAddr;
 
-use tower_http::trace::TraceLayer;
 use octomus_core::channel::{Channel, ChannelState};
 use octomusui_core::{Entity, ModelContext, SingletonEntity};
+use tower_http::trace::TraceLayer;
 
 // Spells "Octomus" - should hopefully not conflict with other ports.
 // Does not conflict with known ports on https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers

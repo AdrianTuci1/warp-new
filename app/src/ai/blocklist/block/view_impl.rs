@@ -33,8 +33,6 @@ use std::collections::{HashMap, HashSet};
 
 use common::get_highlight_ranges_for_find_matches;
 use itertools::Itertools;
-use pathfinder_color::ColorU;
-use settings::Setting as _;
 use octomus_core::features::FeatureFlag;
 use octomus_core::semantic_selection::SemanticSelection;
 use octomus_core::ui::color::contrast::{
@@ -53,6 +51,8 @@ use octomusui::platform::Cursor;
 use octomusui::text_layout::TextStyle;
 use octomusui::ui_components::components::UiComponent;
 use octomusui::{AppContext, Element, SingletonEntity, View, ViewContext};
+use pathfinder_color::ColorU;
+use settings::Setting as _;
 
 use super::secret_redaction::SecretRedactionState;
 use super::{

@@ -1,6 +1,5 @@
 mod header_revamp;
 
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::features::FeatureFlag;
 use octomusui::elements::{
     Align, ChildAnchor, ChildView, Clipped, ConstrainedBox, Container, CrossAxisAlignment, Flex,
@@ -13,6 +12,7 @@ use octomusui::platform::Cursor;
 use octomusui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, ModelHandle, ViewHandle};
+use pathfinder_geometry::vector::vec2f;
 
 use crate::appearance::Appearance;
 use crate::code_review::code_review_view::{
@@ -437,7 +437,9 @@ impl CodeReviewHeader {
                     .build()
                     .finish()
             })
-            .with_tooltip_position(octomusui::ui_components::button::ButtonTooltipPosition::AboveLeft)
+            .with_tooltip_position(
+                octomusui::ui_components::button::ButtonTooltipPosition::AboveLeft,
+            )
             .build()
             .on_click(|ctx, _, _| {
                 ctx.dispatch_typed_action(CodeReviewAction::AddDiffSetAsContext(

@@ -10,11 +10,11 @@ use std::mem;
 use std::ops::RangeInclusive;
 pub use std::ops::{Range, RangeBounds};
 
-use vec1::Vec1;
 use octomus_core::semantic_selection::SemanticSelection;
 use octomus_terminal::model::grid::cell;
 use octomusui::text::SelectionType;
 use octomusui::units::Lines;
+use vec1::Vec1;
 
 use super::index::{Direction, VisibleRow};
 use crate::terminal::model::ansi::CursorShape;

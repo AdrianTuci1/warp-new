@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use pathfinder_geometry::vector::{Vector2F, vec2f};
 use octomus_core::ui::Icon;
 use octomus_core::ui::appearance::Appearance;
 use octomusui_core::assets::asset_cache::AssetSource;
@@ -10,6 +9,7 @@ use octomusui_core::elements::{
 use octomusui_core::keymap::Keystroke;
 use octomusui_core::prelude::stack::*;
 use octomusui_core::prelude::*;
+use pathfinder_geometry::vector::{Vector2F, vec2f};
 
 use crate::{Component, Options as _, button};
 

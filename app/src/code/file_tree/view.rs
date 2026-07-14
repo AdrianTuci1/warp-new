@@ -5,15 +5,6 @@ use std::sync::Arc;
 
 use editing::sort_entries_for_file_tree;
 use itertools::Itertools;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::Vector2F;
-use render::RenderState;
-use repo_metadata::file_tree_store::{
-    FileTreeDirectoryEntryState, FileTreeEntryState, FileTreeFileMetadata,
-};
-use repo_metadata::local_model::IndexedRepoState;
-use repo_metadata::repositories::DetectedRepositories;
-use repo_metadata::{FileTreeEntry, RepoMetadataModel};
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::Fill;
@@ -37,6 +28,15 @@ use octomusui::{
     id, AppContext, BlurContext, Element, Entity, EventContext, ModelHandle, SingletonEntity as _,
     TypedActionView, View, ViewContext, ViewHandle, WeakViewHandle,
 };
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::Vector2F;
+use render::RenderState;
+use repo_metadata::file_tree_store::{
+    FileTreeDirectoryEntryState, FileTreeEntryState, FileTreeFileMetadata,
+};
+use repo_metadata::local_model::IndexedRepoState;
+use repo_metadata::repositories::DetectedRepositories;
+use repo_metadata::{FileTreeEntry, RepoMetadataModel};
 
 use crate::appearance::Appearance;
 use crate::code::active_file::{ActiveFileEvent, ActiveFileModel};

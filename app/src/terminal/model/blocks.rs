@@ -9,15 +9,15 @@ use std::time::Duration;
 use anyhow::anyhow;
 use chrono::{DateTime, Local};
 use instant::SystemTime;
-use selection::BlockListSelection;
-pub use selection::SelectionRange;
-use sum_tree::{Dimension, Item, SeekBias, SumTree};
 use octomus_core::features::FeatureFlag;
 use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
 use octomusui::color::ColorU;
 use octomusui::r#async::executor::Background;
 use octomusui::units::{IntoLines, IntoPixels, Lines};
 use octomusui::{record_trace_event, AppContext, EntityId, ViewHandle};
+use selection::BlockListSelection;
+pub use selection::SelectionRange;
+use sum_tree::{Dimension, Item, SeekBias, SumTree};
 
 use super::ansi::{Handler, InputBufferValue};
 use super::block::{BlockId, BlockSize, BlockState, SerializedAIMetadata};

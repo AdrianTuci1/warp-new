@@ -1,10 +1,10 @@
 use std::ops::Range;
 
 use ai::diff_validation::DiffType;
-use warp_editor::render::element::VerticalExpansionBehavior;
 use octomusui::elements::new_scrollable::ScrollableAppearance;
 use octomusui::elements::ScrollbarWidth;
 use octomusui::{AppContext, View, ViewContext, ViewHandle};
+use warp_editor::render::element::VerticalExpansionBehavior;
 
 use super::editor::scroll::ScrollWheelBehavior;
 use super::editor::view::CodeEditorView;

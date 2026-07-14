@@ -1,10 +1,9 @@
-use registry::register_uri_handler;
 use octomusui::AppContext;
+use registry::register_uri_handler;
 #[cfg(feature = "release_bundle")]
 use {
-    service_impl::forward_uri_to_sole_running_instance,
+    octomus_core::channel::ChannelState, service_impl::forward_uri_to_sole_running_instance,
     single_instance_manager::SingleInstanceManager, thiserror::Error, url::Url,
-    octomus_core::channel::ChannelState,
 };
 
 mod registry;

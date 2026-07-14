@@ -14,7 +14,6 @@ use std::time::Duration;
 use ::channel_versions::{ParsedVersion, VersionInfo};
 use anyhow::{anyhow, Context as _, Result};
 use chrono::{DateTime, FixedOffset, NaiveDate};
-use rand::Rng as _;
 use octomus_core::execution_mode::AppExecutionMode;
 use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
 use octomusui::platform::TerminationMode;
@@ -22,6 +21,7 @@ use octomusui::r#async::Timer;
 use octomusui::windowing::state::ApplicationStage;
 use octomusui::windowing::{self, WindowManager};
 use octomusui::{AppContext, Entity, ModelContext, SingletonEntity, ViewContext};
+use rand::Rng as _;
 
 pub use self::changelog::get_current_changelog;
 use self::channel_versions::fetch_channel_versions;

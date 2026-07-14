@@ -15,13 +15,13 @@ use http::HeaderValue;
 pub use http::header::AUTHORIZATION;
 use http::header::HeaderName;
 pub use http::{HeaderMap, StatusCode};
+use octomus_core::channel::{Channel, ChannelState};
+use octomus_core::operating_system_info::OperatingSystemInfo;
+use octomus_core::{execution_mode, report_error};
 use reqwest::IntoUrl;
 use reqwest_eventsource::RequestBuilderExt;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
-use octomus_core::channel::{Channel, ChannelState};
-use octomus_core::operating_system_info::OperatingSystemInfo;
-use octomus_core::{execution_mode, report_error};
 
 use crate::iap::{IapTokenProvider, proxy_auth_header};
 

@@ -2,9 +2,6 @@ use std::ops::{Deref as _, Range};
 use std::sync::Arc;
 
 use num_traits::Float as _;
-use parking_lot::FairMutex;
-use pathfinder_geometry::vector::vec2f;
-use vec1::Vec1;
 use octomus_core::features::FeatureFlag;
 use octomus_util::user_input::UserInput;
 use octomusui::elements::new_scrollable::{NewScrollableElement, ScrollableAxis};
@@ -21,6 +18,9 @@ use octomusui::{
     Element, EntityId, Event, EventContext, LayoutContext, ModelHandle, PaintContext,
     SizeConstraint,
 };
+use parking_lot::FairMutex;
+use pathfinder_geometry::vector::vec2f;
+use vec1::Vec1;
 
 use super::{should_intercept_mouse, should_intercept_scroll};
 use crate::appearance::Appearance;

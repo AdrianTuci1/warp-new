@@ -1,7 +1,6 @@
 use std::path::PathBuf;
 
 use futures_util::stream::AbortHandle;
-use pathfinder_geometry::vector::vec2f;
 use octomusui::elements::{
     Align, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, MainAxisAlignment,
     MainAxisSize, MouseStateHandle, ParentElement, Radius,
@@ -13,6 +12,7 @@ use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyle
 use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use super::modal::BODY_HEIGHT;
 use super::nodes::{

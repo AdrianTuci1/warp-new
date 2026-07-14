@@ -1,6 +1,6 @@
+use octomusui::platform::linux;
 use settings::macros::define_settings_group;
 use settings::{SupportedPlatforms, SyncToCloud};
-use octomusui::platform::linux;
 
 define_settings_group!(LinuxAppConfiguration,
     settings: [

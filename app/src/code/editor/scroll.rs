@@ -1,5 +1,5 @@
-use warp_editor::content::version::BufferVersion;
 use octomus_util::path::LineAndColumnArg;
+use warp_editor::content::version::BufferVersion;
 
 #[derive(Debug, Clone, Copy)]
 pub enum ScrollWheelBehavior {

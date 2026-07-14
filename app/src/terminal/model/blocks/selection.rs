@@ -3,13 +3,13 @@ use std::fmt::Debug;
 use std::mem;
 use std::ops::RangeInclusive;
 
-use sum_tree::SeekBias;
-use vec1::{vec1, Vec1};
 use octomus_core::semantic_selection::SemanticSelection;
 use octomus_terminal::model::grid::CellType;
 use octomusui::text::{IsRect, SelectionType};
 use octomusui::units::{IntoLines as _, Lines};
 use octomusui::{AppContext, EntityId, ViewAsRef as _};
+use sum_tree::SeekBias;
+use vec1::{vec1, Vec1};
 
 use super::{
     BlockHeight, BlockHeightItem, BlockHeightSummary, BlockList, BlockListPoint, RichContentItem,
@@ -954,9 +954,10 @@ impl BlockList {
                             }
 
                             if let Some(active_window_id) = app.windows().active_window() {
-                                if let Some(ssh_block) = app
-                                    .view_with_id::<OctomusifySuccessBlock>(active_window_id, *view_id)
-                                {
+                                if let Some(ssh_block) = app.view_with_id::<OctomusifySuccessBlock>(
+                                    active_window_id,
+                                    *view_id,
+                                ) {
                                     let octomusify_success_block = app.view(&ssh_block);
                                     if let Some(selected_text) =
                                         octomusify_success_block.selected_text()

@@ -1,6 +1,3 @@
-use warp_editor::editor::NavigationKey;
-use warp_editor::model::RichTextEditorModel;
-use warp_editor::render::model::RenderState;
 use octomusui::elements::{
     AnchorPair, Container, Flex, MouseStateHandle, OffsetPositioning, OffsetType, ParentElement,
     PositionedElementOffsetBounds, PositioningAxis, XAxisAnchor, YAxisAnchor,
@@ -12,6 +9,9 @@ use octomusui::{
     AppContext, BlurContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use warp_editor::editor::NavigationKey;
+use warp_editor::model::RichTextEditorModel;
+use warp_editor::render::model::RenderState;
 
 use super::model::NotebooksEditorModel;
 use crate::appearance::Appearance;

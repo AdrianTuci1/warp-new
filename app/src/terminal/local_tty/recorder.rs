@@ -3,8 +3,8 @@ use std::sync::{Arc, Mutex};
 use async_broadcast::Receiver;
 use futures_lite::StreamExt;
 use instant::{Duration, Instant};
-use parking_lot::FairMutex;
 use octomusui::r#async::executor::Background;
+use parking_lot::FairMutex;
 
 use crate::auth::auth_state::AuthState;
 use crate::send_telemetry_on_executor;

@@ -1,7 +1,5 @@
 use std::sync::Arc;
 
-use pathfinder_geometry::vector::vec2f;
-use vim::vim::{VimMode, VimState};
 use octomus_completer::completer::Description;
 use octomus_core::features::FeatureFlag;
 use octomusui::elements::{
@@ -14,6 +12,8 @@ use octomusui::fonts::Weight;
 use octomusui::presenter::ChildView;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{AppContext, EntityId, SingletonEntity, ViewHandle};
+use pathfinder_geometry::vector::vec2f;
+use vim::vim::{VimMode, VimState};
 
 use crate::ai::llms::{is_using_api_key_for_provider, LLMPreferences};
 use crate::ai::{AIRequestUsageModel, BuyCreditsBannerDisplayState};

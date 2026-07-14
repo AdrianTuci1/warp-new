@@ -2,8 +2,6 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use chrono::Local;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use warp_editor::editor::NavigationKey;
 use octomusui::clipboard::ClipboardContent;
 use octomusui::elements::{
     resizable_state_handle, Align, Border, ChildAnchor, ConstrainedBox, Container, CornerRadius,
@@ -23,6 +21,8 @@ use octomusui::{
     AppContext, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use warp_editor::editor::NavigationKey;
 
 use super::execution_context::OctomusAiExecutionContext;
 use super::requests::{Event as RequestsEvent, RequestStatus, Requests};
@@ -68,7 +68,8 @@ const BODY_FONT_SIZE: f32 = 13.;
 const TITLE_FONT_SIZE: f32 = 16.;
 const ZERO_STATE_HELP_TEXT_FONT_SIZE: f32 = 12.;
 
-const ZERO_STATE_HELP_TEXT: &str = "Shift + ctrl + space a block or text selection to ask Octomus AI.";
+const ZERO_STATE_HELP_TEXT: &str =
+    "Shift + ctrl + space a block or text selection to ask Octomus AI.";
 const SCRIPT_ZERO_STATE_PROMPT: &str = "Write a script to connect to an AWS EC2 instance.";
 const GIT_ZERO_STATE_PROMPT: &str = "How do I undo the most recent commits in git?";
 const FILES_ZERO_STATE_PROMPT: &str = "How do I find all files containing specific text?";

@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::time::Duration;
 
-use settings::Setting as _;
 use octomus::features::FeatureFlag;
 use octomus::integration_testing::remote_server::{
     assert_command_executor_is_remote_server, assert_remote_server_connected,
@@ -22,9 +21,12 @@ use octomus::integration_testing::terminal::{
     execute_command_for_single_terminal_in_tab, run_completer,
     wait_until_bootstrapped_single_pane_for_tab,
 };
+use octomus::terminal::octomusify::settings::{
+    SshExtensionInstallMode, SshExtensionInstallModeSetting,
+};
 use octomus::terminal::shell::ShellType;
-use octomus::terminal::octomusify::settings::{SshExtensionInstallMode, SshExtensionInstallModeSetting};
 use octomusui_core::integration::TestStep;
+use settings::Setting as _;
 
 use super::{new_builder, Builder};
 
@@ -150,7 +152,8 @@ pub fn test_remote_server_completions() -> Builder {
         ))
         // Trigger the actual tab-completion request path for a remote file.
         .with_step(
-            run_completer(0, "cat /tmp/octomus-rs-completion-t").set_timeout(Duration::from_secs(15)),
+            run_completer(0, "cat /tmp/octomus-rs-completion-t")
+                .set_timeout(Duration::from_secs(15)),
         )
         // Verify the executor is still the remote server executor after
         // completions have been triggered.

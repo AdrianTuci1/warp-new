@@ -1,6 +1,6 @@
+use octomusui::{AppContext, SingletonEntity};
 use settings::macros::define_settings_group;
 use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
-use octomusui::{AppContext, SingletonEntity};
 
 use crate::features::FeatureFlag;
 

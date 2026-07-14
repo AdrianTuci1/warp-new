@@ -24,14 +24,6 @@ pub use aws_bedrock_login::*;
 pub use aws_cli_not_installed::*;
 pub use notifications_discovery::*;
 pub use notifications_error::*;
-pub use open_in_octomus::*;
-pub use passive_code_diff::*;
-use pathfinder_color::ColorU;
-pub use session_state::*;
-pub use shared_sessions::*;
-pub use shell_process_terminated::*;
-pub use ssh::*;
-pub use vim_mode::*;
 use octomusui::elements::{
     Align, Clipped, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Icon,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Radius, SavePosition,
@@ -41,6 +33,14 @@ use octomusui::fonts::{FamilyId, Properties, Weight};
 use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::Element;
+pub use open_in_octomus::*;
+pub use passive_code_diff::*;
+use pathfinder_color::ColorU;
+pub use session_state::*;
+pub use shared_sessions::*;
+pub use shell_process_terminated::*;
+pub use ssh::*;
+pub use vim_mode::*;
 
 pub use self::prompt_suggestions::*;
 use crate::appearance::Appearance;

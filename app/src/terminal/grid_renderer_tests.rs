@@ -1,7 +1,7 @@
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
 use octomusui::fonts::Cache as FontCache;
 use octomusui::units::{IntoLines, Lines, Pixels};
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
 
 use super::{active_or_next_match, CachedBackgroundColor};
 use crate::terminal::grid_size_util::calculate_grid_baseline_position;

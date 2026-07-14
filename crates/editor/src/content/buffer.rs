@@ -13,13 +13,6 @@ use markdown_parser::{
     OrderedFormattedIndentTextInline, parse_markdown, parse_markdown_with_gfm_tables,
 };
 use num_traits::SaturatingSub;
-use pathfinder_color::ColorU;
-use rand::Rng;
-use rand::distributions::Alphanumeric;
-use serde_yaml::Mapping;
-use string_offset::{ByteOffset, CharOffset};
-use sum_tree::{SeekBias, SumTree};
-use vec1::{Vec1, vec1};
 use octomus_core::platform::SessionPlatform;
 use octomus_core::safe_error;
 use octomus_util::content_version::ContentVersion;
@@ -28,6 +21,13 @@ use octomusui_core::fonts::Weight;
 use octomusui_core::text::point::Point;
 use octomusui_core::text::{TextBuffer, char_slice};
 use octomusui_core::{AppContext, Entity, EntityId, ModelContext, ModelHandle};
+use pathfinder_color::ColorU;
+use rand::Rng;
+use rand::distributions::Alphanumeric;
+use serde_yaml::Mapping;
+use string_offset::{ByteOffset, CharOffset};
+use sum_tree::{SeekBias, SumTree};
+use vec1::{Vec1, vec1};
 
 use super::anchor::{Anchor, AnchorSide, Anchors};
 use super::cursor::BufferCursor;

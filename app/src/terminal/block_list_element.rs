@@ -8,10 +8,6 @@ use std::sync::{Arc, Mutex, MutexGuard};
 
 use enum_iterator::Sequence;
 use itertools::Itertools;
-use parking_lot::FairMutex;
-use pathfinder_color::ColorU;
-use session_sharing_protocol::common::{ParticipantId, Selection};
-use vec1::Vec1;
 use octomus_core::semantic_selection::SemanticSelection;
 use octomus_core::ui::builder::UiBuilder;
 use octomus_core::ui::theme::AnsiColorIdentifier;
@@ -36,6 +32,10 @@ use octomusui::{
     AfterLayoutContext, AppContext, ClipBounds, Element, EntityId, Event, EventContext,
     LayoutContext, ModelHandle, PaintContext, SingletonEntity as _, SizeConstraint,
 };
+use parking_lot::FairMutex;
+use pathfinder_color::ColorU;
+use session_sharing_protocol::common::{ParticipantId, Selection};
+use vec1::Vec1;
 
 use super::block_list_viewport::{ClampingMode, InputMode, ScrollPosition, ViewportState};
 use super::blockgrid_renderer::GridRenderParams;
@@ -50,6 +50,7 @@ use super::model::mouse::{MouseAction, MouseButton, MouseState};
 use super::model::session::SessionId;
 use super::model::terminal_model::{SelectedBlocks, WithinBlock, WithinModel};
 use super::model::SecretHandle;
+use super::octomusify::render::{draw_flag_pole, render_subshell_flag};
 use super::shared_session::presence_manager::{
     text_selection_color, PresenceManager, MUTED_PARTICIPANT_COLOR,
 };
@@ -58,7 +59,6 @@ use super::view::{
     BlocklistAIRenderContext, InlineBannerId, RichContentMetadata, SeparatorId,
     SharedSessionBanners, TerminalEditor, TerminalViewRenderContext, BLOCK_BANNER_HEIGHT,
 };
-use super::octomusify::render::{draw_flag_pole, render_subshell_flag};
 use super::{heights_approx_eq, TerminalModel, HEIGHT_FUDGE_FACTOR_LINES};
 use crate::ai::blocklist::agent_view::{agent_view_bg_fill, AgentViewState};
 use crate::ai::blocklist::{ai_brand_color, ATTACH_AS_AGENT_MODE_CONTEXT_TEXT};
@@ -84,9 +84,9 @@ use crate::terminal::model::escape_sequences::{
 use crate::terminal::model::index::Point as IndexPoint;
 use crate::terminal::model::selection::{SelectAction, SelectionPoint};
 use crate::terminal::model::terminal_model::BlockIndex;
+use crate::terminal::octomusify::SubshellSource;
 use crate::terminal::safe_mode_settings::get_secret_obfuscation_mode;
 use crate::terminal::view::TerminalAction;
-use crate::terminal::octomusify::SubshellSource;
 use crate::terminal::{grid_renderer, SizeInfo};
 use crate::themes::theme::{Fill, WarpTheme};
 use crate::ui_components::{self, icons as UIIcon};

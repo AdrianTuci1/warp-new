@@ -1,7 +1,7 @@
 use channel_versions::overrides::TargetOS;
 use chrono::{DateTime, Local};
-use serde::{Deserialize, Serialize};
 use octomus_core::command::ExitCode;
+use serde::{Deserialize, Serialize};
 
 use crate::terminal::event::UserBlockCompleted;
 use crate::terminal::model::block::BlockId;

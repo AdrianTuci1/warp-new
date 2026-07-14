@@ -3,9 +3,6 @@
 use std::fs;
 use std::time::Duration;
 
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use settings::Setting as _;
 use octomus::cmd_or_ctrl_shift;
 use octomus::features::FeatureFlag;
 use octomus::integration_testing::clipboard::assert_clipboard_contains_string;
@@ -35,6 +32,9 @@ use octomusui_core::event::{Event, ModifiersState};
 use octomusui_core::integration::{AssertionCallback, AssertionOutcome, TestStep};
 use octomusui_core::windowing::WindowManager;
 use octomusui_core::{async_assert, async_assert_eq, SingletonEntity, TypedActionView, WindowId};
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use settings::Setting as _;
 
 use super::new_builder;
 use crate::util::skip_if_powershell_core_2303;

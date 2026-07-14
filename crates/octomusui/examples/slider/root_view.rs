@@ -1,9 +1,9 @@
-use pathfinder_color::ColorU;
 use octomusui::elements::{Align, Container};
 use octomusui::presenter::ChildView;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::ui_components::slider::{Slider, SliderStateHandle};
 use octomusui::{AppContext, Element, Entity, TypedActionView, View, ViewContext, ViewHandle};
+use pathfinder_color::ColorU;
 
 /// Renders a center-aligned slider component against a black background. When the slider is
 /// dragged, the updated value is printed to stdout.

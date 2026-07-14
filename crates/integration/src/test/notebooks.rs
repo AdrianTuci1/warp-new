@@ -14,7 +14,9 @@ use octomus::integration_testing::terminal::{
     wait_until_bootstrapped_single_pane_for_tab,
 };
 use octomus::integration_testing::view_getters::terminal_view;
-use octomus::integration_testing::window::{add_and_save_window, close_window, save_active_window_id};
+use octomus::integration_testing::window::{
+    add_and_save_window, close_window, save_active_window_id,
+};
 use octomusui_core::integration::TestStep;
 
 use super::{new_builder, Builder};

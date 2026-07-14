@@ -1,6 +1,6 @@
 use chrono::Utc;
-use warp_graphql::scalars::time::ServerTimestamp;
 use octomusui::{App, SingletonEntity};
+use warp_graphql::scalars::time::ServerTimestamp;
 
 use super::*;
 use crate::ai::request_usage_model::{RequestLimitInfo, RequestLimitRefreshDuration};

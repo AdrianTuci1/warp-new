@@ -2,20 +2,20 @@ use std::collections::{HashMap, HashSet};
 use std::fs;
 
 use ai::skills::{get_provider_for_path, ParsedSkill, SkillProvider, SkillReference, SkillScope};
-use repo_metadata::repositories::DetectedRepositories;
-use repo_metadata::{DirectoryWatcher, RepoMetadataModel};
-use tempfile::TempDir;
 use octomus_core::channel::ChannelState;
 use octomus_util::host_id::HostId;
 use octomus_util::local_or_remote_path::LocalOrRemotePath;
 use octomus_util::remote_path::RemotePath;
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui::App;
+use repo_metadata::repositories::DetectedRepositories;
+use repo_metadata::{DirectoryWatcher, RepoMetadataModel};
+use tempfile::TempDir;
 use watcher::HomeDirectoryWatcher;
 
 use super::*;
-use crate::settings::AISettings;
 use crate::octomus_managed_paths_watcher::WarpManagedPathsWatcher;
+use crate::settings::AISettings;
 
 // ============================================================================
 // Tests for get_skills_for_working_directory subdirectory scoping

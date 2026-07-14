@@ -3,13 +3,13 @@ use std::io::Write;
 use std::path::PathBuf;
 
 use ai::skills::{parse_skill, ParsedSkill, SkillProvider, SkillReference, SkillScope};
+use octomus_core::features::FeatureFlag;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomusui::App;
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
 use repo_metadata::RepoMetadataModel;
 use tempfile::TempDir;
-use octomus_core::features::FeatureFlag;
-use octomus_util::local_or_remote_path::LocalOrRemotePath;
-use octomusui::App;
 use watcher::HomeDirectoryWatcher;
 
 use super::*;
@@ -20,8 +20,8 @@ use crate::ai::agent::{
 };
 use crate::ai::blocklist::action_model::AIConversationId;
 use crate::ai::skills::{BundledSkillActivation, SkillManager};
-use crate::settings::AISettings;
 use crate::octomus_managed_paths_watcher::WarpManagedPathsWatcher;
+use crate::settings::AISettings;
 
 fn initialize_app(app: &mut App) {
     app.add_singleton_model(DirectoryWatcher::new);

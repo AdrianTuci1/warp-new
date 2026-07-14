@@ -7,11 +7,11 @@ mod tests;
 use std::cmp::Ordering;
 use std::sync::Arc;
 
-use repo_metadata::file_tree_store::FileTreeEntryState;
-use repo_metadata::{FileMetadata, FileTreeEntry};
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui::elements::MouseStateHandle;
 use octomusui::ViewContext;
+use repo_metadata::file_tree_store::FileTreeEntryState;
+use repo_metadata::{FileMetadata, FileTreeEntry};
 
 use super::{FileTreeIdentifier, FileTreeItem, FileTreeView};
 use crate::code::file_tree::view::{PendingEdit, PendingEditKind};

@@ -10,10 +10,10 @@ use std::time::Duration;
 use futures::channel::oneshot;
 use futures::executor::block_on;
 use ignore::gitignore::Gitignore;
-use virtual_fs::{Stub, VirtualFS};
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui_core::r#async::FutureExt as _;
 use octomusui_core::App;
+use virtual_fs::{Stub, VirtualFS};
 
 use crate::entry::{DirectoryEntry, Entry, FileMetadata};
 use crate::file_tree_store::{FileTreeEntry, FileTreeEntryState, FileTreeState};

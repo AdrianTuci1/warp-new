@@ -11,12 +11,14 @@ use std::str::FromStr;
 
 use anyhow::{anyhow, ensure, Result};
 use itertools::Itertools;
-use session_sharing_protocol::common::SessionId;
-use url::Url;
 use octomus_util::path::LineAndColumnArg;
 use octomusui::notification::UserNotification;
 use octomusui::platform::TerminationMode;
-use octomusui::{AppContext, EntityId, SingletonEntity as _, TypedActionView, ViewHandle, WindowId};
+use octomusui::{
+    AppContext, EntityId, SingletonEntity as _, TypedActionView, ViewHandle, WindowId,
+};
+use session_sharing_protocol::common::SessionId;
+use url::Url;
 
 use self::docker::open_docker_container;
 use crate::ai::active_agent_views_model::{ActiveAgentViewsModel, ConversationOrTaskId};

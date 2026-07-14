@@ -1,7 +1,4 @@
 use itertools::Itertools;
-use pathfinder_geometry::vector::vec2f;
-use serde::Serialize;
-use settings::Setting as _;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{
     Align, Border, ChildAnchor, ChildView, Clipped, ConstrainedBox, Container, CornerRadius,
@@ -15,6 +12,9 @@ use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyle
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use serde::Serialize;
+use settings::Setting as _;
 
 use crate::chip_configurator::{ChipConfigurator, ChipConfiguratorAction, ChipConfiguratorLayout};
 use crate::context_chips::prompt::{Prompt, PromptConfiguration, PromptSelection};
@@ -686,7 +686,10 @@ impl EditorModal {
 
         self.render_prompt_section(
             appearance,
-            matches!(self.prompt_type, PromptType::Octomus | PromptType::WarpDefault),
+            matches!(
+                self.prompt_type,
+                PromptType::Octomus | PromptType::WarpDefault
+            ),
             header_row,
             None,
             body,

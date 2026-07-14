@@ -10,11 +10,11 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use anyhow::Result;
-use serde::{Deserialize, Serialize};
 use octomus_core::SessionId;
 use octomus_util::remote_path::RemotePath;
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui::{AppContext, ModelContext, ModelHandle};
+use serde::{Deserialize, Serialize};
 
 use crate::code_review::diff_size_limits::DiffSize;
 use crate::util::git::{BranchEntry, Commit, PrInfo};

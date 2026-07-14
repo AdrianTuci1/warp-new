@@ -1,7 +1,7 @@
 use fuzzy_match::FuzzyMatchResult;
+use octomusui::{App, SingletonEntity};
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::RepoMetadataModel;
-use octomusui::{App, SingletonEntity};
 
 use super::super::search_item::{FileSearchItem, FileSearchResult};
 use super::FileSearchModel;

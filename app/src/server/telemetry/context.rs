@@ -3,10 +3,10 @@
 
 use std::sync::OnceLock;
 
-use serde::Serialize;
-use serde_json::{json, Value};
 #[cfg(target_family = "wasm")]
 use octomusui::platform::wasm;
+use serde::Serialize;
+use serde_json::{json, Value};
 
 use super::rudder_message::Message as RudderMessage;
 use crate::server::OperatingSystemInfo;

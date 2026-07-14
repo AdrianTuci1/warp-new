@@ -7,9 +7,9 @@ mod parser;
 mod token;
 
 use lexer::Lexer;
+use octomus_util::path::EscapeChar;
 use parser::Parser;
 use string_offset::ByteOffset;
-use octomus_util::path::EscapeChar;
 
 use crate::parsers::LiteCommand;
 

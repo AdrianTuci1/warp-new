@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::color::coloru_with_opacity;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_util::path::user_friendly_path;
@@ -14,6 +13,7 @@ use octomusui::platform::Cursor;
 use octomusui::text_layout::TextStyle;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{AppContext, SingletonEntity, ViewHandle};
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;
 use crate::ai::agent_conversations_model::{

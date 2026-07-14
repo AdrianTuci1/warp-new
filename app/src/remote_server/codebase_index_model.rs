@@ -2,11 +2,11 @@ use std::collections::HashMap;
 use std::str::FromStr;
 
 use ai::index::full_source_code_embedding::NodeHash;
-use remote_server::codebase_index_proto::{RemoteCodebaseIndexState, RemoteCodebaseIndexStatus};
 use octomus_core::{HostId, SessionId};
 use octomus_util::remote_path::RemotePath;
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui::{Entity, ModelContext, SingletonEntity};
+use remote_server::codebase_index_proto::{RemoteCodebaseIndexState, RemoteCodebaseIndexStatus};
 
 use super::manager::{
     RemoteCodebaseIndexStatusWithPath, RemoteCodebaseIndexUpdateOperation, RemoteServerManager,

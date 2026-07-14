@@ -4,10 +4,10 @@ use std::time::Duration;
 
 use chrono::{DateTime, Local, Utc};
 use itertools::Itertools;
-use uuid::Uuid;
 use octomus_cli::agent::Harness;
 use octomus_core::features::FeatureFlag;
 use octomusui::{App, EntityId};
+use uuid::Uuid;
 
 use super::{
     convert_persisted_conversation_to_ai_conversation_with_metadata, AIConversationMetadata,

@@ -3,12 +3,12 @@
 use std::fmt::{Display, Formatter};
 use std::sync::OnceLock;
 
-use serde::Serialize;
-use serde_with::SerializeDisplay;
 #[cfg(target_family = "wasm")]
 use octomusui_core::platform::wasm;
 #[cfg(target_family = "wasm")]
 use octomusui_core::platform::OperatingSystem;
+use serde::Serialize;
+use serde_with::SerializeDisplay;
 
 static OS_INFO: OnceLock<Result<OperatingSystemInfo, OperatingSystemInfoError>> = OnceLock::new();
 

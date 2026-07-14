@@ -205,7 +205,10 @@ fn shift_nested_chunks_only_touches_the_requested_slot() {
     shift_old_session_in_session_chunks(tmp.path(), "octomus.log", 0);
 
     assert!(tmp.path().join("octomus.log.old.1.in_session.0").is_file());
-    assert_eq!(tmp.path().join("octomus.log.old.1.in_session.0"), slot1_chunk);
+    assert_eq!(
+        tmp.path().join("octomus.log.old.1.in_session.0"),
+        slot1_chunk
+    );
 }
 
 #[test]

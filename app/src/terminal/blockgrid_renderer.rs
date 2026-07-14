@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 use std::ops::{Neg, RangeInclusive};
 
-use pathfinder_color::ColorU;
 use octomusui::fonts::{FamilyId, Properties, Weight};
 use octomusui::geometry::rect::RectF;
 use octomusui::geometry::vector::{vec2f, Vector2F};
 use octomusui::{AppContext, Element, EntityId, PaintContext};
+use pathfinder_color::ColorU;
 
 use super::model::ansi::{CursorShape, CursorStyle};
 use super::model::grid::RespectDisplayedOutput;

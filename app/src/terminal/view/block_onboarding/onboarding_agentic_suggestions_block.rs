@@ -1,8 +1,6 @@
 use lazy_static::lazy_static;
 use markdown_parser::weight::CustomWeight;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use regex::Regex;
-use serde::{Deserialize, Serialize};
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::color::internal_colors;
 use octomusui::elements::{
@@ -17,6 +15,8 @@ use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     WeakViewHandle,
 };
+use regex::Regex;
+use serde::{Deserialize, Serialize};
 
 use crate::ai::blocklist::{
     ai_brand_color, BlocklistAIActionEvent, BlocklistAIActionModel, BlocklistAIHistoryEvent,

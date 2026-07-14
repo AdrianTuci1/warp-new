@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
-use uuid::Uuid;
 use octomusui::elements::{ChildView, Container};
 use octomusui::ui_components::components::{Coords, UiComponentStyles};
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use uuid::Uuid;
 
 use crate::ai::mcp::gallery::MCPGalleryManager;
 use crate::ai::mcp::templatable_installation::VariableValue;

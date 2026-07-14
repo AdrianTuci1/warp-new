@@ -1,8 +1,8 @@
-use pathfinder_color::ColorU;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::color::coloru_with_opacity;
 use octomus_core::ui::theme::Fill;
 use octomus_core::ui::theme::color::internal_colors;
+use pathfinder_color::ColorU;
 
 /// Theming delegate for a button.
 pub trait Theme {

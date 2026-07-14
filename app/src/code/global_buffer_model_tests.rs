@@ -1,13 +1,13 @@
 use lsp::LspManagerModel;
-use remote_server::proto::TextEdit;
-use repo_metadata::repositories::DetectedRepositories;
-use repo_metadata::watcher::DirectoryWatcher;
-use repo_metadata::RepoMetadataModel;
 use octomus_files::FileModel;
 use octomus_util::content_version::ContentVersion;
 use octomus_util::host_id::HostId;
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui::{App, ModelHandle, SingletonEntity};
+use remote_server::proto::TextEdit;
+use repo_metadata::repositories::DetectedRepositories;
+use repo_metadata::watcher::DirectoryWatcher;
+use repo_metadata::RepoMetadataModel;
 
 use super::{BufferSource, CharOffsetEdit, GlobalBufferModel, PendingEditBatch};
 use crate::test_util::settings::initialize_settings_for_tests;

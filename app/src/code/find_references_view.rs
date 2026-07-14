@@ -7,13 +7,9 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 
 use lsp::ReferenceLocation;
-use pathfinder_geometry::vector::Vector2F;
-use string_offset::CharOffset;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::icons::Icon as WarpIcon;
 use octomus_core::ui::theme::color::internal_colors;
-use warp_editor::content::buffer::InitialBufferState;
-use warp_editor::render::element::VerticalExpansionBehavior;
 use octomus_files::FileModel;
 use octomusui::elements::{
     Border, ChildAnchor, ChildView, ClippedScrollStateHandle, ClippedScrollable, ConstrainedBox,
@@ -28,6 +24,10 @@ use octomusui::ui_components::components::UiComponent;
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::Vector2F;
+use string_offset::CharOffset;
+use warp_editor::content::buffer::InitialBufferState;
+use warp_editor::render::element::VerticalExpansionBehavior;
 
 use super::editor::view::{CodeEditorRenderOptions, CodeEditorView};
 use super::global_buffer_model::GlobalBufferModel;

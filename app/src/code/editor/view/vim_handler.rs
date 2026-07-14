@@ -1,3 +1,6 @@
+use octomusui::text::point::Point;
+use octomusui::units::IntoPixels;
+use octomusui::{SingletonEntity, ViewContext};
 use vim::vim::{
     BracketChar, CharacterMotion, Direction, FindCharMotion, FirstNonWhitespaceMotion,
     InsertPosition, LineMotion, ModeTransition, MotionType, TextObjectType, VimHandler, VimMode,
@@ -10,9 +13,6 @@ use warp_editor::content::buffer::{
 use warp_editor::model::{CoreEditorModel, PlainTextEditorModel};
 use warp_editor::render::model::AutoScrollMode;
 use warp_editor::selection::{TextDirection, TextUnit};
-use octomusui::text::point::Point;
-use octomusui::units::IntoPixels;
-use octomusui::{SingletonEntity, ViewContext};
 
 use super::{CodeEditorEvent, CodeEditorView};
 use crate::code::editor::find::view::Event as FindViewEvent;

@@ -8,13 +8,13 @@ use ai::skills::{
     provider_parent_directory_for_skills_root, provider_rank, ParsedSkill, SkillProvider,
 };
 use lazy_static::lazy_static;
-use siphasher::sip::SipHasher;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::Icon;
 use octomus_util::local_or_remote_path::LocalOrRemotePath;
 use octomusui::prelude::MouseStateHandle;
 use octomusui::{AppContext, Element, EventContext, SingletonEntity};
+use siphasher::sip::SipHasher;
 
 use super::{SkillDescriptor, SkillManager};
 use crate::ai::agent::conversation::AIConversationId;

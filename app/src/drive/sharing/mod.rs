@@ -1,12 +1,12 @@
 use std::borrow::Cow;
 
 use chrono::{DateTime, Local};
-use session_sharing_protocol::common::SessionId;
 use octomus_core::channel::ChannelState;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::color::ColorU;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{AppContext, SingletonEntity, WeakViewHandle};
+use session_sharing_protocol::common::SessionId;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::blocklist::BlocklistAIHistoryModel;

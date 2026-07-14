@@ -11,11 +11,6 @@ use base64::Engine;
 use hex::FromHexError;
 use instant::Instant;
 use itertools::{Either, Itertools};
-use serde::Serialize;
-use session_sharing_protocol::common::{
-    AICommandMetadata, OrderedTerminalEventType, ParticipantId,
-};
-use session_sharing_protocol::sharer::SessionSourceType;
 use octomus_core::features::FeatureFlag;
 use octomus_core::report_error;
 use octomus_core::semantic_selection::SemanticSelection;
@@ -27,11 +22,16 @@ use octomusui::r#async::executor::Background;
 #[cfg(not(target_family = "wasm"))]
 use octomusui::util::save_as_file;
 use octomusui::AppContext;
+use serde::Serialize;
+use session_sharing_protocol::common::{
+    AICommandMetadata, OrderedTerminalEventType, ParticipantId,
+};
+use session_sharing_protocol::sharer::SessionSourceType;
 
 use super::super::{AltScreen, BlockList};
 use super::ansi::{
-    BootstrappedValue, FinishUpdateValue, InputBufferValue, Mode, PendingHook,
-    TmuxInstallFailedInfo, OctomusificationUnavailableReason,
+    BootstrappedValue, FinishUpdateValue, InputBufferValue, Mode,
+    OctomusificationUnavailableReason, PendingHook, TmuxInstallFailedInfo,
 };
 use super::block::{
     AgentInteractionMetadata, Block, BlockId, BlockMetadata, BlockSize, BlockState,

@@ -7,8 +7,8 @@ use objc2_metal::{
     MTLDevice, MTLOrigin, MTLPixelFormat, MTLRegion, MTLSize, MTLStorageMode, MTLTexture,
     MTLTextureDescriptor, MTLTextureUsage,
 };
-use pathfinder_geometry::vector::Vector2F;
 use octomusui_core::platform::CapturedFrame;
+use pathfinder_geometry::vector::Vector2F;
 
 #[cfg(test)]
 #[path = "frame_capture_tests.rs"]

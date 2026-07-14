@@ -2,8 +2,6 @@ use std::path::{Path, PathBuf};
 
 use ai::api_keys::{ApiKeyManager, ApiKeyManagerEvent};
 use itertools::Itertools;
-use regex::Regex;
-use thousands::Separable;
 use octomus_core::ui::theme::color::internal_colors;
 use octomusui::elements::{
     Align, Border, ChildView, ClippedScrollStateHandle, ClippedScrollable, ConstrainedBox,
@@ -18,6 +16,8 @@ use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use regex::Regex;
+use thousands::Separable;
 
 use crate::ai::blocklist::BlocklistAIPermissions;
 use crate::ai::execution_profiles::model_menu_items::available_model_menu_items;
@@ -1740,7 +1740,11 @@ impl TypedActionView for ExecutionProfileEditorView {
             }
             ExecutionProfileEditorViewAction::SetPlanAutoSync { enabled } => {
                 AIExecutionProfilesModel::handle(ctx).update(ctx, |profiles_model, ctx| {
-                    profiles_model.set_autosync_plans_to_octomus_drive(self.profile_id, *enabled, ctx);
+                    profiles_model.set_autosync_plans_to_octomus_drive(
+                        self.profile_id,
+                        *enabled,
+                        ctx,
+                    );
                 });
                 ctx.notify();
             }

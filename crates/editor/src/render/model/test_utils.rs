@@ -3,15 +3,15 @@
 use std::mem;
 use std::sync::Arc;
 
-use ordered_float::OrderedFloat;
-use parking_lot::Once;
-use vec1::{Vec1, vec1};
 use octomusui_core::color::ColorU;
 use octomusui_core::elements::{Border, Fill, ListIndentLevel};
 use octomusui_core::fonts::{FamilyId, Weight};
 use octomusui_core::geometry::vector::vec2f;
 use octomusui_core::text_layout::{CaretPosition, Glyph, Line, Run, TextFrame};
 use octomusui_core::units::{IntoPixels, Pixels};
+use ordered_float::OrderedFloat;
+use parking_lot::Once;
+use vec1::{Vec1, vec1};
 
 use super::{
     BlockItem, BrokenLinkStyle, CheckBoxStyle, DEFAULT_BLOCK_SPACINGS, HorizontalRuleStyle,

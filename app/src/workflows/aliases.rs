@@ -1,11 +1,11 @@
 use std::collections::{HashMap, HashSet};
 
 use anyhow::Error;
-use serde::{Deserialize, Serialize};
-use settings_value::SettingsValue;
 use octomus_core::define_settings_group;
 use octomus_core::settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
 use octomusui::{AppContext, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
+use settings_value::SettingsValue;
 
 use crate::cloud_object::model::persistence::{CloudModel, CloudModelEvent};
 use crate::cloud_object::CloudObject as _;

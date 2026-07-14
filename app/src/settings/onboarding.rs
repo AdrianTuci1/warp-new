@@ -1,8 +1,8 @@
+use octomus_core::features::FeatureFlag;
+use octomusui::{AppContext, SingletonEntity as _};
 use onboarding::slides::{AgentAutonomy, AgentDevelopmentSettings};
 use onboarding::{SelectedSettings, SessionDefault, UICustomizationSettings};
 use settings::Setting as _;
-use octomus_core::features::FeatureFlag;
-use octomusui::{AppContext, SingletonEntity as _};
 
 use crate::ai::execution_profiles::profiles::AIExecutionProfilesModel;
 use crate::ai::execution_profiles::{ActionPermission, WriteToPtyPermission};

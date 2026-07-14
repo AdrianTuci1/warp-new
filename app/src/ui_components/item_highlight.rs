@@ -1,8 +1,8 @@
-use pathfinder_color::ColorU;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{CornerRadius, MouseState, Radius};
 use octomusui::Element;
+use pathfinder_color::ColorU;
 
 use crate::appearance::Appearance;
 use crate::ui_components::blended_colors;

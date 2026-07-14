@@ -38,13 +38,13 @@ use itertools::Itertools;
 use libsqlite3_sys as sqlite3;
 use lsp::supported_servers::LSPServerType;
 use num_traits::FromPrimitive;
+use octomusui::platform::FullscreenState;
+use octomusui::windowing::{MIN_WINDOW_HEIGHT, MIN_WINDOW_WIDTH};
+use octomusui::{AppContext, SingletonEntity};
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::Vector2F;
 use persistence::model::AMBIENT_AGENT_PANE_KIND;
 use uuid::Uuid;
-use octomusui::platform::FullscreenState;
-use octomusui::windowing::{MIN_WINDOW_HEIGHT, MIN_WINDOW_WIDTH};
-use octomusui::{AppContext, SingletonEntity};
 
 use super::agent::{delete_agent_conversations, upsert_agent_conversation};
 use super::block_list::{

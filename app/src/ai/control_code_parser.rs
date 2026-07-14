@@ -1,7 +1,7 @@
 use std::ops::Range;
 
-use regex::Regex;
 use octomusui::keymap::Keystroke;
+use regex::Regex;
 
 use crate::terminal::model::escape_sequences::C0;
 

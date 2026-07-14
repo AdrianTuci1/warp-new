@@ -3,7 +3,6 @@ use std::path::PathBuf;
 
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::Icon;
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     Border, ChildView, ClippedScrollStateHandle, ClippedScrollable, ConstrainedBox, Container,
     CornerRadius, CrossAxisAlignment, Fill, Flex, Hoverable, MainAxisAlignment, MainAxisSize,
@@ -19,6 +18,7 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use warp_editor::editor::NavigationKey;
 
 use crate::appearance::Appearance;
 use crate::editor::{

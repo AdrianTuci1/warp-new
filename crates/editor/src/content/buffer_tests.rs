@@ -7,16 +7,16 @@ use markdown_parser::{
     FormattedIndentTextInline, FormattedText, FormattedTextFragment, FormattedTextLine, parse_html,
     parse_markdown,
 };
+use octomus_util::content_version::ContentVersion;
+use octomusui_core::elements::ListIndentLevel;
+use octomusui_core::text::point::Point;
+use octomusui_core::{App, AppContext, ModelContext, ModelHandle, ReadModel};
 use pathfinder_color::ColorU;
 use rand::SeedableRng;
 use rand::rngs::StdRng;
 use serde_yaml::{Mapping, Value};
 use string_offset::{ByteOffset, CharOffset};
 use vec1::{Vec1, vec1};
-use octomus_util::content_version::ContentVersion;
-use octomusui_core::elements::ListIndentLevel;
-use octomusui_core::text::point::Point;
-use octomusui_core::{App, AppContext, ModelContext, ModelHandle, ReadModel};
 
 use super::{BufferEvent, EditResult, ToBufferCharOffset};
 use crate::content::buffer::{
@@ -3429,8 +3429,7 @@ fn test_markdown_escapes() {
 #[test]
 fn test_import_markdown() {
     App::test((), |mut app| async move {
-        let markdown_string =
-            "test\n```octomus-runnable-command\nparagragh\n```\nSome text\nSome ***bold and italic***";
+        let markdown_string = "test\n```octomus-runnable-command\nparagragh\n```\nSome text\nSome ***bold and italic***";
         let (buffer, _selection) = Buffer::mock_from_markdown(
             markdown_string,
             None,

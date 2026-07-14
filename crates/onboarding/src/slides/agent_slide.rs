@@ -1,8 +1,4 @@
 use ai::LLMId;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use ui_components::button::State as ButtonState;
-use ui_components::{button, Component as _, Options as _};
 use octomus_core::features::FeatureFlag;
 use octomus_core::send_telemetry_from_ctx;
 use octomus_core::ui::appearance::Appearance;
@@ -25,6 +21,10 @@ use octomusui_core::ui_components::components::{UiComponent as _, UiComponentSty
 use octomusui_core::{
     AppContext, Element, Entity, Gradient, SingletonEntity as _, TypedActionView, View, ViewContext,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use ui_components::button::State as ButtonState;
+use ui_components::{button, Component as _, Options as _};
 
 use super::two_line_button::{render_two_line_button, TwoLineButtonSpec};
 use super::OnboardingSlide;
@@ -999,12 +999,12 @@ impl AgentSlide {
         );
 
         let step_index = 2;
-        let step_count = if octomus_core::features::FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
-        {
-            5
-        } else {
-            4
-        };
+        let step_count =
+            if octomus_core::features::FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
+                5
+            } else {
+                4
+            };
         bottom_nav::onboarding_bottom_nav(
             appearance,
             step_index,

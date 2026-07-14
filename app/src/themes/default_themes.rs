@@ -1,5 +1,4 @@
 use asset_macro::bundled_or_fetched_asset;
-use pathfinder_color::ColorU;
 use octomus_core::ui::color::blend::Blend;
 use octomus_core::ui::color::{coloru_with_opacity, OPAQUE};
 use octomus_core::ui::theme::color::CustomDetails;
@@ -7,6 +6,7 @@ use octomus_core::ui::theme::{
     AnsiColor, AnsiColors, Details, Fill, HorizontalGradient, Image, TerminalColors,
     VerticalGradient, WarpTheme,
 };
+use pathfinder_color::ColorU;
 
 const DARK_MODE_NORMAL_COLORS: AnsiColors = AnsiColors::new(
     AnsiColor::from_u32(0x616161FF),

@@ -14,7 +14,6 @@ use ai::index::full_source_code_embedding::manager::CodebaseIndexManager;
 use ai::index::full_source_code_embedding::manager::CodebaseIndexManagerEvent;
 #[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
 use git2::Repository as GitRepository;
-use pathfinder_color::ColorU;
 use octomus_core::features::FeatureFlag;
 use octomus_core::paths::home_relative_path;
 use octomus_core::ui::theme::color::internal_colors;
@@ -28,7 +27,10 @@ use octomusui::platform::file_picker::FilePickerError;
 use octomusui::platform::FilePickerConfiguration;
 use octomusui::r#async::{SpawnedFutureHandle, Timer};
 use octomusui::ui_components::components::UiComponent;
-use octomusui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
+use octomusui::{
+    AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
+};
+use pathfinder_color::ColorU;
 
 use crate::appearance::Appearance;
 use crate::modal::MODAL_BACKDROP_OPACITY;

@@ -4,10 +4,10 @@ use std::sync::Arc;
 use ai::index::full_source_code_embedding::manager::CodebaseIndexManager;
 use chrono::Local;
 use lazy_static::lazy_static;
-use regex::Regex;
 use octomus_core::features::FeatureFlag;
-use warp_graphql::generic_string_object::GenericStringObjectFormat as GraphQLFormat;
 use octomusui::{AppContext, SingletonEntity};
+use regex::Regex;
+use warp_graphql::generic_string_object::GenericStringObjectFormat as GraphQLFormat;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::{

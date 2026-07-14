@@ -601,7 +601,8 @@ impl Input {
                 .ambient_agent_view_model()
                 .map(|m| m.as_ref(app).selected_harness())
                 .unwrap_or(octomus_cli::agent::Harness::Oz);
-            if harness != octomus_cli::agent::Harness::Oz && !self.should_show_auth_secret_ftux(app) {
+            if harness != octomus_cli::agent::Harness::Oz && !self.should_show_auth_secret_ftux(app)
+            {
                 row.add_child(ChildView::new(auth_secret_selector).finish());
             }
         }
@@ -719,8 +720,8 @@ impl Input {
 }
 
 pub mod styles {
-    use pathfinder_color::ColorU;
     use octomus_core::ui::theme::WarpTheme;
+    use pathfinder_color::ColorU;
 
     use crate::ui_components::blended_colors;
 

@@ -1,7 +1,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use pathfinder_geometry::vector::{vec2f, Vector2F};
 use octomus_core::ui::appearance::Appearance;
 use octomusui::elements::new_scrollable::SingleAxisConfig;
 use octomusui::elements::{ChildView, Clipped, ClippedScrollStateHandle, ConstrainedBox, Fill};
@@ -10,6 +9,7 @@ use octomusui::{
     App, Entity, Event, Presenter, TypedActionView, View, ViewContext, ViewHandle, WindowId,
     WindowInvalidation,
 };
+use pathfinder_geometry::vector::{vec2f, Vector2F};
 
 use super::*;
 

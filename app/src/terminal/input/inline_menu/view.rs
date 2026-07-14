@@ -2,7 +2,6 @@
 use std::sync::LazyLock;
 
 use itertools::Itertools;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::color::blend::Blend;
@@ -30,6 +29,7 @@ use octomusui::{
     Action, AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WeakViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::blocklist::agent_view::{
     agent_view_bg_color, AgentViewController, AgentViewControllerEvent,

@@ -31,27 +31,9 @@ use model::{
     SubwordBoundaries, ToBufferOffset, ToCharOffset, ToDisplayPoint, ToPoint,
 };
 use num_traits::SaturatingSub;
-use parking_lot::Mutex;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::Vector2F;
-use settings::Setting as _;
-use snapshot::{EditorHeightShrinkDelay, ViewSnapshot};
-use string_offset::{ByteOffset, CharOffset};
-use vec1::{vec1, Vec1};
-use vim::vim::{
-    BracketChar, CharacterMotion, Direction, FindCharMotion, FirstNonWhitespaceMotion,
-    InsertPosition, LineMotion, ModeTransition, MotionType, TextObjectInclusion, TextObjectType,
-    VimHandler, VimMode, VimModel, VimMotion, VimOperand, VimOperator, VimState, VimSubscriber,
-    VimTextObject, WordBound, WordMotion, WordType,
-};
-use vim::{
-    vim_a_block, vim_a_paragraph, vim_a_quote, vim_a_word, vim_inner_block, vim_inner_paragraph,
-    vim_inner_quote, vim_inner_word, vim_word_iterator_from_offset,
-};
 use octomus_completer::completer::Description;
 use octomus_core::semantic_selection::SemanticSelection;
 use octomus_core::{safe_error, send_telemetry_from_ctx};
-use warp_editor::editor::NavigationKey;
 use octomus_util::path::ShellFamily;
 use octomus_util::user_input::UserInput;
 use octomusui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
@@ -77,6 +59,24 @@ use octomusui::{
     FocusContext, ModelAsRef, ModelContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WindowId,
 };
+use parking_lot::Mutex;
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::Vector2F;
+use settings::Setting as _;
+use snapshot::{EditorHeightShrinkDelay, ViewSnapshot};
+use string_offset::{ByteOffset, CharOffset};
+use vec1::{vec1, Vec1};
+use vim::vim::{
+    BracketChar, CharacterMotion, Direction, FindCharMotion, FirstNonWhitespaceMotion,
+    InsertPosition, LineMotion, ModeTransition, MotionType, TextObjectInclusion, TextObjectType,
+    VimHandler, VimMode, VimModel, VimMotion, VimOperand, VimOperator, VimState, VimSubscriber,
+    VimTextObject, WordBound, WordMotion, WordType,
+};
+use vim::{
+    vim_a_block, vim_a_paragraph, vim_a_quote, vim_a_word, vim_inner_block, vim_inner_paragraph,
+    vim_inner_quote, vim_inner_word, vim_word_iterator_from_offset,
+};
+use warp_editor::editor::NavigationKey;
 /// The editor interfaces that we publicly expose to consumers.
 /// This should be a very limited set; if you need to add something here,
 /// you should carefully consider if it leaks the internal details of the editor.

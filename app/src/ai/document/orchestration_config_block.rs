@@ -6,8 +6,6 @@ use std::collections::HashMap;
 
 use ai::agent::action::RunAgentsExecutionMode;
 use ai::agent::orchestration_config::OrchestrationConfigStatus;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
 use octomus_cli::agent::Harness;
 use octomus_core::send_telemetry_from_ctx;
 use octomus_core::ui::theme::WarpTheme;
@@ -21,6 +19,8 @@ use octomusui::platform::Cursor;
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::blocklist::inline_action::create_environment_modal::{
@@ -753,7 +753,9 @@ impl View for OrchestrationConfigBlockView {
         let card = Container::new(column.finish())
             .with_uniform_padding(12.)
             .with_corner_radius(CornerRadius::with_all(Radius::Pixels(4.)))
-            .with_background(octomus_core::ui::theme::color::internal_colors::accent_overlay_1(theme))
+            .with_background(
+                octomus_core::ui::theme::color::internal_colors::accent_overlay_1(theme),
+            )
             .with_border(octomusui::elements::Border::all(1.).with_border_fill(theme.accent()))
             .finish();
 

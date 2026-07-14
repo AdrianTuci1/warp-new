@@ -1,10 +1,10 @@
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     Align, ConstrainedBox, Container, Flex, ParentElement, SavePosition, Shrinkable, Stack,
 };
 use octomusui::fonts::FamilyId;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, ViewContext, ViewHandle};
+use warp_editor::editor::NavigationKey;
 
 use crate::editor::{
     EditOrigin, EditorOptions, EditorView, Event as EditorEvent, InteractionState,

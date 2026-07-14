@@ -6,8 +6,6 @@ use ai::workspace::WorkspaceMetadata;
 use csv::Writer;
 use enclose::enclose;
 use itertools::Itertools;
-use settings::manager::SettingsManager;
-use settings::Setting as _;
 use octomus_core::context_flag::ContextFlag;
 use octomus_util::path::user_friendly_path;
 use octomusui::actions::StandardAction;
@@ -17,6 +15,8 @@ use octomusui::platform::menu::{
 };
 use octomusui::windowing::WindowManager;
 use octomusui::{AppContext, SingletonEntity};
+use settings::manager::SettingsManager;
+use settings::Setting as _;
 
 use crate::ai::persisted_workspace::PersistedWorkspace;
 use crate::auth::AuthStateProvider;

@@ -1,10 +1,10 @@
 //! General-purpose administrative commands in the Octomus CLI.
 
 use anyhow::{Context, Result};
-use serde::Serialize;
 use octomus_cli::agent::OutputFormat;
 use octomusui::platform::TerminationMode;
 use octomusui::{AppContext, SingletonEntity};
+use serde::Serialize;
 
 use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};
 use crate::auth::user::PrincipalType;

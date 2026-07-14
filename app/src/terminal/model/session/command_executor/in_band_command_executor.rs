@@ -7,12 +7,12 @@ use std::sync::Arc;
 use anyhow::Result;
 use async_channel::{self, Receiver, Sender};
 use async_trait::async_trait;
-use parking_lot::{Mutex, MutexGuard};
 use octomus_completer::completer::{CommandExitStatus, CommandOutput};
 use octomus_core::command::ExitCode;
 use octomus_terminal::model::Point;
 use octomus_util::on_cancel::OnCancelFutureExt;
 use octomusui::r#async::block_on;
+use parking_lot::{Mutex, MutexGuard};
 
 use super::ExecuteCommandOptions;
 use crate::safe_info;

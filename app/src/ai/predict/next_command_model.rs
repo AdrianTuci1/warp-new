@@ -6,8 +6,6 @@ use std::time::Duration;
 use chrono::Utc;
 use futures::stream::AbortHandle;
 use itertools::Itertools;
-#[cfg_attr(not(feature = "local_fs"), allow(unused_imports))]
-use parking_lot::{FairMutex, Mutex};
 use octomus_completer::completer::{
     self, expand_command_aliases, AliasExpansionResult, CompleterOptions,
     CompletionsFallbackStrategy, MatchStrategy,
@@ -19,6 +17,8 @@ use octomus_core::features::FeatureFlag;
 #[cfg(feature = "local_fs")]
 use octomusui::r#async::FutureExt;
 use octomusui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
+#[cfg_attr(not(feature = "local_fs"), allow(unused_imports))]
+use parking_lot::{FairMutex, Mutex};
 
 use super::generate_ai_input_suggestions::{
     create_generate_ai_input_suggestions_request, get_context_messages,

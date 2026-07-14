@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use pathfinder_color::ColorU;
 use octomus_core::ui::appearance::Appearance as CoreAppearance;
 use octomus_core::ui::icons::Icon;
 use octomus_core::ui::theme::color::internal_colors;
@@ -14,6 +13,7 @@ use octomusui::elements::{
 use octomusui::fonts::Weight;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{View, ViewContext, ViewHandle};
+use pathfinder_color::ColorU;
 
 use crate::ai::agent::conversation::ConversationStatus;
 use crate::ai::agent_management::notifications::item::NotificationSourceAgent;

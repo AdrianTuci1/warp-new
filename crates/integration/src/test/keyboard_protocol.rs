@@ -48,8 +48,10 @@ fn wait_for_protocol_enabled() -> TestStep {
 fn assert_output_contains(
     expected: &'static str,
     description: &'static str,
-) -> impl FnMut(&mut octomusui_core::App, octomusui_core::WindowId) -> octomusui_core::integration::AssertionOutcome
-{
+) -> impl FnMut(
+    &mut octomusui_core::App,
+    octomusui_core::WindowId,
+) -> octomusui_core::integration::AssertionOutcome {
     move |app, window_id| {
         let terminal_view = single_terminal_view_for_tab(app, window_id, 0);
         terminal_view.read(app, |view, _ctx| {

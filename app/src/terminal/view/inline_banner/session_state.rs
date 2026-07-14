@@ -1,5 +1,5 @@
-use settings::Setting;
 use octomusui::{Entity, ModelContext, SingletonEntity};
+use settings::Setting;
 
 use crate::settings::{AISettings, AISettingsChangedEvent};
 

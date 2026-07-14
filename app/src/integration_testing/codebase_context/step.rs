@@ -2,9 +2,9 @@ use std::path::PathBuf;
 use std::time::Duration;
 
 use ai::index::full_source_code_embedding::manager::CodebaseIndexManager;
-use settings::Setting;
 use octomusui::integration::{AssertionOutcome, StepData, TestStep};
 use octomusui::{async_assert, App, ReadModel, SingletonEntity, UpdateModel, WindowId};
+use settings::Setting;
 
 use crate::integration_testing::step::new_step_with_default_assertions;
 use crate::settings::CodeSettings;

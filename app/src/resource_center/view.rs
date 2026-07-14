@@ -1,4 +1,3 @@
-use vec1::{vec1, Vec1};
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::builder::AnimatedButtonOptions;
 use octomusui::elements::{
@@ -15,6 +14,7 @@ use octomusui::{
     AppContext, Entity, EntityId, FocusContext, ModelHandle, SingletonEntity, TypedActionView,
     View, ViewContext, ViewHandle, WindowId,
 };
+use vec1::{vec1, Vec1};
 
 use super::keybindings_page::KeybindingsEvent;
 use super::section_views::{

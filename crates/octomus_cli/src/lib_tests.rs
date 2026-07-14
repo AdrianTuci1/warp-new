@@ -436,7 +436,8 @@ fn agent_run_cloud_accepts_mcp() {
 #[test]
 fn agent_run_cloud_accepts_run_ambient_alias() {
     // Ensure backwards compatibility: run-ambient should still work as an alias
-    let args = Args::try_parse_from(["octomus", "agent", "run-ambient", "--prompt", "hello"]).unwrap();
+    let args =
+        Args::try_parse_from(["octomus", "agent", "run-ambient", "--prompt", "hello"]).unwrap();
 
     let Some(Command::CommandLine(boxed_cmd)) = args.command else {
         panic!("Expected `octomus agent run-ambient` (alias) command");
@@ -518,7 +519,8 @@ fn agent_run_accepts_prompt_only() {
 
 #[test]
 fn agent_run_accepts_saved_prompt_only() {
-    let args = Args::try_parse_from(["octomus", "agent", "run", "--saved-prompt", "sp-123"]).unwrap();
+    let args =
+        Args::try_parse_from(["octomus", "agent", "run", "--saved-prompt", "sp-123"]).unwrap();
 
     let Some(Command::CommandLine(boxed_cmd)) = args.command else {
         panic!("Expected `octomus agent run` command");
@@ -892,7 +894,8 @@ fn artifact_upload_accepts_conversation_id_and_description() {
 
 #[test]
 fn artifact_upload_accepts_missing_association_target_for_env_fallback() {
-    let args = Args::try_parse_from(["octomus", "artifact", "upload", "path/to/file.json"]).unwrap();
+    let args =
+        Args::try_parse_from(["octomus", "artifact", "upload", "path/to/file.json"]).unwrap();
 
     let Some(Command::CommandLine(boxed_cmd)) = args.command else {
         panic!("Expected `octomus artifact upload` command");
@@ -1650,7 +1653,8 @@ fn agent_run_cloud_rejects_both_computer_use_flags() {
 
 #[test]
 fn agent_run_cloud_defaults_to_no_computer_use_override() {
-    let args = Args::try_parse_from(["octomus", "agent", "run-cloud", "--prompt", "hello"]).unwrap();
+    let args =
+        Args::try_parse_from(["octomus", "agent", "run-cloud", "--prompt", "hello"]).unwrap();
 
     let Some(Command::CommandLine(boxed_cmd)) = args.command else {
         panic!("Expected `octomus agent run-cloud` command");
@@ -1689,7 +1693,8 @@ fn agent_run_cloud_accepts_harness_flag() {
 
 #[test]
 fn agent_run_cloud_defaults_harness_to_oz() {
-    let args = Args::try_parse_from(["octomus", "agent", "run-cloud", "--prompt", "hello"]).unwrap();
+    let args =
+        Args::try_parse_from(["octomus", "agent", "run-cloud", "--prompt", "hello"]).unwrap();
 
     let Some(Command::CommandLine(boxed_cmd)) = args.command else {
         panic!("Expected `octomus agent run-cloud` command");
@@ -1856,8 +1861,10 @@ fn run_message_list_parses_filters() {
 #[test]
 fn run_message_list_rejects_non_positive_limit() {
     assert!(
-        Args::try_parse_from(["octomus", "run", "message", "list", "run-123", "--limit", "0",])
-            .is_err()
+        Args::try_parse_from([
+            "octomus", "run", "message", "list", "run-123", "--limit", "0",
+        ])
+        .is_err()
     );
 }
 
@@ -1908,8 +1915,8 @@ fn run_message_read_parses() {
 
 #[test]
 fn run_message_mark_delivered_parses() {
-    let args =
-        Args::try_parse_from(["octomus", "run", "message", "mark-delivered", "message-456"]).unwrap();
+    let args = Args::try_parse_from(["octomus", "run", "message", "mark-delivered", "message-456"])
+        .unwrap();
 
     let Some(Command::CommandLine(boxed_cmd)) = args.command else {
         panic!("Expected `octomus run message mark-delivered` command");

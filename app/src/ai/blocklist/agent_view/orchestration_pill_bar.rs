@@ -7,8 +7,6 @@ use std::collections::hash_map::DefaultHasher;
 use std::collections::{HashMap, HashSet};
 use std::hash::{Hash, Hasher};
 
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
 use octomus_cli::agent::Harness;
 use octomus_core::channel::ChannelState;
 use octomus_core::send_telemetry_from_ctx;
@@ -35,6 +33,8 @@ use octomusui::{
     AppContext, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::agent::conversation::{
     AIConversation, AIConversationId, ConversationStatus, StatusColorStyle,

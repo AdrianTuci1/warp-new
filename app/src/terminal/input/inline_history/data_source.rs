@@ -8,8 +8,8 @@
 
 use chrono::{DateTime, Local};
 use fuzzy_match::FuzzyMatchResult;
-use ordered_float::OrderedFloat;
 use octomusui::{AppContext, Entity, EntityId, ModelHandle, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::ai::agent::conversation::{AIConversationId, ConversationStatus};
 use crate::ai::blocklist::agent_view::AgentViewController;

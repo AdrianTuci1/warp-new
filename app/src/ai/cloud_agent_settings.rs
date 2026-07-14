@@ -5,10 +5,10 @@
 
 use std::collections::HashMap;
 
-use settings::macros::define_settings_group;
-use settings::{Setting as _, SupportedPlatforms, SyncToCloud};
 use octomus_cli::agent::Harness;
 use octomus_core::report_if_error;
+use settings::macros::define_settings_group;
+use settings::{Setting as _, SupportedPlatforms, SyncToCloud};
 
 use crate::server::ids::SyncId;
 

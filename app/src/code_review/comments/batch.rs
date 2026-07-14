@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use octomus_core::features::FeatureFlag;
-use warp_editor::render::model::LineCount;
 use octomusui::{Entity, ModelContext};
+use warp_editor::render::model::LineCount;
 
 use super::{
     AttachedReviewComment, AttachedReviewCommentTarget, CommentId, PendingImportedReviewComment,

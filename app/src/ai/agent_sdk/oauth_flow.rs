@@ -2,8 +2,8 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use anyhow::{anyhow, Result};
-use warp_graphql::queries::get_oauth_connect_tx_status::OauthConnectTxStatus;
 use octomusui::r#async::Timer;
+use warp_graphql::queries::get_oauth_connect_tx_status::OauthConnectTxStatus;
 
 use crate::server::server_api::integrations::IntegrationsClient;
 

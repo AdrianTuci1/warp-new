@@ -1,7 +1,5 @@
 use std::borrow::Cow;
 
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::Vector2F;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::color::blend::Blend as _;
@@ -20,6 +18,8 @@ use octomusui::ui_components::components::{UiComponent as _, UiComponentStyles};
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity as _, TypedActionView, View, ViewContext,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::Vector2F;
 
 use crate::util::bindings::{keybinding_name_to_display_string, BindingGroup, CustomAction};
 

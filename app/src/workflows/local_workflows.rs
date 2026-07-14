@@ -3,10 +3,10 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use octomus_util::path::ShellFamily;
-use warp_workflows::workflows as global_workflows;
 #[cfg(not(target_family = "wasm"))]
 use octomusui::platform::OperatingSystem;
 use octomusui::{AppContext, Entity, ModelContext, SingletonEntity};
+use warp_workflows::workflows as global_workflows;
 
 use super::workflow::Workflow;
 use super::WorkflowSource;

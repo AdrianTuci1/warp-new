@@ -1,5 +1,3 @@
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::icons::Icon as WarpIcon;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::{Fill as WarpThemeFill, WarpTheme};
@@ -7,6 +5,8 @@ use octomusui::elements::{
     ChildAnchor, ConstrainedBox, Container, CornerRadius, Element, OffsetPositioning, ParentAnchor,
     ParentElement, ParentOffsetBounds, Radius, Stack,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::agent::conversation::{ConversationStatus, StatusColorStyle};
 use crate::terminal::CLIAgent;
@@ -454,10 +454,11 @@ fn render_with_optional_status_badge(
     let (icon, color) = status.status_icon_and_color(theme, StatusColorStyle::Standard);
     let badge_icon_diameter = badge_icon_size(total_size, badge_style);
     let pad = badge_padding(total_size, badge_style);
-    let badge_icon = ConstrainedBox::new(icon.to_octomusui_icon(WarpThemeFill::Solid(color)).finish())
-        .with_width(badge_icon_diameter)
-        .with_height(badge_icon_diameter)
-        .finish();
+    let badge_icon =
+        ConstrainedBox::new(icon.to_octomusui_icon(WarpThemeFill::Solid(color)).finish())
+            .with_width(badge_icon_diameter)
+            .with_height(badge_icon_diameter)
+            .finish();
     let inner_radius = match badge_style.inner_shape {
         BadgeInnerShape::Circle => Radius::Percentage(50.),
         BadgeInnerShape::RoundedSquare { radius_px } => Radius::Pixels(radius_px),

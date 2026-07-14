@@ -1,7 +1,3 @@
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use regex_automata::hybrid::BuildError;
-use warp_editor::editor::NavigationKey;
 use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
 use octomusui::elements::{
     Align, Border, ChildAnchor, Clipped, ConstrainedBox, Container, CornerRadius,
@@ -15,6 +11,10 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use regex_automata::hybrid::BuildError;
+use warp_editor::editor::NavigationKey;
 
 use super::model::find::{FindConfig, RegexDFAs};
 use crate::appearance::Appearance;

@@ -1,8 +1,8 @@
 //! End-to-end editor tests.
 
-use string_offset::CharOffset;
 use octomus_core::features::FeatureFlag;
 use octomusui_core::{App, ModelHandle, ReadModel};
+use string_offset::CharOffset;
 
 use super::model::test_utils::{TEST_STYLES, init_logging};
 use super::model::{BlockItem, RenderEvent, RenderState};

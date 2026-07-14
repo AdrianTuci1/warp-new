@@ -1,5 +1,5 @@
-use settings::Setting as _;
 use octomusui::{AppContext, SingletonEntity};
+use settings::Setting as _;
 
 use super::alt_screen_reporting::AltScreenReporting;
 use super::model::grid::grid_handler::TermMode;

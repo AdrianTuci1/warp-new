@@ -1,11 +1,11 @@
 use std::collections::BTreeSet;
 
 use comfy_table::Cell;
-use serde::Serialize;
 use octomus_cli::model::ModelCommand;
 use octomus_cli::GlobalOptions;
 use octomusui::platform::TerminationMode;
 use octomusui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use crate::ai::agent_sdk::output::{self, TableFormat};
 use crate::ai::llms::LLMPreferences;

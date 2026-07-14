@@ -1,6 +1,6 @@
 use ai::skills::{ParsedSkill, SkillProvider, SkillReference, SkillScope};
-use serde::{Deserialize, Serialize};
 use octomus_core::ui::icons::Icon;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Hash)]
 pub struct SkillDescriptor {

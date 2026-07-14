@@ -29,8 +29,9 @@ fn test_github_pr_display_text_from_url_rejects_non_pr_urls() {
 
 #[test]
 fn test_github_pr_chip_display_value_formats_url() {
-    let value =
-        crate::context_chips::ChipValue::Text("https://github.com/octomus/octomus/pull/456".to_string());
+    let value = crate::context_chips::ChipValue::Text(
+        "https://github.com/octomus/octomus/pull/456".to_string(),
+    );
     assert_eq!(
         ContextChipKind::GithubPullRequest.display_value(&value),
         "PR #456"

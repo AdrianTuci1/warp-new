@@ -4,11 +4,11 @@ use std::sync::Arc;
 
 use chrono::{DateTime, Duration, Utc};
 use instant::Instant;
-use parking_lot::Mutex;
-use persistence::model::{AgentConversationData, ConversationUsageMetadata};
 use octomus_cli::agent::Harness;
 use octomus_core::features::FeatureFlag;
 use octomusui::{App, EntityId, ModelHandle, SingletonEntity};
+use parking_lot::Mutex;
+use persistence::model::{AgentConversationData, ConversationUsageMetadata};
 
 use super::entry::{
     AgentConversationEntryId, AgentConversationNavigationSubject, AgentConversationProvenance,

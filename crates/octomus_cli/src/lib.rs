@@ -4,9 +4,9 @@ use std::path::Path;
 use std::{env, fmt};
 
 use clap::{CommandFactory, Parser, Subcommand, ValueEnum};
-use url::Url;
 use octomus_core::channel::ChannelState;
 use octomus_core::features::FeatureFlag;
+use url::Url;
 
 use crate::agent::OutputFormat;
 

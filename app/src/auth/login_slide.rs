@@ -1,10 +1,5 @@
 use std::cell::Cell;
 
-use onboarding::slides::{layout, slide_content};
-use onboarding::{OnboardingIntention, AI_FEATURES, WARP_DRIVE_FEATURES};
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use ui_components::{button, Component as _, Options as _};
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::Icon;
@@ -24,6 +19,11 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, UpdateModel, View,
     ViewContext, ViewHandle,
 };
+use onboarding::slides::{layout, slide_content};
+use onboarding::{OnboardingIntention, AI_FEATURES, WARP_DRIVE_FEATURES};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use ui_components::{button, Component as _, Options as _};
 
 use crate::appearance::Appearance;
 use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};

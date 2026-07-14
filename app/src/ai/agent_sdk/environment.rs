@@ -4,18 +4,18 @@ use comfy_table::Cell;
 use cynic::QueryBuilder;
 use inquire::error::InquireError;
 use inquire::{Confirm, Select};
-use serde::Serialize;
 use octomus_cli::agent::OutputFormat;
 use octomus_cli::environment::{EnvironmentCommand, ImageCommand};
 use octomus_cli::scope::ObjectScope;
 use octomus_cli::GlobalOptions;
+use octomusui::r#async::FutureExt;
+use octomusui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 use warp_graphql::queries::get_oauth_connect_tx_status::OauthConnectTxStatus;
 use warp_graphql::queries::list_warp_dev_images::{
     ListWarpDevImages, ListWarpDevImagesResult, ListWarpDevImagesVariables,
 };
 use warp_graphql::queries::user_repo_auth_status::UserRepoAuthStatusEnum;
-use octomusui::r#async::FutureExt;
-use octomusui::{AppContext, ModelContext, SingletonEntity};
 
 use crate::ai::agent_sdk::driver::WARP_DRIVE_SYNC_TIMEOUT;
 use crate::ai::agent_sdk::oauth_flow::poll_oauth_until_terminal;

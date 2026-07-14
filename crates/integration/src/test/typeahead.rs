@@ -205,10 +205,10 @@ pub fn test_background_output() -> Builder {
     use std::io::Write;
     use std::os::unix::prelude::OpenOptionsExt;
 
-    use regex::Regex;
     use octomus::integration_testing::block::assert_background_output;
     use octomus::integration_testing::terminal::execute_command_for_single_terminal_in_tab;
     use octomus::integration_testing::terminal::util::ExpectedExitStatus;
+    use regex::Regex;
 
     let (starter, _) = current_shell_starter_and_version();
     let (spawn_command, kill_command) = match starter.shell_type() {

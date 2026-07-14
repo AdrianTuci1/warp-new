@@ -2,11 +2,9 @@ use std::collections::{HashMap, HashSet};
 use std::ops::Range;
 use std::sync::{Arc, Mutex};
 
-use pathfinder_geometry::vector::Vector2F;
 use octomus_core::features::FeatureFlag;
 use octomus_core::send_telemetry_from_ctx;
 use octomus_core::ui::Icon;
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     Border, ChildAnchor, ChildView, Clipped, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, Element, Fill, Flex, FormattedTextElement, Hoverable, MainAxisAlignment,
@@ -23,6 +21,8 @@ use octomusui::{
     AppContext, BlurContext, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WindowId,
 };
+use pathfinder_geometry::vector::Vector2F;
+use warp_editor::editor::NavigationKey;
 
 use super::view_model::{ConversationEntry, ConversationListViewModel};
 use crate::ai::active_agent_views_model::{ActiveAgentViewsModel, ConversationOrTaskId};

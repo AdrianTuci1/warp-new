@@ -1,13 +1,13 @@
 use std::cell::Cell;
 use std::sync::Arc;
 
-use pathfinder_color::ColorU;
-use string_offset::CharOffset;
-use sum_tree::SumTree;
 use octomusui_core::assets::asset_cache::AssetSource;
 use octomusui_core::fonts::FamilyId;
 use octomusui_core::text_layout::{CaretPosition, TextFrame};
 use octomusui_core::units::IntoPixels;
+use pathfinder_color::ColorU;
+use string_offset::CharOffset;
+use sum_tree::SumTree;
 
 use crate::content::text::{
     BufferBlockStyle, CodeBlockType, FormattedTable, table_cell_offset_maps,

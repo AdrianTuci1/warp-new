@@ -1,10 +1,10 @@
 use byte_unit::Byte;
 use instant::Duration;
+use octomusui::keymap::ContextPredicate;
+use octomusui::{id, AppContext};
 use serde::{Deserialize, Serialize};
 use session_sharing_protocol::common::{Role, Scrollback, ScrollbackBlock, SessionId};
 use session_sharing_protocol::sharer::SessionSourceType;
-use octomusui::keymap::ContextPredicate;
-use octomusui::{id, AppContext};
 
 use super::model::block::SerializedBlock;
 use super::model::terminal_model::BlockIndex;

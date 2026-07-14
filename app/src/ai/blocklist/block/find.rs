@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::ops::Range;
 
 use itertools::Itertools;
-use regex::RegexBuilder;
 use octomusui::SingletonEntity;
+use regex::RegexBuilder;
 
 use super::{AIBlock, TextLocation};
 use crate::ai::agent::{AIAgentTextSection, MessageId};

@@ -1,6 +1,6 @@
-use settings::Setting as _;
 use octomus_core::features::FeatureFlag;
 use octomusui::{App, EntityId, ModelHandle, SingletonEntity};
+use settings::Setting as _;
 
 use super::AgentNotificationsModel;
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;

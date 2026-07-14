@@ -20,10 +20,10 @@ pub use auth_manager::AuthManager;
 pub use auth_state::AuthStateProvider;
 use itertools::Itertools;
 pub use login_failure_notification::LoginFailureReason;
-pub use user_uid::UserUid;
 use octomus_core::user_preferences::GetUserPreferences as _;
 use octomusui::modals::{AlertDialogWithCallbacks, ModalButton};
 use octomusui::{AppContext, SingletonEntity};
+pub use user_uid::UserUid;
 
 use crate::ai::agent_conversations_model::AgentConversationsModel;
 use crate::ai::blocklist::agent_view::orchestration_pill_bar_model::OrchestrationPillBarModel;

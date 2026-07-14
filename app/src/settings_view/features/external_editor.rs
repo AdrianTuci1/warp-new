@@ -1,12 +1,12 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-use settings::{Setting, ToggleableSetting};
 use octomus_core::features::FeatureFlag;
 use octomusui::elements::{Flex, MouseStateHandle, ParentElement};
 use octomusui::ui_components::components::UiComponent;
 use octomusui::ui_components::switch::SwitchStateHandle;
 use octomusui::{Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
+use settings::{Setting, ToggleableSetting};
 
 use crate::appearance::Appearance;
 use crate::server::telemetry::TelemetryEvent;
@@ -150,7 +150,10 @@ impl ExternalEditorView {
 
         let mut items = vec![default_app];
 
-        items.push(DropdownItem::new("Octomus", make_action(EditorChoice::Octomus)));
+        items.push(DropdownItem::new(
+            "Octomus",
+            make_action(EditorChoice::Octomus),
+        ));
         if FeatureFlag::AllowOpeningFileLinksUsingEditorEnv.is_enabled() {
             items.push(DropdownItem::new(
                 "$EDITOR",

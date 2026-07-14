@@ -6,19 +6,19 @@ use anyhow::{anyhow, Result};
 use chrono::{DateTime, Utc};
 use comfy_table::Cell;
 use inquire::{Confirm, InquireError, Select};
-use serde::Serialize;
 use octomus_cli::agent::OutputFormat;
 use octomus_cli::api_key::{
     ApiKeyCommand, ApiKeyExpirationArgs, ApiKeySortByArg, CreateApiKeyArgs, ExpireApiKeyArgs,
     ListApiKeysArgs,
 };
 use octomus_cli::{GlobalOptions, SortOrderArg};
+use octomusui::platform::TerminationMode;
+use octomusui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 use warp_graphql::mutations::expire_api_key::ExpireApiKeyResult;
 use warp_graphql::mutations::generate_api_key::GenerateApiKeyResult;
 use warp_graphql::queries::api_keys::ApiKeyProperties;
 use warp_graphql::scalars::Time;
-use octomusui::platform::TerminationMode;
-use octomusui::{AppContext, ModelContext, SingletonEntity};
 
 use super::output::{self, TableFormat};
 use crate::server::ids::ApiKeyUid;

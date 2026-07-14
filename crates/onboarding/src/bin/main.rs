@@ -4,12 +4,6 @@ use std::borrow::Cow;
 
 use ai::LLMId;
 use anyhow::Result;
-use onboarding::slides::OnboardingModelInfo;
-use onboarding::{
-    AgentOnboardingEvent, AgentOnboardingView, MockTelemetryContextProvider, SelectedSettings,
-};
-use pathfinder_color::ColorU;
-use rust_embed::RustEmbed;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::icons::Icon;
 use octomus_core::ui::theme::{
@@ -26,6 +20,12 @@ use octomusui_core::{
     platform, AddWindowOptions, AppContext, AssetProvider, Element, Entity, SingletonEntity as _,
     TypedActionView, View, ViewContext, ViewHandle,
 };
+use onboarding::slides::OnboardingModelInfo;
+use onboarding::{
+    AgentOnboardingEvent, AgentOnboardingView, MockTelemetryContextProvider, SelectedSettings,
+};
+use pathfinder_color::ColorU;
+use rust_embed::RustEmbed;
 
 #[derive(Clone, Copy, RustEmbed)]
 #[folder = "../../app/assets"]

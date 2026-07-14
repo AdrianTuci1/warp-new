@@ -24,11 +24,11 @@ use crate::repo_metadata_proto::{proto_snapshot_to_update, proto_to_repo_metadat
 
 #[cfg(not(target_family = "wasm"))]
 mod remote_server_log;
-#[cfg(not(target_family = "wasm"))]
-pub use remote_server_log::RemoteServerLog;
 use octomus_core::{safe_error, safe_warn, SessionId};
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui_core::r#async::TransportStream;
+#[cfg(not(target_family = "wasm"))]
+pub use remote_server_log::RemoteServerLog;
 
 use crate::protocol::{self, ProtocolError, RequestId};
 

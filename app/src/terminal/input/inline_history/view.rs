@@ -1,12 +1,14 @@
 //! Inline history menu view for up-arrow history with conversations, commands and prompts.
 use std::collections::HashSet;
 
-use pathfinder_color::ColorU;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::ChildView;
-use octomusui::{AppContext, Element, Entity, EntityId, ModelHandle, View, ViewContext, ViewHandle};
+use octomusui::{
+    AppContext, Element, Entity, EntityId, ModelHandle, View, ViewContext, ViewHandle,
+};
+use pathfinder_color::ColorU;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::blocklist::agent_view::{AgentViewController, AgentViewControllerEvent};

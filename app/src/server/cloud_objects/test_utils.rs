@@ -3,9 +3,9 @@ use std::sync::mpsc::{sync_channel, Receiver};
 use std::sync::Arc;
 
 use cloud_object_client::{MockObjectClient, ObjectClient};
-use settings::manager::SettingsManager;
 use octomus_core::execution_mode::{AppExecutionMode, ExecutionMode};
 use octomusui::{App, ModelHandle, SingletonEntity};
+use settings::manager::SettingsManager;
 
 use super::update_manager::UpdateManager;
 use crate::auth::auth_manager::AuthManager;
@@ -17,7 +17,7 @@ use crate::persistence::ModelEvent;
 use crate::server::server_api::ServerApiProvider;
 use crate::server::sync_queue::SyncQueue;
 use crate::server::telemetry::context_provider::AppTelemetryContextProvider;
-use crate::settings::{PrivacySettings, OctomusDrivePrivacySettings};
+use crate::settings::{OctomusDrivePrivacySettings, PrivacySettings};
 use crate::workspaces::team_tester::TeamTesterStatus;
 use crate::workspaces::update_manager::TeamUpdateManager;
 use crate::workspaces::user_profiles::UserProfiles;

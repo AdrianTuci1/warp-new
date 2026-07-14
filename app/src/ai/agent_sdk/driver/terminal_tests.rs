@@ -1,8 +1,8 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use session_sharing_protocol::sharer::SessionRetentionReason;
 use octomusui::App;
+use session_sharing_protocol::sharer::SessionRetentionReason;
 
 use super::TerminalDriver;
 use crate::terminal::shared_session::SharedSessionStatus;

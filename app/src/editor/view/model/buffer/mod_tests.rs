@@ -9,10 +9,10 @@ use std::pin::{pin, Pin};
 use async_channel::Receiver;
 use enclose::enclose;
 use futures::StreamExt;
-use rand::prelude::StdRng;
-use test::Network;
 use octomusui::color::ColorU;
 use octomusui::{App, ModelHandle};
+use rand::prelude::StdRng;
+use test::Network;
 
 use super::*;
 use crate::editor::soft_wrap::ClampDirection;

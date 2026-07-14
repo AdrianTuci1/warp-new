@@ -1,7 +1,6 @@
 use std::fmt;
 use std::num::NonZeroUsize;
 
-use settings::Setting as _;
 use octomus_core::semantic_selection::SemanticSelection;
 use octomusui::elements::{
     Container, DispatchEventResult, Element, EventHandler, SavePosition, SelectableArea,
@@ -11,6 +10,7 @@ use octomusui::fonts::{Properties, Weight};
 use octomusui::presenter::ChildView;
 use octomusui::units::Pixels;
 use octomusui::{AppContext, EntityId, ModelAsRef, ModelHandle, SingletonEntity, ViewHandle};
+use settings::Setting as _;
 
 use super::input::InputRenderStateModel;
 use super::model::block::Block;

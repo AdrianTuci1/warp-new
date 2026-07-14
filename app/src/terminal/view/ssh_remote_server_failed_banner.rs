@@ -1,7 +1,6 @@
 //! Banner shown when the remote-server binary check, installation, or connection fails on the remote host.
 //! We fall back to the existing Octomusification behavior and display this banner so the user knows why advanced features are unavailable.
 
-use remote_server::transport::UserFacingError;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::AnsiColorIdentifier;
 use octomusui::elements::{
@@ -10,6 +9,7 @@ use octomusui::elements::{
 };
 use octomusui::platform::Cursor;
 use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use remote_server::transport::UserFacingError;
 
 use crate::terminal::model::session::SessionId;
 use crate::ui_components::icons::Icon;
@@ -70,10 +70,14 @@ impl View for SshRemoteServerFailedBanner {
 
         // Alert-circle icon
         let icon = Container::new(
-            ConstrainedBox::new(Icon::AlertCircle.to_octomusui_icon(fg_color.into()).finish())
-                .with_width(16.)
-                .with_height(16.)
-                .finish(),
+            ConstrainedBox::new(
+                Icon::AlertCircle
+                    .to_octomusui_icon(fg_color.into())
+                    .finish(),
+            )
+            .with_width(16.)
+            .with_height(16.)
+            .finish(),
         )
         .with_margin_right(8.)
         .finish();

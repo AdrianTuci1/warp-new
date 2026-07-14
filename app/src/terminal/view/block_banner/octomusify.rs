@@ -1,4 +1,3 @@
-use pathfinder_color::ColorU;
 use octomusui::elements::{
     Align, ConstrainedBox, Container, CrossAxisAlignment, Flex, HighlightedHyperlink,
     MouseStateHandle, ParentElement, Shrinkable,
@@ -8,6 +7,7 @@ use octomusui::keymap::Keystroke;
 use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element};
+use pathfinder_color::ColorU;
 
 use super::{render_block_banner, BLOCK_BANNER_DESCRIPTION_MAX_HEIGHT};
 use crate::appearance::Appearance;
@@ -70,7 +70,10 @@ pub struct OctomusifyBannerState {
 }
 
 impl OctomusifyBannerState {
-    pub fn new(mode: OctomusificationMode, initialize_octomusify_keybinding: Option<Keystroke>) -> Self {
+    pub fn new(
+        mode: OctomusificationMode,
+        initialize_octomusify_keybinding: Option<Keystroke>,
+    ) -> Self {
         Self {
             mode,
             height: 0.0,

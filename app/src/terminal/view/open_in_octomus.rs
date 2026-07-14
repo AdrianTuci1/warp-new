@@ -4,7 +4,6 @@ use std::sync::Arc;
 
 use itertools::Itertools;
 use lazy_static::lazy_static;
-use settings::Setting as _;
 use octomus_completer::completer::TopLevelCommandCaseSensitivity;
 use octomus_completer::parsers::classify_command;
 use octomus_completer::parsers::hir::{Command, Expression};
@@ -13,6 +12,7 @@ use octomus_completer::signatures::CommandRegistry;
 use octomus_util::path::EscapeChar;
 use octomusui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
 use octomusui::{SingletonEntity, ViewContext};
+use settings::Setting as _;
 
 use super::{Event, InlineBannerItem, InlineBannerType, TerminalView};
 #[cfg(feature = "local_fs")]
@@ -155,7 +155,8 @@ impl TerminalView {
     ) {
         match action {
             OpenInWarpBannerAction::OpenFile => {
-                if let Some(banner_state) = self.inline_banners_state.open_in_octomus_banner.take() {
+                if let Some(banner_state) = self.inline_banners_state.open_in_octomus_banner.take()
+                {
                     match banner_state.target.file_type {
                         OpenableFileType::Markdown => {
                             ctx.emit(Event::OpenFileInWarp {
@@ -191,7 +192,8 @@ impl TerminalView {
                 }
             }
             OpenInWarpBannerAction::Close => {
-                if let Some(banner_state) = self.inline_banners_state.open_in_octomus_banner.take() {
+                if let Some(banner_state) = self.inline_banners_state.open_in_octomus_banner.take()
+                {
                     self.close_open_in_octomus_banner(banner_state.id);
                     match banner_state.target.file_type {
                         OpenableFileType::Markdown => {

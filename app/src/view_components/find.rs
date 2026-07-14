@@ -1,5 +1,3 @@
-use pathfinder_color::ColorU;
-use serde::Serialize;
 pub use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
 use octomusui::elements::{
     Align, Border, ChildAnchor, Clipped, ConstrainedBox, Container, CornerRadius,
@@ -16,6 +14,8 @@ use octomusui::{
     Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_color::ColorU;
+use serde::Serialize;
 
 use crate::appearance::Appearance;
 use crate::editor::{

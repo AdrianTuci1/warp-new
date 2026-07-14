@@ -292,8 +292,8 @@ impl Input {
 }
 
 pub mod styles {
-    use pathfinder_color::ColorU;
     use octomus_core::ui::theme::WarpTheme;
+    use pathfinder_color::ColorU;
 
     pub fn default_border_color(theme: &WarpTheme) -> ColorU {
         theme.outline().into()

@@ -8,13 +8,13 @@ use async_trait::async_trait;
 use chrono::{Duration, Utc};
 use derivative::Derivative;
 use lazy_static::lazy_static;
-use regex::Regex;
-use url::Url;
 use octomus_core::channel::Channel;
 use octomus_core::features::FeatureFlag;
+use octomusui::{AppContext, SingletonEntity};
+use regex::Regex;
+use url::Url;
 use warp_graphql::queries::get_updated_cloud_objects::UpdatedObjectInput;
 use warp_graphql::scalars::time::ServerTimestamp;
-use octomusui::{AppContext, SingletonEntity};
 
 use self::breadcrumbs::ContainingObject;
 use self::model::actions::ObjectActions;
@@ -26,7 +26,9 @@ use crate::appearance::Appearance;
 use crate::auth::UserUid;
 use crate::channel::ChannelState;
 use crate::drive::items::OctomusDriveItem;
-use crate::drive::{CloudObjectTypeAndId, OpenOctomusDriveObjectArgs, OpenOctomusDriveObjectSettings};
+use crate::drive::{
+    CloudObjectTypeAndId, OpenOctomusDriveObjectArgs, OpenOctomusDriveObjectSettings,
+};
 use crate::persistence::ModelEvent;
 use crate::server::cloud_objects::update_manager::InitiatedBy;
 use crate::server::ids::{HashableId, HashedSqliteId, ObjectUid, ServerId, SyncId, ToServerId};
@@ -775,7 +777,8 @@ where
     }
 
     fn to_octomus_drive_item(&self, appearance: &Appearance) -> Option<Box<dyn OctomusDriveItem>> {
-        self.model().to_octomus_drive_item(self.id, appearance, self)
+        self.model()
+            .to_octomus_drive_item(self.id, appearance, self)
     }
 
     fn can_export(&self) -> bool {

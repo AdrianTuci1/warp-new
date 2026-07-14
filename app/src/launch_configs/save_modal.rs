@@ -1,8 +1,6 @@
 use markdown_parser::{
     FormattedText, FormattedTextFragment, FormattedTextInline, FormattedTextLine,
 };
-use pathfinder_geometry::vector::vec2f;
-use serde::{Deserialize, Serialize};
 use octomus_core::paths::home_relative_path;
 use octomus_core::ui::theme::Fill;
 use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
@@ -18,6 +16,8 @@ use octomusui::{
     AppContext, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use serde::{Deserialize, Serialize};
 
 use crate::app_state::{get_app_state, AppState};
 use crate::appearance::Appearance;

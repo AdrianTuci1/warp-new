@@ -3,7 +3,6 @@
 
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::Fill;
-use warp_editor::model::CoreEditorModel;
 use octomusui::elements::{
     Align, Border, ConstrainedBox, Container, CrossAxisAlignment, Flex, MouseStateHandle,
     ParentElement, Shrinkable,
@@ -16,6 +15,7 @@ use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use warp_editor::model::CoreEditorModel;
 
 use super::model::{CodeEditorModel, CodeEditorModelEvent};
 use crate::editor::InteractionState;

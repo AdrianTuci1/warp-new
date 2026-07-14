@@ -3,10 +3,7 @@ use std::collections::HashMap;
 
 use instant::{Duration, Instant};
 use log::debug;
-use url::Url;
 use octomus_core::send_telemetry_from_ctx;
-use warp_editor::editor::NavigationKey;
-use warp_graphql::queries::user_github_info::UserGithubInfoResult;
 use octomusui::elements::{
     Border, ChildAnchor, ChildView, Clipped, ClippedScrollStateHandle, ClippedScrollable,
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Dismiss, Element, Empty, Expanded,
@@ -25,6 +22,9 @@ use octomusui::{
     AppContext, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use url::Url;
+use warp_editor::editor::NavigationKey;
+use warp_graphql::queries::user_github_info::UserGithubInfoResult;
 
 use super::editor_text_colors;
 use super::settings_page::{render_input_list, InputListItem};
@@ -3095,7 +3095,8 @@ impl UpdateEnvironmentForm {
             "Suggest image"
         };
 
-        let tooltip_text = "Octomus will suggest a Docker image based on your selected repositories.";
+        let tooltip_text =
+            "Octomus will suggest a Docker image based on your selected repositories.";
 
         let button = Hoverable::new(
             self.suggest_image_button_mouse_state.clone(),
@@ -3117,10 +3118,11 @@ impl UpdateEnvironmentForm {
                 };
 
                 let icon_size = appearance.ui_font_size();
-                let icon = ConstrainedBox::new(Icon::Lightbulb.to_octomusui_icon(text_fill).finish())
-                    .with_width(icon_size)
-                    .with_height(icon_size)
-                    .finish();
+                let icon =
+                    ConstrainedBox::new(Icon::Lightbulb.to_octomusui_icon(text_fill).finish())
+                        .with_width(icon_size)
+                        .with_height(icon_size)
+                        .finish();
 
                 let text = Text::new(
                     button_text,

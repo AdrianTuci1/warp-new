@@ -1,8 +1,6 @@
 use std::collections::HashSet;
 use std::{fmt, iter, mem};
 
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::Vector2F;
 use octomus_core::features::FeatureFlag;
 use octomusui::elements::{
     ChildAnchor, ConstrainedBox, Container, DispatchEventResult, Element, Empty, EventHandler,
@@ -12,6 +10,8 @@ use octomusui::elements::{
 };
 use octomusui::platform::Cursor;
 use octomusui::{AppContext, EntityId, ViewContext};
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::Vector2F;
 
 use super::{ActivationReason, PaneGroup, PaneId};
 use crate::app_state;

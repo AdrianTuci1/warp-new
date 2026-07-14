@@ -1,10 +1,7 @@
 use std::rc::Rc;
 
-use strum::IntoEnumIterator;
-use strum_macros::{EnumIter, IntoStaticStr};
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::Appearance;
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     Border, ClippedScrollStateHandle, ClippedScrollable, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, Empty, Fill, Flex, MainAxisAlignment, MainAxisSize, MouseStateHandle,
@@ -17,6 +14,9 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use strum::IntoEnumIterator;
+use strum_macros::{EnumIter, IntoStaticStr};
+use warp_editor::editor::NavigationKey;
 
 use crate::cloud_object::model::persistence::CloudModel;
 use crate::cloud_object::Revision;

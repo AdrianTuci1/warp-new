@@ -4,11 +4,15 @@ use std::sync::Arc;
 
 use itertools::Itertools;
 use markdown_parser::html_parser::WARP_EMBED_ATTRIBUTE_NAME;
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::{Border, ConstrainedBox, CornerRadius, Empty, Margin, Padding, Radius};
+use octomusui::text_layout::TextFrame;
+use octomusui::units::{IntoPixels, Pixels};
+use octomusui::{AppContext, Element, LayoutContext, SingletonEntity, SizeConstraint};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::{vec2f, Vector2F};
 use serde_yaml::Mapping;
 use string_offset::ByteOffset;
-use octomus_core::ui::appearance::Appearance;
 use warp_editor::content::markdown::MarkdownStyle;
 use warp_editor::content::text::TextStylesWithMetadata;
 use warp_editor::editor::EmbeddedItemModel;
@@ -22,10 +26,6 @@ use warp_editor::render::model::{
     EMBEDDED_ITEM_FIRST_LINE_HEIGHT,
 };
 use warp_editor::render::BLOCK_FOOTER_HEIGHT;
-use octomusui::elements::{Border, ConstrainedBox, CornerRadius, Empty, Margin, Padding, Radius};
-use octomusui::text_layout::TextFrame;
-use octomusui::units::{IntoPixels, Pixels};
-use octomusui::{AppContext, Element, LayoutContext, SingletonEntity, SizeConstraint};
 
 use crate::cloud_object::model::persistence::CloudModel;
 use crate::cloud_object::CloudObject;
@@ -611,7 +611,9 @@ impl RenderableBlock for RenderableEmbeddedWorkflow {
             );
         }
 
-        ctx.paint.scene.start_layer(octomusui::ClipBounds::ActiveLayer);
+        ctx.paint
+            .scene
+            .start_layer(octomusui::ClipBounds::ActiveLayer);
 
         // Position the block footer right below the content area, flush with its right-hand edge.
         // This gives the footer some padding relative to the visible area with a background.
@@ -626,7 +628,11 @@ impl RenderableBlock for RenderableEmbeddedWorkflow {
         ctx.paint.scene.stop_layer();
     }
 
-    fn after_layout(&mut self, ctx: &mut octomusui::AfterLayoutContext, app: &octomusui::AppContext) {
+    fn after_layout(
+        &mut self,
+        ctx: &mut octomusui::AfterLayoutContext,
+        app: &octomusui::AppContext,
+    ) {
         self.footer.after_layout(ctx, app);
     }
 

@@ -11,6 +11,11 @@ use async_channel::Receiver;
 use futures_util::stream::AbortHandle;
 use futures_util::{SinkExt, StreamExt};
 use instant::Instant;
+use octomus_core::features::FeatureFlag;
+use octomusui::r#async::{SpawnedFutureHandle, Timer};
+use octomusui::{
+    Entity, ModelContext, ModelHandle, RequestState, RetryOption, SingletonEntity, WeakViewHandle,
+};
 use parking_lot::FairMutex;
 use session_sharing_protocol::common::{
     ActivePrompt, ActivePromptUpdate, AddGuestsResponse, AgentAttachment, AgentPromptFailureReason,
@@ -26,11 +31,6 @@ use session_sharing_protocol::common::{
 use session_sharing_protocol::viewer::{
     DownstreamMessage, InitPayload, RoleUpdatedReason, SessionEndedReason, UpstreamMessage,
     ViewerRemovedReason,
-};
-use octomus_core::features::FeatureFlag;
-use octomusui::r#async::{SpawnedFutureHandle, Timer};
-use octomusui::{
-    Entity, ModelContext, ModelHandle, RequestState, RetryOption, SingletonEntity, WeakViewHandle,
 };
 use websocket::{Message, Sink, Stream, WebsocketMessage as _};
 

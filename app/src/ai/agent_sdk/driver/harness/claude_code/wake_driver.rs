@@ -4,9 +4,9 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use anyhow::{Context, Result};
+use octomus_cli::agent::Harness;
 use shell_words::quote as shell_quote;
 use uuid::Uuid;
-use octomus_cli::agent::Harness;
 use warp_graphql::ai::AgentTaskState;
 
 use super::super::claude_transcript::{

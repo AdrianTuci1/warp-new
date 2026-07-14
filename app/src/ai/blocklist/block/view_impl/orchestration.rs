@@ -1,13 +1,13 @@
 //! Rendering functions for orchestration-related output items (messaging & agent management).
 
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_color::ColorU;
 use octomusui::elements::{
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Empty, Flex, FormattedTextElement,
     Hoverable, MouseStateHandle, ParentElement, Radius, Shrinkable, Text,
 };
 use octomusui::platform::Cursor;
 use octomusui::{AppContext, Element, SingletonEntity};
+use pathfinder_color::ColorU;
 
 use super::common::render_scrollable_collapsible_content;
 use super::output::{action_icon, Props};

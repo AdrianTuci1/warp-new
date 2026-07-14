@@ -4,8 +4,8 @@
 //! https://docs.google.com/document/d/1YMovEoXsPRziPk99a4i9LZNEKGm_rjEyzhcHsFkT3ac/edit.
 
 use getset::Getters;
-use serde::{Deserialize, Serialize};
 use octomusui_core::color::ColorU;
+use serde::{Deserialize, Serialize};
 
 use self::internal_colors::{
     accent_overlay_2, fg_overlay_1, fg_overlay_2, fg_overlay_3, neutral_1, neutral_2, neutral_3,

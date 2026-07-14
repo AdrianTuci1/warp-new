@@ -4,9 +4,6 @@ use std::sync::Arc;
 
 use futures::Future;
 use itertools::Itertools;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use url::Url;
 use octomus_core::context_flag::ContextFlag;
 use octomus_core::settings::Setting;
 use octomus_core::ui::theme::color::internal_colors;
@@ -31,6 +28,9 @@ use octomusui::{
     AppContext, BlurContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView,
     UpdateView, View, ViewContext, ViewHandle, WindowId,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use url::Url;
 
 use super::cloud_object_naming_dialog::CloudObjectNamingDialog;
 use super::drive_helpers::{
@@ -802,7 +802,8 @@ impl DriveIndex {
             if let Some(cloud_object) = cloud_model.get_by_uid(&uid) {
                 // Add object to the list
                 let cloud_id = cloud_object.cloud_object_type_and_id();
-                self.ordered_items.push(OctomusDriveItemId::Object(cloud_id));
+                self.ordered_items
+                    .push(OctomusDriveItemId::Object(cloud_id));
                 // If the item is a folder and the folder is open, recurse
                 if let CloudObjectTypeAndId::Folder(folder_id) = cloud_id {
                     if self
@@ -841,7 +842,8 @@ impl DriveIndex {
                                 self.ordered_items
                                     .push(OctomusDriveItemId::MCPServerCollection);
                             }
-                            self.ordered_items.push(OctomusDriveItemId::AIFactCollection);
+                            self.ordered_items
+                                .push(OctomusDriveItemId::AIFactCollection);
                         }
                         // Sort and add the rest of the items in the space
                         let Some(uids) = self
@@ -1053,7 +1055,11 @@ impl DriveIndex {
         NetworkStatus::as_ref(app).is_online()
     }
 
-    pub fn scroll_item_into_view(&mut self, item_id: OctomusDriveItemId, ctx: &mut ViewContext<Self>) {
+    pub fn scroll_item_into_view(
+        &mut self,
+        item_id: OctomusDriveItemId,
+        ctx: &mut ViewContext<Self>,
+    ) {
         self.clipped_scroll_state.scroll_to_position(ScrollTarget {
             position_id: item_id.drive_row_position_id(),
             mode: ScrollToPositionMode::FullyIntoView,
@@ -1448,7 +1454,8 @@ impl DriveIndex {
         let mut is_focused = false;
         if let DriveIndexSection::Space(space) = section {
             if let Some(focused_index) = self.focused_index {
-                if Some(&OctomusDriveItemId::Space(space)) == self.ordered_items.get(focused_index) {
+                if Some(&OctomusDriveItemId::Space(space)) == self.ordered_items.get(focused_index)
+                {
                     container = container.with_background(
                         octomus_core::ui::theme::color::internal_colors::fg_overlay_4(
                             appearance.theme(),
@@ -1651,7 +1658,8 @@ impl DriveIndex {
         let mut is_focused = false;
         if let DriveIndexSection::Space(space) = section {
             if let Some(focused_index) = self.focused_index {
-                if Some(&OctomusDriveItemId::Space(space)) == self.ordered_items.get(focused_index) {
+                if Some(&OctomusDriveItemId::Space(space)) == self.ordered_items.get(focused_index)
+                {
                     container = container.with_background(
                         octomus_core::ui::theme::color::internal_colors::fg_overlay_4(
                             appearance.theme(),
@@ -1728,8 +1736,10 @@ impl DriveIndex {
                 }
             }
             (DriveIndexVariant::Trash, DriveIndexSection::Space(space)) => {
-                let title_font_color = self
-                    .font_color_based_on_focused_state(appearance, OctomusDriveItemId::Space(space));
+                let title_font_color = self.font_color_based_on_focused_state(
+                    appearance,
+                    OctomusDriveItemId::Space(space),
+                );
                 Some(self.render_trash_section_header(
                     self.render_section_title(space, title_font_color, appearance, app),
                     &space,
@@ -1788,7 +1798,8 @@ impl DriveIndex {
     }
 
     fn render_trash_row(&self, appearance: &Appearance, _: &AppContext) -> Box<dyn Element> {
-        let font_color = self.font_color_based_on_focused_state(appearance, OctomusDriveItemId::Trash);
+        let font_color =
+            self.font_color_based_on_focused_state(appearance, OctomusDriveItemId::Trash);
         let icon = Container::new(
             ConstrainedBox::new(Icon::Trash.to_octomusui_icon(font_color.into()).finish())
                 .with_width(SECTION_HEADER_FONT_SIZE)
@@ -1839,7 +1850,9 @@ impl DriveIndex {
         if let Some(focused_index) = self.focused_index {
             if Some(&OctomusDriveItemId::Trash) == self.ordered_items.get(focused_index) {
                 container = container.with_background(
-                    octomus_core::ui::theme::color::internal_colors::fg_overlay_4(appearance.theme()),
+                    octomus_core::ui::theme::color::internal_colors::fg_overlay_4(
+                        appearance.theme(),
+                    ),
                 );
                 is_focused = true;
             }
@@ -1887,7 +1900,8 @@ impl DriveIndex {
         let is_selected = self.selected == Some(octomus_drive_item_id);
         let mut is_focused = false;
         if let Some(focused_index) = self.focused_index {
-            if let Some(&OctomusDriveItemId::AIFactCollection) = self.ordered_items.get(focused_index)
+            if let Some(&OctomusDriveItemId::AIFactCollection) =
+                self.ordered_items.get(focused_index)
             {
                 is_focused = true;
             }
@@ -1900,7 +1914,9 @@ impl DriveIndex {
             0,
             self.menu.clone(),
             false, /* can_move */
-            !self.menu_items(&space, &octomus_drive_item_id, app).is_empty(),
+            !self
+                .menu_items(&space, &octomus_drive_item_id, app)
+                .is_empty(),
             false,
             false, /* share_dialog_open */
             is_selected,
@@ -1937,7 +1953,9 @@ impl DriveIndex {
             0,
             self.menu.clone(),
             false, /* can_move */
-            !self.menu_items(&space, &octomus_drive_item_id, app).is_empty(),
+            !self
+                .menu_items(&space, &octomus_drive_item_id, app)
+                .is_empty(),
             false,
             false, /* share_dialog_open */
             is_selected,
@@ -2687,7 +2705,9 @@ impl DriveIndex {
             folder_depth,
             self.menu.clone(),
             can_move,
-            !self.menu_items(&space, &octomus_drive_item_id, app).is_empty(),
+            !self
+                .menu_items(&space, &octomus_drive_item_id, app)
+                .is_empty(),
             menu_open,
             share_dialog_open,
             is_selected,
@@ -2935,7 +2955,10 @@ impl DriveIndex {
         .finish()
     }
 
-    fn render_octomus_drive_loading_icon(&self, appearance: &Appearance) -> Box<dyn octomusui::Element> {
+    fn render_octomus_drive_loading_icon(
+        &self,
+        appearance: &Appearance,
+    ) -> Box<dyn octomusui::Element> {
         // Use same padding as icon_button (4px) to center the icon within ICON_DIMENSIONS
         let icon_button_padding = (ICON_DIMENSIONS - LOADING_ICON_WIDTH) / 2.;
         let loading_icon = Container::new(
@@ -4335,7 +4358,9 @@ impl DriveIndex {
         app: &AppContext,
     ) -> Vec<MenuItem<DriveIndexAction>> {
         match self.index_variant {
-            DriveIndexVariant::MainIndex => self.index_menu_items(space, octomus_drive_item_id, app),
+            DriveIndexVariant::MainIndex => {
+                self.index_menu_items(space, octomus_drive_item_id, app)
+            }
             DriveIndexVariant::Trash => self.trash_menu_items(space, octomus_drive_item_id, app),
         }
     }
@@ -4887,7 +4912,8 @@ impl DriveIndex {
         if let Some(server_id) = cloud_object_type_and_id.server_id() {
             self.share_dialog_open_for_object = Some(*octomus_drive_item_id);
             self.sharing_dialog.update(ctx, |sharing_dialog, ctx| {
-                sharing_dialog.set_target(Some(ShareableObject::OctomusDriveObject(server_id)), ctx);
+                sharing_dialog
+                    .set_target(Some(ShareableObject::OctomusDriveObject(server_id)), ctx);
                 if let Some(invitee_email) = invitee_email {
                     sharing_dialog.add_invitee_email(invitee_email, ctx);
                 }
@@ -5605,7 +5631,9 @@ impl TypedActionView for DriveIndex {
                     user_workspaces.generate_stripe_billing_portal_link(*team_uid, ctx);
                 });
             }
-            DriveIndexAction::ToggleShareDialog { octomus_drive_item_id } => {
+            DriveIndexAction::ToggleShareDialog {
+                octomus_drive_item_id,
+            } => {
                 self.toggle_share_dialog(
                     octomus_drive_item_id,
                     None,

@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 use std::ops::Range;
 
-use string_offset::ByteOffset;
-use urlocator::{UrlLocation, UrlLocator};
 use octomusui::elements::{MouseStateHandle, PartialClickableElement};
 use octomusui::platform::Cursor;
 use octomusui::text::char_slice;
 use octomusui::Action;
+use string_offset::ByteOffset;
+use urlocator::{UrlLocation, UrlLocator};
 
 use crate::ai::agent::{AIAgentActionType, AIAgentOutput, AIAgentTextSection, ReadFilesRequest};
 use crate::ai::blocklist::block::view_impl::output::LinkActionConstructors;
@@ -409,9 +409,9 @@ pub(crate) fn detect_file_paths(
     file_paths
 }
 
+use octomusui::text::word_boundaries::WordBoundariesPolicy;
 use string_offset::CharOffset;
 use warp_editor::content::buffer::Buffer;
-use octomusui::text::word_boundaries::WordBoundariesPolicy;
 
 /// Returns the range of the word surrounding the given offset.
 pub(crate) fn get_word_range_at_offset(
@@ -419,9 +419,9 @@ pub(crate) fn get_word_range_at_offset(
     offset: CharOffset,
     word_boundary_policy: Option<WordBoundariesPolicy>,
 ) -> Option<Range<CharOffset>> {
-    use warp_editor::content::buffer::{ToBufferCharOffset, ToBufferPoint};
     use octomusui::text::words::is_default_word_boundary;
     use octomusui::text::TextBuffer;
+    use warp_editor::content::buffer::{ToBufferCharOffset, ToBufferPoint};
 
     let word_boundary_policy = word_boundary_policy.unwrap_or(WordBoundariesPolicy::Default);
     let mut word_found_at: Option<CharOffset> = None;

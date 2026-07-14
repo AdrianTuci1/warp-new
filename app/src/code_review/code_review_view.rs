@@ -10,22 +10,10 @@ use indexmap::IndexMap;
 use itertools::Itertools;
 #[cfg(feature = "local_fs")]
 use num_traits::SaturatingSub;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use rand::distributions::Alphanumeric;
-use rand::Rng;
-use string_offset::CharOffset;
-use vec1::Vec1;
 use octomus_core::channel::{Channel, ChannelState};
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::{safe_error, safe_info, SessionId};
-use warp_editor::content::buffer::{AutoScrollBehavior, InitialBufferState, SelectionOffsets};
-use warp_editor::model::CoreEditorModel;
-use warp_editor::render::element::VerticalExpansionBehavior;
-#[cfg(not(target_family = "wasm"))]
-use warp_editor::render::model::AutoScrollMode;
-use warp_editor::render::model::LineCount;
 use octomus_util::content_version::ContentVersion;
 use octomus_util::path::LineAndColumnArg;
 use octomus_util::standardized_path::StandardizedPath;
@@ -54,6 +42,18 @@ use octomusui::{
     AppContext, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle, WindowId,
 };
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use rand::distributions::Alphanumeric;
+use rand::Rng;
+use string_offset::CharOffset;
+use vec1::Vec1;
+use warp_editor::content::buffer::{AutoScrollBehavior, InitialBufferState, SelectionOffsets};
+use warp_editor::model::CoreEditorModel;
+use warp_editor::render::element::VerticalExpansionBehavior;
+#[cfg(not(target_family = "wasm"))]
+use warp_editor::render::model::AutoScrollMode;
+use warp_editor::render::model::LineCount;
 
 use super::code_review_header::CodeReviewHeader;
 use super::comment_list_view::{CommentListDebugState, CommentListEvent, CommentListView};
@@ -869,9 +869,11 @@ impl CodeReviewView {
             .map(|p| p.to_path_buf())
             .or_else(|| {
                 repo_metadata::repositories::DetectedRepositories::as_ref(ctx)
-                    .get_root_for_path(&octomus_util::local_or_remote_path::LocalOrRemotePath::Local(
-                        path.to_path_buf(),
-                    ))
+                    .get_root_for_path(
+                        &octomus_util::local_or_remote_path::LocalOrRemotePath::Local(
+                            path.to_path_buf(),
+                        ),
+                    )
                     .and_then(|r| r.to_local_path().map(std::path::Path::to_path_buf))
             })
             .or_else(|| path.parent().map(|p| p.to_path_buf()));
@@ -914,9 +916,11 @@ impl CodeReviewView {
             .map(|p| p.to_path_buf())
             .or_else(|| {
                 repo_metadata::repositories::DetectedRepositories::as_ref(ctx)
-                    .get_root_for_path(&octomus_util::local_or_remote_path::LocalOrRemotePath::Local(
-                        path.to_path_buf(),
-                    ))
+                    .get_root_for_path(
+                        &octomus_util::local_or_remote_path::LocalOrRemotePath::Local(
+                            path.to_path_buf(),
+                        ),
+                    )
                     .and_then(|r| r.to_local_path().map(std::path::Path::to_path_buf))
             })
             .or_else(|| path.parent().map(|p| p.to_path_buf()));

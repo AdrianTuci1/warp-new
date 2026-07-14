@@ -1,5 +1,4 @@
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use settings::Setting as _;
 use octomusui::elements::{
     Align, Border, Clipped, ConstrainedBox, Container, CornerRadius, Flex, FormattedTextElement,
     HighlightedHyperlink, Hoverable, HyperlinkUrl, MainAxisAlignment, MainAxisSize,
@@ -9,6 +8,7 @@ use octomusui::fonts::Weight;
 use octomusui::platform::Cursor;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use settings::Setting as _;
 
 use crate::appearance::Appearance;
 use crate::context_chips::prompt::Prompt;

@@ -1,5 +1,5 @@
-use session_sharing_protocol::common::{Guest, PendingGuest, Role, SessionId, TeamAclData};
 use octomusui::{Entity, ModelContext, SingletonEntity};
+use session_sharing_protocol::common::{Guest, PendingGuest, Role, SessionId, TeamAclData};
 
 use crate::drive::sharing::SharingAccessLevel;
 pub struct SessionPermissionsManager {}

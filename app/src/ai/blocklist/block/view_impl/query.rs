@@ -2,7 +2,6 @@
 //!
 //! Queries are not rendered in blocks corresponding to requested command or requested action responses.
 
-use pathfinder_color::ColorU;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::theme::color::internal_colors;
 use octomusui::elements::{
@@ -13,6 +12,7 @@ use octomusui::fonts::{Properties, Style, Weight};
 use octomusui::ui_components::chip::Chip;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, SingletonEntity};
+use pathfinder_color::ColorU;
 
 use super::common::{render_query_text, render_user_avatar, FindContext};
 use crate::ai::blocklist::block::view_impl::common::UserQueryProps;

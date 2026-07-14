@@ -41,6 +41,16 @@ use futures::FutureExt;
 use grep::GrepExecutor;
 #[cfg(feature = "local_fs")]
 use mime_guess::from_path;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomus_core::features::FeatureFlag;
+#[cfg(feature = "local_fs")]
+use octomus_files::{FileModel, TextFileReadResult};
+#[cfg(feature = "local_fs")]
+use octomus_util::file::FileLoadError;
+#[cfg(feature = "local_fs")]
+use octomus_util::file_type::is_buffer_binary;
+use octomusui::r#async::{Spawnable, SpawnableOutput};
+use octomusui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 use parking_lot::FairMutex;
 use read_documents::ReadDocumentsExecutor;
 pub(super) use read_files::ReadFilesExecutor;
@@ -66,16 +76,6 @@ use suggest_new_conversation::SuggestNewConversationExecutor;
 pub use suggest_prompt::PromptSuggestionExecutor;
 use upload_artifact::UploadArtifactExecutor;
 use use_computer::UseComputerExecutor;
-use octomus_core::execution_mode::AppExecutionMode;
-use octomus_core::features::FeatureFlag;
-#[cfg(feature = "local_fs")]
-use octomus_files::{FileModel, TextFileReadResult};
-#[cfg(feature = "local_fs")]
-use octomus_util::file::FileLoadError;
-#[cfg(feature = "local_fs")]
-use octomus_util::file_type::is_buffer_binary;
-use octomusui::r#async::{Spawnable, SpawnableOutput};
-use octomusui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 
 use self::search_codebase::SearchCodebaseExecutor;
 use crate::ai::agent::conversation::AIConversationId;

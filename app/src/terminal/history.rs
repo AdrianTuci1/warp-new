@@ -3,9 +3,9 @@ use std::sync::Arc;
 
 use chrono::{DateTime, Local, TimeZone as _};
 use futures::Future;
-use serde::{Deserialize, Serialize};
 use octomus_core::command::ExitCode;
 use octomusui::{AppContext, Entity, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
 
 use super::model::block::{AgentInteractionMetadata, Block, SerializedAIMetadata, SerializedBlock};
 use super::shell::ShellType;

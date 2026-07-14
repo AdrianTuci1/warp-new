@@ -2,13 +2,13 @@ use std::collections::HashSet;
 use std::ops::Range;
 
 use lazy_static::lazy_static;
+use octomusui_core::elements::SmartSelectFn;
+use octomusui_core::text::word_boundaries::WordBoundariesPolicy;
+use octomusui_core::text::words::{is_default_word_boundary, DEFAULT_WORD_BOUNDARY_CHARS};
 use regex::Regex;
 use settings::macros::define_settings_group;
 use settings::{Setting, SupportedPlatforms, SyncToCloud};
 use string_offset::ByteOffset;
-use octomusui_core::elements::SmartSelectFn;
-use octomusui_core::text::word_boundaries::WordBoundariesPolicy;
-use octomusui_core::text::words::{is_default_word_boundary, DEFAULT_WORD_BOUNDARY_CHARS};
 
 /// Upper limit for how many characters in either direction we'll search for patterns. Need to
 /// limit this to avoid running regex on absurdly long words

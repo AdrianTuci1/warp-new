@@ -2,11 +2,8 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use itertools::Itertools;
-use strum::IntoEnumIterator;
-use strum_macros::{EnumIter, IntoStaticStr};
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::Fill;
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     Align, Border, ChildAnchor, ChildView, ClippedScrollStateHandle, ClippedScrollable,
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Dismiss, Empty, EventHandler,
@@ -23,6 +20,9 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use strum::IntoEnumIterator;
+use strum_macros::{EnumIter, IntoStaticStr};
+use warp_editor::editor::NavigationKey;
 
 use super::enum_creation_dialog::WorkflowEnumData;
 use crate::editor::{

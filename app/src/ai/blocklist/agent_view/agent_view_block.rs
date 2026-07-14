@@ -1,6 +1,3 @@
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::Vector2F;
-use settings::Setting;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::Icon;
 use octomusui::elements::{
@@ -16,6 +13,9 @@ use octomusui::{
     AppContext, Element, Entity, EntityId, EventContext, ModelHandle, SingletonEntity,
     TypedActionView, View, ViewContext,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::Vector2F;
+use settings::Setting;
 
 use super::{AgentViewController, AgentViewEntryOrigin};
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;

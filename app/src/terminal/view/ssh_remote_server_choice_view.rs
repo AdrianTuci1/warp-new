@@ -16,7 +16,6 @@
 //!
 //! Dismissing the block (on click of either option, or when the session is
 //! deregistered) is the parent's responsibility.
-use settings::Setting;
 use octomus_core::ui::theme::color::internal_colors;
 use octomusui::elements::{
     Border, ChildView, Container, CornerRadius, CrossAxisAlignment, Flex, Hoverable,
@@ -28,6 +27,7 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use settings::Setting;
 
 use crate::ai::blocklist::block::keyboard_navigable_buttons::{
     rich_navigation_button, KeyboardNavigableButtons,
@@ -37,7 +37,7 @@ use crate::ai::blocklist::inline_action::inline_action_header::{
 };
 use crate::server::telemetry::TelemetryEvent;
 use crate::terminal::model::session::SessionId;
-use crate::terminal::octomusify::settings::{SshExtensionInstallMode, OctomusifySettings};
+use crate::terminal::octomusify::settings::{OctomusifySettings, SshExtensionInstallMode};
 use crate::ui_components::blended_colors;
 use crate::{send_telemetry_from_ctx, Appearance};
 
@@ -178,7 +178,9 @@ impl SshRemoteServerChoiceView {
                 "Manage Octomusify settings".into(),
                 None,
                 Some(Box::new(|ctx| {
-                    ctx.dispatch_typed_action(SshRemoteServerChoiceViewAction::OpenOctomusifySettings);
+                    ctx.dispatch_typed_action(
+                        SshRemoteServerChoiceViewAction::OpenOctomusifySettings,
+                    );
                 })),
                 self.manage_settings_mouse_state.clone(),
             )

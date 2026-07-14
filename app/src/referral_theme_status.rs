@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use serde::{Deserialize, Serialize};
 use octomus_core::user_preferences::GetUserPreferences as _;
 use octomusui::{Entity, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
 
 use crate::auth::AuthStateProvider;
 use crate::safe_info;

@@ -11,7 +11,6 @@
 
 use std::path::PathBuf;
 
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::features::FeatureFlag;
 use octomus_core::send_telemetry_from_ctx;
 use octomus_core::ui::appearance::Appearance;
@@ -28,6 +27,7 @@ use octomusui::{
     AppContext, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use crate::code::editor::{add_color, remove_color};
 use crate::code_review::telemetry_event::{

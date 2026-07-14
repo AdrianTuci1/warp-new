@@ -2,9 +2,9 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use onboarding::{ProjectOnboardingSettings, SelectedSettings};
 use octomus_core::execution_mode::AppExecutionMode;
 use octomusui::{SingletonEntity as _, ViewContext};
+use onboarding::{ProjectOnboardingSettings, SelectedSettings};
 
 use crate::pane_group::{NewTerminalOptions, PanesLayout};
 use crate::settings::AISettings;

@@ -7,7 +7,6 @@
 //!   `Workspace::render_settings_error_banner`) when the settings file has an
 //!   error *and* the user has dismissed the workspace banner.
 //! * Otherwise, a plain bordered "Open settings file" button.
-use pathfinder_color::ColorU;
 use octomus_core::ui::color::coloru_with_opacity;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{
@@ -18,6 +17,7 @@ use octomusui::elements::{
 };
 use octomusui::fonts::{FamilyId, Properties, Weight};
 use octomusui::platform::Cursor;
+use pathfinder_color::ColorU;
 
 use crate::appearance::Appearance;
 use crate::settings::SettingsFileError;

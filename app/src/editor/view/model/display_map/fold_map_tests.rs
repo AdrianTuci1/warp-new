@@ -1,5 +1,5 @@
-use tests::buffer::RangesWhenEditing;
 use octomusui::App;
+use tests::buffer::RangesWhenEditing;
 
 use super::*;
 use crate::editor::tests::{sample_text, RandomCharIter};

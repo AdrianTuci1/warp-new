@@ -1,10 +1,10 @@
 use std::collections::HashSet;
 use std::time::Duration;
 
-use ordered_float::OrderedFloat;
 use octomus_core::telemetry::testing::MockTelemetryContextProvider;
 use octomusui_core::r#async::Timer;
 use octomusui_core::{App, AppContext, Element};
+use ordered_float::OrderedFloat;
 
 use super::*;
 use crate::item::SearchItem;

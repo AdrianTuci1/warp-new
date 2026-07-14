@@ -1,8 +1,8 @@
 //! Data source for the inline conversation menu.
 
 use itertools::Itertools;
-use ordered_float::OrderedFloat;
 use octomusui::{AppContext, Entity, ModelHandle, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::ai::agent_conversations_model::{
     AgentConversationEntry, AgentConversationEntryId, AgentManagementFilters,

@@ -13,9 +13,9 @@ mod session;
 use async_trait::async_trait;
 use keyboard::Keyboard;
 use mouse::Mouse;
+use octomusui_core::r#async::Timer;
 use pathfinder_geometry::vector::Vector2I;
 use session::PortalSession;
-use octomusui_core::r#async::Timer;
 
 use crate::{Action, ActionResult, Options};
 

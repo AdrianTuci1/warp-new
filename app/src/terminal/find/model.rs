@@ -14,11 +14,11 @@ use alt_screen::{run_find_on_alt_screen, AltScreenFindRun};
 pub use async_find::{AsyncFindController, AsyncFindStatus};
 use block_list::run_find_on_block_list;
 pub use block_list::{BlockGridMatch, BlockListFindRun, BlockListMatch};
+use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity, ViewHandle};
 use parking_lot::FairMutex;
 use rich_content::FindableRichContentHandle;
 pub use rich_content::{FindableRichContentView, RichContentMatchId};
 use settings::Setting as _;
-use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity, ViewHandle};
 
 use crate::settings::InputModeSettings;
 use crate::terminal::block_list_element::GridType;

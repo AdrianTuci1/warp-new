@@ -1,8 +1,6 @@
 use std::path::Path;
 use std::sync::Arc;
 
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::theme::{Fill, WarpTheme};
 use octomusui::elements::{
     Border, ChildAnchor, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Expanded,
@@ -14,6 +12,8 @@ use octomusui::geometry::vector::Vector2F;
 use octomusui::platform::Cursor;
 use octomusui::ui_components::components::UiComponent;
 use octomusui::{Element, EventContext};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::appearance::Appearance;
 use crate::tab_configs::session_config::SessionType;
@@ -237,9 +237,11 @@ where
 
     let home_dir = dirs::home_dir();
     let raw_path = selected_directory.to_string_lossy();
-    let dir_display =
-        octomus_util::path::user_friendly_path(&raw_path, home_dir.as_ref().and_then(|h| h.to_str()))
-            .into_owned();
+    let dir_display = octomus_util::path::user_friendly_path(
+        &raw_path,
+        home_dir.as_ref().and_then(|h| h.to_str()),
+    )
+    .into_owned();
 
     let dir_text = Text::new_inline(dir_display, appearance.ui_font_family(), 14.)
         .with_color(if on_accent_bg {

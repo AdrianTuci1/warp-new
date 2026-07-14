@@ -12,9 +12,9 @@ mod registry;
 use std::cmp::Ordering;
 
 pub use lookup::*;
+use octomus_js::TypedJsFunctionRef;
 pub use registry::*;
 use serde::{Deserialize, Serialize};
-use octomus_js::TypedJsFunctionRef;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[cfg_attr(feature = "test-util", derive(Default))]

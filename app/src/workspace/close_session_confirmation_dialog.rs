@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{
     Align, ChildAnchor, Container, MouseStateHandle, OffsetPositioning, ParentAnchor,
@@ -12,6 +11,7 @@ use octomusui::ui_components::text::Span;
 use octomusui::{
     AppContext, Element, Entity, EntityId, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use crate::appearance::Appearance;
 use crate::pane_group::PaneId;

@@ -8,9 +8,6 @@
 //! completion, which the host uses to submit or update the input editor.
 use std::collections::HashMap;
 
-use pathfinder_color::ColorU;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::theme::color::internal_colors;
 use octomusui::elements::new_scrollable::{NewScrollable, ScrollableAppearance, SingleAxisConfig};
@@ -29,6 +26,9 @@ use octomusui::{
     AppContext, BlurContext, Element, Entity, EntityId, FocusContext, ModelHandle, SingletonEntity,
     TypedActionView, View, ViewContext, ViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::blocklist::block::cli_controller::{CLISubagentController, CLISubagentEvent};
@@ -852,11 +852,14 @@ fn render_header(
     let ui_font_family = appearance.ui_font_family();
     let ui_font_size = appearance.ui_font_size();
     Hoverable::new(header_mouse_state.clone(), move |_state| {
-        let chevron =
-            ConstrainedBox::new(chevron_icon.to_octomusui_icon(sub_text_color.into()).finish())
-                .with_height(16.)
-                .with_width(16.)
-                .finish();
+        let chevron = ConstrainedBox::new(
+            chevron_icon
+                .to_octomusui_icon(sub_text_color.into())
+                .finish(),
+        )
+        .with_height(16.)
+        .with_width(16.)
+        .finish();
         let label = Text::new(label_text.clone(), ui_font_family, ui_font_size)
             .with_style(Properties {
                 style: Style::Normal,

@@ -1,19 +1,19 @@
 use std::path::Path;
 use std::sync::Arc;
 
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+#[cfg(feature = "local_fs")]
+use octomus_files::FileModel;
+use octomusui::platform::WindowStyle;
+use octomusui::{App, SingletonEntity, View};
 use pathfinder_geometry::vector::vec2f;
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
 #[cfg(feature = "local_fs")]
 use repo_metadata::RepoMetadataModel;
 use string_offset::CharOffset;
-use octomus_core::features::FeatureFlag;
-use octomus_core::ui::appearance::Appearance;
 use warp_editor::render::model::BlockItem;
-#[cfg(feature = "local_fs")]
-use octomus_files::FileModel;
-use octomusui::platform::WindowStyle;
-use octomusui::{App, SingletonEntity, View};
 
 use super::{FileNotebookView, FileState, MarkdownDisplayMode, SourceFile};
 use crate::auth::auth_manager::AuthManager;

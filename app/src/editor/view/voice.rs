@@ -1,5 +1,3 @@
-use settings::Setting as _;
-use voice_input::{StartListeningError, VoiceInput, VoiceSessionResult};
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::AnsiColorIdentifier;
 use octomusui::elements::{Container, CornerRadius, Icon, Radius};
@@ -8,6 +6,8 @@ use octomusui::r#async::SpawnedFutureHandle;
 use octomusui::ui_components::button::ButtonTooltipPosition;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{elements, AppContext, Element, SingletonEntity, ViewContext, ViewHandle};
+use settings::Setting as _;
+use voice_input::{StartListeningError, VoiceInput, VoiceSessionResult};
 
 use super::{EditorAction, EditorView, VoiceTranscriber, VoiceTranscriptionOptions};
 use crate::ai::blocklist::InputType;

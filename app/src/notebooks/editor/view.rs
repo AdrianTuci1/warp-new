@@ -4,18 +4,6 @@ use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use markdown_parser::{parse_html, parse_markdown, FormattedText};
-use pathfinder_geometry::vector::vec2f;
-use string_offset::CharOffset;
-use warp_editor::content::anchor::Anchor;
-use warp_editor::content::text::{BufferTextStyle, CodeBlockType, TextStyles};
-use warp_editor::content::version::BufferVersion;
-use warp_editor::editor::{EmbeddedItemModel, NavigationKey, RunnableCommandModel, TextDecoration};
-use warp_editor::model::{CoreEditorModel, RichTextEditorModel};
-use warp_editor::render::element::{
-    DisplayOptions, DisplayStateHandle, RichTextAction, RichTextElement, VerticalExpansionBehavior,
-};
-use warp_editor::render::model::{BlockItem, HitTestBlockType, Location, RenderState};
-use warp_editor::selection::{TextDirection, TextUnit};
 use octomus_util::path::LineAndColumnArg;
 use octomus_util::user_input::UserInput;
 use octomusui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
@@ -46,6 +34,18 @@ use octomusui::{
     windowing, AppContext, BlurContext, CursorInfo, Element, Entity, FocusContext, ModelHandle,
     SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, WeakViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use string_offset::CharOffset;
+use warp_editor::content::anchor::Anchor;
+use warp_editor::content::text::{BufferTextStyle, CodeBlockType, TextStyles};
+use warp_editor::content::version::BufferVersion;
+use warp_editor::editor::{EmbeddedItemModel, NavigationKey, RunnableCommandModel, TextDecoration};
+use warp_editor::model::{CoreEditorModel, RichTextEditorModel};
+use warp_editor::render::element::{
+    DisplayOptions, DisplayStateHandle, RichTextAction, RichTextElement, VerticalExpansionBehavior,
+};
+use warp_editor::render::model::{BlockItem, HitTestBlockType, Location, RenderState};
+use warp_editor::selection::{TextDirection, TextUnit};
 
 use super::block_insertion_menu::{BlockInsertionMenuState, BlockInsertionSource};
 use super::find_bar::{FindBar, FindBarEvent, FindBarState};

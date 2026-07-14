@@ -55,6 +55,7 @@ pub use input_mode::*;
 #[cfg(any(target_os = "linux", target_os = "freebsd"))]
 pub use linux::*;
 pub use native_preference::*;
+use octomus_core::user_preferences::GetUserPreferences as _;
 pub use onboarding::*;
 pub use pane::*;
 pub use privacy::*;
@@ -64,7 +65,6 @@ pub use select::*;
 pub use ssh::*;
 pub use theme::*;
 pub use vim_banner::*;
-use octomus_core::user_preferences::GetUserPreferences as _;
 
 /// Describes errors encountered when loading settings from `settings.toml`.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -120,15 +120,15 @@ use std::ops::Mul;
 use std::path::PathBuf;
 
 use lazy_static::lazy_static;
+use octomus_core::features::FeatureFlag;
+use octomusui::elements::DEFAULT_UI_LINE_HEIGHT_RATIO;
+use octomusui::keymap::Keystroke;
+use octomusui::{AppContext, DisplayIdx, SingletonEntity};
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::Vector2F;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use settings::Setting as _;
-use octomus_core::features::FeatureFlag;
-use octomusui::elements::DEFAULT_UI_LINE_HEIGHT_RATIO;
-use octomusui::keymap::Keystroke;
-use octomusui::{AppContext, DisplayIdx, SingletonEntity};
 
 use crate::root_view::QuakeModePinPosition;
 use crate::terminal::{BlockListSettings, BlockPadding};

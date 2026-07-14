@@ -2,10 +2,7 @@ use std::fmt::Write;
 use std::time::Duration;
 
 use async_channel::Sender;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::r#async::debounce;
-use warp_editor::render::model::{AutoScrollMode, Decoration};
-use warp_editor::search::{SearchEvent, Searcher};
 use octomusui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
 use octomusui::elements::{
     Border, ChildAnchor, Clipped, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
@@ -21,6 +18,9 @@ use octomusui::{
     AppContext, BlurContext, Element, Entity, FocusContext, ModelHandle, SingletonEntity,
     TypedActionView, View, ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use warp_editor::render::model::{AutoScrollMode, Decoration};
+use warp_editor::search::{SearchEvent, Searcher};
 
 use super::model::NotebooksEditorModel;
 use super::view::{EditorViewEvent, RichTextEditorView};
@@ -356,10 +356,14 @@ impl View for FindBar {
         let has_matches = searcher.match_count() > 0;
 
         let find_icon = Container::new(
-            ConstrainedBox::new(Icon::Find.to_octomusui_icon(theme.active_ui_detail()).finish())
-                .with_height(editor_height)
-                .with_width(editor_height)
-                .finish(),
+            ConstrainedBox::new(
+                Icon::Find
+                    .to_octomusui_icon(theme.active_ui_detail())
+                    .finish(),
+            )
+            .with_height(editor_height)
+            .with_width(editor_height)
+            .finish(),
         )
         .with_padding_left(12.)
         .with_padding_top(16.)

@@ -11,20 +11,12 @@ use keybindings::KeybindingsView;
 use main_page::{MainPageAction, MainSettingsPageEvent, MainSettingsPageView};
 use mcp_servers_page::MCPServersSettingsPageView;
 use nav::{SettingsNavItem, SettingsUmbrella};
-use pathfinder_geometry::vector::Vector2F;
-use privacy_page::{PrivacyPageView, PrivacyPageViewEvent};
-use settings_file_footer::{render_footer, SettingsFooterKind, SettingsFooterMouseStates};
-use settings_page::{
-    MatchData, SettingsPage, SettingsPageEvent, SettingsPageMeta, SettingsPageViewHandle,
-    HEADER_PADDING,
-};
 use octomus_core::channel::ChannelState;
 use octomus_core::context_flag::ContextFlag;
 use octomus_core::features::FeatureFlag;
 use octomus_core::send_telemetry_from_ctx;
 use octomus_core::settings::ToggleableSetting as _;
 use octomus_core::ui::theme::color::internal_colors;
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     Align, Border, ChildAnchor, ChildView, Clipped, ClippedScrollStateHandle, ClippedScrollable,
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, DispatchEventResult, Empty,
@@ -38,6 +30,14 @@ use octomusui::{
     id, Action, AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView,
     UpdateView as _, View, ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::Vector2F;
+use privacy_page::{PrivacyPageView, PrivacyPageViewEvent};
+use settings_file_footer::{render_footer, SettingsFooterKind, SettingsFooterMouseStates};
+use settings_page::{
+    MatchData, SettingsPage, SettingsPageEvent, SettingsPageMeta, SettingsPageViewHandle,
+    HEADER_PADDING,
+};
+use warp_editor::editor::NavigationKey;
 
 use self::telemetry::SettingsTelemetryEvent;
 use crate::ai::execution_profiles::profiles::ClientProfileId;
@@ -100,10 +100,10 @@ pub(crate) mod settings_page;
 // mod teams_page;
 mod cloud_credential_modal;
 mod cloud_page;
+mod octomus_drive_page;
 mod telemetry;
 mod transfer_ownership_confirmation_modal;
 pub mod update_environment_form;
-mod octomus_drive_page;
 // mod octomusify_page;
 
 #[cfg(not(target_family = "wasm"))]
@@ -2427,8 +2427,10 @@ impl TypedActionView for SettingsView {
                 }
             }
             SettingsAction::OctomusDrive(octomus_drive_action) => {
-                if let Some(octomus_drive_page) = self.settings_page(SettingsSection::OctomusDrive) {
-                    if let SettingsPageViewHandle::OctomusDrive(view) = &octomus_drive_page.view_handle
+                if let Some(octomus_drive_page) = self.settings_page(SettingsSection::OctomusDrive)
+                {
+                    if let SettingsPageViewHandle::OctomusDrive(view) =
+                        &octomus_drive_page.view_handle
                     {
                         view.update(ctx, |view, ctx| {
                             view.handle_action(octomus_drive_action, ctx);

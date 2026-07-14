@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
-use repo_metadata::repositories::DetectedRepositories;
-use repo_metadata::RepoMetadataModel;
 use octomusui::platform::WindowStyle;
 use octomusui::presenter::ChildView;
 use octomusui::{App, Element, Entity, TypedActionView, View, ViewHandle, WindowId};
+use repo_metadata::repositories::DetectedRepositories;
+use repo_metadata::RepoMetadataModel;
 
 use super::{create_editable_comment_markdown_editor, create_readonly_comment_markdown_editor};
 use crate::appearance::Appearance;

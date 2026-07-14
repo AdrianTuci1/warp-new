@@ -1,8 +1,5 @@
 use std::fmt::Debug;
 
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use sharing::SharedPaneContent;
 use octomus_core::features::FeatureFlag;
 use octomus_core::settings::Setting;
 use octomusui::elements::{
@@ -17,6 +14,9 @@ use octomusui::{
     AppContext, Element, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use sharing::SharedPaneContent;
 
 use super::header_content::{HeaderContent, HeaderRenderContext, StandardHeaderOptions};
 use super::PaneDropTargetData;

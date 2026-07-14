@@ -5,12 +5,10 @@ use std::sync::Arc;
 
 use fuzzy_match::{match_indices_case_insensitive, FuzzyMatchResult};
 use instant::Instant;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::builder::MIN_FONT_SIZE;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::Fill;
-use warp_editor::editor::NavigationKey;
 use octomusui::clipboard::ClipboardContent;
 use octomusui::color::ColorU;
 use octomusui::elements::{
@@ -30,6 +28,8 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity as _, TypedActionView, View,
     ViewContext, ViewHandle, WindowId,
 };
+use pathfinder_geometry::vector::vec2f;
+use warp_editor::editor::NavigationKey;
 
 use crate::ai::cloud_environments::CloudAmbientAgentEnvironment;
 use crate::cloud_object::model::generic_string_model::StringModel;
@@ -773,10 +773,13 @@ impl DisplayChipMenu {
         let image_key = format!("env-sidecar:{}:image", data.id);
 
         let icon = |icon: Icon| {
-            ConstrainedBox::new(icon.to_octomusui_icon(Fill::Solid(label_text_color)).finish())
-                .with_width(ENV_SIDE_CAR_ICON_SIZE)
-                .with_height(ENV_SIDE_CAR_ICON_SIZE)
-                .finish()
+            ConstrainedBox::new(
+                icon.to_octomusui_icon(Fill::Solid(label_text_color))
+                    .finish(),
+            )
+            .with_width(ENV_SIDE_CAR_ICON_SIZE)
+            .with_height(ENV_SIDE_CAR_ICON_SIZE)
+            .finish()
         };
 
         let label_text = |text: &str| {

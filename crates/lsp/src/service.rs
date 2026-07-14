@@ -16,10 +16,10 @@ use lsp_types::{
     RegistrationParams, RelativePattern, TextDocumentIdentifier, TextDocumentItem,
     TextDocumentPositionParams, UnregistrationParams, VersionedTextDocumentIdentifier, WatchKind,
 };
+use octomus_util::on_cancel::OnCancelFutureExt;
 use serde_json::Value;
 #[cfg(not(target_arch = "wasm32"))]
 use simple_logger::SimpleLogger;
-use octomus_util::on_cancel::OnCancelFutureExt;
 
 use crate::config::{lsp_uri_to_path, path_to_lsp_uri, LanguageId};
 use crate::types::{

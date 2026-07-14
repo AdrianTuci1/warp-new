@@ -1,8 +1,6 @@
 use std::sync::Arc;
 
 use fuzzy_match::FuzzyMatchResult;
-use ordered_float::OrderedFloat;
-use pathfinder_color::ColorU;
 use octomusui::elements::{
     Align, ConstrainedBox, Container, Flex, Highlight, ParentElement, Shrinkable, Text,
 };
@@ -10,6 +8,8 @@ use octomusui::fonts::{Properties, Weight};
 use octomusui::keymap::{DescriptionContext, Keystroke};
 use octomusui::ui_components::components::UiComponent;
 use octomusui::{AppContext, Element, SingletonEntity};
+use ordered_float::OrderedFloat;
+use pathfinder_color::ColorU;
 
 use crate::appearance::Appearance;
 use crate::drive::cloud_object_styling::octomus_drive_icon_color;

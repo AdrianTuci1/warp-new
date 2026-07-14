@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::theme::phenomenon::PhenomenonStyle;
 use octomus_core::ui::theme::Fill;
 use octomusui::assets::asset_cache::AssetSource;
@@ -9,6 +8,7 @@ use octomusui::elements::{
 };
 use octomusui::fonts::{Properties, Weight};
 use octomusui::{Element, ViewHandle};
+use pathfinder_geometry::vector::vec2f;
 
 use crate::appearance::Appearance;
 use crate::ui_components::icons::Icon;

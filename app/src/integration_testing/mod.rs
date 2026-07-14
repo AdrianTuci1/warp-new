@@ -20,6 +20,7 @@ pub mod keybindings;
 pub mod launch_configs;
 pub mod navigation_palette;
 pub mod notebook;
+pub mod octomus_drive;
 pub mod pane_group;
 pub mod persistence;
 #[cfg(target_os = "macos")]
@@ -35,7 +36,6 @@ pub mod terminal;
 pub mod themes;
 pub mod type_getters;
 pub mod view_getters;
-pub mod octomus_drive;
 pub mod window;
 pub mod workflow;
 pub mod workspace;

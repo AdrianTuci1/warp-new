@@ -5,11 +5,11 @@ use std::time::Duration;
 
 use chrono::{DateTime, Local};
 use markdown_parser::FormattedTextFragment;
-use session_sharing_protocol::common::{ParticipantId, ParticipantList, Role, SessionId};
-use session_sharing_protocol::sharer::SessionSourceType;
 use octomus_core::features::FeatureFlag;
 use octomusui::elements::MouseStateHandle;
 use octomusui::{AppContext, Element, ModelHandle, ViewContext, ViewHandle};
+use session_sharing_protocol::common::{ParticipantId, ParticipantList, Role, SessionId};
+use session_sharing_protocol::sharer::SessionSourceType;
 
 use super::sharer::Sharer;
 use super::viewer::Viewer;

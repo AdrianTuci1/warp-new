@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use parking_lot::FairMutex;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::Fill;
@@ -9,6 +8,7 @@ use octomusui::elements::{Container, Element, Empty, MouseStateHandle};
 use octomusui::keymap::Keystroke;
 use octomusui::platform::OperatingSystem;
 use octomusui::{AppContext, Entity, ModelHandle, SingletonEntity, View, ViewContext};
+use parking_lot::FairMutex;
 
 use super::{AgentViewState, EphemeralMessageModel, EphemeralMessageModelEvent};
 use crate::ai::agent::conversation::AIConversation;

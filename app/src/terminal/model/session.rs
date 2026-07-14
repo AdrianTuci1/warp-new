@@ -16,11 +16,6 @@ pub use command_executor::*;
 use futures::future::{BoxFuture, Shared};
 use futures::FutureExt;
 use instant::Instant;
-use once_cell::sync::OnceCell;
-use parking_lot::{Mutex, RwLock};
-use smol_str::SmolStr;
-use typed_path::{TypedPath, TypedPathBuf, WindowsPath};
-use version_compare::Version;
 use octomus_completer::completer::{
     CommandExitStatus, CommandOutput, PathSeparators, TopLevelCommandCaseSensitivity,
 };
@@ -30,6 +25,11 @@ use octomus_util::path::{
 };
 use octomusui::platform::OperatingSystem;
 use octomusui::{Entity, ModelContext, SingletonEntity};
+use once_cell::sync::OnceCell;
+use parking_lot::{Mutex, RwLock};
+use smol_str::SmolStr;
+use typed_path::{TypedPath, TypedPathBuf, WindowsPath};
+use version_compare::Version;
 
 use super::ansi::{BootstrappedValue, InitShellValue, SSHValue};
 use super::terminal_model::{HistoryEntry, SubshellInitializationInfo};
@@ -39,8 +39,8 @@ use crate::features::FeatureFlag;
 use crate::remote_server::manager::{RemoteServerManager, RemoteServerManagerEvent};
 use crate::server::telemetry::{BootstrappingInfo, TelemetryEvent};
 use crate::terminal::event::{ExecutedExecutorCommandEvent, RemoteServerSetupState};
-use crate::terminal::shell::{Shell, ShellType};
 use crate::terminal::octomusify::SubshellSource;
+use crate::terminal::shell::{Shell, ShellType};
 use crate::terminal::{History, ShellHost, ShellLaunchData};
 
 #[derive(thiserror::Error, Debug)]
@@ -859,7 +859,9 @@ pub enum SessionType {
     /// `RemoteServerManager` has completed the connection handshake. It is
     /// `None` when the feature flag is off or the connection hasn't been
     /// established yet.
-    WarpifiedRemote { host_id: Option<octomus_core::HostId> },
+    WarpifiedRemote {
+        host_id: Option<octomus_core::HostId>,
+    },
 }
 
 impl From<BootstrapSessionType> for SessionType {

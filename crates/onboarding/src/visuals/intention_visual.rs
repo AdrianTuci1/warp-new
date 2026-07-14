@@ -1,6 +1,6 @@
-use pathfinder_color::ColorU;
 use octomusui_core::elements::Align;
 use octomusui_core::Element;
+use pathfinder_color::ColorU;
 
 use super::onboarding_visual::{OnboardingVisual, Pill, RectPct};
 

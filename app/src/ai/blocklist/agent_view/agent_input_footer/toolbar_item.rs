@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use octomusui::SingletonEntity;
+use serde::{Deserialize, Serialize};
 
 use super::editor::AgentToolbarEditorMode;
 use crate::context_chips::{agent_footer_available_chips, available_chips, ContextChipKind};

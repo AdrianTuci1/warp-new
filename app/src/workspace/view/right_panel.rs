@@ -3,7 +3,6 @@ use std::sync::Arc;
 
 use dunce::canonicalize;
 use itertools::Itertools;
-use pathfinder_color::ColorU;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::Icon;
 use octomus_util::path::LineAndColumnArg;
@@ -21,6 +20,7 @@ use octomusui::{
     AppContext, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle,
 };
+use pathfinder_color::ColorU;
 
 use crate::ai::agent::AgentReviewCommentBatch;
 use crate::appearance::{Appearance, AppearanceEvent};

@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+use octomus_core::features::FeatureFlag;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use octomus_core::features::FeatureFlag;
 
 use super::Availability;
 use crate::search::slash_command_menu::static_commands::Argument;

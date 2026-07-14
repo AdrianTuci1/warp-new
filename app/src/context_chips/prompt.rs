@@ -1,7 +1,7 @@
 use itertools::Itertools;
+use octomusui::{Entity, GetSingletonModelHandle, ModelContext, SingletonEntity, UpdateModel};
 use serde::{Deserialize, Serialize};
 use settings::Setting as _;
-use octomusui::{Entity, GetSingletonModelHandle, ModelContext, SingletonEntity, UpdateModel};
 
 pub use super::ContextChipKind;
 use crate::settings::{

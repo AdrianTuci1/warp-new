@@ -1,12 +1,14 @@
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::theme::Fill;
-use octomusui::elements::{Align, Container, CrossAxisAlignment, Dismiss, Flex, ParentElement, Stack};
+use octomusui::elements::{
+    Align, Container, CrossAxisAlignment, Dismiss, Flex, ParentElement, Stack,
+};
 use octomusui::fonts::Weight;
 use octomusui::keymap::FixedBinding;
 use octomusui::platform::Cursor;
 use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{BorderStyle, Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use pathfinder_geometry::vector::vec2f;
 
 use crate::appearance::Appearance;
 use crate::ui_components::buttons;

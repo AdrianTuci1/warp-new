@@ -2,14 +2,6 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use async_channel::TryRecvError;
-use parking_lot::Mutex;
-use string_offset::CharOffset;
-use tempfile::tempdir;
-use warp_editor::content::mermaid_diagram::mermaid_asset_source;
-use warp_editor::render::element::RichTextAction;
-use warp_editor::render::model::{
-    BlockItem, BlockSpacing, HitTestBlockType, ImageBlockConfig, Location, RenderEvent,
-};
 use octomus_util::user_input::UserInput;
 use octomusui::assets::asset_cache::{AssetCache, AssetState};
 use octomusui::event::ModifiersState;
@@ -19,7 +11,17 @@ use octomusui::presenter::ChildView;
 use octomusui::r#async::block_on;
 use octomusui::units::Pixels;
 use octomusui::windowing::WindowManager;
-use octomusui::{App, Element, Entity, SingletonEntity, TypedActionView, View, ViewHandle, WindowId};
+use octomusui::{
+    App, Element, Entity, SingletonEntity, TypedActionView, View, ViewHandle, WindowId,
+};
+use parking_lot::Mutex;
+use string_offset::CharOffset;
+use tempfile::tempdir;
+use warp_editor::content::mermaid_diagram::mermaid_asset_source;
+use warp_editor::render::element::RichTextAction;
+use warp_editor::render::model::{
+    BlockItem, BlockSpacing, HitTestBlockType, ImageBlockConfig, Location, RenderEvent,
+};
 
 use super::{EditorViewAction, LayoutAffectingAssetLoad, RichTextEditorConfig, RichTextEditorView};
 use crate::appearance::Appearance;

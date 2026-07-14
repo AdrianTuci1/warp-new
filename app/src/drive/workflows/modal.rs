@@ -3,10 +3,7 @@ use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 
 use itertools::Itertools;
-use pathfinder_geometry::vector::vec2f;
-use string_offset::CharOffset;
 use octomus_core::ui::theme::Fill;
-use warp_editor::editor::NavigationKey;
 use octomusui::clipboard::ClipboardContent;
 use octomusui::elements::{
     Align, Border, ChildAnchor, Clipped, ClippedScrollStateHandle, ClippedScrollable,
@@ -23,6 +20,9 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, UpdateView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use string_offset::CharOffset;
+use warp_editor::editor::NavigationKey;
 
 use super::arguments::ArgumentsState;
 use super::enum_creation_dialog::{EnumCreationDialog, EnumCreationDialogEvent, WorkflowEnumData};

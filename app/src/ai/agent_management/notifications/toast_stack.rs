@@ -1,6 +1,5 @@
 use std::time::Duration;
 
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::color::blend::Blend;
 use octomus_core::ui::theme::color::internal_colors;
 use octomusui::elements::{
@@ -14,7 +13,10 @@ use octomusui::platform::Cursor;
 use octomusui::r#async::{SpawnedFutureHandle, Timer};
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::ui_components::keyboard_shortcut::KeyboardShortcut;
-use octomusui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
+use octomusui::{
+    AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
+};
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::agent_management::notifications::item_rendering::{
     create_notification_artifact_buttons_view, handle_notification_artifact_buttons_event,

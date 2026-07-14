@@ -4,13 +4,13 @@ use std::rc::Rc;
 
 use ai::diff_validation::DiffType;
 use octomus_core::ui::appearance::Appearance;
-use warp_editor::content::buffer::InitialBufferState;
-use warp_editor::render::model::LineCount;
 use octomus_util::file::{FileLoadError, FileSaveError};
 use octomusui::elements::MouseStateHandle;
 use octomusui::{
     AppContext, Element, Entity, TypedActionView, View, ViewContext, ViewHandle, WindowId,
 };
+use warp_editor::content::buffer::InitialBufferState;
+use warp_editor::render::model::LineCount;
 
 pub use super::diff_viewer::DisplayMode;
 use super::editor::view::CodeEditorView;

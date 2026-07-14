@@ -6,12 +6,12 @@ mod view;
 use std::cmp;
 use std::ops::Range;
 
+pub use octomusui::text::point::Point;
+use octomusui::AppContext;
 /// Consumers of the editor should only interface with the view.
 /// They should _not_ be able to interface with the internal
 /// details of the editor (e.g. the [`Buffer`]).
 pub use view::*;
-pub use octomusui::text::point::Point;
-use octomusui::AppContext;
 
 pub fn init(app: &mut AppContext) {
     view::init(app);

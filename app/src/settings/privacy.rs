@@ -2,14 +2,14 @@ use std::fmt::Display;
 use std::sync::Arc;
 
 use anyhow::Result;
+use octomus_core::features::FeatureFlag;
+use octomus_core::report_if_error;
+use octomusui::{AppContext, Entity, ModelContext, SingletonEntity, UpdateModel};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use settings::macros::{define_settings_group, maybe_define_setting, register_settings_events};
 use settings::{RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud};
-use octomus_core::features::FeatureFlag;
-use octomus_core::report_if_error;
 use warp_graphql::mutations::update_user_settings::UpdateUserSettingsInput;
-use octomusui::{AppContext, Entity, ModelContext, SingletonEntity, UpdateModel};
 
 use super::cloud_preferences_syncer::CloudPreferencesSyncer;
 use crate::ai::blocklist::telemetry_banner::should_collect_ai_ugc_telemetry;
@@ -253,9 +253,11 @@ impl PrivacySettings {
             .value();
 
         // Listen for changes to the cloud model and update ourselves when they happen.
-        ctx.subscribe_to_model(&OctomusDrivePrivacySettings::handle(ctx), |me, event, ctx| {
-            let privacy_settings = OctomusDrivePrivacySettings::as_ref(ctx);
-            match event {
+        ctx.subscribe_to_model(
+            &OctomusDrivePrivacySettings::handle(ctx),
+            |me, event, ctx| {
+                let privacy_settings = OctomusDrivePrivacySettings::as_ref(ctx);
+                match event {
                 OctomusDrivePrivacySettingsChangedEvent::IsTelemetryEnabled { .. } => {
                     me.set_is_telemetry_enabled(
                         *privacy_settings.is_telemetry_enabled.value(),
@@ -279,7 +281,8 @@ impl PrivacySettings {
                     );
                 }
             }
-        });
+            },
+        );
 
         let user_secret_regex_list: CustomSecretRegexList =
             CustomSecretRegexList::new_from_storage(ctx);

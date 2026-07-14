@@ -2,7 +2,6 @@ use std::sync::{Arc, Mutex};
 
 use ::settings::{Setting, ToggleableSetting};
 use lazy_static::lazy_static;
-use pathfinder_color::ColorU;
 use octomus_core::channel::ChannelState;
 use octomus_core::context_flag::ContextFlag;
 use octomus_core::features::FeatureFlag;
@@ -21,6 +20,7 @@ use octomusui::{
     id, Action, AppContext, Entity, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_color::ColorU;
 
 use super::settings_page::{
     render_body_item, render_customer_type_badge, AdditionalInfo, LocalOnlyIconState, MatchData,

@@ -12,10 +12,10 @@ use alias::{expand_command_aliases, AliasExpansionResult};
 use async_recursion::async_recursion;
 use imp::*;
 use itertools::Itertools;
+use octomus_core::ui::theme::AnsiColorIdentifier;
 pub use priority::Priority;
 use smol_str::SmolStr;
 use warp_command_signatures::IconType;
-use octomus_core::ui::theme::AnsiColorIdentifier;
 
 use super::coalesce::coalesce_completion_results;
 use super::context::CompletionContext;

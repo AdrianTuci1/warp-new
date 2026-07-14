@@ -323,6 +323,7 @@ where
         appearance: &Appearance,
         object: &GenericCloudObject<GenericStringObjectId, Self>,
     ) -> Option<Box<dyn OctomusDriveItem>> {
-        self.string_model.to_octomus_drive_item(id, appearance, object)
+        self.string_model
+            .to_octomus_drive_item(id, appearance, object)
     }
 }

@@ -3,6 +3,11 @@ use std::collections::HashMap;
 use ai::index::full_source_code_embedding::manager::CodebaseIndexManager;
 use ai::project_context::model::ProjectContextModel;
 use chrono::Utc;
+use octomus_core::features::FeatureFlag;
+use octomusui::platform::{WindowBounds, WindowStyle};
+use octomusui::windowing::state::ApplicationStage;
+use octomusui::windowing::WindowManager;
+use octomusui::{App, ModelHandle};
 use pathfinder_geometry::rect::RectF;
 use persistence::model::{
     AgentConversation, AgentConversationData, AgentConversationRecord, ConversationUsageMetadata,
@@ -14,11 +19,6 @@ use repo_metadata::RepoMetadataModel;
 use session_sharing_protocol::common::SessionId;
 use shared_session::permissions_manager::SessionPermissionsManager;
 use uuid::Uuid;
-use octomus_core::features::FeatureFlag;
-use octomusui::platform::{WindowBounds, WindowStyle};
-use octomusui::windowing::state::ApplicationStage;
-use octomusui::windowing::WindowManager;
-use octomusui::{App, ModelHandle};
 use watcher::HomeDirectoryWatcher;
 
 use super::child_agent::{
@@ -65,6 +65,7 @@ use crate::network::NetworkStatus;
 use crate::notebooks::editor::keys::NotebookKeybindings;
 use crate::notebooks::manager::NotebookManager;
 use crate::notebooks::notebook::NotebookView;
+use crate::octomus_managed_paths_watcher::WarpManagedPathsWatcher;
 use crate::pricing::PricingInfoModel;
 use crate::resource_center::TipsCompleted;
 use crate::search::files::model::FileSearchModel;
@@ -93,7 +94,6 @@ use crate::terminal::shared_session::{
 };
 use crate::test_util::settings::initialize_settings_for_tests;
 use crate::undo_close::UndoCloseStack;
-use crate::octomus_managed_paths_watcher::WarpManagedPathsWatcher;
 use crate::workflows::local_workflows::LocalWorkflows;
 use crate::workspace::sync_inputs::SyncedInputState;
 use crate::workspace::{ActiveSession, OneTimeModalModel, WorkspaceRegistry};

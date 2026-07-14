@@ -11,7 +11,9 @@ use octomusui::platform::Cursor;
 use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::checkbox::Checkbox;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use octomusui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
+use octomusui::{
+    AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
+};
 
 /// Registers keybindings for the new-worktree modal (ESC to close).
 pub fn init(app: &mut AppContext) {

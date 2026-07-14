@@ -21,14 +21,14 @@ pub use agent_view_block::*;
 pub use controller::*;
 pub use ephemeral_message_model::*;
 pub use inline_agent_view_header::*;
-pub use orchestration_pill_bar::{render_orchestration_breadcrumbs, OrchestrationPillBar};
-use pathfinder_color::ColorU;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::color::blend::Blend;
 use octomus_core::ui::theme::Fill;
 use octomusui::fonts::Properties;
 use octomusui::keymap::Keystroke;
 use octomusui::{AppContext, SingletonEntity};
+pub use orchestration_pill_bar::{render_orchestration_breadcrumbs, OrchestrationPillBar};
+use pathfinder_color::ColorU;
 pub use zero_state_block::*;
 
 use crate::terminal::model::TerminalModel;

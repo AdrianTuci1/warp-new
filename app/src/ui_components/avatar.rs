@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::external_product_icon::ExternalProductIcon;
 use octomus_core::ui::icons::Icon;
 use octomusui::elements::{
@@ -6,6 +5,7 @@ use octomusui::elements::{
     OffsetPositioning, ParentAnchor, ParentElement, ParentOffsetBounds, Stack, Text,
 };
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use pathfinder_geometry::vector::vec2f;
 
 use super::red_notification_dot::RedNotificationDot;
 

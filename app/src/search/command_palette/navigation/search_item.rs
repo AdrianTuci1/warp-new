@@ -1,6 +1,6 @@
-use ordered_float::OrderedFloat;
 use octomusui::elements::Container;
 use octomusui::{AppContext, Element, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::appearance::Appearance;
 use crate::pane_group::PaneId;

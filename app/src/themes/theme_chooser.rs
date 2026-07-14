@@ -1,6 +1,3 @@
-use pathfinder_color::ColorU;
-use settings::Setting as _;
-use warp_editor::editor::NavigationKey;
 use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
 use octomusui::elements::{
     Align, ChildAnchor, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
@@ -19,6 +16,9 @@ use octomusui::{
     AppContext, Entity, FocusContext, ModelHandle, SingletonEntity, Tracked, TypedActionView,
     UpdateModel, View, ViewContext, ViewHandle,
 };
+use pathfinder_color::ColorU;
+use settings::Setting as _;
+use warp_editor::editor::NavigationKey;
 
 use super::theme;
 use crate::appearance::{Appearance, AppearanceManager};

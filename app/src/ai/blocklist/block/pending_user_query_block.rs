@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use parking_lot::RwLock;
 use octomus_core::features::FeatureFlag;
 use octomus_core::semantic_selection::SemanticSelection;
 use octomusui::elements::{
@@ -12,6 +11,7 @@ use octomusui::{
     AppContext, Element, Entity, EntityId, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use parking_lot::RwLock;
 
 use crate::ai::blocklist::block::view_impl::common::render_user_avatar;
 use crate::ai::blocklist::block::view_impl::{

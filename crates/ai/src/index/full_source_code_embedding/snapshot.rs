@@ -5,9 +5,9 @@ use std::time::Duration;
 
 use chrono::Utc;
 #[cfg(feature = "local_fs")]
-use repo_metadata::Repository;
-#[cfg(feature = "local_fs")]
 use octomusui_core::ModelHandle;
+#[cfg(feature = "local_fs")]
+use repo_metadata::Repository;
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "local_fs")] {

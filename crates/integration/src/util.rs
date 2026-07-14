@@ -3,9 +3,6 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 
 use itertools::Itertools as _;
-use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
-use version_compare::Version;
 use octomus::integration_testing::terminal::util::{
     current_shell_starter_and_version, default_histfile_directory, ExpectedOutput,
 };
@@ -13,6 +10,9 @@ use octomus::integration_testing::view_getters;
 use octomus::terminal::shell;
 use octomus::terminal::shell::ShellType;
 use octomusui_core::{App, WindowId};
+use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
+use version_compare::Version;
 
 use crate::builder::cargo_target_tmpdir;
 

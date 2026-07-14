@@ -1,7 +1,7 @@
-use serde_json::{json, Value};
-use strum_macros::{EnumDiscriminants, EnumIter};
 use octomus_core::register_telemetry_event;
 use octomus_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
+use serde_json::{json, Value};
+use strum_macros::{EnumDiscriminants, EnumIter};
 
 #[derive(Clone, EnumDiscriminants)]
 #[strum_discriminants(derive(EnumIter))]

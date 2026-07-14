@@ -1,14 +1,14 @@
 use std::cell::Cell;
 use std::sync::Arc;
 
-use pathfinder_color::ColorU;
-use string_offset::CharOffset;
 use octomusui_core::elements::{Axis, scroll_delta_for_pointer_movement};
 use octomusui_core::fonts::FamilyId;
 use octomusui_core::geometry::rect::RectF;
 use octomusui_core::geometry::vector::vec2f;
 use octomusui_core::text_layout::TextFrame;
 use octomusui_core::units::{IntoPixels, Pixels};
+use pathfinder_color::ColorU;
+use string_offset::CharOffset;
 
 use crate::content::text::{FormattedTable, table_cell_offset_maps};
 use crate::render::element::table::{

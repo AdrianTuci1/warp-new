@@ -3,11 +3,11 @@ use std::ffi::CStr;
 use cocoa::base::id;
 use objc2_app_kit::{NSEvent, NSEventModifierFlags, NSEventType};
 use objc2_foundation::NSUInteger;
-use pathfinder_geometry::vector::vec2f;
 use octomusui_core::event::{KeyEventDetails, ModifiersState};
 use octomusui_core::keymap::Keystroke;
 use octomusui_core::platform::keyboard::{KeyCode, PhysicalKey};
 use octomusui_core::Event;
+use pathfinder_geometry::vector::vec2f;
 
 use super::keycode::{scancode_to_physicalkey, Keycode};
 use super::utils::unicode_char_to_key;

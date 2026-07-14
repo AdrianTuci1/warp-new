@@ -15,8 +15,8 @@ use std::path::{Path, PathBuf};
 
 use futures::future::BoxFuture;
 use futures::FutureExt as _;
-use serde::{Deserialize, Serialize};
 use octomusui::{AppContext, SingletonEntity as _};
+use serde::{Deserialize, Serialize};
 
 use super::shell::DirectShellStarter;
 #[cfg(feature = "local_tty")]

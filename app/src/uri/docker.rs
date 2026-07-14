@@ -2,10 +2,10 @@ use std::collections::HashMap;
 use std::fmt::Display;
 
 use anyhow::{anyhow, Result};
-use regex::Regex;
-use url::Url;
 use octomus_util::path::{is_posix_portable_pathname, ShellFamily};
 use octomusui::AppContext;
+use regex::Regex;
+use url::Url;
 
 use crate::root_view::SubshellCommandArg;
 use crate::send_telemetry_from_app_ctx;

@@ -6,14 +6,14 @@ use std::sync::Arc;
 
 use anyhow::{Context, Result};
 use async_trait::async_trait;
+use octomus_cli::agent::Harness;
+use octomusui::{ModelHandle, ModelSpawner};
 use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use tempfile::NamedTempFile;
 use uuid::Uuid;
-use octomus_cli::agent::Harness;
 use warp_managed_secrets::ManagedSecretValue;
-use octomusui::{ModelHandle, ModelSpawner};
 
 use super::super::terminal::{CommandHandle, TerminalDriver};
 use super::super::{AgentDriver, AgentDriverError};

@@ -1,5 +1,4 @@
 use octomus_core::ui::appearance::Appearance;
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     Border, ConstrainedBox, Container, CornerRadius, Flex, MouseStateHandle, ParentElement, Radius,
     Shrinkable,
@@ -10,6 +9,7 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use warp_editor::editor::NavigationKey;
 
 use super::EnvVarSecretCommand;
 use crate::editor::{

@@ -5,12 +5,8 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use lazy_static::lazy_static;
-use parking_lot::FairMutex;
-use pathfinder_geometry::vector::vec2f;
-use settings::Setting as _;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::Icon;
-use warp_editor::render::element::VerticalExpansionBehavior;
 use octomusui::elements::{
     Align, Border, ChildView, Clipped, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     Expanded, Flex, MainAxisSize, MouseStateHandle, OffsetPositioning, ParentElement, Radius,
@@ -22,6 +18,10 @@ use octomusui::{
     AppContext, Element, Entity, EntityId, EventContext, ModelHandle, SingletonEntity,
     TypedActionView, UpdateView, View, ViewContext, ViewHandle,
 };
+use parking_lot::FairMutex;
+use pathfinder_geometry::vector::vec2f;
+use settings::Setting as _;
+use warp_editor::render::element::VerticalExpansionBehavior;
 
 use super::inline_action_icons::{self, icon_size};
 use crate::ai::agent::conversation::ConversationStatus;

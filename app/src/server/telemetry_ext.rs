@@ -1,8 +1,8 @@
 use chrono::{DateTime, Utc};
-use serde_json::{json, Value};
 use octomus_core::channel::{Channel, ChannelState};
 use octomus_core::execution_mode;
 use octomusui::telemetry::EventPayload;
+use serde_json::{json, Value};
 
 use super::telemetry::rudder_message::{
     BatchMessage as RudderBatchMessage, BatchMessageItem as RudderBatchMessageItem,

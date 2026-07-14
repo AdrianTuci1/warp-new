@@ -1,8 +1,8 @@
 use enum_iterator::Sequence;
-use serde::{Deserialize, Serialize};
 use octomus_core::channel::{Channel, ChannelState};
 use octomus_core::settings::macros::define_settings_group;
 use octomus_core::settings::{SupportedPlatforms, SyncToCloud};
+use serde::{Deserialize, Serialize};
 
 /// The app icon to use (mac-only).
 ///

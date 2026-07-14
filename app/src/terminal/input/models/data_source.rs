@@ -1,7 +1,6 @@
 use fuzzy_match::{match_indices_case_insensitive, FuzzyMatchResult};
 use itertools::Itertools;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use ordered_float::OrderedFloat;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::icons::Icon;
 use octomus_core::ui::theme::color::internal_colors;
@@ -17,6 +16,7 @@ use octomusui::text_layout::ClipConfig;
 use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, Entity, EntityId, SingletonEntity as _};
+use ordered_float::OrderedFloat;
 
 use super::model_spec_scores::{
     render_model_spec_header, render_model_spec_scores, CostRow, CostRowTooltip,

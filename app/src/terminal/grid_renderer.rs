@@ -8,7 +8,6 @@ use std::ops::{Range, RangeInclusive};
 
 use lazy_static::lazy_static;
 use num_traits::Float as _;
-use unicode_width::UnicodeWidthChar;
 use octomus_core::features::FeatureFlag;
 use octomusui::assets::asset_cache::{AssetCache, AssetSource, AssetState};
 use octomusui::color::ColorU;
@@ -21,6 +20,7 @@ use octomusui::platform::LineStyle;
 use octomusui::text_layout::{Line, StyleAndFont, TextStyle, DEFAULT_TOP_BOTTOM_RATIO};
 use octomusui::units::{IntoLines as _, Lines, Pixels};
 use octomusui::{AppContext, Element, EntityId, PaintContext, Scene, SingletonEntity};
+use unicode_width::UnicodeWidthChar;
 
 pub use self::cell_glyph_cache::CellGlyphCache;
 use self::cell_type::{CellType, IsFocused, Secret};

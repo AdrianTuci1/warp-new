@@ -1,7 +1,6 @@
 use std::future::Future;
 use std::pin::Pin;
 
-use pathfinder_geometry::vector::vec2f;
 use octomus::integration_testing::step::new_step_with_default_assertions;
 use octomus::integration_testing::terminal::util::ExpectedExitStatus;
 use octomus::integration_testing::terminal::{
@@ -11,6 +10,7 @@ use octomus::integration_testing::terminal::{
 };
 use octomusui_core::event::{Event, ModifiersState};
 use octomusui_core::integration::{TestStep, ARTIFACTS_DIR_ENV_VAR};
+use pathfinder_geometry::vector::vec2f;
 
 use crate::Builder;
 

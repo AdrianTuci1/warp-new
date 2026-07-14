@@ -3,9 +3,9 @@ use std::sync::Arc;
 
 use async_channel::Receiver;
 use futures::channel::oneshot;
-use parking_lot::Mutex;
 use octomus_js::JsFunctionId;
 use octomusui::r#async::executor::Background;
+use parking_lot::Mutex;
 
 use super::plugin::{AppServiceCallers, PluginRequest, PluginResponse};
 use super::plugin_ref::PluginRef;

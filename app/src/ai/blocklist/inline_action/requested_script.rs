@@ -3,7 +3,6 @@
 
 use std::rc::Rc;
 
-use pathfinder_geometry::vector::Vector2F;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::elements::{
     Align, Border, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Hoverable,
@@ -17,6 +16,7 @@ use octomusui::ui_components::toggle_menu::{
     ToggleMenuCallback, ToggleMenuItem, ToggleMenuStateHandle,
 };
 use octomusui::{AppContext, Element, EventContext, SingletonEntity};
+use pathfinder_geometry::vector::Vector2F;
 
 use super::inline_action_header::{
     INLINE_ACTION_HEADER_VERTICAL_PADDING, INLINE_ACTION_HORIZONTAL_PADDING,

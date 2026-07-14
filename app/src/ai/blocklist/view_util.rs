@@ -1,8 +1,6 @@
 //! This module contains common utilities for rendering Blocklist AI UI.
 use std::sync::LazyLock;
 
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::elements::{
     ChildAnchor, ConstrainedBox, Container, CrossAxisAlignment, Flex, Hoverable, MainAxisAlignment,
@@ -14,6 +12,8 @@ use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::ui_components::text::Span;
 use octomusui::{AppContext, Element, EntityId, EventContext, SingletonEntity};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::themes::theme::{AnsiColorIdentifier, Fill, WarpTheme};
 use crate::ui_components::icons::Icon;

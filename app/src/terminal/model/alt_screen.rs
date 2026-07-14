@@ -5,13 +5,13 @@ use std::sync::Arc;
 
 use itertools::Itertools;
 use num_traits::Float as _;
-use parking_lot::Mutex;
-use pathfinder_color::ColorU;
-use vec1::Vec1;
 use octomus_core::semantic_selection::SemanticSelection;
 use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
 use octomusui::text::SelectionType;
 use octomusui::units::Lines;
+use parking_lot::Mutex;
+use pathfinder_color::ColorU;
+use vec1::Vec1;
 
 use super::find::RegexDFAs;
 use super::grid::RespectDisplayedOutput;

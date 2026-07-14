@@ -203,7 +203,8 @@ pub fn test_expand_command_aliases_should_not_expand_if_no_space_after_alias() {
     assert!(result.signature_for_completions.is_none());
 
     // The test signature has an alias function which expands subcommand "twelve" to "one", but there's no trailing space so we shouldn't expand.
-    let result = octomusui_core::r#async::block_on(expand_command_aliases("test twelve", false, &ctx));
+    let result =
+        octomusui_core::r#async::block_on(expand_command_aliases("test twelve", false, &ctx));
     assert_eq!(result.expanded_command_line, "test twelve");
     assert_eq!(result.tokens_from_command, vec!["test", "twelve"]);
     // "twelve" isn't a valid subcommand, so we should use the "test" signature.
@@ -218,8 +219,11 @@ pub fn test_expand_command_aliases_should_not_expand_if_no_space_after_alias() {
     );
 
     // We have a top-level aliasForTest which expands to test. But the test signature does not expand "twelve" to "one" because there's no trailing space.
-    let result =
-        octomusui_core::r#async::block_on(expand_command_aliases("aliasForTest twelve", false, &ctx));
+    let result = octomusui_core::r#async::block_on(expand_command_aliases(
+        "aliasForTest twelve",
+        false,
+        &ctx,
+    ));
     assert_eq!(result.expanded_command_line, "test twelve");
     assert_eq!(result.tokens_from_command, vec!["test", "twelve"]);
     // "twelve" isn't a valid subcommand, so we should use the "test" signature.

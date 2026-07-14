@@ -2,13 +2,13 @@ use std::collections::HashMap;
 use std::time::Duration;
 
 use instant::Instant;
-use serde::{Deserialize, Serialize};
 use octomus_cli::agent::Harness;
 use octomus_core::features::FeatureFlag;
 use octomus_core::user_preferences::GetUserPreferences;
+use octomusui::{Entity, ModelContext, RequestState, SingletonEntity};
+use serde::{Deserialize, Serialize};
 use warp_managed_secrets::client::SecretOwner;
 use warp_managed_secrets::{ManagedSecretManager, ManagedSecretValue};
-use octomusui::{Entity, ModelContext, RequestState, SingletonEntity};
 
 use crate::ai::harness_display;
 use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};

@@ -2,10 +2,6 @@ use std::ops::RangeInclusive;
 use std::sync::Arc;
 
 use anyhow::Result;
-use parking_lot::FairMutex;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use serde::Serialize;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::theme::Fill;
 use octomusui::clipboard::ClipboardContent;
@@ -30,6 +26,10 @@ use octomusui::{
     LayoutContext, PaintContext, SingletonEntity, SizeConstraint, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use parking_lot::FairMutex;
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use serde::Serialize;
 
 use super::grid_renderer::CellGlyphCache;
 use super::model::grid::RespectDisplayedOutput;

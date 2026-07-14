@@ -1,8 +1,8 @@
 use comfy_table::Cell;
-use serde::Serialize;
 use octomus_cli::agent::AgentProfileCommand;
 use octomus_cli::GlobalOptions;
 use octomusui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use crate::ai::agent_sdk::output::{self, TableFormat};
 use crate::ai::execution_profiles::profiles::AIExecutionProfilesModel;

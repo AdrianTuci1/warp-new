@@ -2,10 +2,6 @@ use std::cell::Cell;
 use std::sync::Arc;
 
 use markdown_parser::{FormattedTextStyles, Hyperlink};
-use rangemap::RangeSet;
-use string_offset::CharOffset;
-use sum_tree::SumTree;
-use vec1::{Vec1, vec1};
 use octomusui_core::assets::asset_cache::AssetSource;
 use octomusui_core::color::ColorU;
 use octomusui_core::elements::ListIndentLevel;
@@ -14,6 +10,10 @@ use octomusui_core::geometry::rect::RectF;
 use octomusui_core::geometry::vector::vec2f;
 use octomusui_core::text_layout::TextFrame;
 use octomusui_core::units::{IntoPixels, Pixels};
+use rangemap::RangeSet;
+use string_offset::CharOffset;
+use sum_tree::SumTree;
+use vec1::{Vec1, vec1};
 
 use super::debug::Describe;
 use super::test_utils::{layout_paragraph, layout_paragraphs};

@@ -1,11 +1,8 @@
 use std::collections::HashMap;
 
 use instant::Instant;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::color::blend::Blend;
 use octomus_core::ui::theme::color::internal_colors;
-use warp_editor::editor::NavigationKey;
-use warp_graphql::scalars::time::ServerTimestamp;
 use octomusui::elements::{
     Align, Border, ChildAnchor, Clipped, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, Element, Empty, Expanded, Flex, Hoverable, MainAxisAlignment, MainAxisSize,
@@ -22,6 +19,9 @@ use octomusui::{
     AppContext, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use warp_editor::editor::NavigationKey;
+use warp_graphql::scalars::time::ServerTimestamp;
 
 use super::agent_assisted_environment_modal::{
     AgentAssistedEnvironmentModal, AgentAssistedEnvironmentModalEvent,
@@ -1541,10 +1541,13 @@ impl EnvironmentsPageWidget {
         let theme = appearance.theme();
         let build_icon = || {
             Container::new(
-                ConstrainedBox::new(icon.to_octomusui_icon(theme.active_ui_text_color()).finish())
-                    .with_width(icon_size)
-                    .with_height(icon_size)
-                    .finish(),
+                ConstrainedBox::new(
+                    icon.to_octomusui_icon(theme.active_ui_text_color())
+                        .finish(),
+                )
+                .with_width(icon_size)
+                .with_height(icon_size)
+                .finish(),
             )
             .with_uniform_padding(8.)
             .with_corner_radius(CornerRadius::with_all(Radius::Pixels(6.)))

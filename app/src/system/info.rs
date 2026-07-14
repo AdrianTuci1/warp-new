@@ -5,11 +5,11 @@ use byte_unit::Byte;
 use chrono::{DateTime, Local, Utc};
 use itertools::Itertools as _;
 use num_traits::Zero;
+use octomus_core::channel::ChannelState;
+use octomusui::{App, AppContext, Entity, ModelContext, SingletonEntity};
 use ordered_float::OrderedFloat;
 use serde::Serialize;
 use sysinfo::ProcessesToUpdate;
-use octomus_core::channel::ChannelState;
-use octomusui::{App, AppContext, Entity, ModelContext, SingletonEntity};
 
 use crate::server::telemetry;
 use crate::system::memory_footprint;

@@ -28,11 +28,11 @@ pub use in_band_command_executor::{
 #[cfg(feature = "local_tty")]
 pub use local_command_executor::LocalCommandExecutor;
 pub use noop_command_executor::NoOpCommandExecutor;
+use octomus_completer::completer::CommandOutput;
+use octomusui::ModelContext;
 #[cfg(feature = "local_tty")]
 pub use remote_command_executor::RemoteCommandExecutor;
 pub use shared::{shell_escape_single_quotes, ExecutorCommandEvent};
-use octomus_completer::completer::CommandOutput;
-use octomusui::ModelContext;
 
 use super::SessionInfo;
 use crate::terminal::event::ExecutedExecutorCommandEvent;
@@ -148,10 +148,10 @@ fn new_command_executor_for_local_tty_session(
     ctx: &mut ModelContext<Sessions>,
 ) -> Arc<dyn CommandExecutor> {
     use msys2_command_executor::MSYS2CommandExecutor;
+    use octomusui::SingletonEntity as _;
     use remote_server_executor::RemoteServerCommandExecutor;
     use settings::Setting as _;
     use tmux_executor::TmuxCommandExecutor;
-    use octomusui::SingletonEntity as _;
     use wsl_command_executor::WslCommandExecutor;
 
     use super::IsLegacySSHSession;

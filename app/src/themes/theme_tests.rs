@@ -156,7 +156,8 @@ fn custom_theme_unmatched_legacy_absolute_path_is_preserved() {
 #[test]
 fn custom_theme_windows_absolute_path_string_is_preserved() {
     let root = PathBuf::from("/Users/example/.octomus/themes");
-    let stored = PathBuf::from(r"C:\Users\example\AppData\Roaming\octomus\Octomus\data\themes\mocha.yml");
+    let stored =
+        PathBuf::from(r"C:\Users\example\AppData\Roaming\octomus\Octomus\data\themes\mocha.yml");
 
     assert_eq!(custom_theme_path_from_storage(&stored, &root), stored);
 }
@@ -164,7 +165,8 @@ fn custom_theme_windows_absolute_path_string_is_preserved() {
 #[test]
 fn custom_theme_windows_absolute_path_string_is_not_portable() {
     let root = PathBuf::from("/Users/example/.octomus/themes");
-    let stored = PathBuf::from(r"C:\Users\example\AppData\Roaming\octomus\Octomus\data\themes\mocha.yml");
+    let stored =
+        PathBuf::from(r"C:\Users\example\AppData\Roaming\octomus\Octomus\data\themes\mocha.yml");
 
     assert!(!custom_theme_path_is_portable(&stored, &root));
 }
@@ -172,7 +174,8 @@ fn custom_theme_windows_absolute_path_string_is_not_portable() {
 #[test]
 fn custom_theme_windows_absolute_path_string_storage_helper_preserves_path() {
     let root = PathBuf::from("/Users/example/.octomus/themes");
-    let stored = PathBuf::from(r"C:\Users\example\AppData\Roaming\octomus\Octomus\data\themes\mocha.yml");
+    let stored =
+        PathBuf::from(r"C:\Users\example\AppData\Roaming\octomus\Octomus\data\themes\mocha.yml");
 
     assert_eq!(custom_theme_path_for_storage(&stored, &root), stored);
 }

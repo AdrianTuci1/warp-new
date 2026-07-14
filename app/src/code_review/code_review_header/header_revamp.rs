@@ -5,7 +5,6 @@
 //!
 //! Separated into its own module so the two codepaths are easy to distinguish.
 
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::features::FeatureFlag;
 use octomusui::elements::{
     ChildAnchor, ChildView, Clipped, ConstrainedBox, Container, CrossAxisAlignment, Flex,
@@ -13,6 +12,7 @@ use octomusui::elements::{
     ParentOffsetBounds, Shrinkable, Stack,
 };
 use octomusui::{Element, ViewHandle};
+use pathfinder_geometry::vector::vec2f;
 
 use super::CodeReviewHeader;
 use crate::appearance::Appearance;

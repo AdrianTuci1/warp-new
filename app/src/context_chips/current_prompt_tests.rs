@@ -4,14 +4,14 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use itertools::Itertools;
-use parking_lot::Mutex;
-#[cfg(feature = "local_fs")]
-use repo_metadata::DirectoryWatcher;
-use settings::Setting as _;
 use octomus_completer::completer::{CommandExitStatus, CommandOutput};
 use octomus_core::command::ExitCode;
 use octomusui::{App, SingletonEntity};
 use octomusui_extras::user_preferences;
+use parking_lot::Mutex;
+#[cfg(feature = "local_fs")]
+use repo_metadata::DirectoryWatcher;
+use settings::Setting as _;
 
 use super::{ChipUpdateStatus, CurrentPrompt, PromptContext};
 use crate::auth::auth_manager::AuthManager;

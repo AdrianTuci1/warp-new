@@ -7,9 +7,9 @@ use std::sync::Arc;
 
 use futures::FutureExt;
 use itertools::Itertools as _;
-use persistence::model::AgentConversationRecord;
 use octomus_core::features::FeatureFlag;
 use octomusui::{AppContext, SingletonEntity};
+use persistence::model::AgentConversationRecord;
 
 use super::{
     agent_id_key_from_persisted_data, AIConversationMetadata, BlocklistAIHistoryModel,

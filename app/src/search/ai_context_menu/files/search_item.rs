@@ -2,9 +2,9 @@ use std::fmt::Debug;
 use std::path::PathBuf;
 
 use fuzzy_match::FuzzyMatchResult;
-use ordered_float::OrderedFloat;
 use octomusui::elements::{ConstrainedBox, Container, Icon};
 use octomusui::{AppContext, Element};
+use ordered_float::OrderedFloat;
 
 use crate::appearance::Appearance;
 use crate::search::ai_context_menu::mixer::AIContextMenuSearchableAction;

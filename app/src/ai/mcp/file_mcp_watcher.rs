@@ -6,6 +6,8 @@ use std::sync::LazyLock;
 
 use async_channel::Sender;
 use futures::Future;
+use octomus_core::safe_warn;
+use octomusui::{Entity, ModelContext, ModelHandle, SingletonEntity};
 use regex::Regex;
 use repo_metadata::repositories::{
     DetectedRepositories, DetectedRepositoriesEvent, RepoDetectionSource,
@@ -13,8 +15,6 @@ use repo_metadata::repositories::{
 use repo_metadata::repository::{Repository, RepositorySubscriber, SubscriberId};
 use repo_metadata::watcher::{DirectoryWatcher, RepositoryUpdate};
 use strum::IntoEnumIterator;
-use octomus_core::safe_warn;
-use octomusui::{Entity, ModelContext, ModelHandle, SingletonEntity};
 use watcher::HomeDirectoryWatcherEvent;
 
 use crate::ai::mcp::parsing::normalize_codex_toml_to_json;
@@ -285,7 +285,9 @@ impl FileMCPWatcher {
         }
 
         let Ok(std_path) =
-            octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(subdir_path)
+            octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(
+                subdir_path,
+            )
         else {
             return;
         };

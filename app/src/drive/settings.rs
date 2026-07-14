@@ -1,6 +1,6 @@
+use octomus_core::features::FeatureFlag;
 use settings::macros::define_settings_group;
 use settings::{RespectUserSyncSetting, SupportedPlatforms, SyncToCloud};
-use octomus_core::features::FeatureFlag;
 
 use super::DriveSortOrder;
 

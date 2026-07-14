@@ -1,9 +1,9 @@
 use std::ops::Range;
 
 use itertools::Itertools;
+use octomusui_core::{AppContext, Entity, ModelHandle};
 use string_offset::CharOffset;
 use vec1::{Vec1, vec1};
-use octomusui_core::{AppContext, Entity, ModelHandle};
 
 use crate::content::anchor::{Anchor, AnchorSide, AnchorUpdate, Anchors};
 use crate::content::buffer::{Buffer, SelectionOffsets, ToBufferPoint};

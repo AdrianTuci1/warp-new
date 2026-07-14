@@ -1,7 +1,7 @@
-use settings::Setting;
 use octomusui::integration::TestStep;
 use octomusui::windowing::WindowManager;
 use octomusui::{async_assert, SingletonEntity};
+use settings::Setting;
 
 use crate::integration_testing::step::new_step_with_default_assertions;
 use crate::integration_testing::view_getters::theme_chooser_view;

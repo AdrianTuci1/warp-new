@@ -1,8 +1,8 @@
-use typed_path::TypedPathBuf;
 use octomus_completer::meta::SpannedItem;
 use octomus_completer::parsers::ParsedToken;
 use octomus_completer::signatures::CommandRegistry;
 use octomusui::App;
+use typed_path::TypedPathBuf;
 
 use super::*;
 use crate::completer::SessionContext;

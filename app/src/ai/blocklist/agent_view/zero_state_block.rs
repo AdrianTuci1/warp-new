@@ -5,8 +5,6 @@ use std::sync::Arc;
 
 use itertools::Itertools as _;
 use markdown_parser::{parse_markdown, FormattedText, FormattedTextFragment, FormattedTextLine};
-use parking_lot::FairMutex;
-use settings::Setting;
 use octomus_core::features::FeatureFlag;
 use octomus_core::report_if_error;
 use octomus_core::ui::Icon;
@@ -23,6 +21,8 @@ use octomusui::scene::Border;
 use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use parking_lot::FairMutex;
+use settings::Setting;
 
 use crate::ai::active_agent_views_model::{ActiveAgentViewsModel, ConversationOrTaskId};
 use crate::ai::agent::conversation::AIConversationId;

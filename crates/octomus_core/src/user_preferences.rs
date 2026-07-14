@@ -6,9 +6,9 @@
 
 use std::ops::Deref;
 
-use settings::PrivatePreferences;
 use octomusui_core::SingletonEntity;
 use octomusui_extras::user_preferences::UserPreferences;
+use settings::PrivatePreferences;
 
 /// An extension trait on [`octomusui_core::AppContext`] for accessing private user
 /// preferences.

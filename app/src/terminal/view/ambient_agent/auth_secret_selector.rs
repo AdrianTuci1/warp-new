@@ -1,13 +1,10 @@
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 
-use pathfinder_geometry::vector::vec2f;
-use settings::Setting as _;
 use octomus_cli::agent::Harness;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::Fill;
-use warp_managed_secrets::client::SecretOwner;
 use octomusui::elements::{
     Border, ChildAnchor, ChildView, OffsetPositioning, ParentAnchor, ParentElement as _,
     ParentOffsetBounds, Stack,
@@ -16,6 +13,9 @@ use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use settings::Setting as _;
+use warp_managed_secrets::client::SecretOwner;
 
 use crate::ai::auth_secret_types::auth_secret_types_for_harness;
 use crate::ai::cloud_agent_settings::CloudAgentSettings;

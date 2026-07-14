@@ -3,10 +3,10 @@ use std::iter::Take;
 use std::ops::Range;
 
 use anyhow::{anyhow, Result};
-use string_offset::CharOffset;
-use sum_tree::{self, Cursor, Dimension, SeekBias, SumTree};
 use octomusui::text_layout::TextStyle;
 use octomusui::{AppContext, ModelHandle};
+use string_offset::CharOffset;
+use sum_tree::{self, Cursor, Dimension, SeekBias, SumTree};
 
 use super::super::buffer::{AnchorRangeExt, TextSummary};
 use super::buffer::StylizedChar;

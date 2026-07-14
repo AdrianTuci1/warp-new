@@ -1,6 +1,5 @@
 use chrono::{DateTime, Local};
 use fuzzy_match::FuzzyMatchResult;
-use ordered_float::OrderedFloat;
 use octomus_core::ui::color::coloru_with_opacity;
 use octomus_core::ui::theme::Fill;
 use octomus_core::ui::Icon;
@@ -10,6 +9,7 @@ use octomusui::prelude::{Align, CrossAxisAlignment, Flex, MainAxisAlignment, Mai
 use octomusui::scene::{CornerRadius, Radius};
 use octomusui::text_layout::ClipConfig;
 use octomusui::{AppContext, Element, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::ai::agent::conversation::{AIConversationId, ConversationStatus};
 use crate::ai::conversation_status_ui::{render_status_element, STATUS_ELEMENT_PADDING};

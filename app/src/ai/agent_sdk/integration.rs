@@ -2,11 +2,11 @@ use futures::future;
 use octomus_cli::integration::{CreateIntegrationArgs, IntegrationCommand, UpdateIntegrationArgs};
 use octomus_cli::provider::ProviderType;
 use octomus_cli::GlobalOptions;
+use octomusui::platform::TerminationMode;
+use octomusui::{AppContext, ModelContext, SingletonEntity};
 use warp_graphql::mutations::create_simple_integration::CreateSimpleIntegrationOutput;
 use warp_graphql::queries::get_oauth_connect_tx_status::OauthConnectTxStatus;
 use warp_graphql::queries::get_simple_integrations::SimpleIntegrationsOutput;
-use octomusui::platform::TerminationMode;
-use octomusui::{AppContext, ModelContext, SingletonEntity};
 
 use super::common::{EnvironmentChoice, ResolveConfigurationError};
 use super::integration_output;

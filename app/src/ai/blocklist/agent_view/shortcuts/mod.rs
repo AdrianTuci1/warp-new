@@ -3,7 +3,6 @@ mod model;
 use std::borrow::Cow;
 
 pub use model::*;
-use pathfinder_color::ColorU;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::elements::{
@@ -12,6 +11,7 @@ use octomusui::elements::{
 use octomusui::keymap::Keystroke;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, SingletonEntity};
+use pathfinder_color::ColorU;
 
 use crate::ai::blocklist::agent_view::{
     ENTER_AGENT_VIEW_NEW_CONVERSATION_KEYSTROKE, ENTER_CLOUD_AGENT_VIEW_NEW_CONVERSATION_KEYSTROKE,

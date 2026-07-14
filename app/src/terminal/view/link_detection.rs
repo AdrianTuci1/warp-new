@@ -1,8 +1,8 @@
 use std::ops::Deref;
 
-use serde::{Serialize, Serializer};
 use octomusui::platform::Cursor;
 use octomusui::ViewContext;
+use serde::{Serialize, Serializer};
 
 use crate::send_telemetry_from_ctx;
 use crate::server::telemetry::{LinkOpenMethod, TelemetryEvent};

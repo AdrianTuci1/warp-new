@@ -1,10 +1,5 @@
 use std::time::Duration;
 
-use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
-use session_sharing_protocol::common::{ParticipantId, Role, SessionId as SharedSessionId};
-use session_sharing_protocol::sharer::{SessionEndedReason, SessionSourceType};
-use strum_macros::{EnumDiscriminants, EnumIter};
 use octomus_completer::completer::MatchType;
 use octomus_core::command::ExitCode;
 use octomus_core::interval_timer::TimingDataPoint;
@@ -14,6 +9,11 @@ use octomus_core::telemetry::{
 use octomusui::keymap::Keystroke;
 use octomusui::notification::{NotificationSendError, RequestPermissionsOutcome};
 use octomusui::rendering::ThinStrokes;
+use serde::{Deserialize, Serialize};
+use serde_json::{json, Value};
+use session_sharing_protocol::common::{ParticipantId, Role, SessionId as SharedSessionId};
+use session_sharing_protocol::sharer::{SessionEndedReason, SessionSourceType};
+use strum_macros::{EnumDiscriminants, EnumIter};
 
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::agent::conversation::AIConversationId;
@@ -3497,7 +3497,9 @@ impl TelemetryEvent {
                 Some(json!({"enabled": enabled}))
             }
             TelemetryEvent::ToggleSshTmuxWrapper { enabled } => Some(json!({"enabled": enabled})),
-            TelemetryEvent::ToggleSshOctomusification { enabled } => Some(json!({"enabled": enabled})),
+            TelemetryEvent::ToggleSshOctomusification { enabled } => {
+                Some(json!({"enabled": enabled}))
+            }
             TelemetryEvent::SetSshExtensionInstallMode { mode } => Some(json!({"mode": mode})),
             TelemetryEvent::SshRemoteServerChoiceDoNotAskAgainToggled { checked } => {
                 Some(json!({"checked": checked}))
@@ -5734,7 +5736,9 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::AgentModeRatedResponse => {
                 EnablementState::Flag(FeatureFlag::GlobalAIAnalyticsBanner)
             }
-            Self::ExecutedOctomusDrivePrompt => EnablementState::Flag(FeatureFlag::AgentModeWorkflows),
+            Self::ExecutedOctomusDrivePrompt => {
+                EnablementState::Flag(FeatureFlag::AgentModeWorkflows)
+            }
             Self::ImageReceived => EnablementState::Always,
             Self::FileExceededContextLimit => EnablementState::Always,
             Self::AgentModeError => EnablementState::Always,
@@ -6141,7 +6145,9 @@ impl TelemetryEventDesc for TelemetryEventDiscriminants {
             Self::CopiedSharedSessionLink { .. } => "Copied Shared Session Link",
             Self::WebSessionOpenedOnDesktop { .. } => "Web session opened on desktop",
             Self::WebCloudObjectOpenedOnDesktop { .. } => "Octomus Drive object opened on desktop",
-            Self::DriveSharingOnboardingBlockShown => "Octomus Drive Sharing onboarding block shown",
+            Self::DriveSharingOnboardingBlockShown => {
+                "Octomus Drive Sharing onboarding block shown"
+            }
             Self::UnsupportedShell => "Unsupported Shell",
             Self::SettingsImportInitiated => "Settings Import Initiated",
             Self::InviteTeammates => "Invited Teammates",

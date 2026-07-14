@@ -370,6 +370,11 @@ pub struct RunAgentArgs {
     #[arg(long = "conversation", value_name = "ID")]
     pub conversation: Option<String>,
 
+    /// Run the agent in standalone mode without connecting to the Octomus server.
+    /// This is intended for headless VPS execution where no cloud sync is available.
+    #[arg(long = "standalone", hide = true)]
+    pub standalone: bool,
+
     /// Agent profile to configure the terminal session.
     #[arg(long = "profile", value_name = "ID")]
     pub profile: Option<String>,

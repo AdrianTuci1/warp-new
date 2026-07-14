@@ -21,8 +21,6 @@ use objc2_foundation::{
 };
 use objc2_metal::{MTLCopyAllDevices, MTLCreateSystemDefaultDevice, MTLDevice};
 use objc2_quartz_core::CAMetalLayer;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
 use octomusui_core::accessibility::AccessibilityContent;
 use octomusui_core::actions::StandardAction;
 use octomusui_core::event::ModifiersState;
@@ -35,6 +33,8 @@ use octomusui_core::r#async::{executor, Timer};
 use octomusui_core::rendering::GPUPowerPreference;
 use octomusui_core::windowing::WindowCallbacks;
 use octomusui_core::{DisplayId, DisplayIdx, Event, OptionalPlatformWindow, Scene, WindowId};
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
 
 use super::delegate::DispatchDelegate;
 use super::rendering::{self, is_integrated_gpu, Device, RendererManager};

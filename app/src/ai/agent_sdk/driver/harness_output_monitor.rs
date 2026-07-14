@@ -5,8 +5,8 @@
 use std::sync::Arc;
 use std::time::Duration;
 
-use regex::escape;
 use octomusui::ModelSpawner;
+use regex::escape;
 
 use super::terminal::BlockOutputMatch;
 use super::AgentDriver;

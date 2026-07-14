@@ -5,7 +5,6 @@ use enclose::enclose;
 use itertools::Itertools as _;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use octomus_core::ui::appearance::Appearance;
-use warp_graphql::billing::AddonCreditsOption;
 use octomusui::elements::{
     Border, ChildView, Container, CrossAxisAlignment, Empty, Flex, HighlightedHyperlink,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Text,
@@ -14,6 +13,7 @@ use octomusui::fonts::Weight;
 use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{Coords, UiComponent as _, UiComponentStyles};
 use octomusui::{AppContext, Element, Entity, SingletonEntity as _, View, ViewContext, ViewHandle};
+use warp_graphql::billing::AddonCreditsOption;
 
 use crate::features::FeatureFlag;
 use crate::menu::MenuItemFields;

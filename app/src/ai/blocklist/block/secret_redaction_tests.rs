@@ -1,7 +1,7 @@
-use regex::Regex;
-use serial_test::serial;
 use octomusui::elements::Text;
 use octomusui::fonts::FamilyId;
+use regex::Regex;
+use serial_test::serial;
 
 use super::*;
 use crate::terminal::model::secrets::{self, SecretLevel};

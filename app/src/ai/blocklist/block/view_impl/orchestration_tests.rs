@@ -261,8 +261,8 @@ fn participant_for_agent_id_uses_pill_style_child_agent_avatar() {
 #[test]
 fn participant_for_restored_child_run_id_resolves_to_agent_name() {
     use chrono::Utc;
-    use uuid::Uuid;
     use octomus_core::features::FeatureFlag;
+    use uuid::Uuid;
 
     use crate::persistence::model::{
         AgentConversation, AgentConversationData, AgentConversationRecord,

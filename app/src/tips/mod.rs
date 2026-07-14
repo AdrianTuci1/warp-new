@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
 use octomusui::keymap::Keystroke;
 use octomusui::AppContext;
+use serde::{Deserialize, Serialize};
 
 pub mod tip_view;
 pub use tip_view::{TipsEvent, TipsView};

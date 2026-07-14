@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::theme::AnsiColorIdentifier;
 use octomusui::elements::{
     ChildAnchor, ConstrainedBox, Container, CornerRadius, Empty, Fill, OffsetPositioning,
@@ -6,6 +5,7 @@ use octomusui::elements::{
 };
 use octomusui::ui_components::components::UiComponentStyles;
 use octomusui::Element;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::appearance::Appearance;
 

@@ -1,4 +1,3 @@
-use regex::Regex;
 use octomus::integration_testing::step::new_step_with_default_assertions;
 use octomus::integration_testing::tab::assert_pane_title;
 use octomus::integration_testing::terminal::wait_until_bootstrapped_single_pane_for_tab;
@@ -6,6 +5,7 @@ use octomus::integration_testing::view_getters::{pane_group_view, workspace_view
 use octomus::workspace::WorkspaceAction;
 use octomusui_core::integration::TestStep;
 use octomusui_core::{async_assert, async_assert_eq, App};
+use regex::Regex;
 
 use super::{new_builder, Builder};
 use crate::util::write_all_rc_files_for_test;

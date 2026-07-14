@@ -1,7 +1,7 @@
-use pathfinder_geometry::vector::vec2f;
 use octomusui::elements::{Hoverable, MainAxisAlignment, MainAxisSize, MouseStateHandle};
 use octomusui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use pathfinder_geometry::vector::vec2f;
 
 use super::settings_page::{MatchData, NAV_ITEM_LEFT_MARGIN};
 use super::SettingsSection;

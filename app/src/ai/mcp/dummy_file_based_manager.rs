@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 
-use uuid::Uuid;
 use octomusui::{AppContext, Entity, ModelContext, SingletonEntity};
+use uuid::Uuid;
 
 use super::MCPProvider;
 use crate::ai::mcp::templatable_installation::TemplatableMCPServerInstallation;

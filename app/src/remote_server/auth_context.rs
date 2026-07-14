@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use remote_server::auth::RemoteServerAuthContext;
 use octomusui::r#async::BoxFuture;
+use remote_server::auth::RemoteServerAuthContext;
 
 use crate::auth::auth_state::AuthState;
 use crate::server::server_api::auth::AuthClient;

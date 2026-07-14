@@ -3,12 +3,12 @@
 
 use std::collections::HashMap;
 
-use settings::Setting as _;
 use octomus::features::FeatureFlag;
 use octomus::integration_testing::terminal::wait_until_bootstrapped_single_pane_for_tab;
 use octomus::settings::{BlockVisibilitySettings, ScrollSettings};
 use octomusui_core::integration::AssertionOutcome;
 use octomusui_core::{async_assert, async_assert_eq, SingletonEntity};
+use settings::Setting as _;
 
 use super::{new_builder, Builder};
 

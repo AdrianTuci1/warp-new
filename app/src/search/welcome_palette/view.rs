@@ -5,7 +5,6 @@ use std::sync::Arc;
 
 use chrono::Utc;
 use itertools::Itertools as _;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::context_flag::ContextFlag;
 use octomus_core::features::FeatureFlag;
 use octomusui::elements::{
@@ -21,6 +20,7 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView,
     ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use super::super::palette_styles as styles;
 use crate::appearance::Appearance;

@@ -2,14 +2,10 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 use lsp::LspManagerModel;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::channel::{Channel, ChannelState};
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::icons::ICON_DIMENSIONS;
-use warp_editor::render::element::VerticalExpansionBehavior;
 use octomus_util::path::LineAndColumnArg;
 #[cfg(feature = "local_fs")]
 use octomusui::clipboard::ClipboardContent;
@@ -30,6 +26,10 @@ use octomusui::{
     id, AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WindowId,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::vec2f;
+use warp_editor::render::element::VerticalExpansionBehavior;
 
 use super::buffer_location::LocalOrRemotePath;
 use super::diff_viewer::DiffViewer;

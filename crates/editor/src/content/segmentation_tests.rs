@@ -1,11 +1,11 @@
 use itertools::Itertools;
 use markdown_parser::parse_markdown;
-use string_offset::CharOffset;
 use octomus_core::features::FeatureFlag;
 use octomusui_core::App;
 use octomusui_core::text::TextBuffer;
 use octomusui_core::text::point::Point;
 use octomusui_core::text::word_boundaries::WordBoundariesPolicy;
+use string_offset::CharOffset;
 
 use crate::content::buffer::{Buffer, EditOrigin};
 use crate::content::selection_model::BufferSelectionModel;

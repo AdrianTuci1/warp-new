@@ -5,7 +5,6 @@ use std::time::Duration;
 
 use ::settings::{Setting, ToggleableSetting};
 use lazy_static::lazy_static;
-use strum::IntoEnumIterator;
 use octomus_core::channel::ChannelState;
 use octomus_core::context_flag::ContextFlag;
 use octomus_core::semantic_selection::{
@@ -26,6 +25,7 @@ use octomusui::{
     Action, AppContext, DisplayIdx, Entity, EventContext, ModelHandle, SingletonEntity, Tracked,
     TypedActionView, View, ViewContext, ViewHandle, WindowId,
 };
+use strum::IntoEnumIterator;
 #[cfg(any(target_os = "linux", target_os = "freebsd"))]
 use {
     crate::settings::ForceX11, crate::settings::LinuxAppConfiguration,
@@ -822,7 +822,8 @@ lazy_static! {
 const NOTIFICATION_CHECKBOX_MARGIN_RIGHT: f32 = 5.;
 const NOTIFICATION_EDITOR_MARGIN: f32 = 5.;
 
-const NOTIFICATIONS_DOCS_URL: &str = "https://docs.octomus.dev/terminal/more-features/notifications";
+const NOTIFICATIONS_DOCS_URL: &str =
+    "https://docs.octomus.dev/terminal/more-features/notifications";
 
 /// WARNING: this constant was computed manually by determining the pixel width
 /// of the quake mode dropdowns based on the number of expanded items in the flex row.
@@ -4539,7 +4540,9 @@ impl SettingsWidget for SessionRestorationWidget {
             let link = ui_builder
                 .link(
                     "See docs.".to_owned(),
-                    Some("https://docs.octomus.dev/terminal/sessions/session-restoration".to_owned()),
+                    Some(
+                        "https://docs.octomus.dev/terminal/sessions/session-restoration".to_owned(),
+                    ),
                     None,
                     self.docs_link.clone(),
                 )

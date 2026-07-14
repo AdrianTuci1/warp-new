@@ -5,9 +5,9 @@ mod rect;
 mod util;
 
 use frame::Frame;
+use octomusui_core::platform::CapturedFrame;
 use pathfinder_geometry::vector::Vector2F;
 use util::with_error_scope;
-use octomusui_core::platform::CapturedFrame;
 use wgpu::wgc::device::DeviceError;
 use wgpu::wgc::present::SurfaceError;
 

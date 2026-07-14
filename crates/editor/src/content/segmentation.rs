@@ -3,10 +3,10 @@
 //! [`TextBuffer`] API.
 
 use anyhow::anyhow;
-use string_offset::CharOffset;
 use octomusui_core::text::TextBuffer;
 use octomusui_core::text::point::Point;
 use octomusui_core::text::word_boundaries::WordBoundariesPolicy;
+use string_offset::CharOffset;
 
 use super::buffer::{Buffer, ToBufferCharOffset, ToBufferPoint};
 use super::cursor::BufferCursor;

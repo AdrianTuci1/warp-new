@@ -5,9 +5,9 @@ use std::path::Path;
 
 use anyhow::Result;
 use lazy_static::lazy_static;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
 use regex::Regex;
 use thiserror::Error;
-use octomus_util::local_or_remote_path::LocalOrRemotePath;
 
 use super::parser::parse_markdown_content;
 use super::skill_provider::{get_provider_for_path, get_scope_for_path, SkillProvider, SkillScope};

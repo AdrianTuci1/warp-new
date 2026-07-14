@@ -50,6 +50,7 @@ mod modal;
 mod network;
 mod notebooks;
 mod notification;
+mod octomus_managed_paths_watcher;
 mod palette;
 mod persistence;
 mod platform;
@@ -91,7 +92,6 @@ mod view_components;
 mod vim_registers;
 mod voice;
 mod voltron;
-mod octomus_managed_paths_watcher;
 #[cfg(target_family = "wasm")]
 mod wasm_nux_dialog;
 mod window_settings;
@@ -151,6 +151,8 @@ use auth::auth_state::{AuthState, AuthStateProvider};
 use code::editor_management::CodeManager;
 use code::opened_files::OpenedFilesModel;
 use code_review::GlobalCodeReviewModel;
+use octomus_cli::agent::AgentCommand;
+use octomus_cli::{CliCommand, GlobalOptions};
 use profile::ProfileModel;
 use quit_warning::UnsavedStateSummary;
 #[cfg(feature = "local_fs")]
@@ -170,8 +172,6 @@ use terminal::keys_settings::KeysSettings;
 use terminal::local_shell::LocalShellState;
 pub use util::bindings::cmd_or_ctrl_shift;
 use voice::transcriber::VoiceTranscriber;
-use octomus_cli::agent::AgentCommand;
-use octomus_cli::{CliCommand, GlobalOptions};
 #[cfg(feature = "local_fs")]
 use watcher::HomeDirectoryWatcher;
 
@@ -198,6 +198,8 @@ use appearance::{Appearance, AppearanceManager};
 use channel::ChannelState;
 use interval_timer::IntervalTimer;
 use itertools::Itertools;
+pub use octomus_core::errors::{report_error, report_if_error};
+use octomus_core::execution_mode::{AppExecutionMode, ExecutionMode};
 #[cfg(feature = "integration_tests")]
 pub use persistence::testing as sqlite_testing;
 #[cfg(feature = "plugin_host")]
@@ -210,8 +212,6 @@ use shellexpand::tilde;
 use terminal::input;
 use terminal::session_settings::SessionSettings;
 use url::Url;
-pub use octomus_core::errors::{report_error, report_if_error};
-use octomus_core::execution_mode::{AppExecutionMode, ExecutionMode};
 // Re-export the debounce function to simplify imports.
 pub use octomus_core::r#async::debounce;
 // Re-export the send_telemetry_from_ctx macro at the crate root level
@@ -223,13 +223,13 @@ pub use octomus_core::{safe_debug, safe_error, safe_info, safe_warn};
 #[cfg(feature = "local_fs")]
 use octomus_files::FileModel;
 use octomus_logging::LogDestination;
-use warp_managed_secrets::ManagedSecretManager;
 use octomusui::integration::TestDriver;
 use octomusui::modals::{AlertDialogWithCallbacks, AppModalCallback};
 use octomusui::platform::app::ApproveTerminateResult;
 use octomusui::platform::TerminationMode;
 use octomusui::windowing::state::ApplicationStage;
 use octomusui::{App, AppContext, Event, SingletonEntity, WindowId};
+use warp_managed_secrets::ManagedSecretManager;
 use window_settings::WindowSettings;
 use workflows::manager::WorkflowManager;
 use workspace::sync_inputs::SyncedInputState;
@@ -270,6 +270,9 @@ use crate::notebooks::editor::keys::NotebookKeybindings;
 use crate::notebooks::manager::NotebookManager;
 use crate::notebooks::CloudNotebook;
 use crate::notification::NotificationContext;
+use crate::octomus_managed_paths_watcher::{
+    ensure_warp_watch_roots_exist, WarpManagedPathsWatcher,
+};
 use crate::palette::PaletteMode;
 use crate::persistence::model::AgentConversationData;
 use crate::persistence::PersistenceWriter;
@@ -303,7 +306,6 @@ use crate::undo_close::UndoCloseStack;
 use crate::user_config::WarpConfig;
 use crate::util::bindings::is_binding_cross_platform;
 use crate::vim_registers::VimRegisters;
-use crate::octomus_managed_paths_watcher::{ensure_warp_watch_roots_exist, WarpManagedPathsWatcher};
 use crate::workflows::aliases::WorkflowAliases;
 use crate::workflows::local_workflows::LocalWorkflows;
 use crate::workspace::{
@@ -636,7 +638,9 @@ pub fn run() -> Result<()> {
                 return crate::run_plugin_host();
             }
             #[cfg(feature = "local_tty")]
-            octomus_cli::Command::Worker(octomus_cli::WorkerCommand::MinidumpServer { socket_name }) => {
+            octomus_cli::Command::Worker(octomus_cli::WorkerCommand::MinidumpServer {
+                socket_name,
+            }) => {
                 cfg_if::cfg_if! {
                     if #[cfg(all(linux_or_windows, feature = "crash_reporting"))] {
                         return crate::crash_reporting::run_minidump_server(socket_name);
@@ -701,7 +705,9 @@ pub fn run() -> Result<()> {
             }
             octomus_cli::Command::CommandLine(cmd) => {
                 let (is_sandboxed, computer_use_override) = match cmd.as_ref() {
-                    octomus_cli::CliCommand::Agent(octomus_cli::agent::AgentCommand::Run(run_args)) => (
+                    octomus_cli::CliCommand::Agent(octomus_cli::agent::AgentCommand::Run(
+                        run_args,
+                    )) => (
                         run_args.sandboxed,
                         run_args.computer_use.computer_use_override(),
                     ),
@@ -1477,8 +1483,10 @@ pub(crate) fn initialize_app(
             });
 
             GPUState::handle(ctx).update(ctx, |gpu_state, ctx| {
-                gpu_state
-                    .set_has_lower_power_gpu(octomusui::rendering::is_low_power_gpu_available(), ctx);
+                gpu_state.set_has_lower_power_gpu(
+                    octomusui::rendering::is_low_power_gpu_available(),
+                    ctx,
+                );
             });
 
             for window_id in ctx.window_ids().collect_vec() {

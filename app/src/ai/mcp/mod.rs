@@ -4,10 +4,10 @@ use std::path::{Path, PathBuf};
 
 #[cfg(not(target_family = "wasm"))]
 use diesel::{QueryDsl, RunQueryDsl, SqliteConnection};
-use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::Icon;
+use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
 
 use crate::cloud_object::model::generic_string_model::StringModel;
 use crate::cloud_object::model::json_model::JsonModel;

@@ -1,10 +1,10 @@
 use fuzzy_match::FuzzyMatchResult;
-use ordered_float::OrderedFloat;
 use octomus_core::ui::icons::Icon;
 use octomusui::elements::{ConstrainedBox, Container, Highlight, Text};
 use octomusui::fonts::{Properties, Weight};
 use octomusui::text_layout::ClipConfig;
 use octomusui::{AppContext, Element, Entity, ModelContext, ModelHandle, SingletonEntity as _};
+use ordered_float::OrderedFloat;
 
 use crate::appearance::Appearance;
 use crate::cloud_object::model::persistence::CloudModel;

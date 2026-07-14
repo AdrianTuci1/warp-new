@@ -1,7 +1,6 @@
 use std::borrow::Cow;
 use std::rc::Rc;
 
-use pathfinder_color::ColorU;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::color::internal_colors;
 use octomusui::elements::{
@@ -13,6 +12,7 @@ use octomusui::elements::{
 use octomusui::fonts::FamilyId;
 use octomusui::platform::Cursor;
 use octomusui::{AppContext, Element, EventContext, SingletonEntity};
+use pathfinder_color::ColorU;
 
 use crate::ai::blocklist::inline_action::inline_action_icons::icon_size;
 use crate::ui_components::blended_colors;

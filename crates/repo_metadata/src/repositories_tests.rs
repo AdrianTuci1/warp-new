@@ -1,9 +1,9 @@
 use std::fs;
 
-use virtual_fs::{Stub, VirtualFS};
 use octomus_util::local_or_remote_path::LocalOrRemotePath;
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui_core::App;
+use virtual_fs::{Stub, VirtualFS};
 
 use crate::repositories::{stub_git_repository, DetectedRepositories, RepoDetectionSource};
 use crate::watcher::DirectoryWatcher;

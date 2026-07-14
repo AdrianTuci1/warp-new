@@ -1,11 +1,11 @@
 //! Grid tooltips for the terminal view
 
-use pathfinder_geometry::vector::vec2f;
 use octomusui::elements::{
     ChildAnchor, Dismiss, MouseStateHandle, OffsetPositioning, PositionedElementAnchor,
     PositionedElementOffsetBounds, Stack,
 };
 use octomusui::{AppContext, Element, EventContext};
+use pathfinder_geometry::vector::vec2f;
 
 use super::{TerminalAction, TerminalView};
 use crate::appearance::Appearance;
@@ -42,8 +42,8 @@ fn open_in_octomus_tooltip(
     mouse_state: MouseStateHandle,
     app: &AppContext,
 ) -> Option<GridTooltipLink> {
-    use settings::Setting as _;
     use octomusui::SingletonEntity;
+    use settings::Setting as _;
 
     use crate::settings::CodeSettings;
     use crate::util::file::external_editor::EditorSettings;

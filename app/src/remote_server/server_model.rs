@@ -10,9 +10,6 @@ use ::ai::index::full_source_code_embedding::manager::{
 use ::ai::index::full_source_code_embedding::{
     ContentHash, FragmentMetadata as LocalFragmentMetadata, NodeHash,
 };
-use remote_server::proto::OpenBufferSuccess;
-use repo_metadata::repositories::{DetectedRepositories, RepoDetectionSource};
-use repo_metadata::{RepoMetadataEvent, RepoMetadataModel, RepositoryIdentifier};
 use octomus_core::channel::ChannelState;
 use octomus_core::{safe_error, SessionId};
 use octomus_files::{FileModel, FileModelEvent};
@@ -22,6 +19,9 @@ use octomus_util::standardized_path::StandardizedPath;
 use octomusui::platform::TerminationMode;
 use octomusui::r#async::{Spawnable, SpawnableOutput, SpawnedFutureHandle};
 use octomusui::{Entity, ModelContext, ModelHandle, SingletonEntity};
+use remote_server::proto::OpenBufferSuccess;
+use repo_metadata::repositories::{DetectedRepositories, RepoDetectionSource};
+use repo_metadata::{RepoMetadataEvent, RepoMetadataModel, RepositoryIdentifier};
 
 use super::codebase_index_status::{
     codebase_index_status_to_proto, disabled_codebase_index_status,

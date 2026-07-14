@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::icons::Icon;
 use octomus_core::ui::theme::color::internal_colors;
@@ -11,6 +10,7 @@ use octomusui_core::elements::{
 use octomusui_core::fonts::{Properties, Weight};
 use octomusui_core::platform::Cursor;
 use octomusui_core::Element;
+use pathfinder_geometry::vector::vec2f;
 
 use super::agent_slide::AgentSlideAction;
 

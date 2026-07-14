@@ -13,13 +13,13 @@ use lsp_types::{
     PublishDiagnosticsParams, WorkDoneProgress,
 };
 #[cfg(not(target_arch = "wasm32"))]
-use simple_logger::manager::LogManager;
-#[cfg(not(target_arch = "wasm32"))]
 use octomus_core::features::FeatureFlag;
 use octomusui_core::r#async::executor::Background;
 #[cfg(not(target_arch = "wasm32"))]
 use octomusui_core::SingletonEntity;
 use octomusui_core::{Entity, ModelContext};
+#[cfg(not(target_arch = "wasm32"))]
+use simple_logger::manager::LogManager;
 
 use crate::config::{lsp_uri_to_path, LanguageId};
 use crate::server_repo_watcher::LspRepoWatcher;

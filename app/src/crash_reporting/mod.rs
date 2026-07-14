@@ -12,11 +12,6 @@ use std::ops::DerefMut;
 use std::sync::Arc;
 
 use lazy_static::lazy_static;
-use parking_lot::{Mutex, RwLock};
-use regex::Regex;
-use sentry::{ClientInitGuard, IntoDsn, SessionMode};
-#[cfg(linux_or_windows)]
-pub use sentry_minidump::run_server as run_minidump_server;
 use octomus_core::channel::Channel;
 use octomus_server_auth::anonymous_id::get_or_create_anonymous_id;
 use octomusui::r#async::block_on;
@@ -24,6 +19,11 @@ use octomusui::rendering::GPUDeviceInfo;
 use octomusui::windowing::state::ApplicationStage;
 use octomusui::windowing::{self, StateEvent, WindowManager};
 use octomusui::{AppContext, SingletonEntity};
+use parking_lot::{Mutex, RwLock};
+use regex::Regex;
+use sentry::{ClientInitGuard, IntoDsn, SessionMode};
+#[cfg(linux_or_windows)]
+pub use sentry_minidump::run_server as run_minidump_server;
 
 use crate::antivirus::{AntivirusInfo, AntivirusInfoEvent};
 use crate::auth::{AuthStateProvider, UserUid};

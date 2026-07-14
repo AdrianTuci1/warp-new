@@ -13,7 +13,6 @@ pub use entry::{
 use futures::stream::AbortHandle;
 use instant::Instant;
 use itertools::Itertools;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use octomus_cli::agent::Harness;
 use octomus_core::execution_mode::AppExecutionMode;
 use octomus_core::features::FeatureFlag;
@@ -27,6 +26,7 @@ use octomusui::{
     duration_with_jitter, AppContext, Entity, EntityId, ModelContext, RequestState,
     SingletonEntity, WindowId,
 };
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;
 use crate::ai::agent::api::ServerConversationToken;

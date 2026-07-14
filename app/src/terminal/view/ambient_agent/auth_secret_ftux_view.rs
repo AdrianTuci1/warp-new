@@ -2,8 +2,6 @@ use octomus_cli::agent::Harness;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::Fill;
-use warp_editor::editor::NavigationKey;
-use warp_managed_secrets::client::SecretOwner;
 use octomusui::elements::{
     Border, ChildAnchor, ChildView, Clipped, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, Empty, Expanded, Flex, Hoverable, MainAxisAlignment, MainAxisSize,
@@ -15,6 +13,8 @@ use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyle
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use warp_editor::editor::NavigationKey;
+use warp_managed_secrets::client::SecretOwner;
 
 use crate::ai::auth_secret_types::{
     auth_secret_types_for_harness, build_managed_secret_value, learn_more_url_for_harness,

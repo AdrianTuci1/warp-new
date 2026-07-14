@@ -8,10 +8,6 @@ use std::time::Duration;
 
 use anyhow::Result;
 use instant::Instant;
-use parking_lot::Mutex;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use rayon::prelude::*;
-use string_offset::ByteOffset;
 use octomus_completer::completer::Description;
 use octomusui::fonts::{Cache as FontCache, FamilyId, Properties};
 use octomusui::platform::LineStyle;
@@ -21,6 +17,10 @@ use octomusui::text_layout::{
     StyleAndFont, TextAlignment, TextStyle, DEFAULT_TOP_BOTTOM_RATIO,
 };
 use octomusui::{AppContext, EntityId, ModelHandle};
+use parking_lot::Mutex;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use rayon::prelude::*;
+use string_offset::ByteOffset;
 
 use super::model::EditorModel;
 use super::{

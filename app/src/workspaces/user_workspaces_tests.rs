@@ -1,9 +1,9 @@
 use std::time::Duration;
 
 use mockall::Sequence;
-use settings::{PrivatePreferences, PublicPreferences};
 use octomusui::{AddSingletonModel, App};
 use octomusui_extras::user_preferences;
+use settings::{PrivatePreferences, PublicPreferences};
 
 use super::*;
 use crate::ai::llms::LLMModelHost;

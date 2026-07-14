@@ -2,11 +2,7 @@ use std::mem;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
-use pathfinder_geometry::vector::vec2f;
-#[cfg(not(target_family = "wasm"))]
-use remote_server::manager::RemoteServerManager;
 use octomus_core::ui::icons::ICON_DIMENSIONS;
-use warp_editor::model::CoreEditorModel;
 #[cfg(feature = "local_fs")]
 use octomus_files::{FileModel, FileModelEvent};
 #[cfg(feature = "local_fs")]
@@ -30,6 +26,10 @@ use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+#[cfg(not(target_family = "wasm"))]
+use remote_server::manager::RemoteServerManager;
+use warp_editor::model::CoreEditorModel;
 
 use super::context_menu::{show_rich_editor_context_menu, ContextMenuAction, ContextMenuState};
 use super::editor::view::{EditorViewEvent, RichTextEditorConfig, RichTextEditorView};
@@ -1200,11 +1200,11 @@ impl BackingView for FileNotebookView {
             // Wrap the title in a hoverable tooltip showing the full file path.
             let title_element: Box<dyn Element> =
                 if let Some(display_path) = self.file_state.path().map(|p| p.display_path()) {
-                    use pathfinder_geometry::vector::vec2f;
                     use octomusui::elements::{
                         ChildAnchor, Hoverable, OffsetPositioning, ParentAnchor,
                         ParentOffsetBounds, Stack,
                     };
+                    use pathfinder_geometry::vector::vec2f;
                     Hoverable::new(self.header_title_mouse_state.clone(), move |hover_state| {
                         let mut stack = Stack::new();
                         stack.add_child(title_text);

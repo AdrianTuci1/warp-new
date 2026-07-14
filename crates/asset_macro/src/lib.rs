@@ -25,12 +25,12 @@ extern crate proc_macro;
 use std::env;
 use std::path::{Path, PathBuf};
 
+use octomus_util::assets::{ASSETS_DIR, ASYNC_ASSETS_DIR, BUNDLED_ASSETS_DIR, REMOTE_ASSETS_DIR};
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use sha2::Digest;
 use syn::parse::Parse;
 use syn::{parse_macro_input, LitStr, Token};
-use octomus_util::assets::{ASSETS_DIR, ASYNC_ASSETS_DIR, BUNDLED_ASSETS_DIR, REMOTE_ASSETS_DIR};
 
 struct MacroArgs {
     /// The name of the asset. E.g. `jpg/jellyfish_bg.jpg`

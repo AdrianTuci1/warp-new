@@ -5,9 +5,9 @@ use std::cmp::max;
 use std::io;
 
 use instant::Instant;
-use pathfinder_color::ColorU;
 use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
 use octomusui::units::{IntoLines as _, Lines};
+use pathfinder_color::ColorU;
 
 use super::ansi::{self, Attr, Handler, PrecmdValue, PreexecValue, Processor};
 use super::block::{BlockGridPoint, BlockSize};

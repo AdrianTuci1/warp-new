@@ -6,14 +6,14 @@ use ai::skills::{
     ParsedSkill, SkillProvider, SKILL_PROVIDER_DEFINITIONS,
 };
 use anyhow::Error;
-use repo_metadata::file_tree_update::RepoNodeMetadata;
-use repo_metadata::local_model::GetContentsArgs;
-use repo_metadata::{RepoContent, RepoMetadataModel, RepoMetadataUpdate, RepositoryIdentifier};
-use walkdir::{DirEntry, WalkDir};
 use octomus_util::local_or_remote_path::LocalOrRemotePath;
 use octomus_util::remote_path::RemotePath;
 use octomus_util::standardized_path::StandardizedPath;
 use octomusui::AppContext;
+use repo_metadata::file_tree_update::RepoNodeMetadata;
+use repo_metadata::local_model::GetContentsArgs;
+use repo_metadata::{RepoContent, RepoMetadataModel, RepoMetadataUpdate, RepositoryIdentifier};
+use walkdir::{DirEntry, WalkDir};
 
 use crate::octomus_managed_paths_watcher::warp_managed_skill_dirs;
 

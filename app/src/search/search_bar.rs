@@ -1,7 +1,6 @@
 use std::collections::HashSet;
 
 use itertools::{Either, Itertools};
-use warp_editor::editor::NavigationKey;
 use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
 use octomusui::elements::{
     Clipped, ConstrainedBox, Container, CrossAxisAlignment, Flex, ParentElement, Shrinkable, Text,
@@ -12,6 +11,7 @@ use octomusui::{
     Action, AppContext, Element, Entity, FocusContext, ModelContext, ModelHandle, SingletonEntity,
     TypedActionView, View, ViewContext, ViewHandle,
 };
+use warp_editor::editor::NavigationKey;
 
 use super::mixer::SearchMixerEvent;
 use crate::appearance::Appearance;
@@ -909,7 +909,9 @@ impl<T: Action + Clone> View for SearchBar<T> {
             let magnifying_glass = Container::new(
                 ConstrainedBox::new(
                     Icon::Search
-                        .to_octomusui_icon(blended_colors::text_sub(theme, theme.surface_2()).into())
+                        .to_octomusui_icon(
+                            blended_colors::text_sub(theme, theme.surface_2()).into(),
+                        )
                         .finish(),
                 )
                 .with_height(size)

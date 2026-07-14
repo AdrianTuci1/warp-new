@@ -1,5 +1,3 @@
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::color::blend::Blend;
 use octomus_core::ui::theme::color::internal_colors;
 use octomusui::elements::{
@@ -12,6 +10,8 @@ use octomusui::keymap::{FixedBinding, Keystroke};
 use octomusui::platform::Cursor;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::appearance::Appearance;
 use crate::ui_components::icons::Icon;

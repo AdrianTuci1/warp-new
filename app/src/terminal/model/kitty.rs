@@ -6,14 +6,14 @@ use std::{env, fs, str};
 use anyhow::Result;
 use base64::Engine;
 use flate2::read::ZlibDecoder;
-use pathfinder_geometry::vector::Vector2F;
-use rand::Rng;
 use octomusui::assets::asset_cache::Asset;
 use octomusui::image_cache::{
     resize_dimensions, CustomHeaderCreationError, CustomImageFormat, CustomImageHeader, FitType,
     ImageType,
 };
 use octomusui::util::{parse_i32, parse_u32};
+use pathfinder_geometry::vector::Vector2F;
+use rand::Rng;
 
 use super::escape_sequences::C1;
 

@@ -17,9 +17,6 @@ use ai::skills::SkillReference;
 use indexmap::IndexMap;
 use itertools::Itertools;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use ui_components::{button, Component as _, Options as _};
 use octomus_core::channel::ChannelState;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_util::local_or_remote_path::LocalOrRemotePath;
@@ -37,6 +34,9 @@ use octomusui::ui_components::radio_buttons::{RadioButtonItem, RadioButtonLayout
 use octomusui::{
     Action, AppContext, Element, EntityId, ModelHandle, SingletonEntity, View, ViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use ui_components::{button, Component as _, Options as _};
 
 use super::common::{
     format_elapsed_seconds, render_debug_footer, render_failed_output, render_informational_footer,

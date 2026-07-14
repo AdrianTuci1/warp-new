@@ -28,15 +28,15 @@ use core_text::string_attributes::{
     kCTFontAttributeName, kCTKernAttributeName, kCTParagraphStyleAttributeName,
 };
 use itertools::Itertools;
-use ordered_float::OrderedFloat;
-use pathfinder_geometry::vector::vec2f;
-use vec1::Vec1;
 use octomusui_core::fonts::GlyphId;
 use octomusui_core::platform::LineStyle;
 use octomusui_core::text_layout::{
     CaretPosition, ClipConfig, Glyph, Line, Run, StyleAndFont, TextAlignment, TextBorder,
     TextFrame, TextStyle,
 };
+use ordered_float::OrderedFloat;
+use pathfinder_geometry::vector::vec2f;
+use vec1::Vec1;
 
 use super::fonts::FontDB;
 use super::utils::{cg_color_to_color_u, color_u_to_cg_color};

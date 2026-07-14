@@ -70,7 +70,9 @@ pub fn get_cloud_mode_tips() -> Vec<CloudModeTip> {
         ),
         CloudModeTip::new(
             "Build agents that respond to CI failures and attempt automatic fixes.",
-            Some("https://docs.octomus.dev/agent-platform/cloud-agents/integrations/github-actions"),
+            Some(
+                "https://docs.octomus.dev/agent-platform/cloud-agents/integrations/github-actions",
+            ),
         ),
         CloudModeTip::new(
             "Run agents from GitHub Actions using the `oz-agent-action`.",
@@ -126,15 +128,21 @@ pub fn get_cloud_mode_tips() -> Vec<CloudModeTip> {
         ),
         CloudModeTip::new(
             "Build agents that automatically triage and label incoming GitHub issues.",
-            Some("https://docs.octomus.dev/agent-platform/cloud-agents/integrations/github-actions"),
+            Some(
+                "https://docs.octomus.dev/agent-platform/cloud-agents/integrations/github-actions",
+            ),
         ),
         CloudModeTip::new(
             "Set up an agent to generate daily summaries of newly opened issues.",
-            Some("https://docs.octomus.dev/agent-platform/cloud-agents/integrations/github-actions"),
+            Some(
+                "https://docs.octomus.dev/agent-platform/cloud-agents/integrations/github-actions",
+            ),
         ),
         CloudModeTip::new(
             "Create an agent that automatically reviews PRs and suggests improvements.",
-            Some("https://docs.octomus.dev/agent-platform/cloud-agents/integrations/github-actions"),
+            Some(
+                "https://docs.octomus.dev/agent-platform/cloud-agents/integrations/github-actions",
+            ),
         ),
         CloudModeTip::new(
             "Use `oz environment create` to define reproducible execution contexts.",

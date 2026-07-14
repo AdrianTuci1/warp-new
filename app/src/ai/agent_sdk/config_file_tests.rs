@@ -2,8 +2,8 @@
 
 use std::io::Write as _;
 
-use serde_json::json;
 use octomus_cli::mcp::MCPSpec;
+use serde_json::json;
 
 use crate::ai::ambient_agents::AgentConfigSnapshot;
 

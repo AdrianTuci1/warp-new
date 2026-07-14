@@ -6,8 +6,6 @@ use std::path::PathBuf;
 use std::time::Duration;
 
 use lazy_static::lazy_static;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use settings::ToggleableSetting;
 use octomus::cmd_or_ctrl_shift;
 use octomus::features::FeatureFlag;
 use octomus::integration_testing::clipboard::assert_clipboard_contains_string;
@@ -18,10 +16,12 @@ use octomus::integration_testing::terminal::{
 };
 use octomus::integration_testing::view_getters::single_terminal_view_for_tab;
 use octomus::settings::SelectionSettings;
-use warp_multi_agent_api as api;
 use octomusui_core::integration::TestStep;
 use octomusui_core::text::SelectionType;
 use octomusui_core::{async_assert, Event, SingletonEntity};
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use settings::ToggleableSetting;
+use warp_multi_agent_api as api;
 
 use super::new_builder;
 use crate::util::skip_if_powershell_core_2303;

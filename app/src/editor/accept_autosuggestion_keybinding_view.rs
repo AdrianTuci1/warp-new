@@ -1,7 +1,6 @@
 //! This module contains the code for the editable accept autosuggestion keybinding
 //! shown inline in the input.
 use lazy_static::lazy_static;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{
     Border, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
@@ -12,7 +11,10 @@ use octomusui::keymap::Keystroke;
 use octomusui::platform::Cursor;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::ui_components::keyboard_shortcut::KeyboardShortcut;
-use octomusui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
+use octomusui::{
+    AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
+};
+use pathfinder_geometry::vector::vec2f;
 
 use super::EditorElement;
 use crate::appearance::Appearance;

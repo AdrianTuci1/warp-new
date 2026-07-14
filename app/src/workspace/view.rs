@@ -45,20 +45,6 @@ use command::blocking::Command;
 use futures::Future;
 use itertools::Itertools;
 use lazy_static::lazy_static;
-pub(crate) use onboarding::OnboardingTutorial;
-use parking_lot::FairMutex;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::rect::RectF;
-#[cfg(feature = "local_fs")]
-use repo_metadata::repositories::DetectedRepositories;
-#[cfg(feature = "local_fs")]
-use repo_metadata::RemoteRepositoryIdentifier;
-#[cfg(all(target_os = "macos", feature = "crash_reporting"))]
-use sentry::protocol::{Attachment, AttachmentType};
-use serde_json;
-use session_sharing_protocol::common::SessionId as SharedSessionId;
-#[cfg(target_family = "wasm")]
-use url::Url;
 use octomus_cli::agent::Harness;
 use octomus_core::context_flag::ContextFlag;
 use octomus_core::execution_mode::AppExecutionMode;
@@ -70,7 +56,6 @@ use octomus_core::ui::theme::phenomenon::PhenomenonStyle;
 use octomus_core::ui::theme::Fill;
 use octomus_core::ui::Icon;
 use octomus_core::user_preferences::GetUserPreferences as _;
-use warp_editor::editor::NavigationKey;
 use octomus_server_client::auth::AuthEvent;
 use octomus_util::path::{user_friendly_path, LineAndColumnArg};
 #[cfg(all(feature = "local_fs", not(target_family = "wasm")))]
@@ -106,6 +91,21 @@ use octomusui::{
     AppContext, Entity, EntityId, FocusContext, ModelHandle, SingletonEntity, TypedActionView,
     UpdateModel, UpdateView, View, ViewAsRef, ViewContext, ViewHandle, WeakViewHandle, WindowId,
 };
+pub(crate) use onboarding::OnboardingTutorial;
+use parking_lot::FairMutex;
+use pathfinder_color::ColorU;
+use pathfinder_geometry::rect::RectF;
+#[cfg(feature = "local_fs")]
+use repo_metadata::repositories::DetectedRepositories;
+#[cfg(feature = "local_fs")]
+use repo_metadata::RemoteRepositoryIdentifier;
+#[cfg(all(target_os = "macos", feature = "crash_reporting"))]
+use sentry::protocol::{Attachment, AttachmentType};
+use serde_json;
+use session_sharing_protocol::common::SessionId as SharedSessionId;
+#[cfg(target_family = "wasm")]
+use url::Url;
+use warp_editor::editor::NavigationKey;
 
 use self::vertical_tabs::telemetry::{VerticalTabsDisplayOption, VerticalTabsTelemetryEvent};
 use self::vertical_tabs::{
@@ -251,7 +251,8 @@ use crate::drive::settings::{OctomusDriveSettings, OctomusDriveSettingsChangedEv
 use crate::drive::workflows::arguments::ArgumentsState;
 use crate::drive::workflows::modal::{WorkflowModal, WorkflowModalEvent};
 use crate::drive::{
-    CloudObjectTypeAndId, DriveObjectType, DrivePanel, DrivePanelEvent, OpenOctomusDriveObjectSettings,
+    CloudObjectTypeAndId, DriveObjectType, DrivePanel, DrivePanelEvent,
+    OpenOctomusDriveObjectSettings,
 };
 use crate::editor::{
     EditorView, Event as EditorEvent, PropagateAndNoOpNavigationKeys, SingleLineEditorOptions,
@@ -313,8 +314,8 @@ use crate::server::server_api::{ServerApi, ServerApiProvider, ServerTime};
 use crate::server::telemetry::{
     AddTabWithShellSource, AnonymousUserSignupEntrypoint, CloseTarget, EnvVarTelemetryMetadata,
     FileTreeSource, KnowledgePaneEntrypoint, LaunchConfigUiLocation,
-    MCPServerCollectionPaneEntrypoint, NotificationsTurnedOnSource, OpenedWarpAISource,
-    PaletteSource, SharingDialogSource, TabRenameEvent, TierLimitHitEvent, OctomusDriveSource,
+    MCPServerCollectionPaneEntrypoint, NotificationsTurnedOnSource, OctomusDriveSource,
+    OpenedWarpAISource, PaletteSource, SharingDialogSource, TabRenameEvent, TierLimitHitEvent,
 };
 use crate::session_management::{SessionNavigationData, SessionSource, TabNavigationData};
 use crate::settings::cloud_preferences::CloudPreferencesSettings;
@@ -376,6 +377,7 @@ use crate::terminal::model::blockgrid::BlockGrid;
 use crate::terminal::model::session::Session;
 use crate::terminal::model::session::SessionId;
 use crate::terminal::model::terminal_model::ConversationTranscriptViewerStatus;
+use crate::terminal::octomusify::settings::OctomusifySettings;
 use crate::terminal::resizable_data::{
     ModalSizes, ModalType, ResizableData, DEFAULT_LEFT_PANEL_WIDTH, DEFAULT_RIGHT_PANEL_WIDTH,
 };
@@ -404,7 +406,6 @@ use crate::terminal::view::{
     OnboardingIntention, OnboardingVersion, SyncEvent, SyncInputType, TerminalAction,
     NOTIFICATIONS_TROUBLESHOOT_URL,
 };
-use crate::terminal::octomusify::settings::OctomusifySettings;
 use crate::terminal::{self, BlockListSettings, SizeInfo, TerminalModel, TerminalView};
 use crate::themes::theme::{AnsiColorIdentifier, RespectSystemTheme, ThemeKind};
 use crate::themes::theme_chooser::{ThemeChooser, ThemeChooserEvent, ThemeChooserMode};
@@ -7643,7 +7644,11 @@ impl Workspace {
 
     /// Opens the Octomus Drive object identified by `uid` in a new pane
     /// if it has a pane representation.
-    fn open_octomus_drive_object_in_new_pane(&mut self, uid: &ObjectUid, ctx: &mut ViewContext<Self>) {
+    fn open_octomus_drive_object_in_new_pane(
+        &mut self,
+        uid: &ObjectUid,
+        ctx: &mut ViewContext<Self>,
+    ) {
         let Some(object) = CloudModel::as_ref(ctx).get_by_uid(uid) else {
             return;
         };
@@ -8567,8 +8572,11 @@ impl Workspace {
         // whether octomus drive was open first, and toggle based on the initial value.
         let was_octomus_drive_open = self.current_workspace_state.is_octomus_drive_open;
         self.current_workspace_state.close_all_left_panels();
-        self.current_workspace_state.is_octomus_drive_open =
-            if toggle { !was_octomus_drive_open } else { true };
+        self.current_workspace_state.is_octomus_drive_open = if toggle {
+            !was_octomus_drive_open
+        } else {
+            true
+        };
 
         // Set selected object to None upon toggle close of Octomus Drive
         if !self.current_workspace_state.is_octomus_drive_open {
@@ -13737,9 +13745,11 @@ impl Workspace {
         F: FnOnce(&mut DrivePanel, &mut ViewContext<DrivePanel>),
     {
         self.left_panel_view.update(ctx, |left_panel, ctx| {
-            left_panel.octomus_drive_view().update(ctx, |octomus_drive, ctx| {
-                update_fn(octomus_drive, ctx);
-            });
+            left_panel
+                .octomus_drive_view()
+                .update(ctx, |octomus_drive, ctx| {
+                    update_fn(octomus_drive, ctx);
+                });
         });
     }
 
@@ -15150,18 +15160,20 @@ impl Workspace {
                         true,
                     ),
                     ObjectType::Workflow => self.view_in_and_focus_octomus_drive(
-                        OctomusDriveItemId::Object(CloudObjectTypeAndId::Workflow(SyncId::ServerId(
-                            server_id,
-                        ))),
+                        OctomusDriveItemId::Object(CloudObjectTypeAndId::Workflow(
+                            SyncId::ServerId(server_id),
+                        )),
                         ctx,
                     ),
                     ObjectType::GenericStringObject(GenericStringObjectFormat::Json(
                         JsonObjectType::EnvVarCollection,
                     )) => self.view_in_and_focus_octomus_drive(
-                        OctomusDriveItemId::Object(CloudObjectTypeAndId::from_generic_string_object(
-                            GenericStringObjectFormat::Json(JsonObjectType::EnvVarCollection),
-                            SyncId::ServerId(server_id),
-                        )),
+                        OctomusDriveItemId::Object(
+                            CloudObjectTypeAndId::from_generic_string_object(
+                                GenericStringObjectFormat::Json(JsonObjectType::EnvVarCollection),
+                                SyncId::ServerId(server_id),
+                            ),
+                        ),
                         ctx,
                     ),
                     ObjectType::Folder => self.view_in_and_focus_octomus_drive(
@@ -15957,7 +15969,9 @@ impl Workspace {
                     self.left_panel_view
                         .read(ctx, |left_panel, _| match target_view {
                             LeftPanelTargetView::FileTree => left_panel.is_file_tree_active(),
-                            LeftPanelTargetView::OctomusDrive => left_panel.is_octomus_drive_active(),
+                            LeftPanelTargetView::OctomusDrive => {
+                                left_panel.is_octomus_drive_active()
+                            }
                         });
 
                 if self.active_tab_pane_group().as_ref(ctx).left_panel_open && is_target_active {
@@ -16499,9 +16513,12 @@ impl Workspace {
                     ctx,
                 );
             }
-            DrivePanelEvent::OpenNotebook(source) => {
-                self.open_notebook(source, &OpenOctomusDriveObjectSettings::default(), ctx, true)
-            }
+            DrivePanelEvent::OpenNotebook(source) => self.open_notebook(
+                source,
+                &OpenOctomusDriveObjectSettings::default(),
+                ctx,
+                true,
+            ),
             DrivePanelEvent::OpenEnvVarCollection(source) => {
                 self.open_env_var_collection(source, false, ctx)
             }
@@ -16599,7 +16616,9 @@ impl Workspace {
         ctx.focus_self();
         ctx.notify();
         self.set_selected_object(
-            Some(OctomusDriveItemId::Object(workflow.cloud_object_type_and_id())),
+            Some(OctomusDriveItemId::Object(
+                workflow.cloud_object_type_and_id(),
+            )),
             ctx,
         );
     }
@@ -19142,7 +19161,9 @@ impl Workspace {
                 .finish()
             })
             .on_click(|ctx, _, _| {
-                ctx.dispatch_typed_action(WorkspaceAction::OpenLink("https://octomus.dev".to_owned()));
+                ctx.dispatch_typed_action(WorkspaceAction::OpenLink(
+                    "https://octomus.dev".to_owned(),
+                ));
             })
             .with_cursor(Cursor::PointingHand)
             .finish();
@@ -19161,15 +19182,14 @@ impl Workspace {
             };
 
             // Show info button for conversation transcripts and shared sessions (if there's content to display)
-            let should_show_info_button =
-                !matches!(content_type, SimplifiedWasmTabBarContent::OctomusDriveObject)
-                    && self
-                        .active_tab_pane_group()
-                        .as_ref(ctx)
-                        .focused_session_view(ctx)
-                        .is_some_and(|view| {
-                            Self::should_show_conversation_details_panel(&view, ctx)
-                        });
+            let should_show_info_button = !matches!(
+                content_type,
+                SimplifiedWasmTabBarContent::OctomusDriveObject
+            ) && self
+                .active_tab_pane_group()
+                .as_ref(ctx)
+                .focused_session_view(ctx)
+                .is_some_and(|view| Self::should_show_conversation_details_panel(&view, ctx));
 
             if should_show_info_button {
                 right_row.add_child(
@@ -20157,7 +20177,10 @@ impl Workspace {
         Align::new(hoverable.finish()).finish()
     }
 
-    fn render_legacy_octomus_ai_entrypoint_button(&self, appearance: &Appearance) -> Box<dyn Element> {
+    fn render_legacy_octomus_ai_entrypoint_button(
+        &self,
+        appearance: &Appearance,
+    ) -> Box<dyn Element> {
         let (icon, action, label) = (
             icons::Icon::AiAssistant,
             WorkspaceAction::ClickedAIAssistantIcon,
@@ -20540,13 +20563,14 @@ impl Workspace {
                 AutoupdateStage::UnableToUpdateToNewVersion { new_version }
                     if !self.autoupdate_unable_to_update_banner_dismissed =>
                 {
-                    let description =
-                        if is_incoming_version_past_current(new_version.soft_cutoff.as_deref()) {
-                            VERSION_DEPRECATION_WITHOUT_PERMISSIONS_BANNER_TEXT.to_owned()
-                        } else {
-                            "A new version is available but Octomus is unable to perform the update."
-                                .to_owned()
-                        };
+                    let description = if is_incoming_version_past_current(
+                        new_version.soft_cutoff.as_deref(),
+                    ) {
+                        VERSION_DEPRECATION_WITHOUT_PERMISSIONS_BANNER_TEXT.to_owned()
+                    } else {
+                        "A new version is available but Octomus is unable to perform the update."
+                            .to_owned()
+                    };
 
                     Some(WorkspaceBannerFields {
                         banner_type: WorkspaceBanner::UnableToUpdateToNewVersion,
@@ -20654,11 +20678,14 @@ impl Workspace {
         let text_color = theme.main_text_color(Fill::Solid(bg_color)).into_solid();
 
         // Left side: alert icon + bold heading + regular description, all inline.
-        let icon =
-            ConstrainedBox::new(Icon::AlertCircle.to_octomusui_icon(text_color.into()).finish())
-                .with_width(16.)
-                .with_height(16.)
-                .finish();
+        let icon = ConstrainedBox::new(
+            Icon::AlertCircle
+                .to_octomusui_icon(text_color.into())
+                .finish(),
+        )
+        .with_width(16.)
+        .with_height(16.)
+        .finish();
 
         let ui_font_family = appearance.ui_font_family();
         const BANNER_FONT_SIZE: f32 = 12.;
@@ -23386,7 +23413,9 @@ impl TypedActionView for Workspace {
             #[cfg(all(enable_crash_recovery, target_os = "linux"))]
             DismissWaylandCrashRecoveryBannerAndOpenLink => {
                 self.dismiss_workspace_banner(ctx, &WorkspaceBanner::WaylandCrashRecovery);
-                ctx.open_url("https://docs.octomus.dev/terminal/more-features/linux#native-wayland");
+                ctx.open_url(
+                    "https://docs.octomus.dev/terminal/more-features/linux#native-wayland",
+                );
             }
             FixInAgentMode { query } => {
                 self.active_tab_pane_group().update(ctx, |pane_group, ctx| {
@@ -23879,7 +23908,8 @@ impl TypedActionView for Workspace {
             }
             #[cfg(debug_assertions)]
             InstallOpenCodeWarpPlugin => {
-                let message = set_opencode_warp_plugin("github:warpdotdev/opencode-octomus-internal");
+                let message =
+                    set_opencode_warp_plugin("github:warpdotdev/opencode-octomus-internal");
                 self.toast_stack.update(ctx, |view, ctx| {
                     view.add_ephemeral_toast(DismissibleToast::default(message), ctx);
                 });
@@ -24004,8 +24034,8 @@ impl TypedActionView for Workspace {
             }
             ToggleOctomusDrive => {
                 if OctomusDriveSettings::is_octomus_drive_enabled(ctx) {
-                    let is_showing =
-                        self.left_panel_view.as_ref(ctx).active_view() == ToolPanelView::OctomusDrive;
+                    let is_showing = self.left_panel_view.as_ref(ctx).active_view()
+                        == ToolPanelView::OctomusDrive;
                     self.toggle_left_panel_view(&LeftPanelAction::OctomusDrive, is_showing, ctx);
                 }
             }

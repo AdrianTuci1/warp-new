@@ -4,8 +4,8 @@ use std::sync::OnceLock;
 use std::time::Duration;
 
 use chrono::{DateTime, Utc};
-use serde::Serialize;
 use octomus_core::channel::{Channel, ChannelState};
+use serde::Serialize;
 
 #[cfg(not(target_family = "wasm"))]
 mod docker;

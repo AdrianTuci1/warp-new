@@ -2,7 +2,6 @@
 
 use std::sync::Arc;
 
-use pathfinder_color::ColorU;
 use octomus_core::ui::theme::{Fill, WarpTheme};
 use octomusui::elements::{
     Align, ConstrainedBox, Container, CrossAxisAlignment, Flex, Hoverable, MainAxisAlignment,
@@ -11,6 +10,7 @@ use octomusui::elements::{
 use octomusui::fonts::FamilyId;
 use octomusui::platform::FullscreenState;
 use octomusui::{AppContext, Element, SingletonEntity};
+use pathfinder_color::ColorU;
 
 use crate::util::traffic_lights::windows::RendererState;
 use crate::util::traffic_lights::windows_only::WINDOWS_BRIGHT_RED;

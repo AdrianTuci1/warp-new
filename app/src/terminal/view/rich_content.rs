@@ -13,6 +13,7 @@ use crate::terminal::block_list_viewport::ScrollPositionUpdate;
 use crate::terminal::model::blocks::{RemovableBlocklistItem, RichContentItem};
 use crate::terminal::model::rich_content::RichContentType;
 use crate::terminal::model::terminal_model::BlockIndex;
+use crate::terminal::octomusify::success_block::OctomusifySuccessBlock;
 use crate::terminal::ssh::error::SshErrorBlock;
 use crate::terminal::ssh::install_tmux::SshInstallTmuxBlock;
 use crate::terminal::ssh::octomusify::SshOctomusifyBlock;
@@ -21,7 +22,6 @@ use crate::terminal::view::block_onboarding::onboarding_agentic_suggestions_bloc
 use crate::terminal::view::init_environment::InitEnvironmentBlock;
 use crate::terminal::view::ssh_remote_server_choice_view::SshRemoteServerChoiceView;
 use crate::terminal::view::ssh_remote_server_failed_banner::SshRemoteServerFailedBanner;
-use crate::terminal::octomusify::success_block::OctomusifySuccessBlock;
 use crate::terminal::TerminalView;
 
 /// Specifies where to insert rich content in the blocklist.

@@ -5,15 +5,9 @@ use alias_bar::{AliasBar, AliasBarEvent};
 use argument_editor::{ArgumentEditorRow, DEFAULT_ARGUMENT_PREFIX};
 use env_var_selector::{EnvVarSelector, EnvVarSelectorEvent};
 use itertools::Itertools;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use string_offset::CharOffset;
-use syntax_highlightable::SyntaxHighlightable;
-use url::Url;
 use octomus_core::context_flag::ContextFlag;
 use octomus_core::settings::Setting;
 use octomus_core::ui::theme::AnsiColorIdentifier;
-use warp_editor::editor::NavigationKey;
 use octomusui::clipboard::ClipboardContent;
 use octomusui::elements::{
     Align, Border, ChildAnchor, ChildView, Clipped, ClippedScrollStateHandle, ClippedScrollable,
@@ -31,6 +25,12 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WindowId,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use string_offset::CharOffset;
+use syntax_highlightable::SyntaxHighlightable;
+use url::Url;
+use warp_editor::editor::NavigationKey;
 
 use super::aliases::WorkflowAliases;
 use super::command_parser::WorkflowCommandDisplayData;

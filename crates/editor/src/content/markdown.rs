@@ -13,10 +13,10 @@ use markdown_parser::{
     FormattedTextLine, OrderedFormattedIndentTextInline,
 };
 use markup5ever::ns;
-use string_offset::CharOffset;
 use octomusui_core::elements::{ListIndentLevel, ListNumbering};
 use octomusui_core::text::point::Point;
 use octomusui_core::{AppContext, ModelContext, ModelHandle};
+use string_offset::CharOffset;
 
 use super::buffer::{
     ActionWithSelectionDelta, Buffer, EditOrigin, EditResult, StyledBufferBlock,

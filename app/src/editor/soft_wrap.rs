@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use anyhow::anyhow;
-use parking_lot::Mutex;
 use octomusui::text_layout;
+use parking_lot::Mutex;
 
 use crate::editor::view::DisplayPoint;
 use crate::editor::Point;

@@ -6,7 +6,6 @@ use anyhow::{Context as _, Result, bail};
 use firebase::FetchAccessTokenResponse;
 use instant::Duration;
 use oauth2::TokenResponse as _;
-use url::Url;
 use octomus_core::channel::ChannelState;
 use octomus_server_auth::auth_state::AuthState;
 use octomus_server_auth::credentials::{
@@ -14,6 +13,7 @@ use octomus_server_auth::credentials::{
 };
 use octomus_server_auth::user::FirebaseAuthTokens;
 use octomusui_core::r#async::{BoxFuture, Timer};
+use url::Url;
 
 use super::UserAuthenticationError;
 

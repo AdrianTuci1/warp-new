@@ -8,6 +8,8 @@ use ai::skills::{
 };
 use async_channel::Sender;
 use futures::future::BoxFuture;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomusui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
 use remote_server::proto::{
     file_context_proto, FileContextProto, ReadFileContextFile, ReadFileContextRequest,
 };
@@ -16,8 +18,6 @@ use repo_metadata::repository::{Repository, SubscriberId};
 use repo_metadata::{
     DirectoryWatcher, MetadataUpdateType, RepoMetadataModel, RepositoryIdentifier, RepositoryUpdate,
 };
-use octomus_util::local_or_remote_path::LocalOrRemotePath;
-use octomusui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
 use watcher::{BulkFilesystemWatcherEvent, HomeDirectoryWatcher, HomeDirectoryWatcherEvent};
 
 use super::subscribers::{
@@ -28,11 +28,11 @@ use super::utils::{
     is_skill_file, read_local_project_skills_from_filesystem, read_skills_from_directories,
     read_skills_from_files, update_might_affect_project_skills,
 };
-use crate::remote_server::manager::RemoteServerManager;
 use crate::octomus_managed_paths_watcher::{
     filter_repository_update_by_prefix, warp_managed_skill_dirs, WarpManagedPathsWatcher,
     WarpManagedPathsWatcherEvent,
 };
+use crate::remote_server::manager::RemoteServerManager;
 
 #[derive(Debug, PartialEq)]
 pub enum SkillWatcherEvent {

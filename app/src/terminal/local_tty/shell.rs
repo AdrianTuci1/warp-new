@@ -3,10 +3,10 @@ use std::path::{Path, PathBuf};
 use std::{io, process};
 
 use itertools::Itertools as _;
-use serde::{Deserialize, Serialize};
-use typed_path::UnixPathBuf;
 use octomus_core::channel::{Channel, ChannelState};
 use octomus_util::path::{canonicalize_git_bash_path, is_msys2_path, warp_shell_path};
+use serde::{Deserialize, Serialize};
+use typed_path::UnixPathBuf;
 
 use crate::terminal::available_shells::AvailableShell;
 use crate::terminal::bootstrap::init_shell_script_for_shell;

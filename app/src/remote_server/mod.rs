@@ -2,11 +2,11 @@
 use remote_server::manager::RemoteServerManager;
 // Re-export everything from the `remote_server` crate so existing
 // `crate::remote_server::*` imports in `app` continue to work.
-pub use remote_server::*;
 #[cfg(not(target_family = "wasm"))]
 use octomus_server_client::auth::AuthEvent;
 #[cfg(not(target_family = "wasm"))]
 use octomusui::SingletonEntity as _;
+pub use remote_server::*;
 
 #[cfg(not(target_family = "wasm"))]
 use crate::ai::{AIRequestUsageModel, AIRequestUsageModelEvent};

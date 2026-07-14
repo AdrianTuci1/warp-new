@@ -1,9 +1,9 @@
 use std::fmt::Write;
 
 use itertools::Itertools;
-use settings::ToggleableSetting as _;
 use octomusui::modals::{AlertDialogWithCallbacks, AppModalCallback, ModalButton};
 use octomusui::{AppContext, EntityId, SingletonEntity, ViewContext, WeakViewHandle, WindowId};
+use settings::ToggleableSetting as _;
 
 use crate::code::editor_management::{CodeEditorStatus, CodeEditorSummary};
 use crate::pane_group::{CodePane, PaneGroup, PaneId, TerminalPane};

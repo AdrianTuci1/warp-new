@@ -1,6 +1,5 @@
 use std::marker::PhantomData;
 
-use pathfinder_geometry::vector::vec2f;
 use octomusui::elements::{
     Border, ChildAnchor, ConstrainedBox, CornerRadius, CrossAxisAlignment, Flex,
     Icon as WarpUiIcon, MainAxisAlignment, MouseStateHandle, OffsetPositioning, ParentElement,
@@ -13,6 +12,7 @@ use octomusui::{
     AppContext, BlurContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use super::dropdown::{DropdownAction, DropdownItemAction};
 use crate::appearance::Appearance;
@@ -130,8 +130,9 @@ impl<A: DropdownItemAction> CompactDropdown<A> {
                 let icon_color = fields
                     .override_icon_color()
                     .unwrap_or_else(|| appearance.theme().active_ui_text_color());
-                button_label
-                    .add_child(self.render_sized_icon(appearance, icon.to_octomusui_icon(icon_color)));
+                button_label.add_child(
+                    self.render_sized_icon(appearance, icon.to_octomusui_icon(icon_color)),
+                );
             }
         }
 

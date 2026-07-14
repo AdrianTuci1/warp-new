@@ -46,18 +46,6 @@ use futures::stream::AbortHandle;
 use futures::FutureExt as _;
 use itertools::Itertools;
 use lazy_static::lazy_static;
-use ordered_float::Float;
-use parking_lot::FairMutex;
-#[cfg(feature = "local_fs")]
-use parking_lot::Mutex;
-use regex::Regex;
-use serde::{Deserialize, Serialize};
-use serde_json::json;
-use session_sharing_protocol::common::{AgentAttachment, ParticipantId, ServerConversationToken};
-use settings::{Setting as _, ToggleableSetting};
-use string_offset::{ByteOffset, CharOffset};
-use vec1::Vec1;
-use vim::vim::{VimHandler, VimMode};
 use octomus_cli::agent::Harness;
 use octomus_completer::completer::{
     self, CompleterOptions, CompletionContext, CompletionsFallbackStrategy, Description, Match,
@@ -73,7 +61,6 @@ use octomus_core::r#async::debounce;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::AnsiColorIdentifier;
 use octomus_core::user_preferences::GetUserPreferences as _;
-use warp_editor::editor::NavigationKey;
 use octomus_util::path::ShellFamily;
 use octomusui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
 use octomusui::clipboard::{ClipboardContent, ImageData};
@@ -103,6 +90,19 @@ use octomusui::{
     end_trace, start_trace, AppContext, Entity, EntityId, FocusContext, ModelAsRef, ModelHandle,
     SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, WeakViewHandle,
 };
+use ordered_float::Float;
+use parking_lot::FairMutex;
+#[cfg(feature = "local_fs")]
+use parking_lot::Mutex;
+use regex::Regex;
+use serde::{Deserialize, Serialize};
+use serde_json::json;
+use session_sharing_protocol::common::{AgentAttachment, ParticipantId, ServerConversationToken};
+use settings::{Setting as _, ToggleableSetting};
+use string_offset::{ByteOffset, CharOffset};
+use vec1::Vec1;
+use vim::vim::{VimHandler, VimMode};
+use warp_editor::editor::NavigationKey;
 
 use self::decorations::InputBackgroundJobOptions;
 pub use self::handoff_compose::{HandoffComposeState, HandoffComposeStateEvent};
@@ -114,6 +114,7 @@ use super::model::block::{
     AgentInteractionMetadata, BlockId, BlockMetadata, BlocklistEnvVarMetadata,
 };
 use super::model::session::{Session, SessionId, SessionType, Sessions};
+use super::octomusify::SubshellSource;
 use super::prompt_render_helper::{
     should_render_prompt_on_same_line, should_render_prompt_using_editor_decorator_elements,
     PromptRenderHelper, SameLinePromptElements,
@@ -141,7 +142,6 @@ use super::view::queued_prompts_panel::{QueuedPromptsPanelEvent, QueuedPromptsPa
 use super::view::{
     ExecuteCommandEvent, SyncInputType, TerminalAction, PADDING_LEFT as TERMINAL_VIEW_PADDING_LEFT,
 };
-use super::octomusify::SubshellSource;
 use super::{prompt, History, HistoryEntry, SizeInfo, TerminalModel, UpArrowHistoryConfig};
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::{AIAgentContext, AIAgentExchangeId, CancellationReason, EntrypointType};
@@ -9948,7 +9948,8 @@ impl Input {
                             // the completions finish quickly, since that causes a jittery UX.
                             let _ = ctx.spawn(
                                 async move {
-                                    octomusui::r#async::Timer::after(Duration::from_millis(750)).await;
+                                    octomusui::r#async::Timer::after(Duration::from_millis(750))
+                                        .await;
                                     old_buffer_text_original
                                 },
                                 move |input, old_buffer_text_original, ctx| {
@@ -10563,8 +10564,8 @@ impl Input {
                                     .and_then(BlockMetadata::current_working_directory)
                                     .and_then(|pwd| {
                                         // Find git repo and construct absolute path
-                                        use repo_metadata::repositories::DetectedRepositories;
                                         use octomus_util::local_or_remote_path::LocalOrRemotePath;
+                                        use repo_metadata::repositories::DetectedRepositories;
                                         let git_repo_path = DetectedRepositories::as_ref(ctx)
                                             .get_root_for_path(&LocalOrRemotePath::Local(
                                                 Path::new(pwd).to_path_buf(),

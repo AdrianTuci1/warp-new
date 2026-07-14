@@ -3,8 +3,8 @@ use std::borrow::Cow;
 use anyhow::{Result, anyhow};
 use http::StatusCode;
 use instant::Duration;
-use warp_graphql::client::{GraphQLError, Operation};
 use octomusui_core::r#async::BoxFuture;
+use warp_graphql::client::{GraphQLError, Operation};
 
 use crate::base_client::BaseClient;
 

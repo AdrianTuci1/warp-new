@@ -1,5 +1,3 @@
-use pathfinder_color::ColorU;
-use ui_components::{button, Component as _, Options as _};
 use octomus_core::features::FeatureFlag;
 use octomus_core::send_telemetry_from_ctx;
 use octomus_core::ui::appearance::Appearance;
@@ -18,6 +16,8 @@ use octomusui_core::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui_core::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use pathfinder_color::ColorU;
+use ui_components::{button, Component as _, Options as _};
 
 use super::OnboardingSlide;
 use crate::model::{OnboardingStateEvent, OnboardingStateModel};
@@ -178,7 +178,9 @@ impl ThemePickerSlide {
         let state = self.onboarding_state.as_ref(app);
         let is_terminal = matches!(state.intention(), OnboardingIntention::Terminal);
         let octomus_drive_enabled = state.ui_customization().show_octomus_drive;
-        if is_terminal && !octomus_drive_enabled && FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
+        if is_terminal
+            && !octomus_drive_enabled
+            && FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
         {
             content.push(self.render_disclaimer_section(appearance));
         }

@@ -1,4 +1,3 @@
-use pathfinder_color::ColorU;
 use octomus_core::send_telemetry_from_ctx;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::Fill;
@@ -6,6 +5,7 @@ use octomusui::elements::{Align, ChildView, Container, ParentElement, SavePositi
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use pathfinder_color::ColorU;
 
 use super::suggested_agent_mode_workflow_modal::SuggestedAgentModeWorkflowAndId;
 use super::suggested_rule_modal::SuggestedRuleAndId;

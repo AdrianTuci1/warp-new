@@ -3,14 +3,14 @@ use std::path::PathBuf;
 use async_trait::async_trait;
 use bitflags::bitflags;
 use itertools::Itertools;
-use palette::Srgba;
-use pathfinder_color::ColorU;
-use plist::{Dictionary, Value};
 use octomus_core::ui::theme::{AnsiColors, TerminalColors, WarpTheme};
 use octomusui::fonts::FontInfo;
 use octomusui::keymap::Keystroke;
 use octomusui::platform::mac::utils::unicode_char_to_key;
 use octomusui::DisplayIdx;
+use palette::Srgba;
+use pathfinder_color::ColorU;
+use plist::{Dictionary, Value};
 
 use super::config::{
     calculate_accent_color, Config, ConfigError, GlobalHotkey, ImportableSetting, ImportedFont,

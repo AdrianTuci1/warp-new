@@ -2,7 +2,6 @@ use octomus_cli::agent::Harness;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::Fill;
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     Border, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     Empty, Expanded, Flex, Hoverable, MainAxisSize, MouseStateHandle, OffsetPositioning,
@@ -11,6 +10,7 @@ use octomusui::elements::{
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use warp_editor::editor::NavigationKey;
 
 use crate::ai::auth_secret_types::auth_secret_types_for_harness;
 use crate::ai::harness_availability::{

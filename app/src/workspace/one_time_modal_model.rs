@@ -1,6 +1,6 @@
-use settings::Setting as _;
 use octomus_core::features::FeatureFlag;
 use octomusui::{Entity, ModelContext, SingletonEntity, WindowId};
+use settings::Setting as _;
 
 use super::hoa_onboarding;
 use crate::ai::blocklist::agent_view::toolbar_item::AgentToolbarItemKind;

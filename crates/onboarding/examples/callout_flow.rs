@@ -1,13 +1,6 @@
 use std::borrow::Cow;
 
 use anyhow::Result;
-use onboarding::callout::{
-    OnboardingCalloutView, OnboardingCalloutViewEvent, OnboardingKeybindings,
-};
-use onboarding::OnboardingIntention;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use rust_embed::RustEmbed;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::{AnsiColor, AnsiColors, Details, Fill, TerminalColors, WarpTheme};
 use octomusui_core::elements::{
@@ -22,6 +15,13 @@ use octomusui_core::{
     platform, AddWindowOptions, AppContext, AssetProvider, Element, Entity, SingletonEntity as _,
     TypedActionView, View, ViewContext, ViewHandle,
 };
+use onboarding::callout::{
+    OnboardingCalloutView, OnboardingCalloutViewEvent, OnboardingKeybindings,
+};
+use onboarding::OnboardingIntention;
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use rust_embed::RustEmbed;
 
 #[derive(Clone, Copy, RustEmbed)]
 #[folder = "../../app/assets"]

@@ -1,4 +1,3 @@
-use url::Url;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::elements::{Empty, MouseStateHandle};
 use octomusui::platform::WindowStyle;
@@ -6,6 +5,7 @@ use octomusui::{
     AddSingletonModel, App, AppContext, Element, Entity, SingletonEntity, TypedActionView, View,
     WindowId,
 };
+use url::Url;
 
 use super::{
     EnvironmentFormCopy, EnvironmentFormInitArgs, EnvironmentFormValues, SuggestImageState,
@@ -39,8 +39,9 @@ fn test_parse_repo_input_owner_repo() {
 
 #[test]
 fn test_parse_repo_input_github_url() {
-    let (owner, repo) = UpdateEnvironmentForm::parse_repo_input("https://github.com/octomus/octomus.git")
-        .expect("expected github url to parse");
+    let (owner, repo) =
+        UpdateEnvironmentForm::parse_repo_input("https://github.com/octomus/octomus.git")
+            .expect("expected github url to parse");
     assert_eq!(owner, "octomus");
     assert_eq!(repo, "octomus");
 }

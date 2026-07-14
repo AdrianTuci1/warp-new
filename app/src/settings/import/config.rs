@@ -2,15 +2,15 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use pathfinder_color::ColorU;
-use serde::Serialize;
-use strum_macros::EnumIter;
-use thiserror::Error;
 use octomus_core::ui::color::hex_color::HexColorError as UiHexColorError;
 use octomus_core::ui::theme::{AnsiColors, WarpTheme};
 use octomusui::fonts::FontInfo;
 use octomusui::keymap::Keystroke;
 use octomusui::DisplayIdx;
+use pathfinder_color::ColorU;
+use serde::Serialize;
+use strum_macros::EnumIter;
+use thiserror::Error;
 
 use super::alacritty_parser::AlacrittyConfig;
 #[cfg(target_os = "macos")]

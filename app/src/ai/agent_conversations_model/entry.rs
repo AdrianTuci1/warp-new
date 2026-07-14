@@ -1,8 +1,8 @@
 use chrono::{DateTime, Utc};
-use session_sharing_protocol::common::SessionId;
 use octomus_cli::agent::Harness;
 use octomus_core::features::FeatureFlag;
 use octomusui::{AppContext, SingletonEntity};
+use session_sharing_protocol::common::SessionId;
 
 use super::{
     artifacts_match_filter, AgentManagementFilters, AgentRunDisplayStatus, ArtifactFilter,

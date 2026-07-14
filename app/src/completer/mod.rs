@@ -9,8 +9,6 @@ use std::sync::Arc;
 use anyhow::Result;
 use async_trait::async_trait;
 use lazy_static::lazy_static;
-use smol_str::SmolStr;
-use typed_path::{TypedPath, TypedPathBuf};
 use octomus_completer::completer::{
     CommandExitStatus, CommandOutput, CompletionContext, EngineDirEntry, EngineFileType,
     GeneratorContext, PathCompletionContext, PathSeparators, TopLevelCommandCaseSensitivity,
@@ -19,6 +17,8 @@ use octomus_completer::signatures::CommandRegistry;
 use octomus_core::features::FeatureFlag;
 use octomus_util::path::{EscapeChar, ShellFamily};
 use octomusui::{AppContext, SingletonEntity};
+use smol_str::SmolStr;
+use typed_path::{TypedPath, TypedPathBuf};
 
 use crate::safe_warn;
 use crate::terminal::model::session::{ExecuteCommandOptions, Session, SessionType};

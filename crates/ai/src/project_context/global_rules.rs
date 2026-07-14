@@ -2,13 +2,13 @@ use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
 
 use async_channel::Sender;
+use octomus_core::safe_warn;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui_core::{ModelContext, ModelHandle, SingletonEntity};
 use repo_metadata::repository::{RepositorySubscriber, SubscriberId};
 use repo_metadata::{DirectoryWatcher, Repository, RepositoryUpdate};
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use octomus_core::safe_warn;
-use octomus_util::standardized_path::StandardizedPath;
-use octomusui_core::{ModelContext, ModelHandle, SingletonEntity};
 use watcher::{HomeDirectoryWatcher, HomeDirectoryWatcherEvent};
 
 use super::model::{GlobalRulesDelta, ProjectContextModel, ProjectContextModelEvent, ProjectRule};

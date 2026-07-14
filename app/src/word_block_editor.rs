@@ -1,5 +1,3 @@
-use pathfinder_color::ColorU;
-use warp_editor::editor::NavigationKey;
 use octomusui::elements::{
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, MainAxisAlignment,
     MainAxisSize, MouseStateHandle, ParentElement, Radius, Wrap, WrapFill,
@@ -10,6 +8,8 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_color::ColorU;
+use warp_editor::editor::NavigationKey;
 
 use crate::appearance::Appearance;
 use crate::editor::{

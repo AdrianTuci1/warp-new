@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-use settings::Setting as _;
 use octomus::integration_testing::command_search::{
     assert_command_search_has_results, assert_command_search_is_open,
     assert_history_filter_is_active,
@@ -18,6 +17,7 @@ use octomus::terminal::input::Input;
 use octomus::terminal::model::session::get_local_hostname;
 use octomus::terminal::shell::ShellType;
 use octomusui_core::{async_assert, ViewHandle};
+use settings::Setting as _;
 
 use super::{new_builder, TEST_ONLY_ASSETS};
 use crate::util::{get_local_user, write_histfiles_for_test};

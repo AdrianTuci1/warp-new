@@ -405,10 +405,12 @@ impl ConversationUsageView {
 
                 if *is_byok {
                     model_elements.push(
-                        ConstrainedBox::new(Icon::Key.to_octomusui_icon(text_color.into()).finish())
-                            .with_width(font_size)
-                            .with_height(font_size)
-                            .finish(),
+                        ConstrainedBox::new(
+                            Icon::Key.to_octomusui_icon(text_color.into()).finish(),
+                        )
+                        .with_width(font_size)
+                        .with_height(font_size)
+                        .finish(),
                     );
                     model_elements.push(
                         Container::new(

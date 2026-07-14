@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::color::blend::Blend as _;
 use octomus_core::ui::{self};
@@ -14,6 +13,7 @@ use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity as _, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use crate::coding_entrypoints::clone_repo_view::{CloneRepoEvent, CloneRepoView};
 use crate::coding_entrypoints::create_project_view::{CreateProjectEvent, CreateProjectView};
@@ -213,7 +213,8 @@ impl GetStartedView {
             .with_children([
                 Container::new(
                     ConstrainedBox::new(
-                        Icon::new("bundled/svg/octomus-logo-neutral.svg", theme.foreground()).finish(),
+                        Icon::new("bundled/svg/octomus-logo-neutral.svg", theme.foreground())
+                            .finish(),
                     )
                     .with_height(40.)
                     .with_width(40.)

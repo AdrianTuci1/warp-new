@@ -22,8 +22,6 @@ use crate::telemetry::OnboardingEvent;
 
 const APP_BECAME_ACTIVE_DEBOUNCE: Duration = Duration::from_secs(15);
 
-use pathfinder_geometry::vector::vec2f;
-use ui_components::{button, Component as _, Options as _};
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::WarpTheme;
 use octomusui_core::elements::{
@@ -37,6 +35,8 @@ use octomusui_core::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity as _, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use ui_components::{button, Component as _, Options as _};
 
 #[derive(Clone, Debug)]
 pub enum AgentOnboardingEvent {

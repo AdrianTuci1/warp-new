@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 
-use serde::{Deserialize, Serialize};
 use octomus_util::path::ShellFamily;
 use octomusui::platform::OperatingSystem;
+use serde::{Deserialize, Serialize};
 
 #[derive(
     Debug,

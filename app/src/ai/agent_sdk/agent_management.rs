@@ -5,7 +5,6 @@ use std::io::Write as _;
 
 use anyhow::anyhow;
 use comfy_table::Cell;
-use serde::Serialize;
 use octomus_cli::agent::{
     AgentCreateArgs, AgentDeleteArgs, AgentGetArgs, AgentListArgs, AgentSortByArg, AgentUpdateArgs,
     OutputFormat,
@@ -14,6 +13,7 @@ use octomus_cli::json_filter::JsonOutput;
 use octomus_cli::SortOrderArg;
 use octomusui::platform::TerminationMode;
 use octomusui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use super::output::TableFormat;
 use crate::server::server_api::ai::{

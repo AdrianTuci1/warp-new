@@ -2,13 +2,13 @@ use std::time::Duration;
 
 use ::ai::api_keys::{ApiKeyManager, RequestCredentialsOverride};
 use instant::Instant;
-use session_sharing_protocol::common::SessionId;
 use octomus_cli::agent::Harness;
 use octomus_core::features::FeatureFlag;
 use octomus_core::send_telemetry_from_ctx;
 use octomus_terminal::model::BlockId;
 use octomusui::r#async::{SpawnedFutureHandle, Timer};
 use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
+use session_sharing_protocol::common::SessionId;
 
 use super::AmbientAgentProgressUIState;
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;

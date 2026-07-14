@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use itertools::Itertools;
-use tantivy::tokenizer::{TextAnalyzer, Token};
 use octomusui_core::r#async::executor::Background;
+use tantivy::tokenizer::{TextAnalyzer, Token};
 
 use crate::define_search_schema;
 use crate::searcher::{CustomTokenizer, MIN_MEMORY_BUDGET};

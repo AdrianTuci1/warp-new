@@ -16,8 +16,6 @@
 use std::path::PathBuf;
 
 use enclose::enclose;
-use pathfinder_geometry::vector::Vector2F;
-use vec1::Vec1;
 use octomusui::accessibility::AccessibilityContent;
 use octomusui::elements::{
     resizable_state_handle, Border, ChildAnchor, ChildView, Clipped, ConstrainedBox, Container,
@@ -33,6 +31,8 @@ use octomusui::{
     AppContext, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_geometry::vector::Vector2F;
+use vec1::Vec1;
 
 use crate::appearance::Appearance;
 use crate::editor::{

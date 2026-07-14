@@ -7,14 +7,14 @@ use dashmap::DashMap;
 use font_kit::canvas::{AntialiasingStrategy, Canvas, RasterizationOptions};
 use font_kit::font::Font;
 use font_kit::hinting::HintingOptions;
-use pathfinder_geometry::rect::RectI;
-use pathfinder_geometry::transform2d::Transform2F;
-use pathfinder_geometry::vector::{vec2i, Vector2F, Vector2I};
 use octomusui_core::fonts::canvas::RasterFormat;
 use octomusui_core::fonts::{
     FontId, GlyphId, Properties, RasterizedGlyph, Style, SubpixelAlignment, Weight,
 };
 use octomusui_core::rendering;
+use pathfinder_geometry::rect::RectI;
+use pathfinder_geometry::transform2d::Transform2F;
+use pathfinder_geometry::vector::{vec2i, Vector2F, Vector2I};
 
 #[cfg(target_os = "macos")]
 use crate::platform::mac::AutoreleasePoolGuard;

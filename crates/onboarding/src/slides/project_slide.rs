@@ -1,4 +1,3 @@
-use ui_components::{button, keyboard_shortcut, Component as _, Options as _};
 use octomus_core::send_telemetry_from_ctx;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::color::coloru_with_opacity;
@@ -18,6 +17,7 @@ use octomusui_core::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity as _, TypedActionView, View,
     ViewContext,
 };
+use ui_components::{button, keyboard_shortcut, Component as _, Options as _};
 
 use super::OnboardingSlide;
 use crate::model::OnboardingStateModel;
@@ -204,11 +204,12 @@ impl ProjectSlide {
                     },
                 );
 
-                let folder_icon =
-                    ConstrainedBox::new(Icon::Folder.to_octomusui_icon(theme.foreground()).finish())
-                        .with_width(16.)
-                        .with_height(16.)
-                        .finish();
+                let folder_icon = ConstrainedBox::new(
+                    Icon::Folder.to_octomusui_icon(theme.foreground()).finish(),
+                )
+                .with_width(16.)
+                .with_height(16.)
+                .finish();
 
                 let folder_text = Container::new(
                     appearance

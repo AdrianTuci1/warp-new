@@ -304,7 +304,8 @@ pub trait Handler {
 
     /// Callback emitted from the octomusify_ssh_session script if it's discovered
     /// that we can't octomusify the remote session.
-    fn remote_octomusification_is_unavailable(&mut self, _data: OctomusificationUnavailableReason) {}
+    fn remote_octomusification_is_unavailable(&mut self, _data: OctomusificationUnavailableReason) {
+    }
 
     /// How tmux was installed.
     fn notify_ssh_tmux_is_installed(&mut self, _tmux_installation: TmuxInstallationState) {}

@@ -4,7 +4,6 @@ use std::rc::Rc;
 use markdown_parser::{
     FormattedText, FormattedTextFragment, FormattedTextInline, FormattedTextLine,
 };
-use pathfinder_geometry::vector::Vector2F;
 use octomusui::elements::{
     ConstrainedBox, Container, CrossAxisAlignment, Flex, FormattedTextElement,
     HighlightedHyperlink, HyperlinkLens, HyperlinkUrl, MainAxisAlignment, MainAxisSize,
@@ -17,6 +16,7 @@ use octomusui::{
     Action, AppContext, Element, Entity, EventContext, SingletonEntity, TypedActionView, View,
     ViewContext,
 };
+use pathfinder_geometry::vector::Vector2F;
 
 use crate::appearance::Appearance;
 use crate::ui_components::icons::Icon;

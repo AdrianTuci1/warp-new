@@ -4,9 +4,9 @@ use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
+use octomusui_core::{Entity, ModelContext, SingletonEntity};
 #[cfg(feature = "local_fs")]
 use repo_metadata::repositories::RepoDetectionSource;
-use octomusui_core::{Entity, ModelContext, SingletonEntity};
 
 use super::GlobalRules;
 

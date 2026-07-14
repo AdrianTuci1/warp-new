@@ -35,9 +35,9 @@ pub use execute::{
 };
 use futures::future::{join_all, BoxFuture};
 use itertools::Itertools;
+use octomusui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 use parking_lot::FairMutex;
 use preprocess::{PendingPreprocessedActions, PreprocessId};
-use octomusui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 
 use self::execute::ask_user_question::AskUserQuestionExecutor;
 use self::execute::search_codebase::SearchCodebaseExecutor;

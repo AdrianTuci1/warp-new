@@ -1,12 +1,12 @@
 use instant::Duration;
-use settings::{PrivatePreferences, PublicPreferences, Setting, SettingsManager};
-use settings_value::SettingsValue;
 use octomus_core::features::FeatureFlag;
 use octomus_core::settings::macros::define_settings_group;
 use octomus_core::settings::{SupportedPlatforms, SyncToCloud};
 use octomus_core::user_preferences::GetUserPreferences as _;
 use octomusui::SingletonEntity;
 use octomusui_extras::user_preferences;
+use settings::{PrivatePreferences, PublicPreferences, Setting, SettingsManager};
+use settings_value::SettingsValue;
 
 use super::{
     migrate_native_settings_to_settings_file, needs_settings_file_migration_for_path,
@@ -372,10 +372,10 @@ fn test_migration_with_multiple_setting_types() {
 // serde fallback is never reached and values are lost.
 
 mod notifications_migration {
-    use settings::{PrivatePreferences, PublicPreferences, SettingsManager};
     use octomus_core::settings::macros::define_settings_group;
     use octomus_core::settings::{SupportedPlatforms, SyncToCloud};
     use octomusui_extras::user_preferences;
+    use settings::{PrivatePreferences, PublicPreferences, SettingsManager};
 
     use crate::terminal::session_settings::NotificationsSettings;
 

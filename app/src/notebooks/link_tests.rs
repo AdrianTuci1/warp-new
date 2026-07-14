@@ -3,12 +3,12 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use lazy_static::lazy_static;
+use octomus_util::path::LineAndColumnArg;
+use octomusui::{App, ModelHandle, SingletonEntity, WindowId};
 use parking_lot::Mutex;
 use settings::Setting as _;
 use tempfile::tempdir;
 use url::Url;
-use octomus_util::path::LineAndColumnArg;
-use octomusui::{App, ModelHandle, SingletonEntity, WindowId};
 
 use super::{LinkTarget, NotebookLinks, ResolveError, SessionSource};
 use crate::notebooks::file::is_markdown_file;

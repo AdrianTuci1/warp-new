@@ -103,30 +103,6 @@ use instant::Instant;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use markdown_parser::FormattedTextFragment;
-use parking_lot::FairMutex;
-use pathfinder_color::ColorU;
-use regex::Regex;
-#[cfg(not(target_family = "wasm"))]
-use repo_metadata::repositories::DetectedRepositories;
-use repo_metadata::repositories::RepoDetectionSource;
-use serde::Serialize;
-use serde_json::json;
-use session_sharing_protocol::common::{
-    AgentAttachment, LongRunningCommandAgentInteractionState, ParticipantId, Role, RoleRequestId,
-    RoleRequestResponse, ServerConversationToken as SessionSharingServerConversationToken,
-    WindowSize as SessionSharingWindowSize,
-};
-use session_sharing_protocol::sharer::{
-    RoleUpdateReason, SessionEndedReason, SessionRetentionReason,
-};
-use settings::{Setting, ToggleableSetting};
-use shared_session::cloud_conversation_continuation::CloudConversationContinuationUiState;
-use shared_session::{SharedSessionAdapter, Viewer};
-use ssh_file_upload::{FileUpload, FileUploadEvent};
-use sum_tree::SeekBias;
-use use_agent_footer::UseAgentToolbar;
-use uuid::Uuid;
-use vec1::vec1;
 use octomus_core::channel::ChannelState;
 use octomus_core::command::ExitCode;
 use octomus_core::context_flag::ContextFlag;
@@ -174,6 +150,30 @@ use octomusui::{
     ModelHandle, SingletonEntity, Tracked, TypedActionView, View, ViewAsRef, ViewContext,
     ViewHandle, WeakModelHandle, WeakViewHandle, WindowId,
 };
+use parking_lot::FairMutex;
+use pathfinder_color::ColorU;
+use regex::Regex;
+#[cfg(not(target_family = "wasm"))]
+use repo_metadata::repositories::DetectedRepositories;
+use repo_metadata::repositories::RepoDetectionSource;
+use serde::Serialize;
+use serde_json::json;
+use session_sharing_protocol::common::{
+    AgentAttachment, LongRunningCommandAgentInteractionState, ParticipantId, Role, RoleRequestId,
+    RoleRequestResponse, ServerConversationToken as SessionSharingServerConversationToken,
+    WindowSize as SessionSharingWindowSize,
+};
+use session_sharing_protocol::sharer::{
+    RoleUpdateReason, SessionEndedReason, SessionRetentionReason,
+};
+use settings::{Setting, ToggleableSetting};
+use shared_session::cloud_conversation_continuation::CloudConversationContinuationUiState;
+use shared_session::{SharedSessionAdapter, Viewer};
+use ssh_file_upload::{FileUpload, FileUploadEvent};
+use sum_tree::SeekBias;
+use use_agent_footer::UseAgentToolbar;
+use uuid::Uuid;
+use vec1::vec1;
 
 use self::link_detection::HighlightedLinkOption;
 pub use self::link_detection::{GridHighlightedLink, RichContentLink, RichContentLinkTooltipInfo};
@@ -181,7 +181,7 @@ use super::available_shells::AvailableShell;
 use super::block_list_viewport::FindMatchScrollLocation;
 use super::event::SshLoginStatus;
 use super::find::FindOptions;
-use super::model::ansi::{SystemDetails, OctomusificationUnavailableReason};
+use super::model::ansi::{OctomusificationUnavailableReason, SystemDetails};
 use super::model::block::{
     BlockSection, BlocklistEnvVarMetadata, LONG_RUNNING_COMMAND_DURATION_MS,
 };
@@ -191,11 +191,18 @@ use super::model::rich_content::RichContentType;
 use super::model::secrets::RichContentSecretTooltipInfo;
 use super::model::selection::ExpandedSelectionRange;
 use super::model::session::SessionBootstrappedEvent;
+use super::octomusify::success_block::{OctomusifySuccessBlock, OctomusifySuccessBlockEvent};
+use super::octomusify::trigger_state::{OctomusifyState, SshBlockState};
+use super::octomusify::OctomusificationSource;
 use super::settings::AltScreenPaddingMode;
 use super::ssh::error::{SshErrorBlock, SshErrorBlockEvent, SSH_ERROR_BLOCK_VISIBLE_KEY};
 use super::ssh::install_tmux::{
     install_root_tmux_script, install_tmux_script, SshInstallTmuxBlock, SshInstallTmuxBlockEvent,
     SshKeyEvent, TmuxInstallMethod,
+};
+use super::ssh::octomusify::{
+    begin_octomusify_ssh_session_command, octomusify_ssh_session_command, SshOctomusifyBlock,
+    SshOctomusifyBlockEvent,
 };
 use super::ssh::root_access::RootAccess;
 use super::ssh::ssh_detection::evaluate_octomusify_ssh_host;
@@ -203,14 +210,7 @@ use super::ssh::util::{
     convert_script_to_one_line, parse_interactive_ssh_command, InteractiveSshCommand,
     SshOctomusifyCommand,
 };
-use super::ssh::octomusify::{
-    begin_octomusify_ssh_session_command, octomusify_ssh_session_command, SshOctomusifyBlock,
-    SshOctomusifyBlockEvent,
-};
 use super::ssh::SSH_WARPIFY_TIMEOUT_DURATION;
-use super::octomusify::success_block::{OctomusifySuccessBlock, OctomusifySuccessBlockEvent};
-use super::octomusify::trigger_state::{SshBlockState, OctomusifyState};
-use super::octomusify::OctomusificationSource;
 use super::{cli_agent, CLIAgent, GridType, HistoryEvent};
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::agent::conversation::{AIConversation, AIConversationId, ConversationStatus};
@@ -458,6 +458,9 @@ use crate::terminal::model::terminal_model::{
 };
 use crate::terminal::model::{ObfuscateSecrets, RespectObfuscatedSecrets, SecretHandle};
 use crate::terminal::model_events::{AnsiHandlerEvent, ModelEvent, ModelEventDispatcher};
+use crate::terminal::octomusify::render::render_subshell_separator;
+use crate::terminal::octomusify::settings::OctomusifySettings;
+use crate::terminal::octomusify::SubshellSource;
 use crate::terminal::recorder::PtyRecorder;
 use crate::terminal::safe_mode_settings::get_secret_obfuscation_mode;
 use crate::terminal::session_settings::{
@@ -498,9 +501,6 @@ use crate::terminal::view::ssh_remote_server_failed_banner::{
 };
 use crate::terminal::view::telemetry::PromptSuggestionFallbackReason;
 use crate::terminal::view::zero_state_block::TerminalViewZeroStateBlock;
-use crate::terminal::octomusify::render::render_subshell_separator;
-use crate::terminal::octomusify::settings::OctomusifySettings;
-use crate::terminal::octomusify::SubshellSource;
 use crate::terminal::waterfall_gap_element::WaterfallGapElement;
 use crate::terminal::{
     block_list_element::BlockHoverAction,
@@ -9129,7 +9129,10 @@ impl TerminalView {
         triggered_by_rc_file_snippet: bool,
         ctx: &mut ViewContext<Self>,
     ) {
-        self.dismiss_octomusify_banner(&RememberForOctomusification::DoNotRememberSubshellCommand, ctx);
+        self.dismiss_octomusify_banner(
+            &RememberForOctomusification::DoNotRememberSubshellCommand,
+            ctx,
+        );
 
         // Record the active long-running block so we can hide it later once the remote
         // actually confirms subshell bootstrap is in progress.
@@ -9546,7 +9549,10 @@ impl TerminalView {
         event: &SshOctomusifyBlockEvent,
         ctx: &mut ViewContext<Self>,
     ) {
-        fn dismiss_ssh_octomusify_block(me: &mut TerminalView, ctx: &mut ViewContext<TerminalView>) {
+        fn dismiss_ssh_octomusify_block(
+            me: &mut TerminalView,
+            ctx: &mut ViewContext<TerminalView>,
+        ) {
             send_telemetry_from_ctx!(TelemetryEvent::SshTmuxOctomusifyBlockDismissed, ctx);
             me.cancel_bootstrap_workflow(ctx);
         }
@@ -11622,7 +11628,9 @@ impl TerminalView {
 
                 // If this block ran a possible subshell command, and it exited before the 1s timer
                 // completed, abort showing the banner.
-                if let Some(abort_handle) = self.octomusify_state.take_subshell_banner_abort_handle() {
+                if let Some(abort_handle) =
+                    self.octomusify_state.take_subshell_banner_abort_handle()
+                {
                     abort_handle.abort();
                 }
 
@@ -11794,8 +11802,8 @@ impl TerminalView {
                         // command stays running for a bit. If the command fails instantly,
                         // we don't want to flicker the banner away so quickly.
                         let command = command.clone();
-                        self.octomusify_state
-                            .add_subshell_banner_abort_handle(ctx.spawn_abortable(
+                        self.octomusify_state.add_subshell_banner_abort_handle(
+                            ctx.spawn_abortable(
                                 Timer::after(*SUBSHELL_BANNER_DELAY_DURATION),
                                 |view, _, ctx| {
                                     if FeatureFlag::OctomusifyFooter.is_enabled() {
@@ -11811,7 +11819,8 @@ impl TerminalView {
                                     }
                                 },
                                 |_, _| {},
-                            ));
+                            ),
+                        );
                     }
                 } else {
                     if !has_ai_metadata {
@@ -17331,7 +17340,8 @@ impl TerminalView {
         }
 
         // Section 3: Teams related
-        if !all_current_input_text.is_empty() && OctomusDriveSettings::is_octomus_drive_enabled(ctx) {
+        if !all_current_input_text.is_empty() && OctomusDriveSettings::is_octomus_drive_enabled(ctx)
+        {
             items.extend([
                 MenuItem::Separator,
                 MenuItemFields::new("Save as workflow")
@@ -22720,7 +22730,8 @@ impl TerminalView {
                 SessionType::WarpifiedRemote { host_id } => host_id,
                 SessionType::Local => return None,
             }?;
-            let std_path = octomus_util::standardized_path::StandardizedPath::try_new(cwd_str).ok()?;
+            let std_path =
+                octomus_util::standardized_path::StandardizedPath::try_new(cwd_str).ok()?;
             Some(LocalOrRemotePath::Remote(
                 octomus_util::remote_path::RemotePath::new(host_id, std_path),
             ))
@@ -24660,7 +24671,9 @@ impl TerminalView {
 
         match action {
             LearnMore => {
-                ctx.open_url("https://docs.octomus.dev/terminal/octomusify/ssh-legacy#implementation");
+                ctx.open_url(
+                    "https://docs.octomus.dev/terminal/octomusify/ssh-legacy#implementation",
+                );
             }
             Settings => {
                 if FeatureFlag::SSHTmuxWrapper.is_enabled() {
@@ -25280,28 +25293,31 @@ impl TerminalView {
             .ssh_block_state()
             .and_then(|s| s.get_system_details(ctx))
             .to_owned();
-        self.octomusify_state.add_ssh_octomusify_timeout_handle(ctx.spawn(
-            async move {
-                Timer::after(duration).await;
-                (timeout_id, active_block_id, system_details)
-            },
-            |terminal_view, (timeout_id, active_block_id, system_details), ctx| {
-                let is_shell_detection =
-                    terminal_view.octomusify_state.is_shell_detection_in_progress();
-                if timeout_id == terminal_view.octomusify_state.timeout_id()
-                    && terminal_view.model.lock().block_list().active_block_id() == &active_block_id
-                {
-                    terminal_view.add_ssh_error_block(
-                        OctomusificationUnavailableReason::Timeout {
-                            is_tmux_install: false,
-                            is_shell_detection,
-                            system_details,
-                        },
-                        ctx,
-                    );
-                }
-            },
-        ));
+        self.octomusify_state
+            .add_ssh_octomusify_timeout_handle(ctx.spawn(
+                async move {
+                    Timer::after(duration).await;
+                    (timeout_id, active_block_id, system_details)
+                },
+                |terminal_view, (timeout_id, active_block_id, system_details), ctx| {
+                    let is_shell_detection = terminal_view
+                        .octomusify_state
+                        .is_shell_detection_in_progress();
+                    if timeout_id == terminal_view.octomusify_state.timeout_id()
+                        && terminal_view.model.lock().block_list().active_block_id()
+                            == &active_block_id
+                    {
+                        terminal_view.add_ssh_error_block(
+                            OctomusificationUnavailableReason::Timeout {
+                                is_tmux_install: false,
+                                is_shell_detection,
+                                system_details,
+                            },
+                            ctx,
+                        );
+                    }
+                },
+            ));
     }
 
     fn handle_detected_end_of_ssh_login(

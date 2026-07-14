@@ -3,18 +3,18 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use anyhow::{anyhow, Result};
+use octomus_core::channel::ChannelState;
+use octomus_core::features::FeatureFlag;
+use octomus_server_auth::user::persistence::PersistedUser;
+use octomusui::clipboard::ClipboardContent;
+use octomusui::{Entity, ModelContext, SingletonEntity, UpdateModel};
 use settings::Setting as _;
 #[cfg(target_family = "wasm")]
 use url::Url;
 use uuid::Uuid;
-use octomus_core::channel::ChannelState;
-use octomus_core::features::FeatureFlag;
 use warp_graphql::mutations::create_anonymous_user::{
     AnonymousUserType, CreateAnonymousUserResult,
 };
-use octomus_server_auth::user::persistence::PersistedUser;
-use octomusui::clipboard::ClipboardContent;
-use octomusui::{Entity, ModelContext, SingletonEntity, UpdateModel};
 
 use super::auth_state::{AuthState, PersistAction};
 use super::auth_view_modal::{AuthRedirectPayload, AuthViewVariant};

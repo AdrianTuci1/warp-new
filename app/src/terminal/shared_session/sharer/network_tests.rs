@@ -3,13 +3,13 @@ use std::sync::Arc;
 use async_channel::Sender;
 use futures_util::stream::AbortHandle;
 use instant::Instant;
+use octomusui::{App, ModelHandle};
 use parking_lot::FairMutex;
 use session_sharing_protocol::common::{
     ActivePrompt, OrderedTerminalEvent, OrderedTerminalEventType, ParticipantId, Selection,
     SessionId,
 };
 use session_sharing_protocol::sharer::{DownstreamMessage, ReconnectToken, UpstreamMessage};
-use octomusui::{App, ModelHandle};
 use websocket::{Message, WebsocketMessage as _};
 
 use super::{Network, PtyBytesBatchStatus, Stage};

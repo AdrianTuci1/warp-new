@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use parking_lot::FairMutex;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::r#async::SpawnedFutureHandle;
 use octomusui::{AppContext, EntityId, SingletonEntity as _, ViewContext, ViewHandle};
+use parking_lot::FairMutex;
 
 use super::success_block::OctomusifySuccessBlock;
 use crate::terminal::model::ansi::SystemDetails;
@@ -256,7 +256,10 @@ impl OctomusifyState {
         };
     }
 
-    pub fn add_ssh_octomusify_timeout_handle(&mut self, spawned_future_handle: SpawnedFutureHandle) {
+    pub fn add_ssh_octomusify_timeout_handle(
+        &mut self,
+        spawned_future_handle: SpawnedFutureHandle,
+    ) {
         let pending_state = self.pending_state.get_or_insert_with(Default::default);
         pending_state.ssh_octomusify_timeout_handle = Some(spawned_future_handle);
     }

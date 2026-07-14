@@ -5,8 +5,8 @@ use cloud_objects::cloud_object::{
     GenericCloudObject, GenericServerObject, GenericStringModel, JsonObjectType,
 };
 use cloud_objects::ids::GenericStringObjectId;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use octomus_cli::agent::Harness;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::{JsonModel, JsonSerializer};
 

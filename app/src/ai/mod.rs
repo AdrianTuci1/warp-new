@@ -45,8 +45,8 @@ pub use remote_executor::ssh;
 pub mod agent_store;
 pub mod whisper_transcriber;
 pub use agent_tips::*;
-pub use request_usage_model::*;
 use octomusui::AppContext;
+pub use request_usage_model::*;
 #[cfg(not(target_family = "wasm"))]
 pub mod agent_sdk;
 pub mod cloud_agent_config;

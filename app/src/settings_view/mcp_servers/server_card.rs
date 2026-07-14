@@ -1,5 +1,4 @@
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_color::ColorU;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::external_product_icon::ExternalProductIcon;
 use octomus_core::ui::icons::{Icon, ICON_DIMENSIONS};
@@ -18,6 +17,7 @@ use octomusui::ui_components::chip::Chip;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::ui_components::switch::SwitchStateHandle;
 use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use pathfinder_color::ColorU;
 
 use crate::ai::mcp::templatable::CloudTemplatableMCPServer;
 use crate::ai::mcp::{MCPServerState, TemplatableMCPServerManager};

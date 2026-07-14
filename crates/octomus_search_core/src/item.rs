@@ -1,8 +1,8 @@
-use ordered_float::OrderedFloat;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::Fill;
 use octomusui_core::fonts::FamilyId;
 use octomusui_core::{Action, AppContext, Element};
+use ordered_float::OrderedFloat;
 
 use super::result_renderer::ItemHighlightState;
 

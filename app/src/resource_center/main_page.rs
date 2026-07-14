@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::vec2f;
 use octomusui::elements::{
     Align, ClippedScrollStateHandle, ClippedScrollable, Container, CornerRadius, Element, Empty,
     Fill, Flex, Hoverable, Icon, MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement,
@@ -12,6 +11,7 @@ use octomusui::{
     AppContext, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WindowId,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use super::section_views::feature_section::FeatureSectionEvent;
 use super::section_views::{

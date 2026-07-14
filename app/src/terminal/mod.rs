@@ -11,11 +11,11 @@ use serde::{Deserialize, Serialize};
 mod package_installers;
 pub(crate) use history::UpArrowHistoryConfig;
 pub use history::{History, HistoryEntry, HistoryEvent, ShellHost};
-pub use view::{Event, TerminalView};
 pub use octomus_terminal::shell::{self, ShellLaunchData};
 use octomusui::geometry::vector::Vector2F;
 use octomusui::units::{IntoPixels, Lines, Pixels};
 use octomusui::{AppContext, WindowId};
+pub use view::{Event, TerminalView};
 mod block_list_settings;
 
 mod alias;
@@ -75,11 +75,11 @@ pub mod shared_session;
 mod shell_launch_state;
 pub mod universal_developer_input;
 
+pub mod octomusify;
 pub mod ssh;
 pub mod terminal_manager;
 mod terminal_size_element;
 pub mod view;
-pub mod octomusify;
 mod waterfall_gap_element;
 mod writeable_pty;
 #[cfg(windows)]

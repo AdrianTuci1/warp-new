@@ -10,7 +10,6 @@ use ai::agent::action::{RunAgentsAgentRunConfig, RunAgentsExecutionMode, RunAgen
 use ai::agent::action_result::{RunAgentsAgentOutcomeKind, RunAgentsResult};
 use ai::agent::orchestration_config::{OrchestrationConfig, OrchestrationConfigStatus};
 use ai::skills::SkillReference;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::send_telemetry_from_ctx;
 use octomusui::elements::{
     Border, ChildAnchor, ChildView, Container, CornerRadius, CrossAxisAlignment, Empty, Flex,
@@ -22,6 +21,7 @@ use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::{icons, AIAgentActionId, AIAgentActionResultType};
@@ -521,8 +521,9 @@ impl RunAgentsCardView {
             }
         }
         if new_state.orch.model_id.is_empty() {
-            let harness =
-                octomus_cli::agent::Harness::parse_orchestration_harness(&new_state.orch.harness_type);
+            let harness = octomus_cli::agent::Harness::parse_orchestration_harness(
+                &new_state.orch.harness_type,
+            );
             if matches!(harness, Some(octomus_cli::agent::Harness::Oz) | None) {
                 if let Some(base) = self.block_model.base_model(ctx).map(|id| id.to_string()) {
                     new_state.orch.model_id = base;

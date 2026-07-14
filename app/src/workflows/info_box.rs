@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::ops::Range;
 
-use string_offset::CharOffset;
 use octomus_core::features::FeatureFlag;
 use octomus_core::settings::Setting;
 use octomusui::color::ColorU;
@@ -22,6 +21,7 @@ use octomusui::{
     AppContext, Element, Entity, EventContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use string_offset::CharOffset;
 
 use super::command_parser::{
     compute_workflow_display_data, WorkflowArgumentIndex, WorkflowDisplayData,

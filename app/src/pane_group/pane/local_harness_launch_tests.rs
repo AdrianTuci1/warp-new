@@ -2,8 +2,8 @@ use std::ffi::OsString;
 use std::fs;
 use std::sync::Arc;
 
-use tempfile::TempDir;
 use octomus_cli::agent::Harness;
+use tempfile::TempDir;
 
 use super::{
     build_local_claude_child_command, build_local_codex_child_command,

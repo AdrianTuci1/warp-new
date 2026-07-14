@@ -2,7 +2,6 @@ use std::collections::HashMap;
 use std::default::Default;
 use std::sync::Arc;
 
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::send_telemetry_from_ctx;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::elements::{
@@ -15,6 +14,7 @@ use octomusui::ui_components::components::{Coords, UiComponentStyles};
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::agent::SuggestedAgentModeWorkflow;
 use crate::modal::{Modal, ModalEvent};

@@ -1,12 +1,12 @@
 use std::sync::Arc;
 
 use ai::agent::action::{AIAgentActionType, ShellCommandDelay};
-use parking_lot::FairMutex;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::elements::{CornerRadius, Radius};
 use octomusui::{
     AppContext, Element, Entity, EntityId, ModelHandle, SingletonEntity, View, ViewContext,
 };
+use parking_lot::FairMutex;
 
 use crate::ai::agent::icons;
 use crate::ai::blocklist::block::cli_controller::LongRunningCommandControlState;

@@ -3,12 +3,12 @@ use std::sync::atomic::{AtomicBool, Ordering};
 
 use anyhow::anyhow;
 use chrono::{DateTime, Duration, Utc};
-use parking_lot::RwLock;
-use uuid::Uuid;
 use octomus_core::channel::{Channel, ChannelState};
 use octomus_core::report_error;
-use warp_graphql::object_permissions::OwnerType;
 use octomusui_core::{AppContext, Entity, SingletonEntity};
+use parking_lot::RwLock;
+use uuid::Uuid;
+use warp_graphql::object_permissions::OwnerType;
 
 use super::anonymous_id::get_or_create_anonymous_id;
 use super::credentials::Credentials;

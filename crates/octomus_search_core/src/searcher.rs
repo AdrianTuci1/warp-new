@@ -10,6 +10,8 @@ use anyhow::Context;
 use futures::FutureExt as _;
 use instant::Instant;
 use itertools::Itertools;
+use octomusui_core::r#async::executor::Background;
+use octomusui_core::r#async::{Timer, block_on};
 use parking_lot::{Mutex, RwLock};
 use sha2::{Digest, Sha256};
 use string_offset::ByteOffset;
@@ -25,8 +27,6 @@ use tantivy::schema::{
 use tantivy::snippet::SnippetGenerator;
 use tantivy::tokenizer::{Token, TokenStream, Tokenizer};
 use tantivy::{Index, IndexReader, IndexWriter, ReloadPolicy, TantivyDocument, Term};
-use octomusui_core::r#async::executor::Background;
-use octomusui_core::r#async::{Timer, block_on};
 
 pub type FullTextSearchDocumentEntry = HashMap<String, FullTextSearchFieldValue>;
 

@@ -1,10 +1,6 @@
 use std::borrow::Cow;
 
 use indexmap::IndexMap;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use string_offset::CharOffset;
-use vec1::vec1;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::color::blend::Blend;
 use octomus_core::ui::theme::color::internal_colors::{
@@ -12,7 +8,6 @@ use octomus_core::ui::theme::color::internal_colors::{
     text_sub,
 };
 use octomus_core::ui::theme::Fill;
-use warp_editor::model::CoreEditorModel;
 use octomusui::clipboard::ClipboardContent;
 use octomusui::elements::new_scrollable::{NewScrollable, ScrollableAppearance, SingleAxisConfig};
 use octomusui::elements::resizable::{
@@ -34,6 +29,11 @@ use octomusui::{
     AppContext, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use string_offset::CharOffset;
+use vec1::vec1;
+use warp_editor::model::CoreEditorModel;
 
 use crate::ai::AIRequestUsageModel;
 use crate::appearance::Appearance;

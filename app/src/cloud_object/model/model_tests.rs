@@ -5,9 +5,9 @@ use chrono::Utc;
 use cloud_object_client::MockObjectClient;
 use lazy_static::lazy_static;
 use mockall::Sequence;
+use octomusui::{App, ModelHandle};
 use rand::Rng;
 use settings::{RespectUserSyncSetting, SyncToCloud};
-use octomusui::{App, ModelHandle};
 
 use super::*;
 use crate::auth::auth_manager::AuthManager;

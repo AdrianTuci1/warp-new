@@ -2,7 +2,6 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use anyhow::{Context, Result};
-use serde::Serialize;
 use octomus_cli::agent::OutputFormat;
 use octomus_cli::artifact::{
     ArtifactCommand, DownloadArtifactArgs, GetArtifactArgs, UploadArtifactArgs,
@@ -10,6 +9,7 @@ use octomus_cli::artifact::{
 use octomus_cli::GlobalOptions;
 use octomusui::platform::TerminationMode;
 use octomusui::{AppContext, ModelContext, SingletonEntity};
+use serde::Serialize;
 
 use super::artifact_upload::{
     CompletedFileArtifactUpload, FileArtifactUploadRequest, FileArtifactUploader,

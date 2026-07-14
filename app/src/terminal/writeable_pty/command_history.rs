@@ -1,8 +1,8 @@
 use std::sync::mpsc::SyncSender;
 use std::sync::Arc;
 
-use parking_lot::FairMutex;
 use octomusui::{AppContext, ModelHandle, SingletonEntity};
+use parking_lot::FairMutex;
 
 use crate::persistence::{ModelEvent, StartedCommandMetadata};
 use crate::terminal::model::session::Sessions;

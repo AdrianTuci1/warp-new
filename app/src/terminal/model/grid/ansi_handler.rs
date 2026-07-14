@@ -14,16 +14,16 @@ use std::sync::Arc;
 
 use base64::Engine as _;
 use bounded_vec_deque::BoundedVecDeque;
-use pathfinder_geometry::vector::Vector2F;
-use rand::Rng;
-use tab_stops::TabStops;
-use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 use octomus_core::channel::ChannelState;
 use octomus_core::features::FeatureFlag;
 use octomus_terminal::model::ansi::CharsetIndex;
 use octomus_terminal::model::grid::cell;
 use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
 use octomusui::image_cache::{resize_dimensions, FitType};
+use pathfinder_geometry::vector::Vector2F;
+use rand::Rng;
+use tab_stops::TabStops;
+use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
 use super::{AbsolutePoint, FullGridClearBehavior, GridHandler, PerformResetGridChecks, TermMode};
 use crate::server::telemetry::ImageProtocol;

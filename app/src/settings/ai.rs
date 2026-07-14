@@ -12,6 +12,11 @@ pub use cloud_object_models::{
     DEFAULT_COMMAND_EXECUTION_DENYLIST,
 };
 use indexmap::IndexMap;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomus_core::features::FeatureFlag;
+use octomusui::platform::keyboard::KeyCode;
+use octomusui::platform::OperatingSystem;
+use octomusui::{AppContext, Entity, ModelContext, SingletonEntity, UpdateModel};
 use regex::Regex;
 use serde::de::Deserializer;
 use serde::{Deserialize, Serialize};
@@ -20,11 +25,6 @@ use settings::{
 };
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use octomus_core::execution_mode::AppExecutionMode;
-use octomus_core::features::FeatureFlag;
-use octomusui::platform::keyboard::KeyCode;
-use octomusui::platform::OperatingSystem;
-use octomusui::{AppContext, Entity, ModelContext, SingletonEntity, UpdateModel};
 
 use crate::ai::request_usage_model::RequestLimitInfo;
 use crate::auth::AuthStateProvider;

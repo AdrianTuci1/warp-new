@@ -1,6 +1,6 @@
+use octomusui::{EntityId, WindowId};
 use serde_yaml::{Mapping, Value};
 use warp_editor::content::markdown::MarkdownStyle;
-use octomusui::{EntityId, WindowId};
 
 use super::{
     comment_embedded_item_conversion, EmbeddedCommentSpace, EmbeddedItem as _,

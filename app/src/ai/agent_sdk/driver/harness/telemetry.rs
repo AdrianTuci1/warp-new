@@ -1,6 +1,6 @@
+use octomus_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 use serde_json::{json, Value};
 use strum_macros::{EnumDiscriminants, EnumIter};
-use octomus_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 
 /// Telemetry events emitted by the third-party harness runtime layer.
 #[derive(Debug, EnumDiscriminants)]

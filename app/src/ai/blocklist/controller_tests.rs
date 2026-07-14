@@ -1,5 +1,5 @@
-use uuid::Uuid;
 use octomusui::{App, SingletonEntity};
+use uuid::Uuid;
 
 use crate::ai::agent::PassiveSuggestionTrigger;
 use crate::ai::ambient_agents::AmbientAgentTaskId;

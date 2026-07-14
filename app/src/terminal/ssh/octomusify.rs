@@ -11,9 +11,9 @@ use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, V
 
 use crate::ai::blocklist::inline_action::requested_action::RenderableAction;
 use crate::appearance::Appearance;
-use crate::terminal::shell::ShellType;
 use crate::terminal::octomusify;
 use crate::terminal::octomusify::render::SSH_DOCS_URL;
+use crate::terminal::shell::ShellType;
 use crate::ui_components::icons::Icon as UiIcon;
 
 #[derive(Debug, Clone)]
@@ -83,12 +83,17 @@ pub fn octomusify_description(
         ),
         FormattedTextFragment::hyperlink("Learn more", SSH_DOCS_URL),
     ])]);
-    octomusify::render::build_description_row(description, theme, appearance, hyperlink_index.clone())
-        .with_hyperlink_font_color(appearance.theme().accent().into_solid())
-        .register_default_click_handlers(|url, _, ctx| {
-            ctx.open_url(&url.url);
-        })
-        .finish()
+    octomusify::render::build_description_row(
+        description,
+        theme,
+        appearance,
+        hyperlink_index.clone(),
+    )
+    .with_hyperlink_font_color(appearance.theme().accent().into_solid())
+    .register_default_click_handlers(|url, _, ctx| {
+        ctx.open_url(&url.url);
+    })
+    .finish()
 }
 
 impl View for SshOctomusifyBlock {

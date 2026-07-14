@@ -1,4 +1,3 @@
-use pathfinder_color::ColorU;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, MouseStateHandle,
@@ -10,6 +9,7 @@ use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::ui_components::text_input::TextInput;
 use octomusui::{Action, AppContext, Element, SingletonEntity, ViewHandle};
+use pathfinder_color::ColorU;
 
 use crate::appearance::Appearance;
 use crate::editor::EditorView;

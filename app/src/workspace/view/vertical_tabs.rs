@@ -6,10 +6,6 @@ use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 
 use languages::language_by_local_filename;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use settings::Setting as _;
 use octomus_core::context_flag::ContextFlag;
 use octomus_core::telemetry::TelemetryEvent as _;
 use octomus_core::ui::color::blend::Blend;
@@ -34,6 +30,10 @@ use octomusui::text_layout::ClipConfig;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::ui_components::text_input::TextInput;
 use octomusui::{AppContext, EntityId, SingletonEntity, ViewHandle, WindowId};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use settings::Setting as _;
 
 use crate::ai::agent::conversation::{ConversationStatus, StatusColorStyle};
 use crate::ai::agent_management::AgentNotificationsModel;
@@ -2326,10 +2326,14 @@ fn render_group_action_buttons(
 
     let kebab_button = Hoverable::new(kebab_mouse_state, move |button_state| {
         let mut container = Container::new(
-            ConstrainedBox::new(WarpIcon::DotsVertical.to_octomusui_icon(meta_color).finish())
-                .with_width(GROUP_ACTION_BUTTON_ICON_SIZE)
-                .with_height(GROUP_ACTION_BUTTON_ICON_SIZE)
-                .finish(),
+            ConstrainedBox::new(
+                WarpIcon::DotsVertical
+                    .to_octomusui_icon(meta_color)
+                    .finish(),
+            )
+            .with_width(GROUP_ACTION_BUTTON_ICON_SIZE)
+            .with_height(GROUP_ACTION_BUTTON_ICON_SIZE)
+            .finish(),
         )
         .with_padding(Padding::uniform(GROUP_ACTION_BUTTON_PADDING))
         .with_corner_radius(CornerRadius::with_all(Radius::Pixels(4.)));
@@ -6418,7 +6422,9 @@ fn render_detail_section(
         | TypedPane::Workflow { .. }
         | TypedPane::EnvVarCollection
         | TypedPane::AIFact
-        | TypedPane::AIDocument => render_octomus_drive_object_detail_section(props, appearance, app),
+        | TypedPane::AIDocument => {
+            render_octomus_drive_object_detail_section(props, appearance, app)
+        }
         TypedPane::CodeDiff
         | TypedPane::File
         | TypedPane::Settings

@@ -3,8 +3,8 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use parking_lot::FairMutex;
 use octomusui::{App, EntityId};
+use parking_lot::FairMutex;
 
 use super::{
     is_query_refinement, AbsoluteMatch, AsyncFindConfig, AsyncFindController, AsyncFindStatus,

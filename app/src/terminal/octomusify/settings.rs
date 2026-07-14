@@ -1,13 +1,13 @@
 use anyhow::Result;
 use lazy_static::lazy_static;
+use octomus_util::path::ShellFamily;
+use octomusui::{AppContext, Entity, ModelContext, SingletonEntity};
 use regex::Regex;
 use settings::macros::{maybe_define_setting, register_settings_events};
 use settings::{
     ChangeEventReason, RespectUserSyncSetting, Setting, SupportedPlatforms, SyncToCloud,
 };
 use strum_macros::EnumIter;
-use octomus_util::path::ShellFamily;
-use octomusui::{AppContext, Entity, ModelContext, SingletonEntity};
 
 use crate::terminal::ssh::util::{parse_interactive_ssh_command, SshOctomusifyCommand};
 

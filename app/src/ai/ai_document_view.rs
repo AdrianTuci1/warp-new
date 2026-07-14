@@ -2,7 +2,6 @@
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::icons;
 use octomus_core::ui::icons::ICON_DIMENSIONS;
 use octomus_core::ui::theme::Fill as ThemeFill;
@@ -20,6 +19,7 @@ use octomusui::{
     id, AppContext, Element, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::blocklist::agent_view::AgentViewEntryOrigin;
@@ -1254,9 +1254,9 @@ impl TypedActionView for AIDocumentView {
                     AIDocumentModel::as_ref(ctx).get_current_document(&self.document_id)
                 {
                     if let Some(sync_id) = document.sync_id {
-                        ctx.emit(AIDocumentEvent::ViewInOctomusDrive(OctomusDriveItemId::Object(
-                            CloudObjectTypeAndId::Notebook(sync_id),
-                        )));
+                        ctx.emit(AIDocumentEvent::ViewInOctomusDrive(
+                            OctomusDriveItemId::Object(CloudObjectTypeAndId::Notebook(sync_id)),
+                        ));
                     }
                 }
             }
@@ -1303,8 +1303,8 @@ impl BackingView for AIDocumentView {
         let mut menu_items = vec![];
 
         // Only show shareable link when the document is synced to Octomus Drive
-        if let Some(link) =
-            AIDocumentModel::as_ref(ctx).get_document_octomus_drive_object_link(&self.document_id, ctx)
+        if let Some(link) = AIDocumentModel::as_ref(ctx)
+            .get_document_octomus_drive_object_link(&self.document_id, ctx)
         {
             menu_items.push(
                 MenuItemFields::new("Copy link")

@@ -10,8 +10,8 @@ use std::sync::Arc;
 use ignore::gitignore::Gitignore;
 #[cfg(feature = "local_fs")]
 use notify_debouncer_full::notify::WatchFilter;
-use thiserror::Error;
 use octomus_util::standardized_path::StandardizedPath;
+use thiserror::Error;
 
 /// Maximum file size allowed for treesitter parsing (3MB).
 const MAX_FILE_SIZE: usize = 3 * 1000 * 1000;

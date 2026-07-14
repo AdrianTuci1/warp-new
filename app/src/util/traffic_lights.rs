@@ -11,12 +11,12 @@ pub mod windows;
 mod linux_only {
     pub(super) use std::sync::Arc;
 
-    pub(super) use pathfinder_color::ColorU;
-    pub(super) use pathfinder_geometry::vector::vec2f;
     pub(super) use octomusui::elements::{
         Align, Border, ChildAnchor, ConstrainedBox, Container, CornerRadius, Flex, Hoverable, Icon,
         OffsetPositioning, ParentAnchor, ParentElement, ParentOffsetBounds, Radius, Rect, Stack,
     };
+    pub(super) use pathfinder_color::ColorU;
+    pub(super) use pathfinder_geometry::vector::vec2f;
 
     pub(super) use crate::workspace::TOTAL_TAB_BAR_HEIGHT;
 }
@@ -26,13 +26,13 @@ use linux_only::*;
 
 #[cfg(target_os = "windows")]
 mod windows_only {
-    pub(super) use pathfinder_color::ColorU;
-    pub(super) use pathfinder_geometry::vector::vec2f;
     pub(super) use octomus_core::ui::theme;
     pub(super) use octomusui::elements::{
         Align, Border, ChildAnchor, ConstrainedBox, Container, CornerRadius, Hoverable,
         OffsetPositioning, ParentAnchor, ParentOffsetBounds, Radius, Rect, Stack,
     };
+    pub(super) use pathfinder_color::ColorU;
+    pub(super) use pathfinder_geometry::vector::vec2f;
 
     pub(super) use crate::ui_components::icons::Icon as IconComponent;
     pub(super) const WINDOWS_BRIGHT_RED: ColorU = ColorU {

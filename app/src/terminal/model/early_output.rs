@@ -1,9 +1,9 @@
 use std::collections::VecDeque;
 use std::mem;
 
+use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
 use pathfinder_color::ColorU;
 use string_offset::CharOffset;
-use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
 
 use super::ansi;
 use super::block::Block;

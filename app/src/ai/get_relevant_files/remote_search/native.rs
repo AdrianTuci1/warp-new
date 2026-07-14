@@ -12,12 +12,12 @@ use ::ai::index::full_source_code_embedding::{
 };
 use ::ai::index::locations::CodeContextLocation;
 use itertools::Itertools;
+use octomusui::{AppContext, ModelContext, SingletonEntity};
 use remote_server::proto::{
     file_context_proto, FragmentMetadata as ProtoFragmentMetadata, LineRange, ReadFileContextFile,
     ReadFileContextRequest, ReadFileContextResponse,
 };
 use string_offset::ByteOffset;
-use octomusui::{AppContext, ModelContext, SingletonEntity};
 
 use crate::ai::agent::{
     AnyFileContent, FileContext, SearchCodebaseFailureReason, SearchCodebaseResult,

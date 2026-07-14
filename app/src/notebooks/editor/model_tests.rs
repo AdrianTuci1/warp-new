@@ -9,16 +9,7 @@ use markdown_parser::markdown_parser::RUNNABLE_BLOCK_MARKDOWN_LANG;
 use markdown_parser::{
     parse_markdown, CodeBlockText, FormattedText, FormattedTextFragment, FormattedTextLine,
 };
-use pathfinder_geometry::vector::Vector2F;
-use string_offset::CharOffset;
-use vec1::vec1;
 use octomus_core::features::FeatureFlag;
-use warp_editor::content::buffer::{AutoScrollBehavior, BufferSelectAction, SelectionOffsets};
-use warp_editor::content::text::{BlockType, BufferBlockStyle, CodeBlockType, TextStyles};
-use warp_editor::model::{CoreEditorModel, RichTextEditorModel};
-use warp_editor::render::model::viewport::SizeInfo;
-use warp_editor::render::model::{BlockItem, RenderEvent};
-use warp_editor::selection::{TextDirection, TextUnit};
 use octomusui::elements::ListIndentLevel;
 use octomusui::platform::WindowStyle;
 use octomusui::presenter::ChildView;
@@ -28,6 +19,15 @@ use octomusui::{
     AddSingletonModel, App, AppContext, Element, Entity, ModelHandle, SingletonEntity,
     TypedActionView, View, ViewHandle,
 };
+use pathfinder_geometry::vector::Vector2F;
+use string_offset::CharOffset;
+use vec1::vec1;
+use warp_editor::content::buffer::{AutoScrollBehavior, BufferSelectAction, SelectionOffsets};
+use warp_editor::content::text::{BlockType, BufferBlockStyle, CodeBlockType, TextStyles};
+use warp_editor::model::{CoreEditorModel, RichTextEditorModel};
+use warp_editor::render::model::viewport::SizeInfo;
+use warp_editor::render::model::{BlockItem, RenderEvent};
+use warp_editor::selection::{TextDirection, TextUnit};
 
 use super::super::rich_text_styles;
 use super::NotebooksEditorModel;

@@ -19,11 +19,11 @@ use mio::unix::SourceFd;
 use mio::Interest;
 use nix::pty::openpty;
 use nix::sys::termios::{self, InputFlags, SetArg};
-use serde::{Deserialize, Serialize};
-use signal_hook_mio::v1_0::Signals;
 use octomus_core::channel::ChannelState;
 use octomus_core::features::FeatureFlag;
 use octomusui::{AppContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
+use signal_hook_mio::v1_0::Signals;
 
 use super::event_loop::{PTY_TOKEN, SIGNALS_TOKEN};
 use super::spawner::{PtyHandle, PtySpawnInfo, PtySpawner};

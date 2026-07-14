@@ -6,8 +6,6 @@ use std::collections::HashMap;
 
 use markdown_parser::{parse_markdown, FormattedText, FormattedTextLine};
 // Re-export slide types for convenience
-pub use oz_launch::OzLaunchSlide;
-use pathfinder_color::ColorU;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::Fill;
 use octomusui::assets::asset_cache::AssetSource;
@@ -26,6 +24,8 @@ use octomusui::ui_components::components::UiComponent;
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+pub use oz_launch::OzLaunchSlide;
+use pathfinder_color::ColorU;
 
 use crate::settings::PrivacySettings;
 use crate::ui_components::blended_colors;

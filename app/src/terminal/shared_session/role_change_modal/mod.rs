@@ -1,8 +1,8 @@
-use session_sharing_protocol::common::{ParticipantId, Role, RoleRequestId};
 use octomusui::elements::Empty;
 use octomusui::presenter::ChildView;
 use octomusui::ui_components::components::{Coords, UiComponentStyles};
 use octomusui::{AppContext, Element, Entity, View, ViewContext, ViewHandle};
+use session_sharing_protocol::common::{ParticipantId, Role, RoleRequestId};
 
 use crate::modal::Modal;
 use crate::pane_group::TerminalPaneId;

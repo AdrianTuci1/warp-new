@@ -1,4 +1,3 @@
-use pathfinder_color::ColorU;
 use octomusui_core::elements::{
     Align, Border, ConstrainedBox, Container, CornerRadius, Hoverable, Icon, ListIndentLevel,
     MouseStateHandle, Radius, Rect,
@@ -6,6 +5,7 @@ use octomusui_core::elements::{
 use octomusui_core::geometry::vector::vec2f;
 use octomusui_core::platform::Cursor;
 use octomusui_core::{AppContext, Element, SizeConstraint, WeakViewHandle};
+use pathfinder_color::ColorU;
 
 use super::paint::RenderContext;
 use super::placeholder::{self, BlockPlaceholder};

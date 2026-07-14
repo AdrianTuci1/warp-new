@@ -1,4 +1,3 @@
-use pathfinder_color::ColorU;
 use octomus_core::channel::ChannelState;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::Appearance;
@@ -15,6 +14,7 @@ use octomusui::ui_components::button::ButtonVariant;
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::ui_components::switch::SwitchStateHandle;
 use octomusui::{Action, AppContext, Element, SingletonEntity as _};
+use pathfinder_color::ColorU;
 
 use crate::settings::PrivacySettings;
 use crate::themes::theme::ThemeKind;

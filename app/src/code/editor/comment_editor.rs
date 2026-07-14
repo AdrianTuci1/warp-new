@@ -1,10 +1,7 @@
 use std::cell::RefCell;
 
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::Vector2F;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::Fill;
-use warp_editor::render::element::VerticalExpansionBehavior;
 use octomusui::elements::{
     Border, ChildView, Clipped, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex,
     MainAxisAlignment, MainAxisSize, ParentElement, Radius, Shrinkable, Text,
@@ -16,6 +13,9 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::Vector2F;
+use warp_editor::render::element::VerticalExpansionBehavior;
 
 use crate::code::editor::comments::{EditorCommentsModel, PendingCommentEvent};
 use crate::code::editor::line::EditorLineLocation;

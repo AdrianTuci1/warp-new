@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
-use string_offset::CharOffset;
-use warp_editor::model::CoreEditorModel;
 use octomusui::integration::TestStep;
 use octomusui::windowing::WindowManager;
 use octomusui::{async_assert, App, SingletonEntity, ViewHandle, WindowId};
+use string_offset::CharOffset;
+use warp_editor::model::CoreEditorModel;
 
 use crate::cloud_object::model::persistence::CloudModel;
 use crate::cloud_object::{CloudObjectEventEntrypoint, Space};

@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-use settings::Setting as _;
 use octomus::integration_testing::step::new_step_with_default_assertions;
 use octomus::integration_testing::subshell::util::ssh_command;
 use octomus::integration_testing::subshell::{
@@ -12,12 +11,13 @@ use octomus::integration_testing::terminal::util::current_shell_starter_and_vers
 use octomus::integration_testing::terminal::wait_until_bootstrapped_single_pane_for_tab;
 use octomus::integration_testing::view_getters::single_input_view_for_tab;
 use octomus::root_view::SubshellCommandArg;
-use octomus::terminal::shell::ShellType;
 use octomus::terminal::octomusify::settings::AddedSubshellCommands;
+use octomus::terminal::shell::ShellType;
 use octomusui_core::integration::{AssertionOutcome, TestStep};
 use octomusui_core::windowing::state::ApplicationStage;
 use octomusui_core::windowing::WindowManager;
 use octomusui_core::{async_assert, UpdateModel};
+use settings::Setting as _;
 
 use super::{new_builder, Builder};
 use crate::util::skip_if_powershell_core_2303;

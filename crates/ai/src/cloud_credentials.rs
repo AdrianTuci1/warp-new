@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
 use octomusui_core::{Entity, ModelContext, SingletonEntity};
 use octomusui_extras::secure_storage::{self, AppContextExt};
+use serde::{Deserialize, Serialize};
 
 const SECURE_STORAGE_KEY: &str = "CloudCredentials";
 

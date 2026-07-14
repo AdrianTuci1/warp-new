@@ -18,9 +18,6 @@ use lsp::LspEvent;
 #[cfg(feature = "local_fs")]
 use lsp::{LspManagerModel, LspServerConfig};
 #[cfg(feature = "local_fs")]
-use repo_metadata::repositories::{DetectedRepositories, DetectedRepositoriesEvent};
-use serde::{Deserialize, Serialize};
-#[cfg(feature = "local_fs")]
 use octomus_core::channel::ChannelState;
 use octomus_core::features::FeatureFlag;
 #[cfg(feature = "local_fs")]
@@ -28,6 +25,9 @@ use octomus_util::local_or_remote_path::LocalOrRemotePath;
 #[cfg(feature = "local_fs")]
 use octomusui::windowing::WindowManager;
 use octomusui::{AppContext, Entity, ModelContext, SingletonEntity};
+#[cfg(feature = "local_fs")]
+use repo_metadata::repositories::{DetectedRepositories, DetectedRepositoriesEvent};
+use serde::{Deserialize, Serialize};
 
 use crate::ai::blocklist::{BlocklistAIHistoryEvent, BlocklistAIHistoryModel};
 #[cfg(feature = "local_fs")]

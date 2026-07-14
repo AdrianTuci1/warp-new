@@ -4,11 +4,11 @@ use anyhow::Result;
 use futures::StreamExt as _;
 use instant::Instant;
 use num_traits::SaturatingSub;
-use regex::escape;
-use string_offset::ByteOffset;
 use octomus_ripgrep::search::{Match as RipgrepMatch, Submatch};
 use octomusui::r#async::SpawnedFutureHandle;
 use octomusui::{Entity, ModelContext, ModelSpawner};
+use regex::escape;
+use string_offset::ByteOffset;
 
 use crate::workspace::view::global_search::view::GlobalSearchEvent;
 use crate::workspace::view::global_search::SearchConfig;
@@ -105,7 +105,9 @@ impl GlobalSearch {
                     });
                 }
                 Err(err) => {
-                    log::error!("GlobalSearch: octomus_ripgrep CLI search failed or aborted: {err}");
+                    log::error!(
+                        "GlobalSearch: octomus_ripgrep CLI search failed or aborted: {err}"
+                    );
                     ctx.emit(GlobalSearchEvent::Failed {
                         search_id,
                         error: "Global search failed.".to_string(),

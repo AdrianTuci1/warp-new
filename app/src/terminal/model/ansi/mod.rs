@@ -28,10 +28,10 @@ use instant::Instant;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use log::debug;
-use vte::{Params, Parser as VteParser, Perform as VtePerform};
 pub use octomus_terminal::model::ansi::control_sequence_parameters::*;
 use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
 use octomusui::color::ColorU;
+use vte::{Params, Parser as VteParser, Perform as VtePerform};
 
 use super::kitty::parse_kitty_chunk;
 use super::terminal_model::TmuxInstallationState;
@@ -1147,7 +1147,9 @@ where
             // Received a Octomus OSC used for in-band generators.
             WARP_IN_BAND_GENERATOR_OSC_MARKER => match params.get(1) {
                 Some(&WARP_IN_BAND_GENERATOR_START_BYTE) => {
-                    log::info!("Received a Octomus OSC marker for starting in-band command output.");
+                    log::info!(
+                        "Received a Octomus OSC marker for starting in-band command output."
+                    );
                     self.handler.start_in_band_command_output();
                 }
                 Some(&WARP_IN_BAND_GENERATOR_END_BYTE) => {
@@ -1222,7 +1224,9 @@ where
                         .map(|osc_data| String::from_utf8_lossy(osc_data))
                         .and_then(|format| CompletionsShellData::from_format_type(&format))
                     else {
-                        log::warn!("Octomus start completions OSC marker contained invalid format.");
+                        log::warn!(
+                            "Octomus start completions OSC marker contained invalid format."
+                        );
                         return;
                     };
                     self.handler.start_completions_output(format);

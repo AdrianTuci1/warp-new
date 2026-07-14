@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
-use settings::macros::define_settings_group;
-use settings::{RespectUserSyncSetting, SupportedPlatforms, SyncToCloud};
 use octomus_core::features::FeatureFlag;
 use octomusui::units::Pixels;
 use octomusui::{AppContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
+use settings::macros::define_settings_group;
+use settings::{RespectUserSyncSetting, SupportedPlatforms, SyncToCloud};
 
 use crate::settings::{InputSettings, TerminalSpacing};
 

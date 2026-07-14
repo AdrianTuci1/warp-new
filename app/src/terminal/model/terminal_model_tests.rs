@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
 use chrono::{DateTime, Local};
-use vec1::vec1;
 use octomus_core::command::ExitCode;
 use octomus_terminal::model::ansi::ClearMode;
 use octomusui::r#async::executor::Background;
 use octomusui::text::{str_to_byte_vec, SelectionType};
+use vec1::vec1;
 
 use super::*;
 use crate::terminal::color;

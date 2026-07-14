@@ -1,13 +1,13 @@
 use anyhow::Error;
 use itertools::Itertools;
-use pathfinder_geometry::vector::vec2f;
-use settings::ToggleableSetting;
-use unindent::Unindent;
 use octomusui::color::ColorU;
 use octomusui::platform::WindowStyle;
 use octomusui::text_layout::TextFrame;
 use octomusui::windowing::WindowManager;
 use octomusui::{AddSingletonModel, App, UpdateModel, UpdateView};
+use pathfinder_geometry::vector::vec2f;
+use settings::ToggleableSetting;
+use unindent::Unindent;
 
 use super::*;
 use crate::auth::AuthStateProvider;

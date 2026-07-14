@@ -1,8 +1,8 @@
 use anyhow::{anyhow, Result};
-use url::Url;
-use uuid::Uuid;
 #[cfg(target_family = "wasm")]
 use octomus_core::context_flag::ContextFlag;
+use url::Url;
+use uuid::Uuid;
 
 #[cfg(target_family = "wasm")]
 use crate::uri::browser_url_handler::parse_current_url;

@@ -1,0 +1,39 @@
+[package]
+name = "octomus_vps_server"
+version = "0.1.0"
+edition = "2024"
+authors.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "octomus-vps-server"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+axum.workspace = true
+base64.workspace = true
+chacha20poly1305.workspace = true
+chrono.workspace = true
+clap = { workspace = true, features = ["derive", "env"] }
+directories.workspace = true
+hex.workspace = true
+http.workspace = true
+http_client.workspace = true
+log.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+sysinfo = "0.34.2"
+tokio.workspace = true
+tower.workspace = true
+tower-http = { workspace = true, features = ["trace", "cors"] }
+uuid = { workspace = true, features = ["v4", "serde"] }
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+command.workspace = true
+
+[dev-dependencies]
+tempfile = "3.8.0"

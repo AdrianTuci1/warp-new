@@ -4,10 +4,10 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use bytes::Bytes;
-use reqwest::Url;
 use octomusui_core::assets::asset_cache::{
     Asset, AssetCache, AssetSource, AssetState, AsyncAssetId, AsyncAssetType,
 };
+use reqwest::Url;
 
 /// Namespace marker for URL-based async asset sources without persistence.
 pub struct UrlAssetWithoutPersistence;

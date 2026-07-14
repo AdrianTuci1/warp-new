@@ -1,7 +1,5 @@
 use markdown_parser::markdown_parser::RUNNABLE_BLOCK_MARKDOWN_LANG;
 use markdown_parser::CodeBlockText;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::builder::AnimatedButtonOptions;
 use octomusui::clipboard::ClipboardContent;
 use octomusui::elements::{
@@ -19,6 +17,8 @@ use octomusui::{
     AppContext, BlurContext, Element, Entity, FocusContext, ModelHandle, SingletonEntity,
     TypedActionView, View, ViewContext, WeakViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use super::panel::{HEADER_HEIGHT, HEXAGON_ALERT_SVG_PATH};
 use super::requests::{RequestStatus, Requests};

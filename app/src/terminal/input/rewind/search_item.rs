@@ -2,7 +2,6 @@
 //! Renders two lines: query text and code changes summary.
 
 use fuzzy_match::FuzzyMatchResult;
-use ordered_float::OrderedFloat;
 use octomus_core::ui::color::coloru_with_opacity;
 use octomus_core::ui::theme::Fill;
 use octomus_core::ui::Icon;
@@ -13,6 +12,7 @@ use octomusui::fonts::{Properties, Weight};
 use octomusui::scene::{CornerRadius, Radius};
 use octomusui::text_layout::ClipConfig;
 use octomusui::{AppContext, Element, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::ai::agent::AIAgentExchangeId;
 use crate::appearance::Appearance;

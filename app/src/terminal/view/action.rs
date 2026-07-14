@@ -4,15 +4,15 @@ use std::path::PathBuf;
 
 use ai::skills::SkillReference;
 use command_corrections::Correction;
-pub use onboarding::OnboardingIntention;
-use pathfinder_geometry::vector::Vector2F;
-use session_sharing_protocol::common::Role;
-use session_sharing_protocol::sharer::RoleUpdateReason;
 use octomus_util::user_input::UserInput;
 use octomusui::elements::HyperlinkUrl;
 use octomusui::event::ModifiersState;
 use octomusui::units::Lines;
 use octomusui::EntityId;
+pub use onboarding::OnboardingIntention;
+use pathfinder_geometry::vector::Vector2F;
+use session_sharing_protocol::common::Role;
+use session_sharing_protocol::sharer::RoleUpdateReason;
 
 use super::inline_banner::{
     AnonymousUserLoginBannerAction, AwsBedrockLoginBannerAction, AwsCliNotInstalledBannerAction,

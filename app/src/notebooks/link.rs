@@ -7,10 +7,10 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use futures_util::future::Either;
-use url::Url;
 use octomus_util::path::{CleanPathResult, LineAndColumnArg};
 use octomusui::r#async::SpawnedFutureHandle;
 use octomusui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity, WindowId};
+use url::Url;
 
 use super::file::is_markdown_file;
 use crate::drive::OpenOctomusDriveObjectArgs;

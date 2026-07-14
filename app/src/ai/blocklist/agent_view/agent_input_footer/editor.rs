@@ -3,9 +3,9 @@
 //! Uses the shared [`ChipConfigurator`] with `LeftRightZones` layout to let users
 //! drag/drop chips between left, right, and unused banks.
 
-use settings::Setting as _;
 use octomusui::keymap::FixedBinding;
 use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use settings::Setting as _;
 
 use super::toolbar_item::AgentToolbarItemKind;
 use crate::chip_configurator::{

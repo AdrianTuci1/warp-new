@@ -1,10 +1,10 @@
 use std::collections::{HashMap, HashSet};
 
-use uuid::Uuid;
 use octomus_core::features::FeatureFlag;
 use octomus_core::send_telemetry_from_ctx;
-use warp_multi_agent_api as api;
 use octomusui::{Entity, ModelContext, SingletonEntity};
+use uuid::Uuid;
+use warp_multi_agent_api as api;
 
 use super::history_model::{
     BlocklistAIHistoryEvent, BlocklistAIHistoryModel, ConversationStatusUpdate,

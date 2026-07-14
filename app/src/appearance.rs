@@ -1,6 +1,8 @@
-use settings::Setting as _;
 use octomusui::fonts::FamilyId;
-use octomusui::{AddSingletonModel, AppContext, AssetProvider, Entity, ModelContext, SingletonEntity};
+use octomusui::{
+    AddSingletonModel, AppContext, AssetProvider, Entity, ModelContext, SingletonEntity,
+};
+use settings::Setting as _;
 
 #[cfg(target_os = "macos")]
 mod macos_app_icon {
@@ -360,7 +362,8 @@ fn get_or_load_font_family(font_name: &str, ctx: &mut AppContext) -> Option<Fami
     octomusui::fonts::Cache::handle(ctx).update(ctx, |font_cache, _| {
         match font_cache.get_or_load_system_font(font_name) {
             Ok(family) => {
-                let font_id = font_cache.select_font(family, octomusui::fonts::Properties::default());
+                let font_id =
+                    font_cache.select_font(family, octomusui::fonts::Properties::default());
 
                 // Validate that the font contains the `m` glyph since this is assumed in
                 // various parts of the code. We already do this when surfacing fonts in the font

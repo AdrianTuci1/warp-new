@@ -1,4 +1,3 @@
-use serde_json::json;
 use octomus_cli::agent::Harness;
 use octomus_cli::artifact::{
     ArtifactCommand, DownloadArtifactArgs, GetArtifactArgs, UploadArtifactArgs,
@@ -6,6 +5,7 @@ use octomus_cli::artifact::{
 use octomus_cli::task::{MessageCommand, MessageSendArgs, MessageWatchArgs, TaskCommand};
 use octomus_cli::CliCommand;
 use octomus_core::telemetry::TelemetryEvent;
+use serde_json::json;
 
 use super::{command_requires_auth, command_to_telemetry_event, reconcile_task_harness};
 

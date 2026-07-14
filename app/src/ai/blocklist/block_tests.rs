@@ -3,9 +3,9 @@ use std::path::PathBuf;
 use ai::agent::action::{RunAgentsAgentRunConfig, RunAgentsExecutionMode};
 use ai::agent::action_result::StartAgentVersion;
 use ai::skills::SkillReference;
-use settings::Setting;
 use octomus_util::local_or_remote_path::LocalOrRemotePath;
 use octomusui::{App, SingletonEntity};
+use settings::Setting;
 
 use super::{
     default_collapsible_state_for_orchestration_action, received_message_collapsible_id,

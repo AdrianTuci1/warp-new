@@ -1,6 +1,3 @@
-use pathfinder_geometry::vector::vec2f;
-use thousands::Separable;
-use uuid::Uuid;
 use octomus_core::features::FeatureFlag;
 use octomusui::elements::{
     ChildAnchor, ChildView, ConstrainedBox, Container, CrossAxisAlignment, Dismiss, Flex,
@@ -10,6 +7,9 @@ use octomusui::elements::{
 use octomusui::fonts::{Properties, Weight};
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, SingletonEntity, ViewHandle};
+use pathfinder_geometry::vector::vec2f;
+use thousands::Separable;
+use uuid::Uuid;
 
 use super::{ExecutionProfileEditorView, ExecutionProfileEditorViewAction};
 use crate::ai::blocklist::BlocklistAIPermissions;

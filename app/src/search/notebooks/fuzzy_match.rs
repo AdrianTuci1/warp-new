@@ -1,7 +1,7 @@
 use fuzzy_match::FuzzyMatchResult;
-use ordered_float::OrderedFloat;
 use octomusui::elements::{Highlight, Text};
 use octomusui::{AppContext, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::appearance::Appearance;
 use crate::cloud_object::CloudObject;

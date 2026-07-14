@@ -4,9 +4,9 @@ use std::sync::Arc;
 
 use itertools::Itertools;
 use lazy_static::lazy_static;
+use octomus_core::command::ExitCode;
 use pathfinder_color::ColorU;
 use serde::{Deserialize, Serialize};
-use octomus_core::command::ExitCode;
 use warp_graphql::ai::{
     RequestLimitInfo as RequestLimitInfoGraphql,
     RequestLimitRefreshDuration as RequestLimitRefreshDurationGraphql,

@@ -3,12 +3,8 @@ use std::borrow::Cow;
 use email_address::EmailAddress;
 use inheritance::{InheritanceDetails, InheritanceState};
 use itertools::Itertools;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use session_sharing_protocol::common::{Guest, PendingGuest, SessionId, TeamAclData};
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::Fill as ThemeFill;
-use warp_editor::editor::NavigationKey;
 use octomusui::clipboard::ClipboardContent;
 use octomusui::elements::{
     Align, Border, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius,
@@ -26,6 +22,10 @@ use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WeakViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use session_sharing_protocol::common::{Guest, PendingGuest, SessionId, TeamAclData};
+use warp_editor::editor::NavigationKey;
 
 use super::qr_code::{qr_matrix_for_url, qr_png_for_url, QrMatrix, QUIET_ZONE_MODULES};
 use super::{

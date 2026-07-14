@@ -2,8 +2,8 @@
 use std::io::Write;
 use std::path::PathBuf;
 
-use typed_path::TypedPath;
 use octomus_util::path::{convert_wsl_to_windows_host_path, WSLPathConversionError};
+use typed_path::TypedPath;
 
 use crate::terminal::shell::ShellType;
 

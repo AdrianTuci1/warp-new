@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
-use serde_json::{Value, json};
-use strum_macros::{EnumDiscriminants, EnumIter};
 use octomus_core::register_telemetry_event;
 use octomus_core::telemetry::{EnablementState, TelemetryEventDesc};
+use serde_json::{Value, json};
+use strum_macros::{EnumDiscriminants, EnumIter};
 
 #[derive(Clone, EnumDiscriminants)]
 #[strum_discriminants(derive(EnumIter))]

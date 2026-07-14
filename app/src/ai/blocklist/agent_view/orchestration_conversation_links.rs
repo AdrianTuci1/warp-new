@@ -1,5 +1,3 @@
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::Vector2F;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{
@@ -11,6 +9,8 @@ use octomusui::fonts::Weight::Bold;
 use octomusui::platform::Cursor;
 use octomusui::text_layout::ClipConfig;
 use octomusui::{AppContext, Element, EntityId, EventContext, SingletonEntity};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::Vector2F;
 
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::agent::conversation::{AIConversation, AIConversationId};
@@ -265,7 +265,9 @@ pub(crate) fn conversation_navigation_card_with_icon(
             Container::new(
                 ConstrainedBox::new(
                     Icon::ChevronRight
-                        .to_octomusui_icon(blended_colors::text_sub(theme, theme.background()).into())
+                        .to_octomusui_icon(
+                            blended_colors::text_sub(theme, theme.background()).into(),
+                        )
                         .finish(),
                 )
                 .with_height(20.)

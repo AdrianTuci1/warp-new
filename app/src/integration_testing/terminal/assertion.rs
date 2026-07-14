@@ -1,11 +1,11 @@
-use pathfinder_geometry::rect::RectF;
-use regex::Regex;
-use settings::Setting as _;
 use octomus_util::path::user_friendly_path;
 use octomusui::integration::{AssertionCallback, AssertionOutcome};
 use octomusui::units::Lines;
 use octomusui::windowing::WindowManager;
 use octomusui::{async_assert, async_assert_eq, App, SingletonEntity, ViewHandle, WindowId};
+use pathfinder_geometry::rect::RectF;
+use regex::Regex;
+use settings::Setting as _;
 
 use super::util::ExpectedOutput;
 use crate::ai::blocklist::agent_view::AgentViewState;

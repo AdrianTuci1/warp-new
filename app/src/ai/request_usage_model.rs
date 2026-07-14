@@ -3,11 +3,11 @@ use std::sync::Arc;
 use ai::api_keys::ApiKeyManager;
 use chrono::{DateTime, Local, Utc};
 use instant::Instant;
-use serde::{Deserialize, Serialize};
 use octomus_core::user_preferences::GetUserPreferences as _;
+use octomusui::{AppContext, Entity, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
 pub use warp_graphql::billing::BonusGrantType;
 use warp_graphql::scalars::time::ServerTimestamp;
-use octomusui::{AppContext, Entity, ModelContext, SingletonEntity};
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::AIAgentExchangeId;

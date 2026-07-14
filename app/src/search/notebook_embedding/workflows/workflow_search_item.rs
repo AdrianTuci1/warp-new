@@ -1,4 +1,3 @@
-use ordered_float::OrderedFloat;
 use octomusui::elements::{
     Clipped, ConstrainedBox, Container, CrossAxisAlignment, Flex, Highlight, MainAxisAlignment,
     MainAxisSize, ParentElement, Shrinkable, Text,
@@ -6,6 +5,7 @@ use octomusui::elements::{
 use octomusui::fonts::{Properties, Weight};
 use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use octomusui::{AppContext, Element, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::appearance::Appearance;
 use crate::cloud_object::CloudObject;

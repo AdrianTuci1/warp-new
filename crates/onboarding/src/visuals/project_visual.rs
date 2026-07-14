@@ -1,7 +1,7 @@
-use pathfinder_color::ColorU;
 use octomus_core::ui::Icon;
 use octomusui_core::elements::Align;
 use octomusui_core::Element;
+use pathfinder_color::ColorU;
 
 use super::onboarding_visual::{IconPct, OnboardingVisual, Pill, RectPct};
 

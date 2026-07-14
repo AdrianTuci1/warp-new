@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
 use octomus_core::features::FeatureFlag;
 use octomus_core::settings::Setting;
 use octomus_util::path::ShellFamily;
+use serde::{Deserialize, Serialize};
 
 use crate::terminal::octomusify::settings::OctomusifySettings;
 

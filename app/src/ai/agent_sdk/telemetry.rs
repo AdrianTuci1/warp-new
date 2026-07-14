@@ -1,6 +1,6 @@
+use octomus_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 use serde_json::{json, Value};
 use strum_macros::{EnumDiscriminants, EnumIter};
-use octomus_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 
 use crate::features::FeatureFlag;
 
@@ -330,7 +330,9 @@ impl TelemetryEventDesc for CliTelemetryEventDiscriminants {
             CliTelemetryEventDiscriminants::AgentCreate => "Created an agent from the Octomus CLI",
             CliTelemetryEventDiscriminants::AgentUpdate => "Updated an agent from the Octomus CLI",
             CliTelemetryEventDiscriminants::AgentDelete => "Deleted an agent from the Octomus CLI",
-            CliTelemetryEventDiscriminants::AgentSkills => "Listed agent skills from the Octomus CLI",
+            CliTelemetryEventDiscriminants::AgentSkills => {
+                "Listed agent skills from the Octomus CLI"
+            }
             CliTelemetryEventDiscriminants::EnvironmentList => {
                 "Listed cloud environments from the Octomus CLI"
             }
@@ -376,8 +378,12 @@ impl TelemetryEventDesc for CliTelemetryEventDiscriminants {
             }
             CliTelemetryEventDiscriminants::Login => "Logged in via the Octomus CLI",
             CliTelemetryEventDiscriminants::Logout => "Logged out via the Octomus CLI",
-            CliTelemetryEventDiscriminants::Whoami => "Printed current user info from the Octomus CLI",
-            CliTelemetryEventDiscriminants::ProviderSetup => "Set up a provider via the Octomus CLI",
+            CliTelemetryEventDiscriminants::Whoami => {
+                "Printed current user info from the Octomus CLI"
+            }
+            CliTelemetryEventDiscriminants::ProviderSetup => {
+                "Set up a provider via the Octomus CLI"
+            }
             CliTelemetryEventDiscriminants::ProviderList => "Listed providers from the Octomus CLI",
             CliTelemetryEventDiscriminants::IntegrationCreate => {
                 "Created an integration from the Octomus CLI"
@@ -398,8 +404,12 @@ impl TelemetryEventDesc for CliTelemetryEventDiscriminants {
                 "Downloaded an artifact from the Octomus CLI"
             }
             CliTelemetryEventDiscriminants::ApiKeyList => "Listed API keys from the Octomus CLI",
-            CliTelemetryEventDiscriminants::ApiKeyCreate => "Created an API key from the Octomus CLI",
-            CliTelemetryEventDiscriminants::ApiKeyExpire => "Expired an API key from the Octomus CLI",
+            CliTelemetryEventDiscriminants::ApiKeyCreate => {
+                "Created an API key from the Octomus CLI"
+            }
+            CliTelemetryEventDiscriminants::ApiKeyExpire => {
+                "Expired an API key from the Octomus CLI"
+            }
             CliTelemetryEventDiscriminants::ScheduleCreate => {
                 "Created a scheduled agent from the Octomus CLI"
             }

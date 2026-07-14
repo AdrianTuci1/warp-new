@@ -1,10 +1,10 @@
-use pathfinder_color::ColorU;
 use octomusui::elements::{
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Hoverable, Icon,
     MouseStateHandle, ParentElement, Radius, Text,
 };
 use octomusui::platform::Cursor;
 use octomusui::{Element, EventContext};
+use pathfinder_color::ColorU;
 
 use crate::appearance::Appearance;
 use crate::drive::cloud_object_styling::octomus_drive_icon_color;
@@ -123,7 +123,9 @@ impl FilterChipRenderer for QueryFilter {
                 .theme()
                 .main_text_color(appearance.theme().surface_2())
                 .into_solid(),
-            QueryFilter::Workflows => octomus_drive_icon_color(appearance, DriveObjectType::Workflow),
+            QueryFilter::Workflows => {
+                octomus_drive_icon_color(appearance, DriveObjectType::Workflow)
+            }
             QueryFilter::Notebooks => octomus_drive_icon_color(
                 appearance,
                 DriveObjectType::Notebook {

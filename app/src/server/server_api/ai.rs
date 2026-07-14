@@ -13,10 +13,10 @@ use cynic::{MutationBuilder, QueryBuilder};
 use itertools::Itertools;
 #[cfg(test)]
 use mockall::automock;
-use prost::Message;
 use octomus_core::channel::ChannelState;
 use octomus_core::features::FeatureFlag;
 use octomus_core::report_error;
+use prost::Message;
 use warp_graphql::ai::{AgentTaskState, PlatformErrorCode};
 use warp_graphql::client::Operation;
 use warp_graphql::mutations::confirm_file_artifact_upload::{

@@ -1,7 +1,7 @@
+use octomus_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use strum_macros::{EnumDiscriminants, EnumIter};
-use octomus_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
 
 /// Telemetry events for the onboarding flow.
 #[derive(Clone, Debug, Serialize, Deserialize, EnumDiscriminants)]

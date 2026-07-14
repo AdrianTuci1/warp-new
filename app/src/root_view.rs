@@ -7,20 +7,9 @@ use anyhow::Result;
 use cfg_if::cfg_if;
 use itertools::Itertools;
 use lazy_static::lazy_static;
-use onboarding::{
-    AgentOnboardingEvent, AgentOnboardingView, OnboardingIntention, SelectedSettings,
-};
-use parking_lot::Mutex;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use serde::{Deserialize, Serialize};
-use session_sharing_protocol::common::SessionId;
-use settings::Setting as _;
-use url::Url;
 use octomus_core::channel::Channel;
 use octomus_core::context_flag::ContextFlag;
 use octomus_core::user_preferences::GetUserPreferences as _;
-use warp_graphql::billing::StripeSubscriptionPlan;
 use octomusui::clipboard::ClipboardContent;
 use octomusui::elements::{
     Border, ChildAnchor, OffsetPositioning, ParentAnchor, ParentElement, ParentOffsetBounds, Stack,
@@ -35,6 +24,17 @@ use octomusui::{
     NextNewWindowsHasThisWindowsBoundsUponClose, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WindowId,
 };
+use onboarding::{
+    AgentOnboardingEvent, AgentOnboardingView, OnboardingIntention, SelectedSettings,
+};
+use parking_lot::Mutex;
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use serde::{Deserialize, Serialize};
+use session_sharing_protocol::common::SessionId;
+use settings::Setting as _;
+use url::Url;
+use warp_graphql::billing::StripeSubscriptionPlan;
 
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::blocklist::SerializedBlockListItem;
@@ -60,7 +60,9 @@ use crate::cloud_object::model::persistence::CloudModel;
 use crate::cloud_object::{GenericStringObjectFormat, JsonObjectType, ObjectType};
 use crate::drive::export::ExportManager;
 use crate::drive::items::OctomusDriveItemId;
-use crate::drive::{CloudObjectTypeAndId, OpenOctomusDriveObjectArgs, OpenOctomusDriveObjectSettings};
+use crate::drive::{
+    CloudObjectTypeAndId, OpenOctomusDriveObjectArgs, OpenOctomusDriveObjectSettings,
+};
 use crate::experiments::{BlockOnboarding, Experiment};
 use crate::features::FeatureFlag;
 use crate::interval_timer::IntervalTimer;
@@ -2581,11 +2583,12 @@ impl RootView {
                         return false;
                     }
 
-                    let item_id =
-                        OctomusDriveItemId::Object(CloudObjectTypeAndId::from_generic_string_object(
+                    let item_id = OctomusDriveItemId::Object(
+                        CloudObjectTypeAndId::from_generic_string_object(
                             GenericStringObjectFormat::Json(JsonObjectType::EnvVarCollection),
                             SyncId::ServerId(arg.server_id),
-                        ));
+                        ),
+                    );
 
                     handle.update(ctx, |workspace, ctx| {
                         let initialized_section_states =
@@ -3176,8 +3179,8 @@ impl RootView {
         key_code: &octomusui::platform::keyboard::KeyCode,
         ctx: &mut ViewContext<Self>,
     ) -> bool {
-        use voice_input::{VoiceInput, VoiceInputState, VoiceInputToggledFrom};
         use octomusui::event::KeyState;
+        use voice_input::{VoiceInput, VoiceInputState, VoiceInputToggledFrom};
 
         use crate::settings::AISettings;
 

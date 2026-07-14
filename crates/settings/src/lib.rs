@@ -59,11 +59,11 @@ pub const fn toml_path_hierarchy(path: &str) -> Option<&str> {
 }
 
 use anyhow::{Context, Result};
-use serde::Serialize;
-use serde::de::DeserializeOwned;
 use octomus_features::FeatureFlag;
 use octomusui_core::{AppContext, Entity, ModelContext};
 use octomusui_extras::user_preferences::UserPreferences;
+use serde::Serialize;
+use serde::de::DeserializeOwned;
 
 /// A newtype wrapper for the public preferences backend.
 ///

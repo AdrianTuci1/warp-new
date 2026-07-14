@@ -2,14 +2,6 @@
 //! like formatting and changing block types.
 
 use itertools::Itertools;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::Vector2F;
-use warp_editor::content::text::{
-    BlockType as ContentBlockType, BufferBlockStyle, BufferTextStyle, TextStyles,
-    TextStylesWithMetadata,
-};
-use warp_editor::model::RichTextEditorModel;
-use warp_editor::render::model::RenderState;
 use octomusui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
 use octomusui::elements::{
     AnchorPair, Border, ConstrainedBox, Container, CornerRadius, DropShadow, Flex, MainAxisSize,
@@ -22,6 +14,14 @@ use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, SizeConstraint, TypedActionView,
     View, ViewContext, ViewHandle,
 };
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::Vector2F;
+use warp_editor::content::text::{
+    BlockType as ContentBlockType, BufferBlockStyle, BufferTextStyle, TextStyles,
+    TextStylesWithMetadata,
+};
+use warp_editor::model::RichTextEditorModel;
+use warp_editor::render::model::RenderState;
 
 use super::model::{NotebooksEditorModel, RichTextEditorModelEvent};
 use super::view::EditorViewAction;

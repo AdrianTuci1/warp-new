@@ -76,12 +76,16 @@ fn init_overlapping_keybindings(app: &mut AppContext) {
     app.register_fixed_bindings([
         FixedBinding::new(
             escape_key,
-            TerminalAction::NotifySshErrorBlock(SshErrorBlockAction::ContinueWithoutOctomusification),
+            TerminalAction::NotifySshErrorBlock(
+                SshErrorBlockAction::ContinueWithoutOctomusification,
+            ),
             id!(SSH_ERROR_BLOCK_VISIBLE_KEY) & block_action_context(),
         ),
         FixedBinding::new(
             cmd_or_ctrl_enter,
-            TerminalAction::NotifySshErrorBlock(SshErrorBlockAction::ContinueWithoutOctomusification),
+            TerminalAction::NotifySshErrorBlock(
+                SshErrorBlockAction::ContinueWithoutOctomusification,
+            ),
             id!(SSH_ERROR_BLOCK_VISIBLE_KEY) & block_action_context(),
         ),
     ]);

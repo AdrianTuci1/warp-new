@@ -3,9 +3,9 @@
 // `assert!` causes the app to crash before debug info can be exported. Use `integration_assert!` instead.
 #![deny(clippy::assertions_on_constants)]
 
-use warp_multi_agent_api as api;
 use octomusui::integration::{AssertionCallback, AssertionOutcome};
 use octomusui::{integration_assert, EntityId, SingletonEntity};
+use warp_multi_agent_api as api;
 
 use super::llm_judge::{LLMJudge, LLMJudgeConfig};
 use crate::ai::agent::conversation::{AIConversation, AIConversationId, ConversationStatus};

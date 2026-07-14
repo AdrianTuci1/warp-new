@@ -4,10 +4,10 @@ use std::sync::Once;
 
 use futures_lite::future;
 use itertools::Itertools;
+use octomusui_core::App;
 use rangemap::RangeSet;
 use string_offset::CharOffset;
 use sum_tree::SumTree;
-use octomusui_core::App;
 
 use super::{Engine, Match, SearchConfig};
 use crate::content::buffer::Buffer;

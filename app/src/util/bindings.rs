@@ -7,7 +7,6 @@ use enum_iterator::{all, Sequence};
 use fuzzy_match::match_indices_case_insensitive;
 use itertools::Itertools;
 use lazy_static::lazy_static;
-use regex::Regex;
 use octomusui::actions::StandardAction;
 use octomusui::keymap::{
     BindingDescription, BindingId, BindingLens, CustomTag, DescriptionContext, EditableBindingLens,
@@ -15,6 +14,7 @@ use octomusui::keymap::{
 };
 use octomusui::platform::OperatingSystem;
 use octomusui::{Action, AppContext, SingletonEntity};
+use regex::Regex;
 
 use crate::keyboard::{remove_custom_keybinding, write_custom_keybinding, UserDefinedKeybinding};
 use crate::settings_view::keybindings::{KeybindingChangedEvent, KeybindingChangedNotifier};

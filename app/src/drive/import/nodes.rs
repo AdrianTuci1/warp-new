@@ -6,7 +6,6 @@ use std::path::{Path, PathBuf};
 use anyhow::Result;
 use async_recursion::async_recursion;
 use futures_lite::StreamExt;
-use pathfinder_color::ColorU;
 use octomusui::elements::{
     Align, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Hoverable,
     MouseStateHandle, ParentElement, Radius, Shrinkable,
@@ -14,6 +13,7 @@ use octomusui::elements::{
 use octomusui::platform::Cursor;
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::Element;
+use pathfinder_color::ColorU;
 
 use super::modal_body::{ImportModalBodyAction, BASE_INDENT, IMPORT_FONT_SIZE, INDENT_MARGIN};
 use crate::appearance::Appearance;
@@ -322,8 +322,10 @@ impl FolderNode {
             .status
             .render_status_icon(sync_queue_dequeueing, appearance);
 
-        let icon_color =
-            override_color.unwrap_or(octomus_drive_icon_color(appearance, DriveObjectType::Folder));
+        let icon_color = override_color.unwrap_or(octomus_drive_icon_color(
+            appearance,
+            DriveObjectType::Folder,
+        ));
         let icon = ConstrainedBox::new(
             Icon::Folder
                 .to_octomusui_icon(Fill::Solid(icon_color))

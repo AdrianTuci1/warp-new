@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 use std::sync::Arc;
 
-use smol_str::SmolStr;
 use octomus_completer::completer::{GeneratorContext, PathCompletionContext};
 use octomus_completer::signatures::CommandRegistry;
+use smol_str::SmolStr;
 
 /// An implementation of `CompletionContext` for testing purposes.
 pub struct CompletionContext {

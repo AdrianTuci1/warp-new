@@ -1,5 +1,5 @@
-use settings::Setting;
 use octomusui::{App, SingletonEntity};
+use settings::Setting;
 
 use crate::terminal::safe_mode_settings::SafeModeSettings;
 use crate::terminal::shared_session::SharedSessionStatus;

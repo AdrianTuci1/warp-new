@@ -1,4 +1,3 @@
-use pathfinder_geometry::vector::vec2f;
 use octomusui::elements::{
     Align, Border, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Highlight,
     ParentElement, Radius, Shrinkable, Wrap,
@@ -7,6 +6,7 @@ use octomusui::fonts::{Properties, Weight};
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::units::IntoPixels;
 use octomusui::{AppContext, Element, SingletonEntity};
+use pathfinder_geometry::vector::vec2f;
 
 use crate::appearance::Appearance;
 use crate::context_chips::display_chip::{

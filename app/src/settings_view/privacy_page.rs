@@ -4,9 +4,6 @@ use std::collections::{HashMap, HashSet};
 use std::sync::LazyLock;
 use std::time::Duration;
 
-use pathfinder_geometry::vector::vec2f;
-use regex::Regex;
-use settings::Setting as _;
 use octomus_core::context_flag::ContextFlag;
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::theme::color::internal_colors;
@@ -28,6 +25,9 @@ use octomusui::{
     id, Action, AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView,
     UpdateModel, View, ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use regex::Regex;
+use settings::Setting as _;
 
 use super::privacy::{AddRegexModal, AddRegexModalEvent};
 use super::settings_page::{

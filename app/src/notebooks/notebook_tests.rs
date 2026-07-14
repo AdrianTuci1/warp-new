@@ -4,7 +4,6 @@ use chrono::{Duration, Utc};
 use futures_util::future::BoxFuture;
 use itertools::Itertools;
 use octomus_core::ui::appearance::Appearance;
-use warp_editor::editor::EditorView;
 use octomusui::platform::WindowStyle;
 use octomusui::presenter::ChildView;
 use octomusui::r#async::Timer;
@@ -13,6 +12,7 @@ use octomusui::{
     AddSingletonModel, App, AppContext, Element, Entity, SingletonEntity, TypedActionView, View,
     ViewHandle, WindowId,
 };
+use warp_editor::editor::EditorView;
 
 use super::{NotebookEvent, NotebookView, EDIT_WINDOW_DURATION, SAVE_PERIOD};
 use crate::auth::auth_manager::AuthManager;

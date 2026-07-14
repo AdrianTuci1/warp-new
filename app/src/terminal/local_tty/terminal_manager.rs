@@ -10,6 +10,10 @@ use std::thread::JoinHandle;
 
 use anyhow::Context as _;
 use async_broadcast::InactiveReceiver;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomus_core::send_telemetry_from_ctx;
+use octomusui::r#async::executor::Background;
+use octomusui::{AppContext, ModelContext, ModelHandle, SingletonEntity, ViewHandle, WindowId};
 use parking_lot::{FairMutex, Mutex};
 use pathfinder_geometry::vector::Vector2F;
 use session_sharing_protocol::common::{
@@ -27,10 +31,6 @@ use session_sharing_protocol::sharer::{
     TeamAccessLevelUpdateResponse, UpdatePendingUserRoleResponse,
 };
 use settings::Setting as _;
-use octomus_core::execution_mode::AppExecutionMode;
-use octomus_core::send_telemetry_from_ctx;
-use octomusui::r#async::executor::Background;
-use octomusui::{AppContext, ModelContext, ModelHandle, SingletonEntity, ViewHandle, WindowId};
 #[cfg(unix)]
 use {
     super::terminal_attributes::TerminalAttributesPoller,
@@ -73,6 +73,7 @@ use crate::terminal::local_tty::{Pty, PtyOptions};
 use crate::terminal::model::session::Sessions;
 use crate::terminal::model::terminal_model::ExitReason;
 use crate::terminal::model_events::ModelEventDispatcher;
+use crate::terminal::octomusify::settings::OctomusifySettings;
 use crate::terminal::safe_mode_settings::get_secret_obfuscation_mode;
 use crate::terminal::session_settings::{SessionSettings, SessionSettingsChangedEvent};
 use crate::terminal::shared_session::manager::Manager;
@@ -95,7 +96,6 @@ use crate::terminal::shared_session::{
 };
 use crate::terminal::shell::ShellName;
 use crate::terminal::view::{ConversationRestorationInNewPaneType, Event as TerminalViewEvent};
-use crate::terminal::octomusify::settings::OctomusifySettings;
 use crate::terminal::writeable_pty::pty_controller::{EventLoopSendError, EventLoopSender};
 use crate::terminal::writeable_pty::terminal_manager_util::{
     init_pty_controller_model, init_remote_server_controller, wire_up_pty_controller_with_view,

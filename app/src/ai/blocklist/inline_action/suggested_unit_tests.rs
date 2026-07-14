@@ -1,8 +1,6 @@
 use std::sync::Arc;
 
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng as _};
 use octomus_core::settings::ToggleableSetting;
 use octomus_core::ui::appearance::Appearance;
 use octomusui::elements::{
@@ -15,6 +13,8 @@ use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyle
 use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use rand::distributions::Alphanumeric;
+use rand::{thread_rng, Rng as _};
 
 use crate::ai::agent::{AIAgentActionId, AIIdentifiers};
 use crate::ai::predict::prompt_suggestions::{

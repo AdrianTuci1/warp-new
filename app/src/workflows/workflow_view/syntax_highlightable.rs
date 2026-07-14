@@ -3,12 +3,12 @@ use std::ops::Range;
 use std::time::Duration;
 
 use async_channel::Sender;
-use string_offset::ByteOffset;
 use octomus_completer::completer::SuggestionTypeName;
 use octomus_completer::signatures::CommandRegistry;
 use octomus_core::ui::theme::AnsiColorIdentifier;
 use octomusui::r#async::SpawnedFutureHandle;
 use octomusui::{Entity, ModelContext, SingletonEntity, ViewHandle};
+use string_offset::ByteOffset;
 
 use crate::appearance::Appearance;
 use crate::completer::SessionAgnosticContext;

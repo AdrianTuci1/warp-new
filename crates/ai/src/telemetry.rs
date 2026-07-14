@@ -1,11 +1,11 @@
 use std::time::Duration;
 
-use serde::Serialize;
-use serde_json::{json, Value};
-use strum_macros::{EnumDiscriminants, EnumIter};
 use octomus_core::features::FeatureFlag;
 use octomus_core::register_telemetry_event;
 use octomus_core::telemetry::{EnablementState, TelemetryEvent, TelemetryEventDesc};
+use serde::Serialize;
+use serde_json::{json, Value};
+use strum_macros::{EnumDiscriminants, EnumIter};
 
 #[cfg_attr(not(feature = "local_fs"), allow(dead_code))]
 #[derive(Clone, EnumDiscriminants)]

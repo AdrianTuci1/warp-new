@@ -1,8 +1,8 @@
 use ai::skills::SkillReference;
 use input_classifier::InputType;
-use settings::Setting as _;
 use octomus_core::features::FeatureFlag;
 use octomusui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity};
+use settings::Setting as _;
 
 use crate::ai::blocklist::{
     BlocklistAIInputEvent, BlocklistAIInputModel, InputTypeAutoDetectionSource,

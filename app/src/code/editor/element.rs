@@ -4,20 +4,10 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
 pub use gutter_button::{AddAsContextButton, CommentButton, RevertHunkButton};
-use parking_lot::Mutex;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
 use octomus_core::features::FeatureFlag;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::theme::color::internal_colors;
 use octomus_core::ui::theme::Fill;
-use warp_editor::editor::EditorView;
-use warp_editor::render::element::lens_element::RichTextElementLens;
-use warp_editor::render::element::{RenderableBlock, RichTextElement, VerticalExpansionBehavior};
-use warp_editor::render::model::{
-    gutter_expansion_button_types, BlockLocation, ExpansionType, LineCount, RenderState,
-};
 use octomusui::elements::new_scrollable::{NewScrollableElement, ScrollableAxis};
 use octomusui::elements::{
     Align, Axis, Border, ChildAnchor, ConstrainedBox, Container, CornerRadius, Empty, F32Ext, Flex,
@@ -31,6 +21,16 @@ use octomusui::units::{IntoPixels, Pixels};
 use octomusui::{
     AfterLayoutContext, AppContext, ClipBounds, Element, Event, EventContext, LayoutContext,
     ModelHandle, PaintContext, SingletonEntity, SizeConstraint,
+};
+use parking_lot::Mutex;
+use pathfinder_color::ColorU;
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use warp_editor::editor::EditorView;
+use warp_editor::render::element::lens_element::RichTextElementLens;
+use warp_editor::render::element::{RenderableBlock, RichTextElement, VerticalExpansionBehavior};
+use warp_editor::render::model::{
+    gutter_expansion_button_types, BlockLocation, ExpansionType, LineCount, RenderState,
 };
 
 use super::diff::{DiffHunkDisplay, DiffStatus};
@@ -993,7 +993,8 @@ impl<V: EditorView> EditorWrapper<V> {
 
             let container = Container::new(
                 ConstrainedBox::new(
-                    octomusui::elements::Icon::new(gutter_button.icon().into(), icon_color).finish(),
+                    octomusui::elements::Icon::new(gutter_button.icon().into(), icon_color)
+                        .finish(),
                 )
                 .with_width(icon_size)
                 .with_height(icon_size)

@@ -1,8 +1,8 @@
 use std::borrow::Cow;
 use std::fmt;
 
-use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 use octomusui_core::color::ColorU;
+use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
 use super::OPAQUE;
 

@@ -3,11 +3,11 @@ use std::sync::{Arc, OnceLock};
 
 use ai::api_keys::{ApiKeyManager, ApiKeyManagerEvent, CustomEndpoint, CustomEndpointModel};
 pub use ai::LLMId;
-use parking_lot::FairMutex;
-use serde::{de, Deserialize, Serialize};
 use octomus_core::ui::icons::Icon;
 use octomus_core::user_preferences::GetUserPreferences;
 use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
+use parking_lot::FairMutex;
+use serde::{de, Deserialize, Serialize};
 
 use super::execution_profiles::profiles::AIExecutionProfilesModel;
 use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};

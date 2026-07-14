@@ -2,7 +2,6 @@ use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use image::ImageEncoder;
-use pathfinder_color::ColorU;
 use octomusui::elements::{
     Align, ConstrainedBox, Container, DispatchEventResult, EventHandler, Padding, ParentElement,
     Rect, Stack, Text,
@@ -12,6 +11,7 @@ use octomusui::platform::CapturedFrame;
 use octomusui::{
     AppContext, Element, Entity, SingletonEntity as _, TypedActionView, View, ViewContext,
 };
+use pathfinder_color::ColorU;
 
 #[derive(Clone, Debug)]
 pub enum RootViewAction {

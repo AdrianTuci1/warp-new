@@ -6,8 +6,6 @@ use std::path::PathBuf;
 
 use ai::skills::SkillProvider;
 use fuzzy_match::FuzzyMatchResult;
-use ordered_float::OrderedFloat;
-pub(crate) use saved_prompts::*;
 #[cfg(not(target_family = "wasm"))]
 use octomus_cli::agent::Harness;
 use octomus_core::features::FeatureFlag;
@@ -15,6 +13,8 @@ use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::Icon as WarpIcon;
 use octomusui::fonts::FamilyId;
 use octomusui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
+use ordered_float::OrderedFloat;
+pub(crate) use saved_prompts::*;
 pub use zero_state::*;
 
 use super::AcceptSlashCommandOrSavedPrompt;

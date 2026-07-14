@@ -3,11 +3,11 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use itertools::Itertools;
-use ordered_float::OrderedFloat;
-use serde_json::json;
 use octomus_core::ui::builder;
 use octomusui::elements::{ConstrainedBox, Container, Text};
 use octomusui::{AppContext, Element, SingletonEntity};
+use ordered_float::OrderedFloat;
+use serde_json::json;
 
 use super::workflows::{WorkflowIdentity, WorkflowSearchItem};
 use crate::ai::AIRequestUsageModel;
@@ -30,7 +30,8 @@ use crate::util::color::{ContrastingColor, MinimumAllowedContrast};
 use crate::workflows::{AIWorkflowOrigin, WorkflowSource, WorkflowType};
 
 const OPEN_OCTOMUS_AI_ITEM_BODY_TEXT: &str = "Ask Octomus AI for command suggestions";
-const TRANSLATE_WITH_OCTOMUS_AI_ITEM_BODY_TEXT: &str = "Translate into shell command using Octomus AI";
+const TRANSLATE_WITH_OCTOMUS_AI_ITEM_BODY_TEXT: &str =
+    "Translate into shell command using Octomus AI";
 
 #[derive(Clone, Debug)]
 pub enum WarpAISearchItem {

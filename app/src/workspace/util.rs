@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
 use octomusui::elements::MouseStateHandle;
 use octomusui::{AppContext, EntityId, SingletonEntity, ViewContext, ViewHandle, WindowId};
+use serde::{Deserialize, Serialize};
 
 use super::OneTimeModalModel;
 use crate::appearance::Appearance;

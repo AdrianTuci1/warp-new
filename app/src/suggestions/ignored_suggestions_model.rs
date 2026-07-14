@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
-use serde::{Deserialize, Serialize};
 use octomusui::{Entity, ModelContext, SingletonEntity};
+use serde::{Deserialize, Serialize};
 
 use crate::persistence::ModelEvent;
 use crate::GlobalResourceHandlesProvider;

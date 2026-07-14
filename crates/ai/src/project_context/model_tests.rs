@@ -204,7 +204,10 @@ fn test_merge_independent_deltas() {
     });
 
     assert_eq!(delta.discovered_rules.len(), 1);
-    assert_eq!(delta.discovered_rules[0].path, PathBuf::from("/a/OCTOMUS.md"));
+    assert_eq!(
+        delta.discovered_rules[0].path,
+        PathBuf::from("/a/OCTOMUS.md")
+    );
     assert_eq!(delta.deleted_rules, vec![PathBuf::from("/b/OCTOMUS.md")]);
 }
 
@@ -235,7 +238,10 @@ fn test_merge_delete_then_add_yields_add() {
     });
 
     assert_eq!(delta.discovered_rules.len(), 1);
-    assert_eq!(delta.discovered_rules[0].path, PathBuf::from("/a/OCTOMUS.md"));
+    assert_eq!(
+        delta.discovered_rules[0].path,
+        PathBuf::from("/a/OCTOMUS.md")
+    );
     assert!(delta.deleted_rules.is_empty());
 }
 
@@ -256,7 +262,10 @@ fn test_merge_add_delete_add_yields_add() {
     });
 
     assert_eq!(delta.discovered_rules.len(), 1);
-    assert_eq!(delta.discovered_rules[0].path, PathBuf::from("/a/OCTOMUS.md"));
+    assert_eq!(
+        delta.discovered_rules[0].path,
+        PathBuf::from("/a/OCTOMUS.md")
+    );
     assert!(delta.deleted_rules.is_empty());
 }
 

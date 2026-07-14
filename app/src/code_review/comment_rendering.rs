@@ -6,11 +6,8 @@
 use std::rc::Rc;
 
 use chrono::{Duration, Local};
-use pathfinder_color::ColorU;
 use octomus_core::ui::theme::color::internal_colors::{neutral_1, neutral_2, text_sub};
 use octomus_core::ui::theme::Fill;
-use warp_editor::content::buffer::InitialBufferState;
-use warp_editor::render::element::VerticalExpansionBehavior;
 use octomusui::elements::new_scrollable::ScrollableAppearance;
 use octomusui::elements::{
     Border, ChildView, Container, CornerRadius, CrossAxisAlignment, Flex, Hoverable,
@@ -20,7 +17,12 @@ use octomusui::elements::{
 use octomusui::platform::Cursor;
 use octomusui::text_layout::ClipConfig;
 use octomusui::units::Pixels;
-use octomusui::{AppContext, Element, EventContext, SingletonEntity, View, ViewContext, ViewHandle};
+use octomusui::{
+    AppContext, Element, EventContext, SingletonEntity, View, ViewContext, ViewHandle,
+};
+use pathfinder_color::ColorU;
+use warp_editor::content::buffer::InitialBufferState;
+use warp_editor::render::element::VerticalExpansionBehavior;
 
 use crate::appearance::Appearance;
 use crate::code::buffer_location::LocalOrRemotePath;

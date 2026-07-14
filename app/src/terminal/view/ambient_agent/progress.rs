@@ -3,7 +3,6 @@
 use std::borrow::Cow;
 use std::time::Duration;
 
-use pathfinder_geometry::vector::vec2f;
 use octomus_core::ui::appearance::Appearance;
 use octomus_core::ui::Icon;
 use octomusui::elements::{
@@ -12,6 +11,7 @@ use octomusui::elements::{
     PositionedElementOffsetBounds, Radius, Rect, SavePosition, Stack, Text,
 };
 use octomusui::{AppContext, Element, WindowId};
+use pathfinder_geometry::vector::vec2f;
 
 /// The state of a progress step.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

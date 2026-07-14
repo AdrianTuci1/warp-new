@@ -10,13 +10,13 @@ use octomusui::{
     ViewContext, ViewHandle,
 };
 
-use super::SettingsSection;
 use super::cloud_credential_modal::{
     CloudCredentialModal, CloudCredentialModalEvent, CloudCredentialModalViewState,
 };
 use super::settings_page::{
     MatchData, PageType, SettingsPageMeta, SettingsPageViewHandle, SettingsWidget,
 };
+use super::SettingsSection;
 use crate::appearance::Appearance;
 use crate::modal::{Modal, ModalEvent, ModalViewState};
 

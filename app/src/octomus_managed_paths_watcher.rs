@@ -5,12 +5,12 @@ use std::{fs, sync::Arc, time::Duration};
 use dirs::home_dir;
 #[cfg(not(target_family = "wasm"))]
 use notify_debouncer_full::notify::{RecursiveMode, WatchFilter};
-use repo_metadata::RepositoryUpdate;
-#[cfg(any(not(target_family = "wasm"), test))]
-use repo_metadata::TargetFile;
 #[cfg(not(target_family = "wasm"))]
 use octomusui::ModelHandle;
 use octomusui::{Entity, ModelContext, SingletonEntity};
+use repo_metadata::RepositoryUpdate;
+#[cfg(any(not(target_family = "wasm"), test))]
+use repo_metadata::TargetFile;
 #[cfg(not(target_family = "wasm"))]
 use watcher::{BulkFilesystemWatcher, BulkFilesystemWatcherEvent};
 

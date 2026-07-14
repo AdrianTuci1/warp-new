@@ -1,6 +1,6 @@
 use chrono::Utc;
-use serde_json::json;
 use octomusui::telemetry::{Event, EventPayload};
+use serde_json::json;
 
 use super::*;
 

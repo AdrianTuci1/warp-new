@@ -3,9 +3,9 @@ use std::sync::Arc;
 
 use async_channel::Receiver;
 use futures_util::SinkExt;
+use octomusui::{Entity, ModelContext, SingletonEntity};
 use parking_lot::FairMutex;
 use serde::Serialize;
-use octomusui::{Entity, ModelContext, SingletonEntity};
 use websocket::{Message, Sink, Stream, WebSocket, WebsocketMessage as _};
 
 use crate::terminal::bootstrap::init_shell_script_for_shell;

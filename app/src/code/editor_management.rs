@@ -3,9 +3,11 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 use ai::skills::SkillReference;
-use serde::{Deserialize, Serialize};
 use octomus_util::path::LineAndColumnArg;
-use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity, ViewHandle, WindowId};
+use octomusui::{
+    AppContext, Entity, EntityId, ModelContext, SingletonEntity, ViewHandle, WindowId,
+};
+use serde::{Deserialize, Serialize};
 
 use super::buffer_location::LocalOrRemotePath;
 use super::view::CodeView;

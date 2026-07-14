@@ -5,11 +5,11 @@ use std::pin::Pin;
 use std::time::Duration;
 
 use anyhow::Context;
+use octomus_core::safe_info;
+use octomusui::{ModelSpawner, SingletonEntity};
 use tempfile::{Builder, NamedTempFile};
 use vec1::Vec1;
-use octomus_core::safe_info;
 use warp_managed_secrets::ManagedSecretManager;
-use octomusui::{ModelSpawner, SingletonEntity};
 
 use super::super::terminal::TerminalDriver;
 use super::{CloudProvider, CloudProviderSetupError, Result};

@@ -1,6 +1,6 @@
 use anyhow::{Ok, Result};
-use vec1::vec1;
 use octomusui::keymap::Keystroke;
+use vec1::vec1;
 
 use crate::keyboard::{PersistedTrigger, UserDefinedKeybinding, REMOVED_KEYBINDING_SERIALIZATION};
 

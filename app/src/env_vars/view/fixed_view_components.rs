@@ -1,5 +1,3 @@
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::Vector2F;
 use octomus_core::features::FeatureFlag;
 use octomusui::elements::{
     Align, ConstrainedBox, Container, CrossAxisAlignment, Empty, Flex, MainAxisAlignment,
@@ -9,6 +7,8 @@ use octomusui::fonts::Weight;
 use octomusui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
 use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
 use octomusui::{Element, ViewContext};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::Vector2F;
 
 use crate::drive::sharing::{ContentEditability, SharingAccessLevel};
 use crate::env_vars::active_env_var_collection_data::TrashStatus;
@@ -241,7 +241,8 @@ impl EnvVarCollectionView {
                 TextAndIcon::new(
                     TextAndIconAlignment::TextFirst,
                     "Load",
-                    Icon::TerminalInput.to_octomusui_icon(appearance.theme().active_ui_text_color()),
+                    Icon::TerminalInput
+                        .to_octomusui_icon(appearance.theme().active_ui_text_color()),
                     MainAxisSize::Min,
                     MainAxisAlignment::SpaceBetween,
                     Vector2F::new(10., 10.),

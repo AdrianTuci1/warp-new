@@ -5,8 +5,8 @@ use root_view::RootView;
 pub mod root_view;
 
 extern crate octomusui;
-use rust_embed::RustEmbed;
 use octomusui::{platform, AssetProvider};
+use rust_embed::RustEmbed;
 
 #[derive(Clone, Copy, RustEmbed)]
 #[folder = "examples/assets"]

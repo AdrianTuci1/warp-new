@@ -1,4 +1,3 @@
-use settings::Setting as _;
 use octomus_core::ui::theme::Fill;
 use octomusui::elements::{Align, Container, Empty, Flex, MouseStateHandle, ParentElement};
 use octomusui::fonts::Weight;
@@ -11,6 +10,7 @@ use octomusui::ui_components::text::Span;
 use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use settings::Setting as _;
 
 use crate::appearance::Appearance;
 use crate::terminal::general_settings::{GeneralSettings, GeneralSettingsChangedEvent};

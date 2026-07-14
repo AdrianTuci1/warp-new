@@ -5,10 +5,10 @@ mod setup_command_text;
 
 pub use entry::*;
 pub use harness_session_header::*;
-pub use setup_command::*;
-pub use setup_command_text::*;
 use octomusui::prelude::Container;
 use octomusui::{AppContext, Element, ModelHandle};
+pub use setup_command::*;
+pub use setup_command_text::*;
 
 use super::AmbientAgentViewModel;
 use crate::ai::blocklist::block::view_impl::{

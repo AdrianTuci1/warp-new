@@ -18,10 +18,10 @@
 use std::collections::HashMap;
 use std::time::Duration;
 
-use session_sharing_protocol::common::SessionId;
 use octomus_core::features::FeatureFlag;
 use octomusui::r#async::{SpawnedFutureHandle, Timer};
 use octomusui::{Entity, EntityId, ModelContext, SingletonEntity, WeakViewHandle};
+use session_sharing_protocol::common::SessionId;
 
 use crate::ai::agent::conversation::{AIConversationId, ConversationStatus};
 use crate::ai::ambient_agents::{AmbientAgentTask, AmbientAgentTaskId, AmbientAgentTaskState};
