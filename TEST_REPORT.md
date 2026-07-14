@@ -29,6 +29,12 @@ This report covers the changes made to add a `--standalone` flag to the local `a
 4. Updated `SetupClientEventReporter` in `app/src/ai/agent_sdk/setup_observability.rs` to support a no-server variant by storing `AIClient` as `Option<Arc<dyn AIClient>>`.
 5. Applied `cargo fmt` to keep formatting consistent.
 
+## Continuous Deployment
+
+- `.github/workflows/octomus_vps_server.yml` runs build and tests for `octomus_vps_server` on every push/PR to `master`.
+- `.github/workflows/release-to-r2.yml` now also builds and uploads a Linux x86_64 `octomus-vps-server` binary to R2 alongside the macOS DMG.
+- The `upload-channel-versions` release step waits for both macOS and Linux VPS jobs.
+
 ## Known Issues / Pre-existing Failures
 
 - `share_tests.rs` in `octomus_cli` has 3 failing tests that pre-date this branch. They relate to parsing user share requests with a port in the e-mail address and are not caused by the rename or standalone work.
