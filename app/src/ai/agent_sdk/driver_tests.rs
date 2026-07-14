@@ -6,18 +6,18 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use futures::channel::oneshot;
-use repo_metadata::{DirectoryWatcher, RepoMetadataEvent, RepoMetadataModel, RepositoryIdentifier};
-use tempfile::TempDir;
-use warp_cli::agent::Harness;
-use warp_cli::skill::SkillSpec;
-use warp_cli::{
+use octomus_cli::agent::Harness;
+use octomus_cli::skill::SkillSpec;
+use octomus_cli::{
     OZ_CLI_ENV, OZ_HARNESS_ENV, OZ_PARENT_RUN_ID_ENV, OZ_RUN_ID_ENV, SERVER_ROOT_URL_OVERRIDE_ENV,
     SESSION_SHARING_SERVER_URL_OVERRIDE_ENV, WS_SERVER_URL_OVERRIDE_ENV,
 };
-use warp_core::channel::ChannelState;
+use octomus_core::channel::ChannelState;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::{App, SingletonEntity as _};
+use repo_metadata::{DirectoryWatcher, RepoMetadataEvent, RepoMetadataModel, RepositoryIdentifier};
+use tempfile::TempDir;
 use warp_managed_secrets::ManagedSecretValue;
-use warp_util::standardized_path::StandardizedPath;
-use warpui::{App, SingletonEntity as _};
 
 use super::{
     build_secret_env_vars, AgentDriver, IdleTimeoutSender,

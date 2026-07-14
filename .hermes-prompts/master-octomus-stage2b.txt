@@ -1,4 +1,4 @@
-Repo: AdrianTuci1/warp-new
+Repo: AdrianTuci1/octomus-new
 
 Ești AGENT UNIC pentru Octomus — STAGE 2b (Funcționalități Noi). Rulezi LOCAL pe mașina utilizatorului.
 
@@ -12,7 +12,7 @@ Fiecare task se termină cu commit. La final: cargo check + push.
 === PAS 1: CLONE + BRANCH ===
 
 [bash]
-if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q "AdrianTuci1/warp-new"; then
+if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q "AdrianTuci1/octomus-new"; then
   cd /tmp/repo && git fetch origin
   # Prefer stage2a dacă există, altfel stage1
   if git show-ref --verify --quiet refs/remotes/origin/octomus/stage2a; then
@@ -22,7 +22,7 @@ if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q 
   fi
 else
   rm -rf /tmp/repo
-  git clone https://x-access-token:__GH_TOKEN__@github.com/AdrianTuci1/warp-new.git /tmp/repo
+  git clone https://x-access-token:__GH_TOKEN__@github.com/AdrianTuci1/octomus-new.git /tmp/repo
   cd /tmp/repo
   git fetch origin
   if git show-ref --verify --quiet refs/remotes/origin/octomus/stage2a; then

@@ -3,6 +3,11 @@ use std::fs;
 use std::path::PathBuf;
 
 use ai::skills::{ParsedSkill, SkillProvider, SkillScope};
+use octomus_util::host_id::HostId;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomus_util::remote_path::RemotePath;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::App;
 use remote_server::proto::{file_context_proto, FileContextProto};
 use repo_metadata::entry::{DirectoryEntry, Entry, FileMetadata};
 use repo_metadata::file_tree_store::FileTreeState;
@@ -11,11 +16,6 @@ use repo_metadata::{
     DirectoryWatcher, RepoMetadataModel, RepositoryIdentifier, RepositoryUpdate, TargetFile,
 };
 use tempfile::TempDir;
-use warp_util::host_id::HostId;
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warp_util::remote_path::RemotePath;
-use warp_util::standardized_path::StandardizedPath;
-use warpui::App;
 
 use super::super::subscribers::SkillRepositoryMessage;
 use super::{

@@ -1,6 +1,6 @@
-use warp_core::ui::appearance::Appearance;
-use warpui::platform::WindowStyle;
-use warpui::App;
+use octomus_core::ui::appearance::Appearance;
+use octomusui::platform::WindowStyle;
+use octomusui::App;
 
 use super::DrivePanel;
 use crate::ai::blocklist::BlocklistAIHistoryModel;
@@ -48,7 +48,7 @@ fn initialize_app(app: &mut App) {
 }
 
 #[test]
-fn test_warp_drive_sections_with_no_team() {
+fn test_octomus_drive_sections_with_no_team() {
     App::test(ASSETS, |mut app| async move {
         initialize_app(&mut app);
 

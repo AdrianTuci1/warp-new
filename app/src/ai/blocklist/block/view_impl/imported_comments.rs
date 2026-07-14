@@ -1,6 +1,6 @@
-use warpui::elements::{CrossAxisAlignment, Flex, ParentElement};
-use warpui::prelude::ChildView;
-use warpui::{AppContext, Element};
+use octomusui::elements::{CrossAxisAlignment, Flex, ParentElement};
+use octomusui::prelude::ChildView;
+use octomusui::{AppContext, Element};
 
 use crate::ai::blocklist::block::ImportedCommentGroup;
 

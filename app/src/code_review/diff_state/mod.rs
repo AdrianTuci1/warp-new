@@ -10,11 +10,11 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use anyhow::Result;
+use octomus_core::SessionId;
+use octomus_util::remote_path::RemotePath;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::{AppContext, ModelContext, ModelHandle};
 use serde::{Deserialize, Serialize};
-use warp_core::SessionId;
-use warp_util::remote_path::RemotePath;
-use warp_util::standardized_path::StandardizedPath;
-use warpui::{AppContext, ModelContext, ModelHandle};
 
 use crate::code_review::diff_size_limits::DiffSize;
 use crate::util::git::{BranchEntry, Commit, PrInfo};
@@ -383,7 +383,7 @@ pub enum DiffStateModel {
     Remote(ModelHandle<RemoteDiffStateModel>),
 }
 
-impl warpui::Entity for DiffStateModel {
+impl octomusui::Entity for DiffStateModel {
     type Event = DiffStateModelEvent;
 }
 

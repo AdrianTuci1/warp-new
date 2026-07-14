@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::ops::Range;
 
+use octomusui_core::{AppContext, Entity, ModelContext, ModelHandle};
 use rangemap::RangeSet;
 use string_offset::CharOffset;
-use warpui_core::{AppContext, Entity, ModelContext, ModelHandle};
 
 use super::anchor::{Anchor, AnchorSide};
 use crate::content::buffer::Buffer;

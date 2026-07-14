@@ -10,7 +10,7 @@ SSH-ing to the same host each spin up a separate server process.
 
 1. **Survival**: the server must survive SSH disconnections and remain available for
    reconnect for up to 10 minutes.
-2. **Multiplexing**: multiple Warp tabs SSH-ing to the same host must share a single
+2. **Multiplexing**: multiple Octomus tabs SSH-ing to the same host must share a single
    underlying server process.
 3. **Reconnect**: when an SSH connection drops, the client must automatically detect
    this and reconnect to the existing server.
@@ -19,7 +19,7 @@ SSH-ing to the same host each spin up a separate server process.
 
 ## Relevant Code
 
-- `crates/warp_cli/src/lib.rs` — `WorkerCommand::RemoteServerProxy` / `RemoteServerDaemon`
+- `crates/octomus_cli/src/lib.rs` — `WorkerCommand::RemoteServerProxy` / `RemoteServerDaemon`
 - `app/src/remote_server/mod.rs` — platform dispatch (`run_proxy`, `run_daemon`)
 - `app/src/remote_server/unix/` — Unix-specific daemon and proxy implementation
 - `app/src/remote_server/server_model.rs` — platform-agnostic `ServerModel`
@@ -45,7 +45,7 @@ Split the binary into two subcommands:
 
 A Unix domain socket (`.sock`) is a local IPC channel provided by the OS kernel —
 fast, no network involved, and only accessible on the same machine. The proxy
-connects to `~/.warp[-channel]/remote-server/server.sock`.
+connects to `~/.octomus[-channel]/remote-server/server.sock`.
 
 ### Architecture
 
@@ -101,7 +101,7 @@ task on WarpUI's background executor with a dedicated `async_channel` sender.
 
 ### Proxy mode (`remote-server-proxy`)
 
-`WorkerCommand::RemoteServerProxy` in `warp_cli/src/lib.rs` dispatches to
+`WorkerCommand::RemoteServerProxy` in `octomus_cli/src/lib.rs` dispatches to
 `unix::run_proxy()`.
 
 1. Acquires an exclusive advisory `flock` on `server.pid` to serialise concurrent

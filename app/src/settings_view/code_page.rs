@@ -11,31 +11,31 @@ use ai::project_context::model::{ProjectContextModel, ProjectContextModelEvent};
 use ai::workspace::WorkspaceMetadata;
 use lsp::supported_servers::LSPServerType;
 use lsp::{LspManagerModel, LspManagerModelEvent, LspServerModel, LspState};
-use pathfinder_color::ColorU;
+use octomus_core::features::FeatureFlag;
+use octomus_core::report_if_error;
+use octomus_core::settings::ToggleableSetting as _;
+use octomus_core::ui::theme::{AnsiColorIdentifier, Fill as ThemeFill};
+use octomus_util::path::user_friendly_path;
 #[cfg(not(target_family = "wasm"))]
-use remote_server::codebase_index_proto::{RemoteCodebaseIndexState, RemoteCodebaseIndexStatus};
-use warp_core::features::FeatureFlag;
-use warp_core::report_if_error;
-use warp_core::settings::ToggleableSetting as _;
-use warp_core::ui::theme::{AnsiColorIdentifier, Fill as ThemeFill};
-use warp_util::path::user_friendly_path;
-#[cfg(not(target_family = "wasm"))]
-use warp_util::remote_path::RemotePath;
-use warpui::elements::{
+use octomus_util::remote_path::RemotePath;
+use octomusui::elements::{
     ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Element, Empty,
     Expanded, Fill, Flex, MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Radius,
     Shrinkable,
 };
-use warpui::fonts::Weight;
-use warpui::keymap::ContextPredicate;
-use warpui::platform::{Cursor, FilePickerConfiguration};
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::ui_components::switch::{SwitchStateHandle, TooltipConfig};
-use warpui::{
+use octomusui::fonts::Weight;
+use octomusui::keymap::ContextPredicate;
+use octomusui::platform::{Cursor, FilePickerConfiguration};
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::ui_components::switch::{SwitchStateHandle, TooltipConfig};
+use octomusui::{
     id, Action, AppContext, Entity, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_color::ColorU;
+#[cfg(not(target_family = "wasm"))]
+use remote_server::codebase_index_proto::{RemoteCodebaseIndexState, RemoteCodebaseIndexStatus};
 
 #[cfg(feature = "local_fs")]
 use super::features::external_editor::ExternalEditorView;
@@ -80,10 +80,10 @@ const LSP_STATUS_INDICATOR_SIZE: f32 = 8.;
 const CODE_FEATURE_NAME: &str = "Code";
 const INITIALIZATION_SETTINGS_HEADER: &str = "Initialization Settings";
 const CODEBASE_INDEXING_LABEL: &str = "Codebase indexing";
-const CODEBASE_INDEX_DESCRIPTION: &str = "Warp can automatically index code repositories as you navigate them, helping agents quickly understand context and provide solutions. Code is never stored on the server. If a codebase is unable to be indexed, Warp can still navigate your codebase and gain insights via grep and find tool calling.";
+const CODEBASE_INDEX_DESCRIPTION: &str = "Octomus can automatically index code repositories as you navigate them, helping agents quickly understand context and provide solutions. Code is never stored on the server. If a codebase is unable to be indexed, Octomus can still navigate your codebase and gain insights via grep and find tool calling.";
 const WARP_INDEXING_IGNORE_DESCRIPTION: &str = "To exclude specific files or directories from indexing, add them to the .warpindexingignore file in your repository directory. These files will still be accessible to AI features, but they won't be included in codebase embeddings.";
 const AUTO_INDEX_FEATURE_NAME: &str = "Index new folders by default";
-const AUTO_INDEX_DESCRIPTION: &str = "When set to true, Warp will automatically index code repositories as you navigate them - helping agents quickly understand context and provide targeted solutions.";
+const AUTO_INDEX_DESCRIPTION: &str = "When set to true, Octomus will automatically index code repositories as you navigate them - helping agents quickly understand context and provide targeted solutions.";
 const INDEXING_DISABLED_ADMIN_TEXT: &str = "Team admins have disabled codebase indexing.";
 const INDEXING_WORKSPACE_ENABLED_ADMIN_TEXT: &str = "Team admins have enabled codebase indexing.";
 const INDEXING_DISABLED_GLOBAL_AI_TEXT: &str =
@@ -1505,15 +1505,15 @@ impl CodePageWidget {
                     ..Default::default()
                 })
                 .with_text_and_icon_label(
-                    warpui::ui_components::button::TextAndIcon::new(
-                        warpui::ui_components::button::TextAndIconAlignment::IconFirst,
+                    octomusui::ui_components::button::TextAndIcon::new(
+                        octomusui::ui_components::button::TextAndIconAlignment::IconFirst,
                         "Open project rules",
-                        warpui::elements::Icon::new(
+                        octomusui::elements::Icon::new(
                             "bundled/svg/file-code-02.svg",
                             theme.foreground(),
                         ),
-                        warpui::elements::MainAxisSize::Min,
-                        warpui::elements::MainAxisAlignment::Center,
+                        octomusui::elements::MainAxisSize::Min,
+                        octomusui::elements::MainAxisAlignment::Center,
                         pathfinder_geometry::vector::vec2f(14., 14.),
                     )
                     .with_inner_padding(4.),
@@ -1895,7 +1895,7 @@ impl CodePageWidget {
                 Container::new(
                     ConstrainedBox::new(
                         status_icon
-                            .to_warpui_icon(ThemeFill::Solid(presentation.color))
+                            .to_octomusui_icon(ThemeFill::Solid(presentation.color))
                             .finish(),
                     )
                     .with_width(STATUS_ICON_SIZE)
@@ -2205,7 +2205,7 @@ impl CodePageWidget {
         &self,
         workspace_path: &Path,
         server_type: LSPServerType,
-        server_model: Option<&warpui::ModelHandle<LspServerModel>>,
+        server_model: Option<&octomusui::ModelHandle<LspServerModel>>,
         is_enabled: bool,
         mouse_states: LspServerRowMouseStates,
         appearance: &Appearance,
@@ -2394,9 +2394,9 @@ impl CodePageWidget {
     /// Gets the status color and text for an LSP server.
     fn get_lsp_status_info(
         &self,
-        server_model: Option<&warpui::ModelHandle<LspServerModel>>,
+        server_model: Option<&octomusui::ModelHandle<LspServerModel>>,
         app: &AppContext,
-        theme: &warp_core::ui::theme::WarpTheme,
+        theme: &octomus_core::ui::theme::WarpTheme,
     ) -> (ColorU, &'static str) {
         match server_model {
             Some(model) => {

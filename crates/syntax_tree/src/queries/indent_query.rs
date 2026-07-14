@@ -2,9 +2,9 @@ use std::collections::HashMap;
 use std::ops::Range;
 
 use arborium::tree_sitter::{Node, Query, QueryCursor, Tree};
+use octomusui_core::text::point::Point;
 use streaming_iterator::StreamingIterator;
 use warp_editor::content::buffer::Buffer;
-use warpui_core::text::point::Point;
 
 use super::highlight_query::TextBuffer;
 

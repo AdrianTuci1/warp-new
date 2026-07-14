@@ -1,19 +1,21 @@
+use octomus_core::ui::theme::Fill;
+use octomusui::elements::{
+    Align, Container, CrossAxisAlignment, Dismiss, Flex, ParentElement, Stack,
+};
+use octomusui::fonts::Weight;
+use octomusui::keymap::FixedBinding;
+use octomusui::platform::Cursor;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{BorderStyle, Coords, UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
 use pathfinder_geometry::vector::vec2f;
-use warp_core::ui::theme::Fill;
-use warpui::elements::{Align, Container, CrossAxisAlignment, Dismiss, Flex, ParentElement, Stack};
-use warpui::fonts::Weight;
-use warpui::keymap::FixedBinding;
-use warpui::platform::Cursor;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{BorderStyle, Coords, UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
 
 use crate::appearance::Appearance;
 use crate::ui_components::buttons;
 use crate::ui_components::dialog::{dialog_styles, Dialog};
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([
         FixedBinding::new(
@@ -45,7 +47,7 @@ pub enum SummarizationCancelDialogAction {
     Continue,
 }
 
-use warpui::elements::MouseStateHandle;
+use octomusui::elements::MouseStateHandle;
 
 #[derive(Default)]
 pub struct SummarizationCancelDialog {
@@ -63,7 +65,7 @@ impl View for SummarizationCancelDialog {
         "SummarizationCancelDialog"
     }
 
-    fn on_focus(&mut self, _focus_ctx: &warpui::FocusContext, ctx: &mut ViewContext<Self>) {
+    fn on_focus(&mut self, _focus_ctx: &octomusui::FocusContext, ctx: &mut ViewContext<Self>) {
         // Ensure this dialog takes focus away from the terminal editor
         ctx.focus_self();
     }
@@ -118,7 +120,7 @@ impl View for SummarizationCancelDialog {
             .finish();
 
         // Close header with Icon::X and ESC pill
-        let esc_keystroke = warpui::keymap::Keystroke::parse("escape").expect("Valid keystroke");
+        let esc_keystroke = octomusui::keymap::Keystroke::parse("escape").expect("Valid keystroke");
         let close_header = Flex::row()
             .with_cross_axis_alignment(CrossAxisAlignment::Center)
             .with_children([
@@ -190,11 +192,11 @@ impl View for SummarizationCancelDialog {
         let mut stack = Stack::new();
         stack.add_positioned_child(
             dialog_dismiss,
-            warpui::elements::OffsetPositioning::offset_from_parent(
+            octomusui::elements::OffsetPositioning::offset_from_parent(
                 vec2f(0., 0.),
-                warpui::elements::ParentOffsetBounds::WindowByPosition,
-                warpui::elements::ParentAnchor::Center,
-                warpui::elements::ChildAnchor::Center,
+                octomusui::elements::ParentOffsetBounds::WindowByPosition,
+                octomusui::elements::ParentAnchor::Center,
+                octomusui::elements::ChildAnchor::Center,
             ),
         );
 

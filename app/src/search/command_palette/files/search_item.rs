@@ -2,11 +2,11 @@ use std::fmt::Debug;
 use std::path::PathBuf;
 
 use fuzzy_match::FuzzyMatchResult;
+use octomus_util::path::LineAndColumnArg;
+use octomusui::elements::{Align, ConstrainedBox, Container, Flex, Icon, ParentElement, Text};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::{AppContext, Element, SingletonEntity};
 use ordered_float::OrderedFloat;
-use warp_util::path::LineAndColumnArg;
-use warpui::elements::{Align, ConstrainedBox, Container, Flex, Icon, ParentElement, Text};
-use warpui::fonts::{Properties, Weight};
-use warpui::{AppContext, Element, SingletonEntity};
 
 use crate::appearance::Appearance;
 use crate::search::command_palette::mixer::CommandPaletteItemAction;

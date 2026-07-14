@@ -1,11 +1,11 @@
-use pathfinder_geometry::vector::vec2f;
-use warp_core::ui::external_product_icon::ExternalProductIcon;
-use warp_core::ui::icons::Icon;
-use warpui::elements::{
+use octomus_core::ui::external_product_icon::ExternalProductIcon;
+use octomus_core::ui::icons::Icon;
+use octomusui::elements::{
     self, Align, Border, CacheOption, ChildAnchor, ConstrainedBox, Container, Element, Image,
     OffsetPositioning, ParentAnchor, ParentElement, ParentOffsetBounds, Stack, Text,
 };
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use pathfinder_geometry::vector::vec2f;
 
 use super::red_notification_dot::RedNotificationDot;
 

@@ -10,7 +10,7 @@
 //!
 //! The declarations file is an append-only UTF-8 JSONL file. The Rust pipeline only ever
 //! *reads* it; the sibling bash generator `snapshot-declarations.sh` (shipped in
-//! `warp-agent-docker`) is the primary writer, and operators may hand-edit entries.
+//! `octomus-agent-docker`) is the primary writer, and operators may hand-edit entries.
 //!
 //! Each non-empty line is a JSON object with:
 //! - `version`: `1`,
@@ -34,12 +34,12 @@ use anyhow::{Context as _, Result};
 use command::r#async::Command;
 use command::Stdio;
 use futures::future::join_all;
+use octomus_core::report_error;
+use octomusui::r#async::executor::Background;
+use octomusui::r#async::FutureExt as _;
 use tokio::fs::{self as tokio_fs, OpenOptions};
 use tokio::io::AsyncWriteExt as _;
 use tokio::sync::{mpsc, oneshot};
-use warp_core::report_error;
-use warpui::r#async::executor::Background;
-use warpui::r#async::FutureExt as _;
 
 use crate::ai::agent_sdk::retry::with_bounded_retry;
 use crate::ai::ambient_agents::AmbientAgentTaskId;

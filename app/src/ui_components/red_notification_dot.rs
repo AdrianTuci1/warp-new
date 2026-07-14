@@ -1,11 +1,11 @@
-use pathfinder_geometry::vector::vec2f;
-use warp_core::ui::theme::AnsiColorIdentifier;
-use warpui::elements::{
+use octomus_core::ui::theme::AnsiColorIdentifier;
+use octomusui::elements::{
     ChildAnchor, ConstrainedBox, Container, CornerRadius, Empty, Fill, OffsetPositioning,
     ParentAnchor, ParentElement as _, ParentOffsetBounds, Radius, Stack,
 };
-use warpui::ui_components::components::UiComponentStyles;
-use warpui::Element;
+use octomusui::ui_components::components::UiComponentStyles;
+use octomusui::Element;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::appearance::Appearance;
 

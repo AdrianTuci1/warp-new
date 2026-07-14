@@ -8,7 +8,7 @@ mod aws_bedrock_login;
 mod aws_cli_not_installed;
 mod notifications_discovery;
 mod notifications_error;
-mod open_in_warp;
+mod open_in_octomus;
 mod passive_code_diff;
 pub(crate) mod prompt_suggestions;
 mod session_state;
@@ -24,7 +24,16 @@ pub use aws_bedrock_login::*;
 pub use aws_cli_not_installed::*;
 pub use notifications_discovery::*;
 pub use notifications_error::*;
-pub use open_in_warp::*;
+use octomusui::elements::{
+    Align, Clipped, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Icon,
+    MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Radius, SavePosition,
+    Shrinkable, Text,
+};
+use octomusui::fonts::{FamilyId, Properties, Weight};
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::Element;
+pub use open_in_octomus::*;
 pub use passive_code_diff::*;
 use pathfinder_color::ColorU;
 pub use session_state::*;
@@ -32,15 +41,6 @@ pub use shared_sessions::*;
 pub use shell_process_terminated::*;
 pub use ssh::*;
 pub use vim_mode::*;
-use warpui::elements::{
-    Align, Clipped, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Icon,
-    MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Radius, SavePosition,
-    Shrinkable, Text,
-};
-use warpui::fonts::{FamilyId, Properties, Weight};
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::Element;
 
 pub use self::prompt_suggestions::*;
 use crate::appearance::Appearance;
@@ -177,7 +177,7 @@ fn render_inline_block_list_banner(
     let theme = appearance.theme();
     let title_font_size = appearance.ui_font_size() + 1.;
     let button_text_size = title_font_size;
-    let hover_background_fill = warpui::elements::Fill::from(
+    let hover_background_fill = octomusui::elements::Fill::from(
         theme
             .active_ui_text_color()
             .with_opacity(INLINE_BANNER_BUTTON_HOVER_OPACITY),
@@ -403,7 +403,7 @@ fn render_inline_banner_text_button(
             font_color: Some(coloru_with_opacity(button_info.text_color, text_opacity)),
             font_family_id: button_info.font.family,
             font_weight: button_info.font.weight,
-            border_color: Some(warpui::elements::Fill::Solid(coloru_with_opacity(
+            border_color: Some(octomusui::elements::Fill::Solid(coloru_with_opacity(
                 button_info.text_color,
                 text_opacity,
             ))),

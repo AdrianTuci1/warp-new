@@ -20,17 +20,17 @@ use markdown_parser::{
 pub use markdown_parser::{
     FormattedTable, FormattedTableAlignment, FormattedTextFragment, FormattedTextInline,
 };
+use octomus_core::features::FeatureFlag;
+use octomusui_core::AppContext;
+use octomusui_core::elements::ListIndentLevel;
+use octomusui_core::fonts::{Properties, Style, Weight};
+use octomusui_core::text::BlockHeaderSize as HeaderSize;
+use octomusui_core::text::point::Point;
 use pathfinder_color::ColorU;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use string_offset::{ByteOffset, CharOffset, impl_offset};
 use sum_tree::{Cursor, SeekBias, SumTree};
-use warp_core::features::FeatureFlag;
-use warpui_core::AppContext;
-use warpui_core::elements::ListIndentLevel;
-use warpui_core::fonts::{Properties, Style, Weight};
-use warpui_core::text::BlockHeaderSize as HeaderSize;
-use warpui_core::text::point::Point;
 
 use super::buffer::Buffer;
 use super::core::CursorType;

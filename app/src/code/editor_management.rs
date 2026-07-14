@@ -3,9 +3,11 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 use ai::skills::SkillReference;
+use octomus_util::path::LineAndColumnArg;
+use octomusui::{
+    AppContext, Entity, EntityId, ModelContext, SingletonEntity, ViewHandle, WindowId,
+};
 use serde::{Deserialize, Serialize};
-use warp_util::path::LineAndColumnArg;
-use warpui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity, ViewHandle, WindowId};
 
 use super::buffer_location::LocalOrRemotePath;
 use super::view::CodeView;
@@ -113,7 +115,7 @@ pub enum CodeSource {
     },
     /// Opened from an active AI agent conversation.
     AIAction { id: AIAgentActionId },
-    /// Opened from project rules (WARP.md) file.
+    /// Opened from project rules (OCTOMUS.md) file.
     ProjectRules { location: LocalOrRemotePath },
     /// Opened from file tree (local or remote).
     FileTree { location: LocalOrRemotePath },

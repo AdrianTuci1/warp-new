@@ -5,6 +5,10 @@ use asset_cache::AssetCacheExt as _;
 use futures::future::BoxFuture;
 use futures_util::future::join_all;
 use itertools::{Either, Itertools};
+use octomusui::assets::asset_cache::{AssetCache, AssetState};
+use octomusui::image_cache::ImageType;
+use octomusui::r#async::SpawnedFutureHandle;
+use octomusui::{AppContext, Entity, ModelContext, SingletonEntity};
 use pathfinder_color::ColorU;
 use rand::Rng;
 #[cfg(not(target_arch = "wasm32"))]
@@ -13,10 +17,6 @@ use session_sharing_protocol::common::{
     InputReplicaId, ParticipantId, ParticipantInfo, ParticipantList, ParticipantPresenceUpdate,
     PresenceUpdate, Role, RoleRequestId, Selection,
 };
-use warpui::assets::asset_cache::{AssetCache, AssetState};
-use warpui::image_cache::ImageType;
-use warpui::r#async::SpawnedFutureHandle;
-use warpui::{AppContext, Entity, ModelContext, SingletonEntity};
 
 use crate::auth::UserUid;
 use crate::editor::{CursorColors, PeerSelectionData};

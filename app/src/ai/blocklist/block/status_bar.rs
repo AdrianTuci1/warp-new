@@ -4,22 +4,22 @@ use std::time::Duration;
 
 use instant::Instant;
 use markdown_parser::FormattedTextFragment;
-use parking_lot::FairMutex;
-use pathfinder_color::ColorU;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::Fill;
-use warp_core::ui::Icon as CoreIcon;
-use warp_multi_agent_api as api;
-use warpui::elements::shimmering_text::ShimmeringTextStateHandle;
-use warpui::elements::{Border, Container, Empty, Flex, MouseStateHandle, ParentElement, Text};
-use warpui::keymap::Keystroke;
-use warpui::presenter::ChildView;
-use warpui::r#async::{SpawnedFutureHandle, Timer};
-use warpui::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::Fill;
+use octomus_core::ui::Icon as CoreIcon;
+use octomusui::elements::shimmering_text::ShimmeringTextStateHandle;
+use octomusui::elements::{Border, Container, Empty, Flex, MouseStateHandle, ParentElement, Text};
+use octomusui::keymap::Keystroke;
+use octomusui::presenter::ChildView;
+use octomusui::r#async::{SpawnedFutureHandle, Timer};
+use octomusui::{
     AppContext, Element, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use parking_lot::FairMutex;
+use pathfinder_color::ColorU;
+use warp_multi_agent_api as api;
 
 use super::cli_controller::{CLISubagentController, CLISubagentEvent, UserTakeOverReason};
 use super::model::{AIBlockModel, AIBlockModelImpl, AIBlockOutputStatus};
@@ -61,10 +61,10 @@ use crate::terminal::input::suggestions_mode_model::InputSuggestionsModeModel;
 use crate::terminal::input::{HandoffComposeState, SET_INPUT_MODE_TERMINAL_ACTION_NAME};
 use crate::terminal::model::block::LONG_RUNNING_COMMAND_DURATION_MS;
 use crate::terminal::model_events::{ModelEvent, ModelEventDispatcher};
+use crate::terminal::octomusify::render::LEFT_STRIPE_WIDTH;
 use crate::terminal::view::ambient_agent::{
     is_cloud_agent_pre_first_exchange, AmbientAgentViewModel, AmbientAgentViewModelEvent,
 };
-use crate::terminal::warpify::render::LEFT_STRIPE_WIDTH;
 use crate::terminal::{
     TerminalModel, CANCEL_COMMAND_KEYBINDING, TOGGLE_AUTOEXECUTE_MODE_KEYBINDING,
     TOGGLE_HIDE_CLI_RESPONSES_KEYBINDING, TOGGLE_QUEUE_NEXT_PROMPT_KEYBINDING,
@@ -996,7 +996,7 @@ fn latest_model_used_before_exchange<V: View>(
 
 fn render_agent_tip(tip: &AgentTip, app: &AppContext) -> Box<dyn Element> {
     use markdown_parser::{FormattedTextFragment, FormattedTextLine};
-    use warpui::text_layout::ClipConfig;
+    use octomusui::text_layout::ClipConfig;
 
     use crate::ai::agent_tips::AITip;
 
@@ -1018,7 +1018,7 @@ fn render_agent_tip(tip: &AgentTip, app: &AppContext) -> Box<dyn Element> {
 
     let formatted_text =
         markdown_parser::FormattedText::new(vec![FormattedTextLine::Line(fragments)]);
-    warpui::elements::FormattedTextElement::new(
+    octomusui::elements::FormattedTextElement::new(
         formatted_text,
         appearance.monospace_font_size() - 3.,
         appearance.ui_font_family(),
@@ -1030,7 +1030,7 @@ fn render_agent_tip(tip: &AgentTip, app: &AppContext) -> Box<dyn Element> {
     .set_selectable(true)
     .with_clip(ClipConfig::ellipsis())
     .register_default_click_handlers_with_action_support(move |link, evt, app| {
-        use warpui::elements::HyperlinkLens;
+        use octomusui::elements::HyperlinkLens;
         match link {
             HyperlinkLens::Url(url) => {
                 send_telemetry_from_app_ctx!(
@@ -1138,7 +1138,7 @@ impl View for BlocklistAIStatusBar {
         "BlocklistAIStatusBar"
     }
 
-    fn render(&self, app: &AppContext) -> Box<dyn warpui::Element> {
+    fn render(&self, app: &AppContext) -> Box<dyn octomusui::Element> {
         let appearance = Appearance::as_ref(app);
         let agent_view_controller = self.agent_view_controller.as_ref(app);
         if let Some(cloud_mode_setup_terminal_message) =

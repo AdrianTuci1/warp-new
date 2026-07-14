@@ -29,8 +29,8 @@ Remove ALL predefined model configurations. The LLMPreferences should start EMPT
 Replace the ENTIRE content with a minimal stub:
 ```rust
 // LLM preferences - starts empty, user configures their own provider/key.
-use warpui::AppContext;
-use warpui::SingletonEntity;
+use octomusui::AppContext;
+use octomusui::SingletonEntity;
 
 #[derive(Clone, Debug, Default)]
 pub struct LLMPreferences;

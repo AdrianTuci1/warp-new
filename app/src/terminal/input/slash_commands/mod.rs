@@ -9,17 +9,17 @@ use std::path::PathBuf;
 use ai::skills::SkillReference;
 pub use cloud_mode_v2_view::{CloudModeV2SlashCommandView, Section as CloudModeV2Section};
 pub use data_source::*;
-pub use view::{CloseReason, InlineSlashCommandView, SlashCommandsEvent};
 #[cfg(not(target_family = "wasm"))]
-use warp_cli::agent::Harness;
-use warp_core::features::FeatureFlag;
-use warp_core::send_telemetry_from_ctx;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::AnsiColorIdentifier;
+use octomus_cli::agent::Harness;
+use octomus_core::features::FeatureFlag;
+use octomus_core::send_telemetry_from_ctx;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::AnsiColorIdentifier;
 #[cfg(feature = "local_fs")]
-use warp_util::path::{CleanPathResult, LineAndColumnArg};
-use warpui::clipboard::ClipboardContent;
-use warpui::{AppContext, SingletonEntity, ViewContext};
+use octomus_util::path::{CleanPathResult, LineAndColumnArg};
+use octomusui::clipboard::ClipboardContent;
+use octomusui::{AppContext, SingletonEntity, ViewContext};
+pub use view::{CloseReason, InlineSlashCommandView, SlashCommandsEvent};
 
 #[cfg(not(target_family = "wasm"))]
 use crate::ai::agent::conversation::AIConversationId;

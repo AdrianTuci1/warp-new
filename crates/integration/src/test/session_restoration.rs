@@ -1,26 +1,26 @@
-use settings::{RespectUserSyncSetting, SyncToCloud};
-use warp::features::FeatureFlag;
-use warp::integration_testing::notebook::{
+use octomus::features::FeatureFlag;
+use octomus::integration_testing::notebook::{
     assert_cloud_preference_exists, assert_notebook_contents, assert_notebook_metadata_revision,
 };
-use warp::integration_testing::step::{
+use octomus::integration_testing::step::{
     new_step_with_default_assertions, new_step_with_default_assertions_for_pane,
 };
-use warp::integration_testing::tab::assert_pane_title;
-use warp::integration_testing::terminal::wait_until_bootstrapped_single_pane_for_tab;
-use warp::integration_testing::view_getters::single_terminal_view_for_tab;
-use warp::integration_testing::workflow::assert_workflow_metadata_revision;
-use warp::integration_testing::{self};
-use warp::settings::Preference;
-use warp::settings_view::{SettingsSection, SettingsView};
-use warp::sqlite_testing::set_user_and_hostname_for_blocks;
-use warp::terminal::model::session::get_local_hostname;
-use warp::terminal::model::terminal_model::BlockIndex;
-use warp::terminal::shell::ShellType;
-use warp::terminal::{History, ShellHost, TerminalView};
-use warp::workspace::Workspace;
-use warpui_core::integration::{AssertionOutcome, TestStep};
-use warpui_core::{async_assert_eq, SingletonEntity, ViewHandle};
+use octomus::integration_testing::tab::assert_pane_title;
+use octomus::integration_testing::terminal::wait_until_bootstrapped_single_pane_for_tab;
+use octomus::integration_testing::view_getters::single_terminal_view_for_tab;
+use octomus::integration_testing::workflow::assert_workflow_metadata_revision;
+use octomus::integration_testing::{self};
+use octomus::settings::Preference;
+use octomus::settings_view::{SettingsSection, SettingsView};
+use octomus::sqlite_testing::set_user_and_hostname_for_blocks;
+use octomus::terminal::model::session::get_local_hostname;
+use octomus::terminal::model::terminal_model::BlockIndex;
+use octomus::terminal::shell::ShellType;
+use octomus::terminal::{History, ShellHost, TerminalView};
+use octomus::workspace::Workspace;
+use octomusui_core::integration::{AssertionOutcome, TestStep};
+use octomusui_core::{async_assert_eq, SingletonEntity, ViewHandle};
+use settings::{RespectUserSyncSetting, SyncToCloud};
 
 use super::{new_builder, Builder, TEST_ONLY_ASSETS};
 use crate::util::{get_local_user, tab_title_in_home_dir};
@@ -417,8 +417,8 @@ pub fn test_restore_snapshot_with_test_json_object() -> Builder {
 
 /// Tests restoring a snapshot that has multiple objects with the same shareable_object_id
 /// in the metadata table.  This test verifies a regression introduced in
-/// https://github.com/warpdotdev/warp-internal/pull/7406 and fixed in
-/// https://github.com/warpdotdev/warp-internal/pull/7480
+/// https://github.com/warpdotdev/octomus-internal/pull/7406 and fixed in
+/// https://github.com/warpdotdev/octomus-internal/pull/7480
 ///
 /// The two objects have server ids Workflow-ftv7on4HwTeixO2xF5hmKf and Notebook-Flbu686H9XDCHZlYRriVpB
 /// and shareable_object_id 2.
@@ -554,10 +554,7 @@ pub fn test_restore_snapshot_with_settings_page() -> Builder {
 
                     let settings_view = settings_views.first().expect("Settings view must exist");
                     settings_view.read(app, |view, _| {
-                        async_assert_eq!(
-                            view.current_settings_section(),
-                            SettingsSection::Referrals
-                        )
+                        async_assert_eq!(view.current_settings_section(), SettingsSection::Account)
                     })
                 }),
         )

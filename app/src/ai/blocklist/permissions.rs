@@ -2,14 +2,14 @@ use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 
 use anyhow::Result;
+use octomus_completer::parsers::simple::decompose_command;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomus_core::features::FeatureFlag;
+use octomus_core::settings::Setting;
+use octomus_core::user_preferences::GetUserPreferences;
+use octomus_util::path::EscapeChar;
+use octomusui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
 use serde::{Deserialize, Serialize};
-use warp_completer::parsers::simple::decompose_command;
-use warp_core::execution_mode::AppExecutionMode;
-use warp_core::features::FeatureFlag;
-use warp_core::settings::Setting;
-use warp_core::user_preferences::GetUserPreferences;
-use warp_util::path::EscapeChar;
-use warpui::{AppContext, Entity, EntityId, ModelContext, SingletonEntity};
 
 use super::BlocklistAIHistoryModel;
 use crate::ai::agent::conversation::AIConversationId;
@@ -204,7 +204,7 @@ impl BlocklistAIPermissions {
             cli_agent_model: profile_data.cli_agent_model.clone(),
             computer_use_model: profile_data.computer_use_model.clone(),
             context_window_limit: profile_data.context_window_limit,
-            autosync_plans_to_warp_drive: profile_data.autosync_plans_to_warp_drive,
+            autosync_plans_to_octomus_drive: profile_data.autosync_plans_to_octomus_drive,
             web_search_enabled: profile_data.web_search_enabled,
         }
     }
@@ -674,7 +674,7 @@ impl BlocklistAIPermissions {
         self.can_read_files(Some(conversation_id), paths, terminal_view_id, ctx)
     }
 
-    /// Returns whether or not Warp can auto-read the given files (e.g. for codebase indexing).
+    /// Returns whether or not Octomus can auto-read the given files (e.g. for codebase indexing).
     pub fn can_read_files(
         &self,
         conversation_id: Option<&AIConversationId>,

@@ -1,6 +1,6 @@
 use std::ffi::OsString;
 
-use warp_core::channel::ChannelState;
+use octomus_core::channel::ChannelState;
 use windows_registry::{CURRENT_USER, HSTRING};
 
 pub(super) fn register_uri_handler() {
@@ -12,7 +12,7 @@ pub(super) fn register_uri_handler() {
         return;
     };
 
-    // The Windows Registry entry for Warp (assuming the channel is WarpLocal):
+    // The Windows Registry entry for Octomus (assuming the channel is WarpLocal):
     // warplocal
     //   (Default) = "WarpLocal"
     //   URL Protocol = ""
@@ -36,7 +36,7 @@ pub(super) fn register_uri_handler() {
             };
 
             // TODO(CORE-2861): Add the `DefaultIcon` Default value here with the file path to
-            // Warp's icon once we figure out distribution on Windows.
+            // Octomus's icon once we figure out distribution on Windows.
 
             let command_key = match parent_key.create("shell\\open\\command") {
                 Ok(command_key) => command_key,

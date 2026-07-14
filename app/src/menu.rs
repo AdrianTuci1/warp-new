@@ -3,13 +3,10 @@ use std::sync::Arc;
 use std::{fmt, vec};
 
 use chrono::{DateTime, Local};
-use pathfinder_color::ColorU;
-use pathfinder_geometry::rect::RectF;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use warp_core::ui::color::blend::Blend;
-use warpui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
-use warpui::assets::asset_cache::AssetSource;
-use warpui::elements::{
+use octomus_core::ui::color::blend::Blend;
+use octomusui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
+use octomusui::assets::asset_cache::AssetSource;
+use octomusui::elements::{
     Align, Border, CacheOption, ChildAnchor, ClippedScrollStateHandle, ClippedScrollable,
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Dismiss, DispatchEventResult,
     DropShadow, Element, EventHandler, Flex, Hoverable, Icon, Image, MainAxisAlignment,
@@ -18,14 +15,17 @@ use warpui::elements::{
     Radius, Rect, SavePosition, ScrollTarget, ScrollToPositionMode, ScrollbarWidth, Shrinkable,
     Stack, Text,
 };
-use warpui::fonts::{FamilyId, Properties};
-use warpui::keymap::FixedBinding;
-use warpui::platform::Cursor;
-use warpui::text_layout::ClipConfig;
-use warpui::ui_components::components::UiComponent;
-use warpui::{
+use octomusui::fonts::{FamilyId, Properties};
+use octomusui::keymap::FixedBinding;
+use octomusui::platform::Cursor;
+use octomusui::text_layout::ClipConfig;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{
     Action, AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext, WindowId,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::rect::RectF;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
 
 use crate::appearance::Appearance;
 use crate::safe_triangle::SafeTriangle;
@@ -986,7 +986,7 @@ impl<A: Action + Clone> MenuItemFields<A> {
                 Shrinkable::new(
                     1.,
                     Container::new(
-                        ConstrainedBox::new(icon.to_warpui_icon(icon_color).finish())
+                        ConstrainedBox::new(icon.to_octomusui_icon(icon_color).finish())
                             .with_width(icon_size)
                             .with_height(icon_size)
                             .finish(),
@@ -1102,7 +1102,7 @@ impl<A: Action + Clone> MenuItemFields<A> {
                 .finish();
             return Some(Shrinkable::new(1., Align::new(element).right().finish()).finish());
         }
-        let icon_element = ConstrainedBox::new(config.icon.to_warpui_icon(icon_color).finish())
+        let icon_element = ConstrainedBox::new(config.icon.to_octomusui_icon(icon_color).finish())
             .with_width(icon_size)
             .with_height(icon_size)
             .finish();
@@ -1743,7 +1743,7 @@ pub enum MenuAction {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([
         FixedBinding::new(
@@ -2223,7 +2223,7 @@ impl<A: Action + Clone> SubMenu<A> {
                         ScrollbarWidth::Auto,
                         appearance.theme().nonactive_ui_detail().into(),
                         appearance.theme().active_ui_detail().into(),
-                        warpui::elements::Fill::None,
+                        octomusui::elements::Fill::None,
                     )
                     .with_overlayed_scrollbar()
                     .finish(),

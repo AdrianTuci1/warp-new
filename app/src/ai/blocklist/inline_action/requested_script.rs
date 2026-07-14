@@ -3,20 +3,20 @@
 
 use std::rc::Rc;
 
-use pathfinder_geometry::vector::Vector2F;
-use warp_core::ui::appearance::Appearance;
-use warpui::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::{
     Align, Border, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Hoverable,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Radius, Shrinkable, Text,
     Wrap,
 };
-use warpui::keymap::Keystroke;
-use warpui::platform::Cursor;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::ui_components::toggle_menu::{
+use octomusui::keymap::Keystroke;
+use octomusui::platform::Cursor;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::ui_components::toggle_menu::{
     ToggleMenuCallback, ToggleMenuItem, ToggleMenuStateHandle,
 };
-use warpui::{AppContext, Element, EventContext, SingletonEntity};
+use octomusui::{AppContext, Element, EventContext, SingletonEntity};
+use pathfinder_geometry::vector::Vector2F;
 
 use super::inline_action_header::{
     INLINE_ACTION_HEADER_VERTICAL_PADDING, INLINE_ACTION_HORIZONTAL_PADDING,
@@ -347,7 +347,7 @@ fn script_status(
     };
     let is_expanded = (is_executing && is_viewing_detail) || (!is_executing && !is_collapsed);
     let icon = ConstrainedBox::new(
-        warpui::elements::Icon::new(
+        octomusui::elements::Icon::new(
             if is_expanded {
                 Icon::ChevronDown.into()
             } else {

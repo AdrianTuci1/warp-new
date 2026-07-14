@@ -3,11 +3,11 @@ use std::borrow::Cow;
 use cynic::{GraphQlResponse, QueryFragment, QueryVariables};
 use http::StatusCode;
 use instant::Duration;
+use octomus_core::channel::ChannelState;
+use octomus_core::operating_system_info::OperatingSystemInfo;
 use reqwest::header::CONTENT_TYPE;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
-use warp_core::channel::ChannelState;
-use warp_core::operating_system_info::OperatingSystemInfo;
 
 use crate::error::{UserFacingError, UserFacingErrorInterface};
 use crate::request_context::{ClientContext, OsContext, RequestContext};
@@ -36,7 +36,7 @@ pub trait Operation<QF> {
 }
 
 /// The various errors we could encounter when making a GraphQL request to
-/// warp-server.
+/// octomus-server.
 #[derive(Debug, thiserror::Error)]
 pub enum GraphQLError {
     /// Encountered an error while sending the request.

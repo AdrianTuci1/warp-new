@@ -1,16 +1,16 @@
 # PRODUCT.md — CODE-1779: Drag-and-drop file paths in WSL (and Git Bash)
 
 Linear: https://linear.app/warpdotdev/issue/CODE-1779/windows-drag-and-drop-file-paths-in-wsl
-Upstream: https://github.com/warpdotdev/warp/issues/6191
+Upstream: https://github.com/warpdotdev/octomus/issues/6191
 
 Figma: none provided (no visual design — the change is purely in which string lands in the input buffer)
 
 ## Summary
-When a Warp tab is attached to a Unix-like shell on Windows — WSL, or MSYS2 / Git Bash — dragging a file or folder from Windows Explorer onto Warp should insert a path in that shell's native form, not a Windows-native path. For WSL that's `/mnt/c/Users/andy/Downloads`; for Git Bash that's `/c/Users/andy/Downloads`. WSL already works correctly on the terminal grid when a long-running command is active; this spec covers the input editor (broken for both WSL and Git Bash today) and adds matching behavior for Git Bash.
+When a Octomus tab is attached to a Unix-like shell on Windows — WSL, or MSYS2 / Git Bash — dragging a file or folder from Windows Explorer onto Octomus should insert a path in that shell's native form, not a Windows-native path. For WSL that's `/mnt/c/Users/andy/Downloads`; for Git Bash that's `/c/Users/andy/Downloads`. WSL already works correctly on the terminal grid when a long-running command is active; this spec covers the input editor (broken for both WSL and Git Bash today) and adds matching behavior for Git Bash.
 
 ## Behavior
 
-1. Dropping one or more files or folders from Windows Explorer onto the Warp input editor inserts each path in the active session's native form:
+1. Dropping one or more files or folders from Windows Explorer onto the Octomus input editor inserts each path in the active session's native form:
    - **WSL session** — drive-letter paths are mapped under `/mnt/<drive>/…` with forward slashes.
    - **MSYS2 / Git Bash session** — drive-letter paths are mapped under `/<drive>/…` with forward slashes (MSYS2's POSIX-style path convention, which Git Bash and the MSYS2 runtime translate automatically when invoking native Windows binaries).
    - **All other sessions** — paths are inserted exactly as dropped (see invariant 5).

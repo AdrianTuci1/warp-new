@@ -4,15 +4,12 @@ use std::sync::Arc;
 
 use futures::Future;
 use itertools::Itertools;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use url::Url;
-use warp_core::context_flag::ContextFlag;
-use warp_core::settings::Setting;
-use warp_core::ui::theme::color::internal_colors;
-use warp_util::sync::Condition;
-use warpui::clipboard::ClipboardContent;
-use warpui::elements::{
+use octomus_core::context_flag::ContextFlag;
+use octomus_core::settings::Setting;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_util::sync::Condition;
+use octomusui::clipboard::ClipboardContent;
+use octomusui::elements::{
     Align, AnchorPair, Border, ChildAnchor, ChildView, ClippedScrollStateHandle, ClippedScrollable,
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Dash, DropTarget, DropTargetData,
     Empty, Flex, Highlight, Hoverable, MainAxisAlignment, MainAxisSize, MouseStateHandle,
@@ -21,16 +18,19 @@ use warpui::elements::{
     ScrollTarget, ScrollToPositionMode, ScrollbarWidth, Shrinkable, Stack, Text, XAxisAnchor,
     YAxisAnchor,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::keymap::FixedBinding;
-use warpui::platform::{Cursor, OperatingSystem};
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::units::IntoPixels;
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::keymap::FixedBinding;
+use octomusui::platform::{Cursor, OperatingSystem};
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::units::IntoPixels;
+use octomusui::{
     AppContext, BlurContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView,
     UpdateView, View, ViewContext, ViewHandle, WindowId,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
+use url::Url;
 
 use super::cloud_object_naming_dialog::CloudObjectNamingDialog;
 use super::drive_helpers::{
@@ -42,11 +42,11 @@ use super::empty_trash_confirmation_dialog::{
     EmptyTrashConfirmationDialog, EmptyTrashConfirmationEvent,
 };
 use super::folders::CloudFolder;
-use super::items::ai_fact_collection::WarpDriveAIFactCollection;
-use super::items::item::{tools_panel_menu_direction, ItemStates, WarpDriveRow};
-use super::items::mcp_server_collection::WarpDriveMCPServerCollection;
-use super::items::WarpDriveItemId;
-use super::settings::WarpDriveSettings;
+use super::items::ai_fact_collection::OctomusDriveAIFactCollection;
+use super::items::item::{tools_panel_menu_direction, ItemStates, OctomusDriveRow};
+use super::items::mcp_server_collection::OctomusDriveMCPServerCollection;
+use super::items::OctomusDriveItemId;
+use super::settings::OctomusDriveSettings;
 use super::sharing::dialog::{SharingDialog, SharingDialogEvent};
 use super::sharing::{ContentEditability, ShareableObject};
 use super::{CloudObjectTypeAndId, DriveObjectType, DriveSortOrder};
@@ -173,7 +173,7 @@ const OFFLINE_BANNER_TEXT: &str = "You are offline. Some files will be read only
 
 pub const DRIVE_INDEX_VIEW_POSITION_ID: &str = "drive_index_view_id";
 
-// Sets the speed of the autoscroll that occurs when you drag an item near the Warp Drive border.
+// Sets the speed of the autoscroll that occurs when you drag an item near the Octomus Drive border.
 pub const AUTOSCROLL_SPEED_MULTIPLIER: f32 = 10.;
 // Sets the distance from a border at which scroll events start to occur.
 pub const AUTOSCROLL_DETECTION_DISTANCE: f32 = 30.0;
@@ -195,7 +195,7 @@ const PAYMENT_ISSUE_BANNER_LINE_2_ADMIN: &str =
     "Please update your payment information to restore access.";
 
 const PAYMENT_ISSUE_BANNER_LINE_2_ADMIN_ENTERPRISE: &str =
-    "Please contact support@warp.dev to restore access.";
+    "Please contact support@octomus.dev to restore access.";
 
 const PAYMENT_ISSUE_BANNER_LINE_2_NONADMIN: &str = "Please contact a team admin to restore access.";
 
@@ -220,7 +220,7 @@ impl DropTargetData for CloudObjectLocation {
     }
 }
 
-struct RenderedWarpDriveItemAndChildren {
+struct RenderedOctomusDriveItemAndChildren {
     element: Box<dyn Element>,
     num_items: usize, // represents the total number of elements, including the parent and any children
 }
@@ -267,10 +267,10 @@ pub enum DriveIndexAction {
     ToggleSortingMenu,
     ToggleItemOverflowMenu {
         space: Space,
-        warp_drive_item_id: WarpDriveItemId,
+        octomus_drive_item_id: OctomusDriveItemId,
     },
     ToggleShareDialog {
-        warp_drive_item_id: WarpDriveItemId,
+        octomus_drive_item_id: OctomusDriveItemId,
     },
     ToggleSpaceOverflowMenu {
         space: Space,
@@ -341,10 +341,10 @@ pub enum DriveIndexAction {
     CloseTrashIndex,
     FocusPreviousItem,
     FocusNextItem,
-    /// Hitting one of the l/r arrow keys on a Warp Drive item.
+    /// Hitting one of the l/r arrow keys on a Octomus Drive item.
     LeftArrowKey,
     RightArrowKey,
-    /// Hitting enter key on a Warp Drive item.
+    /// Hitting enter key on a Octomus Drive item.
     EnterKey,
     /// Hitting escape key from trash index returns to main drive index.
     EscapeKey,
@@ -462,14 +462,14 @@ pub enum DriveIndexEvent {
         initial_folder_id: Option<SyncId>,
     },
     OpenWorkflowModalWithCloudWorkflow(SyncId),
-    FocusWarpDrive,
+    FocusOctomusDrive,
     OpenSharedObjectsCreationDeniedModal(DriveObjectType, ServerId),
     AttachPlanAsContext(AIDocumentId),
 }
 
 #[derive(Clone, Default)]
 struct MouseStateHandles {
-    warp_drive_initial_load_mouse_state: MouseStateHandle,
+    octomus_drive_initial_load_mouse_state: MouseStateHandle,
     sorting_button_mouse_state: MouseStateHandle,
     retry_button_mouse_state: MouseStateHandle,
     trash_row_mouse_state: MouseStateHandle,
@@ -495,10 +495,10 @@ struct SpaceMenuState {
     offset: Vector2F,
 }
 
-/// The main view for the Warp Drive sidebar.
+/// The main view for the Octomus Drive sidebar.
 /// `DriveIndex` is different from `DrivePanel` in that it is responsible for
-/// all the logic within Warp Drive, whereas `DrivePanel` is responsible for
-/// how Warp Drive interacts with the workspace and the rest of the app.
+/// all the logic within Octomus Drive, whereas `DrivePanel` is responsible for
+/// how Octomus Drive interacts with the workspace and the rest of the app.
 #[derive(Clone)]
 pub struct DriveIndex {
     window_id: WindowId,
@@ -507,15 +507,15 @@ pub struct DriveIndex {
     menu: ViewHandle<Menu<DriveIndexAction>>,
 
     sharing_dialog: ViewHandle<SharingDialog>,
-    /// Variant of the index, determines whether base Warp Drive or trash is viewed.
+    /// Variant of the index, determines whether base Octomus Drive or trash is viewed.
     index_variant: DriveIndexVariant,
     /// If None, the context menu is closed. Otherwise, this contains the ID of the object it's open on.
-    menu_object_id_if_open: Option<WarpDriveItemId>,
+    menu_object_id_if_open: Option<OctomusDriveItemId>,
     /// If Some, the share dialog is open for the given object.
-    share_dialog_open_for_object: Option<WarpDriveItemId>,
+    share_dialog_open_for_object: Option<OctomusDriveItemId>,
     sections: Vec<DriveIndexSection>,
     /// Selected represents an object that is open in the active pane
-    selected: Option<WarpDriveItemId>,
+    selected: Option<OctomusDriveItemId>,
     /// The numerical index of the item that is focused in WD (via keyboard)
     focused_index: Option<usize>,
     item_mouse_states: HashMap<Space, Vec<ItemStates>>,
@@ -530,22 +530,22 @@ pub struct DriveIndex {
     sorting_choice: DriveSortOrder,
     auth_state: Arc<AuthState>,
     space_menu_open_for_space: Option<SpaceMenuState>,
-    show_warp_drive_loading_icon: bool,
+    show_octomus_drive_loading_icon: bool,
     should_show_personal_object_limit_status: bool,
     /// A hashmap of location (space/folder) to a list of hashed IDs of objects inside
     /// the space/folder, used for rendering our objects
     sorted_orders_by_location: HashMap<CloudObjectLocation, Vec<ObjectUid>>,
-    /// A sorted list of all the items (spaces + objects) in Warp Drive
+    /// A sorted list of all the items (spaces + objects) in Octomus Drive
     /// Unlike sorted_orders_by_location, this is not used for rendering
     /// This is used for object focusing and WD keyboard navigation
-    ordered_items: Vec<WarpDriveItemId>,
+    ordered_items: Vec<OctomusDriveItemId>,
 
     /// Whether or not we have done an initial setting of all the section states.
     /// We need to keep track of this to make sure we don't do any opening actions on WD
     /// from links before everything has been set up.
     has_initialized_sections: Condition,
 
-    /// The number of objects in Warp Drive that have errored.
+    /// The number of objects in Octomus Drive that have errored.
     /// This value is cached so that we can determine whether to render the "retry all"
     /// objects button in the case of syncing failures.
     num_errored_objects: usize,
@@ -554,17 +554,17 @@ pub struct DriveIndex {
 
     /// Drive item to represent collection of AI facts.
     /// Special-cased to always render at the top of the Personal space section.
-    ai_fact_collection: WarpDriveAIFactCollection,
+    ai_fact_collection: OctomusDriveAIFactCollection,
     ai_fact_collection_item_mouse_states: ItemStates,
 
     /// Drive item to represent collection of MCP servers.
     /// Special-cased to always render at the top of the Personal space section.
-    mcp_server_collection: WarpDriveMCPServerCollection,
+    mcp_server_collection: OctomusDriveMCPServerCollection,
     mcp_server_collection_item_mouse_states: ItemStates,
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings(vec![
         FixedBinding::new("up", DriveIndexAction::FocusPreviousItem, id!("DriveIndex")),
@@ -730,7 +730,7 @@ impl DriveIndex {
                 cloud_model
                     .active_cloud_objects_in_location_without_descendents(location, app)
                     .filter(move |cloud_object| {
-                        cloud_object.renders_in_warp_drive()
+                        cloud_object.renders_in_octomus_drive()
                             && user_uid.is_some_and(|uid| {
                                 cloud_object.permissions().has_direct_user_access(uid)
                             })
@@ -743,7 +743,7 @@ impl DriveIndex {
             }
             (DriveIndexVariant::MainIndex, _) => cloud_model
                 .active_cloud_objects_in_location_without_descendents(location, app)
-                .filter(|cloud_object| cloud_object.renders_in_warp_drive())
+                .filter(|cloud_object| cloud_object.renders_in_octomus_drive())
                 .sorted_by(self.sorting_choice.sort_by(
                     cloud_view_model,
                     UpdateTimestamp::Revision,
@@ -802,7 +802,8 @@ impl DriveIndex {
             if let Some(cloud_object) = cloud_model.get_by_uid(&uid) {
                 // Add object to the list
                 let cloud_id = cloud_object.cloud_object_type_and_id();
-                self.ordered_items.push(WarpDriveItemId::Object(cloud_id));
+                self.ordered_items
+                    .push(OctomusDriveItemId::Object(cloud_id));
                 // If the item is a folder and the folder is open, recurse
                 if let CloudObjectTypeAndId::Folder(folder_id) = cloud_id {
                     if self
@@ -826,7 +827,7 @@ impl DriveIndex {
         for section in self.sections.clone() {
             if let DriveIndexSection::Space(space) = section {
                 // Add space to the list
-                self.ordered_items.push(WarpDriveItemId::Space(space));
+                self.ordered_items.push(OctomusDriveItemId::Space(space));
                 // If the space is not collapsed, iterate through the items in the space
                 if let Some(section_state) = self
                     .section_states
@@ -839,9 +840,10 @@ impl DriveIndex {
                                 && ContextFlag::ShowMCPServers.is_enabled()
                             {
                                 self.ordered_items
-                                    .push(WarpDriveItemId::MCPServerCollection);
+                                    .push(OctomusDriveItemId::MCPServerCollection);
                             }
-                            self.ordered_items.push(WarpDriveItemId::AIFactCollection);
+                            self.ordered_items
+                                .push(OctomusDriveItemId::AIFactCollection);
                         }
                         // Sort and add the rest of the items in the space
                         let Some(uids) = self
@@ -856,7 +858,7 @@ impl DriveIndex {
             }
         }
         if self.index_variant == DriveIndexVariant::MainIndex {
-            self.ordered_items.push(WarpDriveItemId::Trash);
+            self.ordered_items.push(OctomusDriveItemId::Trash);
         }
     }
 
@@ -935,12 +937,12 @@ impl DriveIndex {
             me.handle_empty_trash_confirmation_dialog_event(event, ctx);
         });
 
-        let sorting_choice = *WarpDriveSettings::as_ref(ctx).sorting_choice.value();
+        let sorting_choice = *OctomusDriveSettings::as_ref(ctx).sorting_choice.value();
 
-        // Hide Warp Drive loading icon once initial load is complete
+        // Hide Octomus Drive loading icon once initial load is complete
         let initial_load_complete = UpdateManager::as_ref(ctx).initial_load_complete();
         ctx.spawn(initial_load_complete, |me, _, ctx| {
-            me.show_warp_drive_loading_icon = false;
+            me.show_octomus_drive_loading_icon = false;
             me.initialize_section_states(ctx);
             me.has_initialized_sections.set();
             ctx.notify();
@@ -988,8 +990,8 @@ impl DriveIndex {
             dropdown
         });
 
-        let ai_fact_collection = WarpDriveAIFactCollection::new(ClientId::default());
-        let mcp_server_collection = WarpDriveMCPServerCollection::new(ClientId::default());
+        let ai_fact_collection = OctomusDriveAIFactCollection::new(ClientId::default());
+        let mcp_server_collection = OctomusDriveMCPServerCollection::new(ClientId::default());
 
         Self {
             window_id: ctx.window_id(),
@@ -1012,7 +1014,7 @@ impl DriveIndex {
             sorting_choice,
             auth_state: AuthStateProvider::as_ref(ctx).get().clone(),
             space_menu_open_for_space: None,
-            show_warp_drive_loading_icon: true,
+            show_octomus_drive_loading_icon: true,
             sorted_orders_by_location: Default::default(),
             ordered_items: Default::default(),
             has_initialized_sections: Default::default(),
@@ -1053,7 +1055,11 @@ impl DriveIndex {
         NetworkStatus::as_ref(app).is_online()
     }
 
-    pub fn scroll_item_into_view(&mut self, item_id: WarpDriveItemId, ctx: &mut ViewContext<Self>) {
+    pub fn scroll_item_into_view(
+        &mut self,
+        item_id: OctomusDriveItemId,
+        ctx: &mut ViewContext<Self>,
+    ) {
         self.clipped_scroll_state.scroll_to_position(ScrollTarget {
             position_id: item_id.drive_row_position_id(),
             mode: ScrollToPositionMode::FullyIntoView,
@@ -1062,7 +1068,7 @@ impl DriveIndex {
     }
 
     /// Sets focused to the index of either the selected object or the first item in WD
-    pub fn reset_focused_index_in_warp_drive(
+    pub fn reset_focused_index_in_octomus_drive(
         &mut self,
         should_scroll: bool,
         ctx: &mut ViewContext<Self>,
@@ -1090,7 +1096,7 @@ impl DriveIndex {
 
     pub fn set_focused_item(
         &mut self,
-        item_id: WarpDriveItemId,
+        item_id: OctomusDriveItemId,
         should_scroll: bool,
         ctx: &mut ViewContext<Self>,
     ) {
@@ -1163,8 +1169,8 @@ impl DriveIndex {
         if let Event::Close { via_select_item } = event {
             self.reset_menus(ctx);
             if !*via_select_item {
-                ctx.emit(DriveIndexEvent::FocusWarpDrive);
-                self.reset_focused_index_in_warp_drive(false, ctx);
+                ctx.emit(DriveIndexEvent::FocusOctomusDrive);
+                self.reset_focused_index_in_octomus_drive(false, ctx);
             }
         }
     }
@@ -1228,14 +1234,14 @@ impl DriveIndex {
         ctx.notify();
     }
 
-    /// Expand the section for warp drive item. This is called when we perform deep link to warp
+    /// Expand the section for octomus drive item. This is called when we perform deep link to octomus
     /// drive items.
     pub fn expand_section_for_drive_item_id(
         &mut self,
-        item_id: WarpDriveItemId,
+        item_id: OctomusDriveItemId,
         ctx: &mut ViewContext<DriveIndex>,
     ) {
-        if let WarpDriveItemId::Object(object_id) = item_id {
+        if let OctomusDriveItemId::Object(object_id) = item_id {
             match object_id {
                 CloudObjectTypeAndId::Notebook(sync_id) => {
                     self.expand_section_for_object(&sync_id.uid().clone(), ctx);
@@ -1303,7 +1309,7 @@ impl DriveIndex {
         let icon = Container::new(
             ConstrainedBox::new(
                 Icon::CreateTeam
-                    .to_warpui_icon(
+                    .to_octomusui_icon(
                         appearance
                             .theme()
                             .main_text_color(appearance.theme().surface_1()),
@@ -1374,7 +1380,7 @@ impl DriveIndex {
             ctx.dispatch_typed_action(DriveIndexAction::ToggleSectionCollapsed(section))
         })
         .on_right_click(move |ctx, _, position| {
-            let position_id = &warp_drive_section_header_position_id(&section);
+            let position_id = &octomus_drive_section_header_position_id(&section);
             let Some(prompt_rect) = ctx.element_position_by_id(position_id) else {
                 return;
             };
@@ -1393,7 +1399,7 @@ impl DriveIndex {
                 stack.add_positioned_overlay_child(
                     ChildView::new(&self.menu).finish(),
                     OffsetPositioning::offset_from_save_position_element(
-                        warp_drive_section_header_position_id(&section),
+                        octomus_drive_section_header_position_id(&section),
                         space_menu_state.offset,
                         PositionedElementOffsetBounds::WindowByPosition,
                         PositionedElementAnchor::TopLeft,
@@ -1448,9 +1454,10 @@ impl DriveIndex {
         let mut is_focused = false;
         if let DriveIndexSection::Space(space) = section {
             if let Some(focused_index) = self.focused_index {
-                if Some(&WarpDriveItemId::Space(space)) == self.ordered_items.get(focused_index) {
+                if Some(&OctomusDriveItemId::Space(space)) == self.ordered_items.get(focused_index)
+                {
                     container = container.with_background(
-                        warp_core::ui::theme::color::internal_colors::fg_overlay_4(
+                        octomus_core::ui::theme::color::internal_colors::fg_overlay_4(
                             appearance.theme(),
                         ),
                     );
@@ -1462,10 +1469,10 @@ impl DriveIndex {
             Hoverable::new(
                 section_state.header_hover_state.clone(),
                 move |mouse_state| {
-                    // If the item is hovered, set a hover background that matches the hover state of warp drive items.
+                    // If the item is hovered, set a hover background that matches the hover state of octomus drive items.
                     if mouse_state.is_hovered() && !is_focused || section_state.menu_open {
                         container = container.with_background(
-                            warp_core::ui::theme::color::internal_colors::fg_overlay_2(
+                            octomus_core::ui::theme::color::internal_colors::fg_overlay_2(
                                 appearance.theme(),
                             ),
                         );
@@ -1506,7 +1513,7 @@ impl DriveIndex {
                 ctx.dispatch_typed_action(DriveIndexAction::ToggleSectionCollapsed(section))
             })
             .on_right_click(move |ctx, _, position| {
-                let position_id = &warp_drive_section_header_position_id(&section);
+                let position_id = &octomus_drive_section_header_position_id(&section);
                 let Some(prompt_rect) = ctx.element_position_by_id(position_id) else {
                     return;
                 };
@@ -1525,7 +1532,7 @@ impl DriveIndex {
                 left_stack.add_positioned_overlay_child(
                     ChildView::new(&self.menu).finish(),
                     OffsetPositioning::offset_from_save_position_element(
-                        warp_drive_section_header_position_id(&section),
+                        octomus_drive_section_header_position_id(&section),
                         space_menu_state.offset,
                         PositionedElementOffsetBounds::WindowByPosition,
                         PositionedElementAnchor::TopLeft,
@@ -1540,7 +1547,7 @@ impl DriveIndex {
             if self
                 .focused_index
                 .and_then(|idx| self.ordered_items.get(idx))
-                .is_some_and(|item| item == &WarpDriveItemId::Space(space_clone))
+                .is_some_and(|item| item == &OctomusDriveItemId::Space(space_clone))
             {
                 (
                     blended_colors::text_main(appearance.theme(), appearance.theme().background()),
@@ -1559,7 +1566,7 @@ impl DriveIndex {
             font_color: Some(empty_trash_default_font_color),
             font_size: Some(14.),
             font_family_id: Some(appearance.ui_font_family()),
-            font_weight: Some(warpui::fonts::Weight::Semibold),
+            font_weight: Some(octomusui::fonts::Weight::Semibold),
             padding: Some(Coords::uniform(6.)),
             border_radius: Some(CornerRadius::with_all(Radius::Pixels(6.))),
             ..Default::default()
@@ -1620,7 +1627,7 @@ impl DriveIndex {
                     self.add_dialog_to_stack(
                         &mut right_stack,
                         ChildView::new(&self.empty_trash_confirmation_dialog).finish(),
-                        warp_drive_section_header_position_id(&section).as_str(),
+                        octomus_drive_section_header_position_id(&section).as_str(),
                         app,
                     );
                 }
@@ -1651,9 +1658,10 @@ impl DriveIndex {
         let mut is_focused = false;
         if let DriveIndexSection::Space(space) = section {
             if let Some(focused_index) = self.focused_index {
-                if Some(&WarpDriveItemId::Space(space)) == self.ordered_items.get(focused_index) {
+                if Some(&OctomusDriveItemId::Space(space)) == self.ordered_items.get(focused_index)
+                {
                     container = container.with_background(
-                        warp_core::ui::theme::color::internal_colors::fg_overlay_4(
+                        octomus_core::ui::theme::color::internal_colors::fg_overlay_4(
                             appearance.theme(),
                         ),
                     );
@@ -1665,10 +1673,10 @@ impl DriveIndex {
         Hoverable::new(
             section_state.header_hover_state.clone(),
             move |mouse_state| {
-                // If the item is hovered, set a hover background that matches the hover state of warp drive items.
+                // If the item is hovered, set a hover background that matches the hover state of octomus drive items.
                 if mouse_state.is_hovered() && !is_focused || section_state.menu_open {
                     container = container.with_background(
-                        warp_core::ui::theme::color::internal_colors::fg_overlay_2(
+                        octomus_core::ui::theme::color::internal_colors::fg_overlay_2(
                             appearance.theme(),
                         ),
                     );
@@ -1680,7 +1688,7 @@ impl DriveIndex {
         .finish()
     }
 
-    // Todo: move the header rendering into WarpDriveItem to consolidate styling logic.
+    // Todo: move the header rendering into OctomusDriveItem to consolidate styling logic.
     fn render_section_header(
         &self,
         section: DriveIndexSection,
@@ -1692,7 +1700,7 @@ impl DriveIndex {
             (DriveIndexVariant::MainIndex, DriveIndexSection::Space(space)) => {
                 let title_font_color: ColorU = if self.focused_index.is_some()
                     && self.ordered_items.get(self.focused_index.unwrap())
-                        == Some(&WarpDriveItemId::Space(space))
+                        == Some(&OctomusDriveItemId::Space(space))
                 {
                     blended_colors::text_main(appearance.theme(), appearance.theme().background())
                 } else {
@@ -1717,7 +1725,7 @@ impl DriveIndex {
             (DriveIndexVariant::MainIndex, DriveIndexSection::JoinTeam) => {
                 if self.is_online(app) {
                     let join_teams_text = format!(
-                        "Collaborate with {} of your teammates already on Warp.",
+                        "Collaborate with {} of your teammates already on Octomus.",
                         UserWorkspaces::handle(app)
                             .as_ref(app)
                             .total_teammates_in_joinable_teams()
@@ -1728,8 +1736,10 @@ impl DriveIndex {
                 }
             }
             (DriveIndexVariant::Trash, DriveIndexSection::Space(space)) => {
-                let title_font_color = self
-                    .font_color_based_on_focused_state(appearance, WarpDriveItemId::Space(space));
+                let title_font_color = self.font_color_based_on_focused_state(
+                    appearance,
+                    OctomusDriveItemId::Space(space),
+                );
                 Some(self.render_trash_section_header(
                     self.render_section_title(space, title_font_color, appearance, app),
                     &space,
@@ -1749,7 +1759,7 @@ impl DriveIndex {
                 ConstrainedBox::new(header)
                     .with_height(SECTION_HEADER_CONTENT_HEIGHT + SECTION_HEADER_MARGIN_BOTTOM)
                     .finish(),
-                &warp_drive_section_header_position_id(&section),
+                &octomus_drive_section_header_position_id(&section),
             )
             .finish()
         } else {
@@ -1788,9 +1798,10 @@ impl DriveIndex {
     }
 
     fn render_trash_row(&self, appearance: &Appearance, _: &AppContext) -> Box<dyn Element> {
-        let font_color = self.font_color_based_on_focused_state(appearance, WarpDriveItemId::Trash);
+        let font_color =
+            self.font_color_based_on_focused_state(appearance, OctomusDriveItemId::Trash);
         let icon = Container::new(
-            ConstrainedBox::new(Icon::Trash.to_warpui_icon(font_color.into()).finish())
+            ConstrainedBox::new(Icon::Trash.to_octomusui_icon(font_color.into()).finish())
                 .with_width(SECTION_HEADER_FONT_SIZE)
                 .with_height(SECTION_HEADER_FONT_SIZE)
                 .finish(),
@@ -1837,9 +1848,11 @@ impl DriveIndex {
         // If the trash row is focused, set background
         let mut is_focused = false;
         if let Some(focused_index) = self.focused_index {
-            if Some(&WarpDriveItemId::Trash) == self.ordered_items.get(focused_index) {
+            if Some(&OctomusDriveItemId::Trash) == self.ordered_items.get(focused_index) {
                 container = container.with_background(
-                    warp_core::ui::theme::color::internal_colors::fg_overlay_4(appearance.theme()),
+                    octomus_core::ui::theme::color::internal_colors::fg_overlay_4(
+                        appearance.theme(),
+                    ),
                 );
                 is_focused = true;
             }
@@ -1852,7 +1865,7 @@ impl DriveIndex {
                 if mouse_state.is_hovered() && !is_focused {
                     container
                         .with_background(
-                            warp_core::ui::theme::color::internal_colors::fg_overlay_2(
+                            octomus_core::ui::theme::color::internal_colors::fg_overlay_2(
                                 appearance.theme(),
                             ),
                         )
@@ -1872,7 +1885,7 @@ impl DriveIndex {
                     .finish(),
             )
             .finish(),
-            "WarpDrive_TrashButton",
+            "OctomusDrive_TrashButton",
         )
         .finish()
     }
@@ -1883,24 +1896,27 @@ impl DriveIndex {
         appearance: &Appearance,
         app: &AppContext,
     ) -> Option<Box<dyn Element>> {
-        let warp_drive_item_id = WarpDriveItemId::AIFactCollection;
-        let is_selected = self.selected == Some(warp_drive_item_id);
+        let octomus_drive_item_id = OctomusDriveItemId::AIFactCollection;
+        let is_selected = self.selected == Some(octomus_drive_item_id);
         let mut is_focused = false;
         if let Some(focused_index) = self.focused_index {
-            if let Some(&WarpDriveItemId::AIFactCollection) = self.ordered_items.get(focused_index)
+            if let Some(&OctomusDriveItemId::AIFactCollection) =
+                self.ordered_items.get(focused_index)
             {
                 is_focused = true;
             }
         }
 
-        let row = WarpDriveRow::new(
+        let row = OctomusDriveRow::new(
             Box::new(self.ai_fact_collection.clone()),
             self.ai_fact_collection_item_mouse_states.clone(),
             space,
             0,
             self.menu.clone(),
             false, /* can_move */
-            !self.menu_items(&space, &warp_drive_item_id, app).is_empty(),
+            !self
+                .menu_items(&space, &octomus_drive_item_id, app)
+                .is_empty(),
             false,
             false, /* share_dialog_open */
             is_selected,
@@ -1919,25 +1935,27 @@ impl DriveIndex {
         appearance: &Appearance,
         app: &AppContext,
     ) -> Option<Box<dyn Element>> {
-        let warp_drive_item_id = WarpDriveItemId::MCPServerCollection;
-        let is_selected = self.selected == Some(warp_drive_item_id);
+        let octomus_drive_item_id = OctomusDriveItemId::MCPServerCollection;
+        let is_selected = self.selected == Some(octomus_drive_item_id);
         let mut is_focused = false;
         if let Some(focused_index) = self.focused_index {
-            if let Some(&WarpDriveItemId::MCPServerCollection) =
+            if let Some(&OctomusDriveItemId::MCPServerCollection) =
                 self.ordered_items.get(focused_index)
             {
                 is_focused = true;
             }
         }
 
-        let row = WarpDriveRow::new(
+        let row = OctomusDriveRow::new(
             Box::new(self.mcp_server_collection.clone()),
             self.mcp_server_collection_item_mouse_states.clone(),
             space,
             0,
             self.menu.clone(),
             false, /* can_move */
-            !self.menu_items(&space, &warp_drive_item_id, app).is_empty(),
+            !self
+                .menu_items(&space, &octomus_drive_item_id, app)
+                .is_empty(),
             false,
             false, /* share_dialog_open */
             is_selected,
@@ -2031,7 +2049,7 @@ impl DriveIndex {
         appearance: &Appearance,
     ) -> Box<dyn Element> {
         let rendered_icon = ConstrainedBox::new(
-            icon.to_warpui_icon(appearance.theme().nonactive_ui_text_color())
+            icon.to_octomusui_icon(appearance.theme().nonactive_ui_text_color())
                 .finish(),
         )
         .with_width(ITEM_FONT_SIZE)
@@ -2373,7 +2391,7 @@ impl DriveIndex {
                     Container::new(
                         ConstrainedBox::new(
                             Icon::CloudOffline
-                                .to_warpui_icon(
+                                .to_octomusui_icon(
                                     appearance
                                         .theme()
                                         .sub_text_color(appearance.theme().surface_2()),
@@ -2494,8 +2512,8 @@ impl DriveIndex {
 
         let mut title_right_side = Flex::row();
 
-        if self.show_warp_drive_loading_icon && self.is_online(app) {
-            title_right_side.add_child(self.render_warp_drive_loading_icon(appearance));
+        if self.show_octomus_drive_loading_icon && self.is_online(app) {
+            title_right_side.add_child(self.render_octomus_drive_loading_icon(appearance));
         }
 
         // Only show the global retry button if there are errored objects
@@ -2589,7 +2607,7 @@ impl DriveIndex {
                     Container::new(
                         ConstrainedBox::new(
                             Icon::Info
-                                .to_warpui_icon(appearance.theme().nonactive_ui_text_color())
+                                .to_octomusui_icon(appearance.theme().nonactive_ui_text_color())
                                 .finish(),
                         )
                         .with_height(15.)
@@ -2634,7 +2652,7 @@ impl DriveIndex {
             .finish()
     }
 
-    /// Renders a warp drive item within the index. If the item is a folder, we recursively call
+    /// Renders a octomus drive item within the index. If the item is a folder, we recursively call
     /// this function in order to render the folder's children (if it's open).
     /// This index refers to the idx within a given space, and is needed to render the context menu at the
     /// correct position. If the item should not be shown, this returns [`None`].
@@ -2650,29 +2668,29 @@ impl DriveIndex {
         cloud_model: &CloudModel,
         appearance: &Appearance,
         app: &AppContext,
-    ) -> Option<RenderedWarpDriveItemAndChildren> {
-        if !object.renders_in_warp_drive() {
+    ) -> Option<RenderedOctomusDriveItemAndChildren> {
+        if !object.renders_in_octomus_drive() {
             return None;
         }
 
         let mut stack = Stack::new();
         let row_object_id = object.cloud_object_type_and_id();
-        let warp_drive_item_id = WarpDriveItemId::Object(row_object_id);
+        let octomus_drive_item_id = OctomusDriveItemId::Object(row_object_id);
         let access_level = CloudViewModel::as_ref(app).access_level(&row_object_id.uid(), app);
 
-        let share_dialog_open = self.share_dialog_open_for_object == Some(warp_drive_item_id);
+        let share_dialog_open = self.share_dialog_open_for_object == Some(octomus_drive_item_id);
         // If the share dialog is open, we don't want to open the menu for the same object.
         let menu_open =
-            self.menu_object_id_if_open == Some(warp_drive_item_id) && !share_dialog_open;
+            self.menu_object_id_if_open == Some(octomus_drive_item_id) && !share_dialog_open;
         let can_move = self.online_only_operation_allowed(&row_object_id, app)
             && matches!(self.index_variant, DriveIndexVariant::MainIndex)
             && access_level.can_move_drive();
         let mut is_focused = false;
 
-        let is_selected = self.selected == Some(warp_drive_item_id);
+        let is_selected = self.selected == Some(octomus_drive_item_id);
         if let Some(focused_index) = self.focused_index {
             if !self.ordered_items.is_empty() {
-                if let Some(&WarpDriveItemId::Object(cloud_id)) =
+                if let Some(&OctomusDriveItemId::Object(cloud_id)) =
                     self.ordered_items.get(focused_index)
                 {
                     is_focused = row_object_id == cloud_id;
@@ -2680,14 +2698,16 @@ impl DriveIndex {
             }
         }
 
-        let row = WarpDriveRow::new_from_cloud_object(
+        let row = OctomusDriveRow::new_from_cloud_object(
             object,
             item_mouse_states[space_index].clone(),
             space,
             folder_depth,
             self.menu.clone(),
             can_move,
-            !self.menu_items(&space, &warp_drive_item_id, app).is_empty(),
+            !self
+                .menu_items(&space, &octomus_drive_item_id, app)
+                .is_empty(),
             menu_open,
             share_dialog_open,
             is_selected,
@@ -2818,7 +2838,7 @@ impl DriveIndex {
             );
         }
 
-        Some(RenderedWarpDriveItemAndChildren {
+        Some(RenderedOctomusDriveItemAndChildren {
             element: rendered_item,
             num_items: total_rows_for_item,
         })
@@ -2902,7 +2922,7 @@ impl DriveIndex {
         section: DriveIndexSection,
         is_collapsed: bool,
         appearance: &Appearance,
-    ) -> Box<dyn warpui::Element> {
+    ) -> Box<dyn octomusui::Element> {
         let icon = if is_collapsed {
             Icon::ListCollapsed
         } else {
@@ -2913,7 +2933,7 @@ impl DriveIndex {
                 // Set icon color contrast correctly if a space is focused
                 if self.focused_index.is_some()
                     && self.ordered_items.get(self.focused_index.unwrap())
-                        == Some(&WarpDriveItemId::Space(space))
+                        == Some(&OctomusDriveItemId::Space(space))
                 {
                     blended_colors::text_main(appearance.theme(), appearance.theme().background())
                         .into()
@@ -2924,9 +2944,9 @@ impl DriveIndex {
             _ => appearance.theme().foreground(),
         };
 
-        // This icon should render the same as other WarpDrive icons but with no click or hover states.
+        // This icon should render the same as other OctomusDrive icons but with no click or hover states.
         Container::new(
-            ConstrainedBox::new(icon.to_warpui_icon(icon_color).finish())
+            ConstrainedBox::new(icon.to_octomusui_icon(icon_color).finish())
                 .with_width(SECTION_HEADER_FONT_SIZE)
                 .with_height(SECTION_HEADER_FONT_SIZE)
                 .finish(),
@@ -2935,13 +2955,16 @@ impl DriveIndex {
         .finish()
     }
 
-    fn render_warp_drive_loading_icon(&self, appearance: &Appearance) -> Box<dyn warpui::Element> {
+    fn render_octomus_drive_loading_icon(
+        &self,
+        appearance: &Appearance,
+    ) -> Box<dyn octomusui::Element> {
         // Use same padding as icon_button (4px) to center the icon within ICON_DIMENSIONS
         let icon_button_padding = (ICON_DIMENSIONS - LOADING_ICON_WIDTH) / 2.;
         let loading_icon = Container::new(
             ConstrainedBox::new(
                 Icon::Refresh
-                    .to_warpui_icon(
+                    .to_octomusui_icon(
                         appearance
                             .theme()
                             .sub_text_color(appearance.theme().surface_1()),
@@ -2958,14 +2981,14 @@ impl DriveIndex {
 
         let hoverable = Hoverable::new(
             self.mouse_state_handles
-                .warp_drive_initial_load_mouse_state
+                .octomus_drive_initial_load_mouse_state
                 .clone(),
             |mouse_state| {
                 let mut stack = Stack::new().with_child(loading_icon);
                 if mouse_state.is_hovered() {
                     let tooltip = appearance
                         .ui_builder()
-                        .tool_tip(String::from("Syncing Warp Drive"));
+                        .tool_tip(String::from("Syncing Octomus Drive"));
 
                     stack.add_positioned_overlay_child(
                         tooltip.build().finish(),
@@ -2984,7 +3007,7 @@ impl DriveIndex {
         hoverable.finish()
     }
 
-    fn render_sorting_button(&self, appearance: &Appearance) -> Box<dyn warpui::Element> {
+    fn render_sorting_button(&self, appearance: &Appearance) -> Box<dyn octomusui::Element> {
         let mut button = icon_button_with_context_menu(
             Icon::Sort,
             move |ctx, _, _| ctx.dispatch_typed_action(DriveIndexAction::ToggleSortingMenu),
@@ -3022,7 +3045,7 @@ impl DriveIndex {
         hoverable.finish()
     }
 
-    fn render_retry_button(&self, appearance: &Appearance) -> Box<dyn warpui::Element> {
+    fn render_retry_button(&self, appearance: &Appearance) -> Box<dyn octomusui::Element> {
         let ui_builder = appearance.ui_builder().clone();
 
         icon_button(
@@ -3050,12 +3073,12 @@ impl DriveIndex {
         space: Space,
         state: &DriveIndexSectionState,
         app: &AppContext,
-    ) -> Box<dyn warpui::Element> {
+    ) -> Box<dyn octomusui::Element> {
         let mut button;
         // Set color contrast correctly when focused
         if self.focused_index.is_some()
             && self.ordered_items.get(self.focused_index.unwrap())
-                == Some(&WarpDriveItemId::Space(space))
+                == Some(&OctomusDriveItemId::Space(space))
         {
             button = highlight(
                 icon_button(
@@ -3128,7 +3151,7 @@ impl DriveIndex {
         appearance: &Appearance,
         state: &DriveIndexSectionState,
         space: Space,
-    ) -> Box<dyn warpui::Element> {
+    ) -> Box<dyn octomusui::Element> {
         let mut button = icon_button(
             appearance,
             Icon::AddTeammates,
@@ -3138,7 +3161,7 @@ impl DriveIndex {
         // Set color contrast correctly when focused
         if self.focused_index.is_some()
             && self.ordered_items.get(self.focused_index.unwrap())
-                == Some(&WarpDriveItemId::Space(space))
+                == Some(&OctomusDriveItemId::Space(space))
         {
             button = highlight(button, appearance)
         };
@@ -3168,7 +3191,7 @@ impl DriveIndex {
     fn font_color_based_on_focused_state(
         &self,
         appearance: &Appearance,
-        item: WarpDriveItemId,
+        item: OctomusDriveItemId,
     ) -> ColorU {
         if self.focused_index.is_some()
             && self.ordered_items.get(self.focused_index.unwrap()) == Some(&item)
@@ -3199,9 +3222,9 @@ impl DriveIndex {
     fn refocus_section_index(&mut self, section: &DriveIndexSection, ctx: &mut ViewContext<Self>) {
         if self.focused_index.is_some() {
             if let DriveIndexSection::Space(space) = *section {
-                self.set_focused_item(WarpDriveItemId::Space(space), true, ctx);
+                self.set_focused_item(OctomusDriveItemId::Space(space), true, ctx);
             }
-            // Need to re-render focused index in Warp Drive after a space has been toggled
+            // Need to re-render focused index in Octomus Drive after a space has been toggled
             if let Some(focused_index) = self.focused_index {
                 self.update_focused_params(focused_index, CloudModel::as_ref(ctx));
             }
@@ -3343,7 +3366,7 @@ impl DriveIndex {
         ctx.notify();
     }
 
-    /// If the given space is tied to a section in warp drive, ensures that that section is open.
+    /// If the given space is tied to a section in octomus drive, ensures that that section is open.
     fn open_section_of_space(&mut self, space: Space) {
         if let Some(target_section) = self
             .sections
@@ -3772,7 +3795,7 @@ impl DriveIndex {
         self.initialize_section_states(ctx);
         ctx.notify();
 
-        WarpDriveSettings::handle(ctx).update(ctx, |settings, ctx| {
+        OctomusDriveSettings::handle(ctx).update(ctx, |settings, ctx| {
             report_if_error!(settings.sorting_choice.set_value(*sorting_choice, ctx));
         });
 
@@ -3929,7 +3952,7 @@ impl DriveIndex {
             |_| {
                 ConstrainedBox::new(
                     Icon::X
-                        .to_warpui_icon(appearance.theme().main_text_color(background_color))
+                        .to_octomusui_icon(appearance.theme().main_text_color(background_color))
                         .finish(),
                 )
                 .with_width(12.)
@@ -3954,7 +3977,7 @@ impl DriveIndex {
                 )
                 .with_color(theme.main_text_color(background_color).into())
                 .with_style(Properties {
-                    weight: warpui::fonts::Weight::Bold,
+                    weight: octomusui::fonts::Weight::Bold,
                     ..Default::default()
                 })
                 .finish(),
@@ -4331,12 +4354,14 @@ impl DriveIndex {
     fn menu_items(
         &self,
         space: &Space,
-        warp_drive_item_id: &WarpDriveItemId,
+        octomus_drive_item_id: &OctomusDriveItemId,
         app: &AppContext,
     ) -> Vec<MenuItem<DriveIndexAction>> {
         match self.index_variant {
-            DriveIndexVariant::MainIndex => self.index_menu_items(space, warp_drive_item_id, app),
-            DriveIndexVariant::Trash => self.trash_menu_items(space, warp_drive_item_id, app),
+            DriveIndexVariant::MainIndex => {
+                self.index_menu_items(space, octomus_drive_item_id, app)
+            }
+            DriveIndexVariant::Trash => self.trash_menu_items(space, octomus_drive_item_id, app),
         }
     }
 
@@ -4344,11 +4369,11 @@ impl DriveIndex {
     fn index_menu_items(
         &self,
         space: &Space,
-        warp_drive_item_id: &WarpDriveItemId,
+        octomus_drive_item_id: &OctomusDriveItemId,
         app: &AppContext,
     ) -> Vec<MenuItem<DriveIndexAction>> {
         let mut menu_items = Vec::new();
-        let WarpDriveItemId::Object(cloud_object_type_and_id) = warp_drive_item_id else {
+        let OctomusDriveItemId::Object(cloud_object_type_and_id) = octomus_drive_item_id else {
             return menu_items;
         };
         let can_move_or_trash = self.online_only_operation_allowed(cloud_object_type_and_id, app);
@@ -4452,7 +4477,7 @@ impl DriveIndex {
                             menu_items.push(
                                 MenuItemFields::new("Share")
                                     .with_on_select_action(DriveIndexAction::ToggleShareDialog {
-                                        warp_drive_item_id: *warp_drive_item_id,
+                                        octomus_drive_item_id: *octomus_drive_item_id,
                                     })
                                     .with_icon(Icon::Share)
                                     .into_item(),
@@ -4681,13 +4706,13 @@ impl DriveIndex {
                             menu_items.push(
                                 MenuItemFields::new("Share")
                                     .with_on_select_action(DriveIndexAction::ToggleShareDialog {
-                                        warp_drive_item_id: *warp_drive_item_id,
+                                        octomus_drive_item_id: *octomus_drive_item_id,
                                     })
                                     .with_icon(Icon::Share)
                                     .into_item(),
                             );
                         }
-                        if !warpui::platform::is_mobile_device()
+                        if !octomusui::platform::is_mobile_device()
                             && !ContextFlag::HideOpenOnDesktopButton.is_enabled()
                             && *UserAppInstallDetectionSettings::as_ref(app)
                                 .user_app_installation_detected
@@ -4765,7 +4790,7 @@ impl DriveIndex {
         menu_items
     }
 
-    /// Builder for a menu item to open a Warp Drive object in a pane. The icon and label depend
+    /// Builder for a menu item to open a Octomus Drive object in a pane. The icon and label depend
     /// on whether the object is editable or not.
     ///
     /// If `prefer_open` is `true`, the item defaults to view/open mode rather than edit mode.
@@ -4783,11 +4808,11 @@ impl DriveIndex {
     fn trash_menu_items(
         &self,
         _space: &Space,
-        warp_drive_item_id: &WarpDriveItemId,
+        octomus_drive_item_id: &OctomusDriveItemId,
         app: &AppContext,
     ) -> Vec<MenuItem<DriveIndexAction>> {
         let mut menu_items = Vec::new();
-        let WarpDriveItemId::Object(cloud_object_type_and_id) = warp_drive_item_id else {
+        let OctomusDriveItemId::Object(cloud_object_type_and_id) = octomus_drive_item_id else {
             return menu_items;
         };
 
@@ -4847,28 +4872,28 @@ impl DriveIndex {
     pub fn toggle_item_menu(
         &mut self,
         space: &Space,
-        warp_drive_item_id: &WarpDriveItemId,
+        octomus_drive_item_id: &OctomusDriveItemId,
         ctx: &mut ViewContext<Self>,
     ) {
         let menu_items: Vec<MenuItem<DriveIndexAction>> =
-            self.menu_items(space, warp_drive_item_id, ctx);
+            self.menu_items(space, octomus_drive_item_id, ctx);
         ctx.update_view(&self.menu, |menu, ctx| {
             menu.set_items(menu_items, ctx);
         });
 
-        self.menu_object_id_if_open = Some(*warp_drive_item_id);
+        self.menu_object_id_if_open = Some(*octomus_drive_item_id);
         ctx.focus(&self.menu);
         ctx.notify();
     }
 
     pub fn toggle_share_dialog(
         &mut self,
-        warp_drive_item_id: &WarpDriveItemId,
+        octomus_drive_item_id: &OctomusDriveItemId,
         invitee_email: Option<String>,
         source: SharingDialogSource,
         ctx: &mut ViewContext<Self>,
     ) {
-        let WarpDriveItemId::Object(cloud_object_type_and_id) = warp_drive_item_id else {
+        let OctomusDriveItemId::Object(cloud_object_type_and_id) = octomus_drive_item_id else {
             return;
         };
 
@@ -4885,9 +4910,10 @@ impl DriveIndex {
 
         self.reset_menus(ctx);
         if let Some(server_id) = cloud_object_type_and_id.server_id() {
-            self.share_dialog_open_for_object = Some(*warp_drive_item_id);
+            self.share_dialog_open_for_object = Some(*octomus_drive_item_id);
             self.sharing_dialog.update(ctx, |sharing_dialog, ctx| {
-                sharing_dialog.set_target(Some(ShareableObject::WarpDriveObject(server_id)), ctx);
+                sharing_dialog
+                    .set_target(Some(ShareableObject::OctomusDriveObject(server_id)), ctx);
                 if let Some(invitee_email) = invitee_email {
                     sharing_dialog.add_invitee_email(invitee_email, ctx);
                 }
@@ -4944,7 +4970,7 @@ impl DriveIndex {
 
     pub fn set_selected_object(
         &mut self,
-        id: Option<WarpDriveItemId>,
+        id: Option<OctomusDriveItemId>,
         ctx: &mut ViewContext<Self>,
     ) {
         self.selected = id;
@@ -4972,17 +4998,17 @@ impl DriveIndex {
                 return;
             };
             match focused_item_id {
-                WarpDriveItemId::AIFactCollection => {
+                OctomusDriveItemId::AIFactCollection => {
                     if let DriveIndexAction::EnterKey = key {
                         ctx.emit(DriveIndexEvent::OpenAIFactCollection);
                     }
                 }
-                WarpDriveItemId::MCPServerCollection => {
+                OctomusDriveItemId::MCPServerCollection => {
                     if let DriveIndexAction::EnterKey = key {
                         ctx.emit(DriveIndexEvent::OpenMCPServerCollection);
                     }
                 }
-                WarpDriveItemId::Object(cloud_id) => match cloud_id {
+                OctomusDriveItemId::Object(cloud_id) => match cloud_id {
                     CloudObjectTypeAndId::Notebook(_) => {
                         if let DriveIndexAction::EnterKey = key {
                             ctx.emit(DriveIndexEvent::OpenObject(*cloud_id))
@@ -5021,7 +5047,7 @@ impl DriveIndex {
                         }
                     }
                 },
-                WarpDriveItemId::Space(space) => {
+                OctomusDriveItemId::Space(space) => {
                     let section = &DriveIndexSection::Space(*space);
                     match key {
                         DriveIndexAction::EnterKey => self.toggle_section_collapse(section, ctx),
@@ -5034,7 +5060,7 @@ impl DriveIndex {
                         _ => {}
                     }
                 }
-                WarpDriveItemId::Trash => {
+                OctomusDriveItemId::Trash => {
                     if let DriveIndexAction::EnterKey = key {
                         self.index_variant = DriveIndexVariant::Trash;
                         self.initialize_section_states(ctx);
@@ -5052,7 +5078,7 @@ impl DriveIndex {
     }
 }
 
-pub fn warp_drive_section_header_position_id(section: &DriveIndexSection) -> String {
+pub fn octomus_drive_section_header_position_id(section: &DriveIndexSection) -> String {
     format!("section_position_{section:?}")
 }
 
@@ -5068,7 +5094,7 @@ impl View for DriveIndex {
         }
     }
 
-    fn keymap_context(&self, _ctx: &AppContext) -> warpui::keymap::Context {
+    fn keymap_context(&self, _ctx: &AppContext) -> octomusui::keymap::Context {
         let mut context = Self::default_keymap_context();
 
         // Disable WD Vim keybindings when a dialog is open
@@ -5081,7 +5107,7 @@ impl View for DriveIndex {
         context
     }
 
-    fn render(&self, app: &AppContext) -> Box<dyn warpui::Element> {
+    fn render(&self, app: &AppContext) -> Box<dyn octomusui::Element> {
         let appearance = Appearance::as_ref(app);
         let workspaces = UserWorkspaces::as_ref(app);
 
@@ -5258,7 +5284,7 @@ impl TypedActionView for DriveIndex {
             DriveIndexAction::OpenObject(cloud_object_type_and_id) => {
                 if !matches!(self.index_variant, DriveIndexVariant::Trash) {
                     self.set_selected_object(
-                        Some(WarpDriveItemId::Object(*cloud_object_type_and_id)),
+                        Some(OctomusDriveItemId::Object(*cloud_object_type_and_id)),
                         ctx,
                     );
                     ctx.emit(DriveIndexEvent::OpenObject(*cloud_object_type_and_id))
@@ -5270,7 +5296,7 @@ impl TypedActionView for DriveIndex {
             } => {
                 if !matches!(self.index_variant, DriveIndexVariant::Trash) {
                     self.set_selected_object(
-                        Some(WarpDriveItemId::Object(*cloud_object_type_and_id)),
+                        Some(OctomusDriveItemId::Object(*cloud_object_type_and_id)),
                         ctx,
                     );
                     ctx.emit(DriveIndexEvent::OpenWorkflowInPane {
@@ -5345,9 +5371,9 @@ impl TypedActionView for DriveIndex {
             }
             DriveIndexAction::ToggleItemOverflowMenu {
                 space,
-                warp_drive_item_id,
+                octomus_drive_item_id,
             } => {
-                self.toggle_item_menu(space, warp_drive_item_id, ctx);
+                self.toggle_item_menu(space, octomus_drive_item_id, ctx);
             }
             DriveIndexAction::ToggleSpaceOverflowMenu { space, offset } => {
                 self.toggle_space_menu(space, *offset, ctx);
@@ -5463,7 +5489,7 @@ impl TypedActionView for DriveIndex {
                 // If WD is focused, then clicking a folder will set that folder to be focused
                 if self.focused_index.is_some() {
                     self.set_focused_item(
-                        WarpDriveItemId::Object(CloudObjectTypeAndId::Folder(*id)),
+                        OctomusDriveItemId::Object(CloudObjectTypeAndId::Folder(*id)),
                         true,
                         ctx,
                     );
@@ -5553,7 +5579,7 @@ impl TypedActionView for DriveIndex {
             }
             DriveIndexAction::ToggleDriveItemContextMenu => {
                 if let Some(focused_index) = self.focused_index {
-                    if let Some(&warp_drive_item_id) = self.ordered_items.get(focused_index) {
+                    if let Some(&octomus_drive_item_id) = self.ordered_items.get(focused_index) {
                         // Retrieve space of the WD item (because context menu options depend on the space)
                         // by finding the last space before the focused item in ordered_items
                         if let Some(space) = self
@@ -5561,7 +5587,7 @@ impl TypedActionView for DriveIndex {
                             .iter()
                             .take(focused_index)
                             .filter_map(|id| {
-                                if let WarpDriveItemId::Space(space) = *id {
+                                if let OctomusDriveItemId::Space(space) = *id {
                                     Some(space)
                                 } else {
                                     None
@@ -5569,7 +5595,7 @@ impl TypedActionView for DriveIndex {
                             })
                             .next_back()
                         {
-                            self.toggle_item_menu(&space, &warp_drive_item_id, ctx);
+                            self.toggle_item_menu(&space, &octomus_drive_item_id, ctx);
                         }
                     }
                 }
@@ -5605,9 +5631,11 @@ impl TypedActionView for DriveIndex {
                     user_workspaces.generate_stripe_billing_portal_link(*team_uid, ctx);
                 });
             }
-            DriveIndexAction::ToggleShareDialog { warp_drive_item_id } => {
+            DriveIndexAction::ToggleShareDialog {
+                octomus_drive_item_id,
+            } => {
                 self.toggle_share_dialog(
-                    warp_drive_item_id,
+                    octomus_drive_item_id,
                     None,
                     SharingDialogSource::DriveIndex,
                     ctx,

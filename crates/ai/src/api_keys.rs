@@ -1,8 +1,8 @@
+use octomusui_core::{Entity, ModelContext, SingletonEntity};
+use octomusui_extras::secure_storage::{self, AppContextExt};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use warp_multi_agent_api as api;
-use warpui_core::{Entity, ModelContext, SingletonEntity};
-use warpui_extras::secure_storage::{self, AppContextExt};
 
 pub use crate::aws_credentials::{AwsCredentials, AwsCredentialsState};
 
@@ -17,7 +17,7 @@ pub enum ApiKeyManagerEvent {
 /// User-provided API keys for AI providers.
 ///
 /// These are used for "Bring Your Own API Key" functionality, allowing
-/// users to use their own API keys instead of Warp's.
+/// users to use their own API keys instead of Octomus's.
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(default)]
 pub struct ApiKeys {

@@ -3,7 +3,7 @@ Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
 
 cd /tmp/worktree-agent-12-store
 
-TASK: Adapt the multi-agent state sharing to work locally without warp-server cloud infrastructure. Instead of creating a new crate from scratch, modify the EXISTING files to use a local directory-based approach. The core structures (AgentDriver, RunAgentsExecutor, OrchestrationEventStreamer, ThirdPartyHarness) already exist — we just need to make them talk via local files instead of cloud APIs.
+TASK: Adapt the multi-agent state sharing to work locally without octomus-server cloud infrastructure. Instead of creating a new crate from scratch, modify the EXISTING files to use a local directory-based approach. The core structures (AgentDriver, RunAgentsExecutor, OrchestrationEventStreamer, ThirdPartyHarness) already exist — we just need to make them talk via local files instead of cloud APIs.
 
 === PART 1: Create a lightweight AgentStore module ===
 
@@ -212,8 +212,8 @@ A drop-in replacement for the cloud SSE event streamer that reads from AgentStor
 use std::collections::HashMap;
 use std::time::Duration;
 
-use warpui::r#async::Timer;
-use warpui::{Entity, ModelContext};
+use octomusui::r#async::Timer;
+use octomusui::{Entity, ModelContext};
 
 use crate::ai::agent_store::{AgentStore, AgentStoreEvent};
 
@@ -233,7 +233,7 @@ pub struct LocalEventStreamer {
     store: AgentStore,
     last_event_count: usize,
     known_statuses: HashMap<String, String>,
-    poll_timer: Option<warpui::r#async::SpawnedFutureHandle>,
+    poll_timer: Option<octomusui::r#async::SpawnedFutureHandle>,
 }
 
 impl Entity for LocalEventStreamer {
@@ -394,7 +394,7 @@ if FeatureFlag::LocalAgentStore.is_enabled() {
 
 === PART 6: Add FeatureFlag ===
 
-EDIT crates/warp_core/src/features.rs:
+EDIT crates/octomus_core/src/features.rs:
 
 Add to the `FeatureFlag` enum:
 

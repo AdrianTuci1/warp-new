@@ -1,7 +1,7 @@
+use octomusui::integration::TestStep;
+use octomusui::windowing::WindowManager;
+use octomusui::SingletonEntity;
 use pathfinder_geometry::vector::Vector2F;
-use warpui::integration::TestStep;
-use warpui::windowing::WindowManager;
-use warpui::SingletonEntity;
 
 use crate::integration_testing::step::new_step_with_default_assertions;
 use crate::integration_testing::terminal::assert_context_menu_is_open;

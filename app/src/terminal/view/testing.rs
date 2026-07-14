@@ -1,5 +1,5 @@
 //! Module for test-only convenience methods on `TerminalView`.
-use warpui::ModelHandle;
+use octomusui::ModelHandle;
 
 use crate::terminal::find::TerminalFindModel;
 cfg_if::cfg_if! {
@@ -7,7 +7,7 @@ cfg_if::cfg_if! {
         use std::sync::Arc;
 
         use parking_lot::FairMutex;
-        use warpui::{ViewContext};
+        use octomusui::{ViewContext};
 
         use crate::{
             ai::blocklist::SerializedBlockListItem, pane_group::TerminalViewResources,
@@ -42,8 +42,8 @@ impl TerminalView {
         is_cloud_mode: bool,
         ctx: &mut ViewContext<Self>,
     ) -> Self {
+        use octomusui::units::{IntoPixels as _, Pixels};
         use pathfinder_geometry::vector::vec2f;
-        use warpui::units::{IntoPixels as _, Pixels};
 
         use crate::server::server_api::ServerApiProvider;
         use crate::terminal::event_listener::ChannelEventListener;

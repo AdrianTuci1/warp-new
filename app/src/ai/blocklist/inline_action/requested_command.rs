@@ -5,23 +5,23 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use lazy_static::lazy_static;
-use parking_lot::FairMutex;
-use pathfinder_geometry::vector::vec2f;
-use settings::Setting as _;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::Icon;
-use warp_editor::render::element::VerticalExpansionBehavior;
-use warpui::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::Icon;
+use octomusui::elements::{
     Align, Border, ChildView, Clipped, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     Expanded, Flex, MainAxisSize, MouseStateHandle, OffsetPositioning, ParentElement, Radius,
     ScrollbarWidth, SelectableArea, SelectionHandle, Stack, Text,
 };
-use warpui::keymap::{Context, EditableBinding, FixedBinding, Keystroke};
-use warpui::ui_components::components::UiComponent as _;
-use warpui::{
+use octomusui::keymap::{Context, EditableBinding, FixedBinding, Keystroke};
+use octomusui::ui_components::components::UiComponent as _;
+use octomusui::{
     AppContext, Element, Entity, EntityId, EventContext, ModelHandle, SingletonEntity,
     TypedActionView, UpdateView, View, ViewContext, ViewHandle,
 };
+use parking_lot::FairMutex;
+use pathfinder_geometry::vector::vec2f;
+use settings::Setting as _;
+use warp_editor::render::element::VerticalExpansionBehavior;
 
 use super::inline_action_icons::{self, icon_size};
 use crate::ai::agent::conversation::ConversationStatus;
@@ -113,7 +113,7 @@ lazy_static! {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([
         FixedBinding::new(
@@ -231,7 +231,7 @@ pub struct RequestedCommandView {
     header_mouse_state: MouseStateHandle,
     is_editing: bool,
 
-    // A requested command can either be copied directly off of one citation (such as a Warp Drive
+    // A requested command can either be copied directly off of one citation (such as a Octomus Drive
     // object), derived from one or more citations, or be unrelated to any citations.
     // A given citation should only appear once per block.
     copied_from_citation: Option<AIAgentCitation>,
@@ -745,7 +745,7 @@ impl RequestedCommandView {
                     Container::new(
                         ConstrainedBox::new(
                             Icon::Info
-                                .to_warpui_icon(
+                                .to_octomusui_icon(
                                     blended_colors::text_sub(theme, theme.surface_1()).into(),
                                 )
                                 .finish(),
@@ -1562,9 +1562,9 @@ impl View for RequestedCommandView {
                 OffsetPositioning::offset_from_save_position_element(
                     Self::get_position_id_for_accept_split_button(&self.position_id_prefix),
                     vec2f(0., 8.),
-                    warpui::elements::PositionedElementOffsetBounds::WindowByPosition,
-                    warpui::elements::PositionedElementAnchor::BottomRight,
-                    warpui::elements::ChildAnchor::TopRight,
+                    octomusui::elements::PositionedElementOffsetBounds::WindowByPosition,
+                    octomusui::elements::PositionedElementAnchor::BottomRight,
+                    octomusui::elements::ChildAnchor::TopRight,
                 ),
             );
         }

@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use warpui::{Entity, SingletonEntity};
+use octomusui::{Entity, SingletonEntity};
 
 /// Error type for transcription. Octomus: String (server::server_api was deleted).
 pub type TranscribeError = String;

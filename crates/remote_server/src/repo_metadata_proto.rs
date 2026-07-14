@@ -3,12 +3,12 @@
 //! The Rust types in `repo_metadata::file_tree_update` were designed to mirror the
 //! proto schema 1:1, so these conversions are straightforward field mappings.
 
+use octomus_util::standardized_path::StandardizedPath;
 use repo_metadata::file_tree_store::{FileTreeEntry, FileTreeEntryState};
 use repo_metadata::file_tree_update::{
     DirectoryNodeMetadata, FileNodeMetadata, FileTreeEntryUpdate, RepoMetadataUpdate,
     RepoNodeMetadata,
 };
-use warp_util::standardized_path::StandardizedPath;
 
 use crate::proto;
 

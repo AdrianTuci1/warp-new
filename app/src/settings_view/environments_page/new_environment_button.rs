@@ -1,5 +1,5 @@
 use crate::editor::EditorView;
-use warpui::{
+use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
 
@@ -25,7 +25,7 @@ impl View for NewEnvironmentButtonView {
     }
 
     fn render(&self, _app: &AppContext) -> Box<dyn Element> {
-        warpui::elements::Empty::new().finish()
+        octomusui::elements::Empty::new().finish()
     }
 }
 

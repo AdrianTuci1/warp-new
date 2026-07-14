@@ -3,21 +3,21 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use lazy_static::lazy_static;
-use parking_lot::RwLock;
-use settings::Setting as _;
-use warp_core::features::FeatureFlag;
-use warp_core::semantic_selection::SemanticSelection;
-use warp_core::ui::Icon;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::semantic_selection::SemanticSelection;
+use octomus_core::ui::Icon;
+use octomusui::elements::{
     get_rich_content_position_id, Border, Clipped, Container, CornerRadius, CrossAxisAlignment,
     Flex, FormattedTextElement, MouseStateHandle, ParentElement, Radius, SavePosition,
     SelectableArea, SelectionHandle,
 };
-use warpui::keymap::{FixedBinding, Keystroke};
-use warpui::{
+use octomusui::keymap::{FixedBinding, Keystroke};
+use octomusui::{
     AppContext, Element, Entity, EntityId, FocusContext, SingletonEntity, TypedActionView, View,
     ViewContext,
 };
+use parking_lot::RwLock;
+use settings::Setting as _;
 
 use crate::ai::agent::icons::{yellow_running_icon, yellow_stop_icon};
 use crate::ai::blocklist::block::view_impl::{
@@ -118,7 +118,7 @@ pub struct EnvVarCollectionBlock {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([
         FixedBinding::new(

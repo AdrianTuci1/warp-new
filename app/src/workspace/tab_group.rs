@@ -1,7 +1,7 @@
 //! Tab group data model. Gated at runtime by `FeatureFlag::GroupedTabs`.
 
+use octomusui::elements::DraggableState;
 use uuid::Uuid;
-use warpui::elements::DraggableState;
 
 /// Stable identity for a tab group.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]

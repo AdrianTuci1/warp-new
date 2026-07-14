@@ -4,8 +4,8 @@ use std::sync::OnceLock;
 use std::time::Duration;
 
 use chrono::{DateTime, Utc};
+use octomus_core::channel::{Channel, ChannelState};
 use serde::Serialize;
-use warp_core::channel::{Channel, ChannelState};
 
 #[cfg(not(target_family = "wasm"))]
 mod docker;
@@ -21,28 +21,28 @@ mod namespace;
 #[cfg(not(target_family = "wasm"))]
 const WARP_ISOLATION_PLATFORM_ENV: &str = "WARP_ISOLATION_PLATFORM";
 
-/// Environment variable containing the generic Warp-managed workload token that we use
+/// Environment variable containing the generic Octomus-managed workload token that we use
 /// for isolation platforms that don't issue their own tokens.
 #[cfg(not(target_family = "wasm"))]
 const WARP_WORKLOAD_TOKEN_ENV: &str = "WARP_WORKLOAD_TOKEN";
 
-/// A kind of isolation platform. For our usage, isolation platforms are different ways where Warp
+/// A kind of isolation platform. For our usage, isolation platforms are different ways where Octomus
 /// can be sandboxed, such as VMs, containers, or cloud hosts. This may also include weaker forms
 /// of sandboxing such as Git worktrees.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum IsolationPlatformType {
-    /// Warp is running within a Docker container. Note that this does *not* mean this is a Warp-hosted
+    /// Octomus is running within a Docker container. Note that this does *not* mean this is a Octomus-hosted
     /// Docker Sandboxes environment. Instead, it's likely a self-hosted agent.
     #[cfg(not(target_family = "wasm"))]
     Docker,
-    /// Warp is running within a Docker Sandbox, likely as a Warp-hosted agent.
+    /// Octomus is running within a Docker Sandbox, likely as a Octomus-hosted agent.
     #[cfg(not(target_family = "wasm"))]
     DockerSandbox,
-    /// Warp is running within a Kubernetes pod, likely as a self-hosted agent.
+    /// Octomus is running within a Kubernetes pod, likely as a self-hosted agent.
     #[cfg(not(target_family = "wasm"))]
     Kubernetes,
-    /// Warp is running within a Namespace instance, likely as a Warp-hosted agent.
+    /// Octomus is running within a Namespace instance, likely as a Octomus-hosted agent.
     #[cfg(not(target_family = "wasm"))]
     Namespace,
 }

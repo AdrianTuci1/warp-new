@@ -1,13 +1,13 @@
 //! Rendering functions for orchestration-related output items (messaging & agent management).
 
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_color::ColorU;
-use warpui::elements::{
+use octomusui::elements::{
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Empty, Flex, FormattedTextElement,
     Hoverable, MouseStateHandle, ParentElement, Radius, Shrinkable, Text,
 };
-use warpui::platform::Cursor;
-use warpui::{AppContext, Element, SingletonEntity};
+use octomusui::platform::Cursor;
+use octomusui::{AppContext, Element, SingletonEntity};
+use pathfinder_color::ColorU;
 
 use super::common::render_scrollable_collapsible_content;
 use super::output::{action_icon, Props};
@@ -233,7 +233,7 @@ fn render_transcript_row(
                 .with_child(Shrinkable::new(1., header).finish())
                 .with_child(
                     Container::new(
-                        ConstrainedBox::new(chevron_icon.to_warpui_icon(text_color).finish())
+                        ConstrainedBox::new(chevron_icon.to_octomusui_icon(text_color).finish())
                             .with_width(icon_sz)
                             .with_height(icon_sz)
                             .finish(),
@@ -857,7 +857,7 @@ fn render_collapse_chevron(
 
     Some(
         Hoverable::new(toggle_mouse_state, move |_| {
-            ConstrainedBox::new(chevron_icon.to_warpui_icon(text_color).finish())
+            ConstrainedBox::new(chevron_icon.to_octomusui_icon(text_color).finish())
                 .with_width(icon_sz)
                 .with_height(icon_sz)
                 .finish()

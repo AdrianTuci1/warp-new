@@ -13,20 +13,20 @@ pub use entry::{
 use futures::stream::AbortHandle;
 use instant::Instant;
 use itertools::Itertools;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use warp_cli::agent::Harness;
-use warp_core::execution_mode::AppExecutionMode;
-use warp_core::features::FeatureFlag;
-use warp_core::report_error;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::WarpTheme;
-use warpui::color::ColorU;
-use warpui::r#async::Timer;
-use warpui::windowing::{StateEvent, WindowManager};
-use warpui::{
+use octomus_cli::agent::Harness;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomus_core::features::FeatureFlag;
+use octomus_core::report_error;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::WarpTheme;
+use octomusui::color::ColorU;
+use octomusui::r#async::Timer;
+use octomusui::windowing::{StateEvent, WindowManager};
+use octomusui::{
     duration_with_jitter, AppContext, Entity, EntityId, ModelContext, RequestState,
     SingletonEntity, WindowId,
 };
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;
 use crate::ai::agent::api::ServerConversationToken;

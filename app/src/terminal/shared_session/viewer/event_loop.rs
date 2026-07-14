@@ -2,11 +2,11 @@ use std::collections::HashMap;
 use std::io::{sink, Sink};
 use std::sync::Arc;
 
+use octomusui::{Entity, ModelContext, SingletonEntity, WeakViewHandle};
 use parking_lot::FairMutex;
 use session_sharing_protocol::common::{
     OrderedTerminalEvent, OrderedTerminalEventType, Scrollback, WindowSize,
 };
-use warpui::{Entity, ModelContext, SingletonEntity, WeakViewHandle};
 
 use crate::ai::agent::AIAgentActionId;
 use crate::ai::blocklist::block::cli_controller::LongRunningCommandControlState;

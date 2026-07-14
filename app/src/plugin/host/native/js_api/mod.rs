@@ -5,16 +5,16 @@ use super::plugin::PluginHandle;
 cfg_if::cfg_if! {
     if #[cfg(feature = "completions_v2")] {
         use rquickjs::{prelude::MutFn, Value};
-        use warp_completer::signatures::CommandSignature;
-        use warp_js::FromWarpJs;
+        use octomus_completer::signatures::CommandSignature;
+        use octomus_js::FromWarpJs;
     }
 }
 
-/// Returns a JS object representing the Warp Plugin API exposed to external JavaScript plugins.
+/// Returns a JS object representing the Octomus Plugin API exposed to external JavaScript plugins.
 ///
 /// Currently, the API contains a single "completions" namespace for registering command
 /// signatures.
-pub fn warp(
+pub fn octomus(
     #[allow(unused_variables)] plugin: PluginHandle,
     ctx: Ctx<'_>,
 ) -> rquickjs::Result<Object<'_>> {
@@ -43,7 +43,7 @@ pub fn console(ctx: Ctx<'_>) -> rquickjs::Result<Object<'_>> {
     Ok(console)
 }
 
-/// Returns a JS object representing the Completions namespace for the Warp Plugin API.
+/// Returns a JS object representing the Completions namespace for the Octomus Plugin API.
 ///
 /// API methods:
 ///
@@ -59,7 +59,7 @@ fn completions<'js>(plugin: PluginHandle, ctx: Ctx<'js>) -> rquickjs::Result<Obj
             MutFn::from(move |val: Value<'js>| {
                 if val.is_array() {
                     let mut plugin = plugin.get_mut();
-                    match Vec::<CommandSignature>::from_warp_js(
+                    match Vec::<CommandSignature>::from_octomus_js(
                         ctx,
                         val,
                         plugin.js_function_registry_mut(),
@@ -71,7 +71,7 @@ fn completions<'js>(plugin: PluginHandle, ctx: Ctx<'js>) -> rquickjs::Result<Obj
                     }
                 } else if val.is_object() {
                     let mut plugin = plugin.get_mut();
-                    match CommandSignature::from_warp_js(
+                    match CommandSignature::from_octomus_js(
                         ctx,
                         val,
                         plugin.js_function_registry_mut(),

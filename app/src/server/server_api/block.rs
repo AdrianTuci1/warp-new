@@ -6,7 +6,7 @@ use chrono::Utc;
 use cynic::{MutationBuilder, QueryBuilder};
 #[cfg(test)]
 use mockall::automock;
-use warp_core::channel::{Channel, ChannelState};
+use octomus_core::channel::{Channel, ChannelState};
 use warp_graphql::mutations::share_block::{
     BlockInput, ShareBlock, ShareBlockResult, ShareBlockVariables,
 };

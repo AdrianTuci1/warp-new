@@ -6,12 +6,12 @@ use std::cell::Ref;
 use std::ops::Range;
 
 use num_traits::SaturatingSub;
+use octomusui_core::elements::Border;
+use octomusui_core::text_layout::PaintStyleOverride;
+use octomusui_core::{Action, AppContext, Element, TypedActionView, View};
 use pathfinder_color::ColorU;
 use rangemap::{RangeMap, RangeSet};
 use string_offset::CharOffset;
-use warpui_core::elements::Border;
-use warpui_core::text_layout::PaintStyleOverride;
-use warpui_core::{Action, AppContext, Element, TypedActionView, View};
 
 use crate::content::version::BufferVersion;
 use crate::render::element::RichTextAction;

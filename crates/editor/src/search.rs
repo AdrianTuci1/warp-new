@@ -2,11 +2,11 @@ use std::ops::Range;
 
 use itertools::Itertools;
 use lazy_static::lazy_static;
+use octomus_core::ui::theme::Fill;
+use octomusui_core::r#async::SpawnedFutureHandle;
+use octomusui_core::{Entity, ModelContext, ModelHandle};
 use pathfinder_color::ColorU;
 use string_offset::CharOffset;
-use warp_core::ui::theme::Fill;
-use warpui_core::r#async::SpawnedFutureHandle;
-use warpui_core::{Entity, ModelContext, ModelHandle};
 
 use crate::content::anchor::Anchor;
 use crate::content::buffer::{Buffer, BufferEvent};
@@ -273,7 +273,7 @@ impl Searcher {
     #[cfg(test)]
     pub fn search_finished(
         &self,
-        ctx: &mut warpui_core::AppContext,
+        ctx: &mut octomusui_core::AppContext,
     ) -> impl std::future::Future<Output = ()> + use<> {
         let maybe_search = self
             .search_handle

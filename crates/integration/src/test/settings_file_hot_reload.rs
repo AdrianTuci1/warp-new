@@ -2,23 +2,23 @@
 //!
 //! Verifies that changes to `settings.toml` on disk are picked up by the
 //! filesystem watcher and pushed into the in-memory setting models, on every
-//! platform where Warp watches `config_local_dir()`.
+//! platform where Octomus watches `config_local_dir()`.
 
 use std::time::Duration;
 
+use octomus::features::FeatureFlag;
+use octomus::integration_testing::step::new_step_with_default_assertions;
+use octomus::integration_testing::terminal::wait_until_bootstrapped_single_pane_for_tab;
+use octomus::settings::FontSettings;
+use octomusui_core::integration::TestStep;
+use octomusui_core::{async_assert_eq, SingletonEntity};
 use settings::Setting as _;
-use warp::features::FeatureFlag;
-use warp::integration_testing::step::new_step_with_default_assertions;
-use warp::integration_testing::terminal::wait_until_bootstrapped_single_pane_for_tab;
-use warp::settings::FontSettings;
-use warpui_core::integration::TestStep;
-use warpui_core::{async_assert_eq, SingletonEntity};
 
 use super::{new_builder, Builder};
 
 /// Helper: returns the path to the TOML settings file.
 fn toml_file_path() -> std::path::PathBuf {
-    warp::settings::user_preferences_toml_file_path()
+    octomus::settings::user_preferences_toml_file_path()
 }
 
 /// Verifies the full settings hot-reload pipeline end-to-end: the filesystem

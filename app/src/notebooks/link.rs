@@ -7,13 +7,13 @@ use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use futures_util::future::Either;
+use octomus_util::path::{CleanPathResult, LineAndColumnArg};
+use octomusui::r#async::SpawnedFutureHandle;
+use octomusui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity, WindowId};
 use url::Url;
-use warp_util::path::{CleanPathResult, LineAndColumnArg};
-use warpui::r#async::SpawnedFutureHandle;
-use warpui::{AppContext, Entity, ModelContext, ModelHandle, SingletonEntity, WindowId};
 
 use super::file::is_markdown_file;
-use crate::drive::OpenWarpDriveObjectArgs;
+use crate::drive::OpenOctomusDriveObjectArgs;
 use crate::terminal::model::session::Session;
 use crate::uri::parse_url_paths::{get_item_data_from_warp_link, WarpWebLink};
 #[cfg(feature = "local_fs")]
@@ -36,7 +36,7 @@ pub enum LinkTarget {
         /// The base session when the link was resolved. It's stored here in case it changes
         /// between resolving and opening the link.
         session: Arc<Session>,
-        /// Whether or not this file is a Markdown file viewable in Warp.
+        /// Whether or not this file is a Markdown file viewable in Octomus.
         is_markdown: bool,
     },
     LocalDirectory {
@@ -259,8 +259,8 @@ impl NotebookLinks {
         match link {
             LinkTarget::Url(url) => {
                 if let Some(WarpWebLink::DriveObject(args)) = get_item_data_from_warp_link(&url) {
-                    return ctx.emit(LinkEvent::OpenWarpDriveLink {
-                        open_warp_drive_args: *args,
+                    return ctx.emit(LinkEvent::OpenOctomusDriveLink {
+                        open_octomus_drive_args: *args,
                     });
                 }
 
@@ -311,7 +311,7 @@ impl NotebookLinks {
                 is_markdown: true,
                 ..
             } => {
-                // The default action for Markdown file links is to open them in Warp. As a
+                // The default action for Markdown file links is to open them in Octomus. As a
                 // secondary action, open them in an external app.
                 open_file(path.clone(), *line_and_column, ctx)
             }
@@ -418,8 +418,8 @@ pub enum LinkEvent {
         path: PathBuf,
         session: Arc<Session>,
     },
-    OpenWarpDriveLink {
-        open_warp_drive_args: OpenWarpDriveObjectArgs,
+    OpenOctomusDriveLink {
+        open_octomus_drive_args: OpenOctomusDriveObjectArgs,
     },
     /// This event tells the parent pane group to open a new terminal session in the given
     /// directory.
@@ -428,7 +428,7 @@ pub enum LinkEvent {
     /// resolution has changed.
     RefreshLinks,
     #[cfg(feature = "local_fs")]
-    /// Emitted when a file should be opened in Warp (code editor or markdown viewer).
+    /// Emitted when a file should be opened in Octomus (code editor or markdown viewer).
     OpenFileWithTarget {
         path: PathBuf,
         target: FileTarget,

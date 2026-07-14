@@ -1,8 +1,8 @@
 // Diff state protocol messages for communication between
-// the Warp client and the remote server binary.
+// the Octomus client and the remote server binary.
 //
 // These messages are used by the diff state subsystem to synchronize
-// code review diff data between a remote daemon and the Warp client.
+// code review diff data between a remote daemon and the Octomus client.
 
 syntax = "proto3";
 

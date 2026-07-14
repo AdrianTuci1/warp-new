@@ -1,5 +1,5 @@
+use octomusui::fonts::Properties;
 use pathfinder_color::ColorU;
-use warpui::fonts::Properties;
 
 use super::{Renderer, RendererStyles};
 use crate::context_chips::{ChipAvailability, ChipDisabledReason, ContextChipKind};

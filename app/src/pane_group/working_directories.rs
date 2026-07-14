@@ -8,16 +8,16 @@ use std::path::PathBuf;
 
 #[cfg(feature = "local_fs")]
 use indexmap::IndexSet;
+use octomus_core::SessionId;
+#[cfg(feature = "local_fs")]
+use octomus_util::remote_path::RemotePath;
+#[cfg(feature = "local_fs")]
+use octomusui::{AppContext, SingletonEntity as _};
+use octomusui::{Entity, EntityId, ModelContext, ModelHandle, ViewHandle};
 #[cfg(feature = "local_fs")]
 use remote_server::manager::RemoteServerManager;
 #[cfg(feature = "local_fs")]
 use repo_metadata::repositories::DetectedRepositories;
-use warp_core::SessionId;
-#[cfg(feature = "local_fs")]
-use warp_util::remote_path::RemotePath;
-#[cfg(feature = "local_fs")]
-use warpui::{AppContext, SingletonEntity as _};
-use warpui::{Entity, EntityId, ModelContext, ModelHandle, ViewHandle};
 
 use crate::code::buffer_location::LocalOrRemotePath;
 #[cfg(feature = "local_fs")]

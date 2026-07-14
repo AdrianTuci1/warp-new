@@ -2,6 +2,17 @@
 
 use chrono::{DateTime, Local};
 use itertools::Itertools;
+use octomus_core::features::FeatureFlag;
+use octomus_core::semantic_selection::SemanticSelection;
+use octomus_core::ui::appearance::Appearance;
+use octomusui::clipboard::ClipboardContent;
+use octomusui::elements::MouseStateHandle;
+use octomusui::platform::Cursor;
+use octomusui::r#async::Timer;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::units::IntoLines;
+use octomusui::{AppContext, Element, ModelHandle, SingletonEntity, ViewContext};
 use session_sharing_protocol::common::{
     ParticipantId, ParticipantList, ParticipantPresenceUpdate, Role, RoleRequestId,
     RoleRequestResponse, SessionId, WindowSize,
@@ -9,17 +20,6 @@ use session_sharing_protocol::common::{
 use session_sharing_protocol::sharer::{RoleUpdateReason, SessionEndedReason, SessionSourceType};
 use session_sharing_protocol::viewer::RoleUpdatedReason;
 use settings::Setting as _;
-use warp_core::features::FeatureFlag;
-use warp_core::semantic_selection::SemanticSelection;
-use warp_core::ui::appearance::Appearance;
-use warpui::clipboard::ClipboardContent;
-use warpui::elements::MouseStateHandle;
-use warpui::platform::Cursor;
-use warpui::r#async::Timer;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::UiComponent;
-use warpui::units::IntoLines;
-use warpui::{AppContext, Element, ModelHandle, SingletonEntity, ViewContext};
 
 use super::adapter::{Adapter, Kind, Participant};
 use super::cloud_conversation_continuation::{
@@ -1183,7 +1183,7 @@ impl TerminalView {
                 for viewer in active_viewers {
                     if let Some(existing_viewer) = shared_session.viewers().get(viewer.id()) {
                         // A change to the viewer's ACL may have originated from
-                        // warp-server, so we need to update the avatar's role.
+                        // octomus-server, so we need to update the avatar's role.
                         existing_viewer.avatar.update(ctx, |avatar, ctx| {
                             if avatar.role() != viewer.role {
                                 avatar.set_role(viewer.role);

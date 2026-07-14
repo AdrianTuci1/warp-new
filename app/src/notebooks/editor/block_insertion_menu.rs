@@ -1,16 +1,16 @@
 use std::sync::Arc;
 
-use serde::{Deserialize, Serialize};
-use warp_editor::content::text::BufferBlockItem;
-use warpui::elements::{
+use octomusui::elements::{
     AnchorPair, Border, Container, CornerRadius, MouseStateHandle, OffsetPositioning, OffsetType,
     PositionedElementOffsetBounds, PositioningAxis, Radius, SavePosition, Stack, XAxisAnchor,
     YAxisAnchor,
 };
-use warpui::presenter::ChildView;
-use warpui::ui_components::button::ButtonTooltipPosition;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, SingletonEntity, ViewContext, ViewHandle};
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::button::ButtonTooltipPosition;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, SingletonEntity, ViewContext, ViewHandle};
+use serde::{Deserialize, Serialize};
+use warp_editor::content::text::BufferBlockItem;
 
 use super::embedded_item::EmbeddedWorkflow;
 use super::view::{EditorViewAction, EditorViewEvent, RichTextEditorView};

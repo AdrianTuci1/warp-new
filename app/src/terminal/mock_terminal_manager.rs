@@ -1,9 +1,9 @@
 use std::any::Any;
 use std::sync::Arc;
 
+use octomusui::{AppContext, ModelHandle, SingletonEntity, ViewHandle, WindowId};
 use parking_lot::FairMutex;
 use pathfinder_geometry::vector::Vector2F;
-use warpui::{AppContext, ModelHandle, SingletonEntity, ViewHandle, WindowId};
 
 use super::event_listener::ChannelEventListener;
 use super::model::session::Sessions;
@@ -132,8 +132,8 @@ impl TerminalManager for MockTerminalManager {
 
 #[cfg(test)]
 mod testing {
-    use warpui::platform::WindowStyle;
-    use warpui::{App, Element, SingletonEntity};
+    use octomusui::platform::WindowStyle;
+    use octomusui::{App, Element, SingletonEntity};
 
     use super::*;
     use crate::server::server_api::ServerApiProvider;
@@ -144,21 +144,21 @@ mod testing {
         terminal_view: ViewHandle<TerminalView>,
     }
 
-    impl warpui::Entity for TerminalRootView {
+    impl octomusui::Entity for TerminalRootView {
         type Event = ();
     }
 
-    impl warpui::View for TerminalRootView {
+    impl octomusui::View for TerminalRootView {
         fn ui_name() -> &'static str {
             "TerminalRootView"
         }
 
-        fn render(&self, _app: &warpui::AppContext) -> Box<dyn warpui::Element> {
-            warpui::elements::ChildView::new(&self.terminal_view).finish()
+        fn render(&self, _app: &octomusui::AppContext) -> Box<dyn octomusui::Element> {
+            octomusui::elements::ChildView::new(&self.terminal_view).finish()
         }
     }
 
-    impl warpui::TypedActionView for TerminalRootView {
+    impl octomusui::TypedActionView for TerminalRootView {
         type Action = ();
     }
 

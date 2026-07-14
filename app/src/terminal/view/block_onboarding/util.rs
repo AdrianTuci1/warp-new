@@ -1,15 +1,15 @@
-use pathfinder_color::ColorU;
-use warp_core::ui::theme::Fill;
-use warpui::elements::{
+use octomus_core::ui::theme::Fill;
+use octomusui::elements::{
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, MouseStateHandle,
     ParentElement, Radius, Shrinkable,
 };
-use warpui::fonts::Weight;
-use warpui::platform::Cursor;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::ui_components::text_input::TextInput;
-use warpui::{Action, AppContext, Element, SingletonEntity, ViewHandle};
+use octomusui::fonts::Weight;
+use octomusui::platform::Cursor;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::ui_components::text_input::TextInput;
+use octomusui::{Action, AppContext, Element, SingletonEntity, ViewHandle};
+use pathfinder_color::ColorU;
 
 use crate::appearance::Appearance;
 use crate::editor::EditorView;
@@ -155,7 +155,7 @@ pub fn render_input_row<A: Action + Clone>(
     } else {
         ConstrainedBox::new(
             Icon::Check
-                .to_warpui_icon(Fill::Solid(ColorU::new(11, 142, 71, 255)))
+                .to_octomusui_icon(Fill::Solid(ColorU::new(11, 142, 71, 255)))
                 .finish(),
         )
         .with_width(24.)

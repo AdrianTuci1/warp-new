@@ -1,13 +1,13 @@
 //! Components for the notebook header.
 
-use warp_core::features::FeatureFlag;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomusui::elements::{
     Container, CrossAxisAlignment, Flex, Highlight, MainAxisAlignment, MainAxisSize,
     MouseStateHandle, ParentElement, Shrinkable,
 };
-use warpui::platform::Cursor;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, SingletonEntity};
+use octomusui::platform::Cursor;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, SingletonEntity};
 
 use super::super::active_notebook_data::ActiveNotebookData;
 use super::{NotebookAction, EDIT_BUTTON_MARGIN};
@@ -23,7 +23,7 @@ use crate::ui_components::icons::Icon;
 use crate::workspaces::user_profiles::UserProfiles;
 
 /// Component to show details about a notebook:
-/// * Interactive breadcrumbs for its location within Warp Drive
+/// * Interactive breadcrumbs for its location within Octomus Drive
 /// * The current editor of the notebook
 /// * Grab-the-baton UI controls
 pub struct DetailsBar {
@@ -65,7 +65,7 @@ impl DetailsBar {
                     self.breadcrumbs.iter().cloned(),
                     appearance,
                     |ctx, _, breadcrumb| {
-                        ctx.dispatch_typed_action(NotebookAction::ViewInWarpDrive(
+                        ctx.dispatch_typed_action(NotebookAction::ViewInOctomusDrive(
                             breadcrumb.kind.into_item_id(),
                         ));
                     },

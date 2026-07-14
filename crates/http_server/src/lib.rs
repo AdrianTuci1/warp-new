@@ -1,14 +1,14 @@
 use std::net::SocketAddr;
 
+use octomus_core::channel::{Channel, ChannelState};
+use octomusui_core::{Entity, ModelContext, SingletonEntity};
 use tower_http::trace::TraceLayer;
-use warp_core::channel::{Channel, ChannelState};
-use warpui_core::{Entity, ModelContext, SingletonEntity};
 
-// Spells "Warp" - should hopefully not conflict with other ports.
+// Spells "Octomus" - should hopefully not conflict with other ports.
 // Does not conflict with known ports on https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers
 const PORT_BASE: u16 = 9277;
 
-/// A singleton model for the small HTTP server that is run by the Warp client.
+/// A singleton model for the small HTTP server that is run by the Octomus client.
 pub struct HttpServer {
     /// The tokio runtime that the HTTP server runs on.
     ///

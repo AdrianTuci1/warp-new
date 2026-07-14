@@ -1,4 +1,4 @@
-Repo: AdrianTuci1/warp-new
+Repo: AdrianTuci1/octomus-new
 
 Ești orchestratorul Octomus — STAGE 1/2. 1 sandbox (16vCPU/32GB, lifetime 14400s).
 
@@ -13,11 +13,11 @@ Clonează repo-ul O SINGURĂ DATĂ, apoi creează worktree-uri pentru fiecare ag
 Toți agenții lucrează pe același sandbox, în worktree-uri separate.
 
 [bash]
-if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q "AdrianTuci1/warp-new"; then
+if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q "AdrianTuci1/octomus-new"; then
   cd /tmp/repo && git fetch origin && git checkout master && git pull origin master
 else
   rm -rf /tmp/repo
-  git clone https://x-access-token:__GH_TOKEN__@github.com/AdrianTuci1/warp-new.git /tmp/repo
+  git clone https://x-access-token:__GH_TOKEN__@github.com/AdrianTuci1/octomus-new.git /tmp/repo
   cd /tmp/repo
 fi
 
@@ -59,7 +59,7 @@ Lansează 4 agenți simultan. Prompt-urile sunt în `/tmp/repo/.hermes-prompts/`
 | A1    | agent-1-delete-dirs.txt       | /tmp/worktree-agent-1-delete    | Șterge dirs cloud + credite  |
 | A2    | agent-2-fix-lib.txt           | /tmp/worktree-agent-2-lib       | Curăță lib.rs                 |
 | A3    | agent-3-fix-ai.txt            | /tmp/worktree-agent-3-ai        | Curăță ai/ + strip credite    |
-| A4    | agent-4-branding.txt          | /tmp/worktree-agent-4-branding  | Warp→Octomus, rename binary   |
+| A4    | agent-4-branding.txt          | /tmp/worktree-agent-4-branding  | Octomus→Octomus, rename binary   |
 
 [bash]
 prompt_dir="/tmp/repo/.hermes-prompts"

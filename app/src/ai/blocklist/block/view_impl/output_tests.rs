@@ -1,19 +1,19 @@
 use ai::agent::action::UploadArtifactRequest;
 use ai::skills::{ParsedSkill, SkillProvider, SkillScope};
+use octomus_util::host_id::HostId;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomus_util::remote_path::RemotePath;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::App;
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::{DirectoryWatcher, RepoMetadataModel};
-use warp_util::host_id::HostId;
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warp_util::remote_path::RemotePath;
-use warp_util::standardized_path::StandardizedPath;
-use warpui::App;
 use watcher::HomeDirectoryWatcher;
 
 use super::{format_upload_artifact_text, parsed_skill_for_common_locations};
 use crate::ai::agent::UploadArtifactResult;
 use crate::ai::skills::SkillManager;
+use crate::octomus_managed_paths_watcher::WarpManagedPathsWatcher;
 use crate::settings::AISettings;
-use crate::warp_managed_paths_watcher::WarpManagedPathsWatcher;
 
 #[test]
 fn format_upload_artifact_text_includes_request_details() {

@@ -1,24 +1,24 @@
 use std::collections::HashMap;
 use std::path::PathBuf;
 
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::Icon;
-use warp_editor::editor::NavigationKey;
-use warpui::elements::{
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::Icon;
+use octomusui::elements::{
     Border, ChildView, ClippedScrollStateHandle, ClippedScrollable, ConstrainedBox, Container,
     CornerRadius, CrossAxisAlignment, Fill, Flex, Hoverable, MainAxisAlignment, MainAxisSize,
     MouseStateHandle, Padding, ParentElement, Radius, SavePosition, ScrollTarget,
     ScrollToPositionMode, ScrollbarWidth, Shrinkable, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::keymap::macros::*;
-use warpui::keymap::{FixedBinding, Keystroke};
-use warpui::platform::Cursor;
-use warpui::ui_components::components::UiComponent;
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::keymap::macros::*;
+use octomusui::keymap::{FixedBinding, Keystroke};
+use octomusui::platform::Cursor;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use warp_editor::editor::NavigationKey;
 
 use crate::appearance::Appearance;
 use crate::editor::{
@@ -508,7 +508,7 @@ impl View for TabConfigParamsModal {
             .with_corner_radius(CornerRadius::with_all(Radius::Pixels(3.)))
             .finish();
 
-            let close_icon = ConstrainedBox::new(Icon::X.to_warpui_icon(sub_text).finish())
+            let close_icon = ConstrainedBox::new(Icon::X.to_octomusui_icon(sub_text).finish())
                 .with_width(14.)
                 .with_height(14.)
                 .finish();

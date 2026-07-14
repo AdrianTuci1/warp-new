@@ -1,12 +1,12 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
 
+use octomus_core::features::FeatureFlag;
+use octomusui::elements::{Flex, MouseStateHandle, ParentElement};
+use octomusui::ui_components::components::UiComponent;
+use octomusui::ui_components::switch::SwitchStateHandle;
+use octomusui::{Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
 use settings::{Setting, ToggleableSetting};
-use warp_core::features::FeatureFlag;
-use warpui::elements::{Flex, MouseStateHandle, ParentElement};
-use warpui::ui_components::components::UiComponent;
-use warpui::ui_components::switch::SwitchStateHandle;
-use warpui::{Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle};
 
 use crate::appearance::Appearance;
 use crate::server::telemetry::TelemetryEvent;
@@ -150,7 +150,10 @@ impl ExternalEditorView {
 
         let mut items = vec![default_app];
 
-        items.push(DropdownItem::new("Warp", make_action(EditorChoice::Warp)));
+        items.push(DropdownItem::new(
+            "Octomus",
+            make_action(EditorChoice::Octomus),
+        ));
         if FeatureFlag::AllowOpeningFileLinksUsingEditorEnv.is_enabled() {
             items.push(DropdownItem::new(
                 "$EDITOR",
@@ -172,7 +175,7 @@ impl ExternalEditorView {
             EditorChoice::ExternalEditor(editor) => {
                 dropdown.set_selected_by_name(format!("{editor}"), ctx)
             }
-            EditorChoice::Warp => dropdown.set_selected_by_name("Warp", ctx),
+            EditorChoice::Octomus => dropdown.set_selected_by_name("Octomus", ctx),
             EditorChoice::EnvEditor => dropdown.set_selected_by_name("$EDITOR", ctx),
             EditorChoice::SystemDefault => dropdown.set_selected_by_name(default_option_text, ctx),
         };
@@ -271,7 +274,7 @@ impl View for ExternalEditorView {
         "ExternalEditorView"
     }
 
-    fn render(&self, app: &warpui::AppContext) -> Box<dyn warpui::Element> {
+    fn render(&self, app: &octomusui::AppContext) -> Box<dyn octomusui::Element> {
         let appearance = Appearance::as_ref(app);
 
         let default_editor = render_dropdown_item(
@@ -306,7 +309,7 @@ impl View for ExternalEditorView {
 
         let default_layout = render_dropdown_item(
             appearance,
-            "Choose a layout to open files in Warp",
+            "Choose a layout to open files in Octomus",
             None,
             None,
             LocalOnlyIconState::for_setting(
@@ -354,11 +357,11 @@ impl View for ExternalEditorView {
         }
 
         column.add_child(render_body_item::<ExternalEditorAction>(
-            "Open Markdown files in Warp's Markdown Viewer by default".to_string(),
+            "Open Markdown files in Octomus's Markdown Viewer by default".to_string(),
             Some(AdditionalInfo {
                 mouse_state: self.markdown_viewer_mouse_state.clone(),
                 on_click_action: Some(ExternalEditorAction::OpenUrl(
-                    "https://docs.warp.dev/terminal/more-features/markdown-viewer".to_string(),
+                    "https://docs.octomus.dev/terminal/more-features/markdown-viewer".to_string(),
                 )),
                 secondary_text: None,
                 tooltip_override_text: None,

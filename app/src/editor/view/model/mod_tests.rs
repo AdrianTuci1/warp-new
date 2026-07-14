@@ -1,7 +1,7 @@
+use octomusui::text_layout::TextStyle;
+use octomusui::App;
 use string_offset::{ByteOffset, CharOffset};
 use vec1::vec1;
-use warpui::text_layout::TextStyle;
-use warpui::App;
 
 use super::{EditOrigin, EditorModel, Edits, InteractionState, UpdateBufferOption};
 use crate::editor::{EditorSnapshot, PlainTextEditorViewAction, TextRun, ValidInputType};

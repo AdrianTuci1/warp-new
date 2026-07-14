@@ -2,7 +2,7 @@
 Product spec: `specs/zachlloyd/markdown-table-consistency/PRODUCT.md`
 
 ## Problem
-PR #23908 updated AI block list Markdown tables to the new blockless visual treatment, but the rest of Warp’s Markdown table renderers still use the older boxed table styling. On the current branch, Markdown table appearance is owned by two separate rendering paths:
+PR #23908 updated AI block list Markdown tables to the new blockless visual treatment, but the rest of Octomus’s Markdown table renderers still use the older boxed table styling. On the current branch, Markdown table appearance is owned by two separate rendering paths:
 
 - editor-backed Markdown surfaces use `RichTextStyles.table_style`
 - AI block list tables build a separate WarpUI `TableConfig` inline
@@ -21,9 +21,9 @@ The implementation should make every current Markdown table renderer inherit the
 - `crates/editor/src/render/model/mod.rs (424-568)` — `RichTextStyles` and `TableStyle`
 - `crates/editor/src/render/element/table.rs:1-220` — editor-backed Markdown table painting path
 - `app/src/ai/blocklist/block/view_impl/common.rs (1140-1270)` — `render_table_section`; current AI block list table renderer and inline `TableConfig`
-- `crates/warpui_core/src/elements/table/mod.rs (117-239)` — shared `TableConfig`, `RowBackground`, and `TableVerticalSizing`
-- `crates/warpui_core/src/elements/table/mod.rs (537-759)` — intrinsic width measurement logic
-- `crates/warpui_core/src/elements/table/mod.rs (1013-1211)` — viewported row layout and painting behavior
+- `crates/octomusui_core/src/elements/table/mod.rs (117-239)` — shared `TableConfig`, `RowBackground`, and `TableVerticalSizing`
+- `crates/octomusui_core/src/elements/table/mod.rs (537-759)` — intrinsic width measurement logic
+- `crates/octomusui_core/src/elements/table/mod.rs (1013-1211)` — viewported row layout and painting behavior
 - `app/src/notebooks/file/mod.rs (230-278)` — file notebook view using `rich_text_styles`
 - `app/src/ai/ai_document_view.rs (292-321)` — AI document view fallback editor using `rich_text_styles`
 - `app/src/ai/document/ai_document_model.rs (783-801)` — AI document model creating notebook-backed editors with `rich_text_styles`
@@ -169,7 +169,7 @@ The shared appearance helper should therefore be mapped differently by each rend
 What must remain shared is the blockless table chrome and the text hierarchy relationship, not every literal font token.
 
 ### 7. Treat the shared helper as the default for future Markdown table renderers
-Document in the code by naming and placement that this helper is the default source for Markdown table appearance in Warp.
+Document in the code by naming and placement that this helper is the default source for Markdown table appearance in Octomus.
 
 The goal is that a new Markdown-rendering surface should not invent its own `TableConfig` or `TableStyle` values for tables unless it has a clear product reason to diverge.
 

@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 
+use octomusui::clipboard::ClipboardContent;
+use octomusui::{AppContext, Entity, ModelContext, SingletonEntity};
 use settings::Setting as _;
 use vim::vim::MotionType;
-use warpui::clipboard::ClipboardContent;
-use warpui::{AppContext, Entity, ModelContext, SingletonEntity};
 
 use crate::settings::AppEditorSettings;
 

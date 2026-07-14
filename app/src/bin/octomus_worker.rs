@@ -2,8 +2,8 @@
 mod channel_config;
 
 use anyhow::Result;
-use warp_core::channel::{Channel, ChannelState};
-use warp_core::features;
+use octomus_core::channel::{Channel, ChannelState};
+use octomus_core::features;
 
 fn main() -> Result<()> {
     let config = channel_config::load_config!("local");
@@ -19,5 +19,5 @@ fn main() -> Result<()> {
 
     ChannelState::set(state);
 
-    warp::run()
+    octomus::run()
 }

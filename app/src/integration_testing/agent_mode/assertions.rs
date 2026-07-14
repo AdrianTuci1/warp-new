@@ -3,9 +3,9 @@
 // `assert!` causes the app to crash before debug info can be exported. Use `integration_assert!` instead.
 #![deny(clippy::assertions_on_constants)]
 
+use octomusui::integration::{AssertionCallback, AssertionOutcome};
+use octomusui::{integration_assert, EntityId, SingletonEntity};
 use warp_multi_agent_api as api;
-use warpui::integration::{AssertionCallback, AssertionOutcome};
-use warpui::{integration_assert, EntityId, SingletonEntity};
 
 use super::llm_judge::{LLMJudge, LLMJudgeConfig};
 use crate::ai::agent::conversation::{AIConversation, AIConversationId, ConversationStatus};
@@ -93,7 +93,7 @@ pub fn assert_latest_exchange_text(
 }
 
 // Make an assertion on the action requested in the exchange at exchange_index.
-/// This is private because `AIAgentActionType` is not public outside the warp app crate
+/// This is private because `AIAgentActionType` is not public outside the octomus app crate
 /// for use within agent mode evals, so they can't write the `ActionAssertion` directly.
 /// We need to define other functions for specific action assertions that don't expose the type.
 /// TODO: consider exposing `AIAgentActionType`

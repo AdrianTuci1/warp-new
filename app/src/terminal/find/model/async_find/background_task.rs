@@ -10,9 +10,9 @@ use std::sync::Arc;
 
 use futures_lite::future::yield_now;
 use instant::Instant;
+use octomus_terminal::model::grid::Dimensions;
+use octomusui::{Entity, ModelContext};
 use parking_lot::FairMutex;
-use warp_terminal::model::grid::Dimensions;
-use warpui::{Entity, ModelContext};
 
 use super::work_queue::{FindWorkItem, FindWorkQueue};
 use super::{AbsoluteMatch, AsyncFindConfig, FindTaskMessage};
@@ -38,7 +38,7 @@ pub fn spawn_find_task<E: Entity>(
     queue: FindWorkQueue,
     result_tx: async_channel::Sender<FindTaskMessage>,
     ctx: &mut ModelContext<E>,
-) -> warpui::r#async::SpawnedFutureHandle {
+) -> octomusui::r#async::SpawnedFutureHandle {
     ctx.spawn(
         async move {
             run_find_task_loop(config, terminal_model, queue, result_tx).await;

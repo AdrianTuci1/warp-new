@@ -6,9 +6,9 @@ use std::sync::Arc;
 use anyhow::Result;
 use async_channel::{self, Receiver, Sender};
 use async_trait::async_trait;
+use octomus_completer::completer::{CommandExitStatus, CommandOutput};
+use octomus_core::command::ExitCode;
 use parking_lot::Mutex;
-use warp_completer::completer::{CommandExitStatus, CommandOutput};
-use warp_core::command::ExitCode;
 
 use super::{CommandExecutor, ExecuteCommandOptions, ExecutorCommandEvent};
 use crate::terminal::event::ExecutedExecutorCommandEvent;

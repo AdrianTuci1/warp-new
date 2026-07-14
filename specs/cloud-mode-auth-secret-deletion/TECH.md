@@ -156,7 +156,7 @@ No new helper-only unit tests are retained in this implementation pass. The foll
 5. Run focused checks:
 
    ```sh
-   cargo check -p warp
+   cargo check -p octomus
    cargo fmt -- --check
    ```
 

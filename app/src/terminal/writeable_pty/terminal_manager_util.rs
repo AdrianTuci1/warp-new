@@ -2,8 +2,8 @@ use std::sync::mpsc::SyncSender;
 use std::sync::Arc;
 
 use async_channel::Receiver;
+use octomusui::{AppContext, ModelHandle, ViewHandle};
 use parking_lot::FairMutex;
-use warpui::{AppContext, ModelHandle, ViewHandle};
 
 use crate::persistence::ModelEvent;
 use crate::terminal::line_editor_status::LineEditorStatus;

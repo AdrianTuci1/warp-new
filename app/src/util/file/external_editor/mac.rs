@@ -6,9 +6,9 @@ use instant::Instant;
 use objc2::rc::{autoreleasepool, Retained};
 use objc2_app_kit::NSWorkspace;
 use objc2_foundation::{NSBundle, NSString, NSURL};
-use warp_core::channel::ChannelState;
-use warp_core::AppId;
-use warpui::ApplicationBundleInfo;
+use octomus_core::channel::ChannelState;
+use octomus_core::AppId;
+use octomusui::ApplicationBundleInfo;
 
 use super::*;
 
@@ -340,8 +340,8 @@ pub fn open_file_path_with_line_and_col(
         }
 
         // NSWorkspace's default-app routing can hand files to a sibling
-        // Warp channel (e.g. Stable handling files while Preview is running).
-        // When the resolved default is a different Warp, open with the
+        // Octomus channel (e.g. Stable handling files while Preview is running).
+        // When the resolved default is a different Octomus, open with the
         // running channel's bundle directly.
         let bundle_id = default_app_to_open_path(full_path);
         if let Some(bundle_id) = bundle_id.as_deref() {
@@ -359,7 +359,7 @@ pub fn open_file_path_with_line_and_col(
 
 fn is_warp_bundle(bundle_id: &str) -> bool {
     AppId::parse(bundle_id)
-        .map(|id| id.qualifier() == "dev" && id.organization() == "warp")
+        .map(|id| id.qualifier() == "dev" && id.organization() == "octomus")
         .unwrap_or(false)
 }
 

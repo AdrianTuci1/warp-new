@@ -24,8 +24,8 @@ KNOWN_BOTS = frozenset(
         "github-actions[bot]",
         "codecov",
         "codecov[bot]",
-        "warp-bot",
-        "warp-bot[bot]",
+        "octomus-bot",
+        "octomus-bot[bot]",
     }
 )
 

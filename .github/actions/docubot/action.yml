@@ -21,7 +21,7 @@ runs:
   using: composite
   steps:
     - name: Setup Octomus CLI
-      uses: ./.github/actions/setup_warp_cli
+      uses: ./.github/actions/setup_octomus_cli
       with:
         warp_channel: ${{ inputs.warp_channel }}
     - name: Clone Octomus GitBook repository

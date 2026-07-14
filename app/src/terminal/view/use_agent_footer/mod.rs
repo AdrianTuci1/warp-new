@@ -5,7 +5,7 @@
 //! Gemini CLI, Codex), it displays a specialized footer with additional functionality.
 
 use base64::Engine;
-use warpui::clipboard::{ClipboardContent, ImageData};
+use octomusui::clipboard::{ClipboardContent, ImageData};
 
 use crate::ai::agent::ImageContext;
 use crate::ai::blocklist::agent_view::agent_input_footer::{
@@ -16,35 +16,35 @@ use crate::terminal::shared_session::{
     SharedSessionActionSource, SharedSessionScrollbackType, SharedSessionSource,
 };
 use crate::util::image::{infer_mime_type, MAX_IMAGE_SIZE_BYTES_FOR_CLI_AGENT, MIME_SNIFF_BYTES};
-mod warpify_footer;
+mod octomusify_footer;
 
 use std::path::Path;
 use std::sync::{Arc, LazyLock};
 use std::time::Duration;
 
 use anyhow::anyhow;
-use parking_lot::FairMutex;
-use pathfinder_color::ColorU;
-use warp_core::features::FeatureFlag;
-use warp_core::settings::Setting;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::color::contrast::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::settings::Setting;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::color::contrast::{
     high_enough_contrast, pick_best_foreground_color, MinimumAllowedContrast,
 };
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::Fill as ThemeFill;
-use warp_core::{report_error, send_telemetry_from_ctx};
-use warp_terminal::model::escape_sequences::{BRACKETED_PASTE_END, BRACKETED_PASTE_START};
-use warpify_footer::{WarpifyFooterView, WarpifyFooterViewEvent};
-use warpui::elements::{
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::Fill as ThemeFill;
+use octomus_core::{report_error, send_telemetry_from_ctx};
+use octomus_terminal::model::escape_sequences::{BRACKETED_PASTE_END, BRACKETED_PASTE_START};
+use octomusify_footer::{OctomusifyFooterView, OctomusifyFooterViewEvent};
+use octomusui::elements::{
     ChildView, Container, CrossAxisAlignment, Empty, Expanded, Flex, MainAxisSize, ParentElement,
 };
-use warpui::keymap::Keystroke;
-use warpui::r#async::Timer;
-use warpui::{
+use octomusui::keymap::Keystroke;
+use octomusui::r#async::Timer;
+use octomusui::{
     AppContext, Element, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use parking_lot::FairMutex;
+use pathfinder_color::ColorU;
 
 use super::{RichContentInsertionPosition, TerminalAction, TerminalView};
 use crate::ai::blocklist::agent_view::agent_view_bg_fill;
@@ -58,7 +58,7 @@ use crate::settings::{
 };
 use crate::terminal::cli_agent_sessions::CLIAgentRichInputCloseReason;
 use crate::terminal::model_events::{ModelEvent, ModelEventDispatcher};
-use crate::terminal::view::block_banner::WarpificationMode;
+use crate::terminal::view::block_banner::OctomusificationMode;
 pub use crate::terminal::CLIAgent;
 use crate::terminal::TerminalModel;
 use crate::ui_components::blended_colors;
@@ -267,18 +267,18 @@ impl TerminalView {
             UseAgentToolbarEvent::HideRichInput => {
                 self.close_cli_agent_rich_input_and_disable_auto_toggle(ctx);
             }
-            UseAgentToolbarEvent::Warpify { mode } => {
+            UseAgentToolbarEvent::Octomusify { mode } => {
                 self.hide_use_agent_footer_in_blocklist(ctx);
                 match mode {
-                    WarpificationMode::Ssh { .. } => {
-                        self.handle_action(&TerminalAction::WarpifySSHSession, ctx);
+                    OctomusificationMode::Ssh { .. } => {
+                        self.handle_action(&TerminalAction::OctomusifySSHSession, ctx);
                     }
-                    WarpificationMode::Subshell { .. } => {
+                    OctomusificationMode::Subshell { .. } => {
                         self.handle_action(&TerminalAction::TriggerSubshellBootstrap, ctx);
                     }
                 }
                 send_telemetry_from_ctx!(
-                    TelemetryEvent::WarpifyFooterAcceptedWarpify {
+                    TelemetryEvent::OctomusifyFooterAcceptedOctomusify {
                         is_ssh: mode.is_ssh()
                     },
                     ctx
@@ -304,11 +304,11 @@ impl TerminalView {
     ) -> bool {
         let ai_settings = AISettings::as_ref(app);
 
-        // If a warpify mode is set, that means ssh or subshell is detected and we should show the footer.
+        // If a octomusify mode is set, that means ssh or subshell is detected and we should show the footer.
         if self
             .use_agent_footer
             .as_ref(app)
-            .warpify_mode(app)
+            .octomusify_mode(app)
             .is_some()
         {
             return true;
@@ -323,7 +323,7 @@ impl TerminalView {
         if cli_agent.is_some() {
             // For CLI agent commands, only check the CLI agent footer setting.
             // This is independent of the global AI toggle so that users who
-            // disable Warp AI still get the footer for third-party coding agents.
+            // disable Octomus AI still get the footer for third-party coding agents.
             if !*ai_settings.should_render_cli_agent_footer {
                 return false;
             }
@@ -435,7 +435,7 @@ impl TerminalView {
 
         if !self.model.lock().is_alt_screen_active() {
             self.use_agent_footer.update(ctx, |footer, ctx| {
-                footer.clear_warpify_mode(ctx);
+                footer.clear_octomusify_mode(ctx);
             });
             self.hide_use_agent_footer_in_blocklist(ctx);
         }
@@ -1060,8 +1060,8 @@ pub struct UseAgentToolbar {
     // Shared agent input footer (renders CLI agent mode when a CLI session is active).
     agent_input_footer: ViewHandle<AgentInputFooter>,
 
-    // Warpify footer UI (shown when a subshell/SSH command is detected).
-    warpify_footer_view: ViewHandle<WarpifyFooterView>,
+    // Octomusify footer UI (shown when a subshell/SSH command is detected).
+    octomusify_footer_view: ViewHandle<OctomusifyFooterView>,
 
     // `true` if the user has dismissed the footer.
     //
@@ -1088,7 +1088,7 @@ impl UseAgentToolbar {
             .with_icon(Icon::Oz)
             .with_keybinding(KeystrokeSource::Fixed(USE_AGENT_KEYSTROKE.clone()), ctx)
             .with_size(button_size)
-            .with_tooltip("Ask the Warp agent to assist")
+            .with_tooltip("Ask the Octomus agent to assist")
             .with_tooltip_alignment(TooltipAlignment::Left)
             .on_click(|ctx| {
                 ctx.dispatch_typed_action(TerminalAction::SetInputModeAgent);
@@ -1102,7 +1102,7 @@ impl UseAgentToolbar {
             .with_icon(Icon::Oz)
             .with_keybinding(KeystrokeSource::Fixed(USE_AGENT_KEYSTROKE.clone()), ctx)
             .with_size(button_size)
-            .with_tooltip("Ask the Warp agent to resume")
+            .with_tooltip("Ask the Octomus agent to resume")
             .with_tooltip_alignment(TooltipAlignment::Left)
             .on_click(|ctx| {
                 ctx.dispatch_typed_action(TerminalAction::SetInputModeAgent);
@@ -1134,11 +1134,11 @@ impl UseAgentToolbar {
             me.handle_agent_input_footer_event(event, ctx);
         });
 
-        let warpify_footer_view =
-            ctx.add_typed_action_view(|ctx| WarpifyFooterView::new(terminal_model.clone(), ctx));
+        let octomusify_footer_view =
+            ctx.add_typed_action_view(|ctx| OctomusifyFooterView::new(terminal_model.clone(), ctx));
 
-        ctx.subscribe_to_view(&warpify_footer_view, |me, _, event, ctx| {
-            me.handle_warpify_footer_event(event, ctx);
+        ctx.subscribe_to_view(&octomusify_footer_view, |me, _, event, ctx| {
+            me.handle_octomusify_footer_event(event, ctx);
         });
 
         ctx.subscribe_to_model(model_event_dispatcher, |me, _, event, ctx| {
@@ -1164,7 +1164,7 @@ impl UseAgentToolbar {
             dismiss_button,
             dont_show_again_button,
             agent_input_footer,
-            warpify_footer_view,
+            octomusify_footer_view,
             terminal_model,
             did_user_dismiss: false,
         }
@@ -1211,19 +1211,19 @@ impl UseAgentToolbar {
         }
     }
 
-    fn handle_warpify_footer_event(
+    fn handle_octomusify_footer_event(
         &mut self,
-        event: &WarpifyFooterViewEvent,
+        event: &OctomusifyFooterViewEvent,
         ctx: &mut ViewContext<Self>,
     ) {
         match event {
-            WarpifyFooterViewEvent::Warpify { mode } => {
-                ctx.emit(UseAgentToolbarEvent::Warpify { mode: mode.clone() });
+            OctomusifyFooterViewEvent::Octomusify { mode } => {
+                ctx.emit(UseAgentToolbarEvent::Octomusify { mode: mode.clone() });
             }
-            WarpifyFooterViewEvent::UseAgent => {
+            OctomusifyFooterViewEvent::UseAgent => {
                 ctx.emit(UseAgentToolbarEvent::UseAgent);
             }
-            WarpifyFooterViewEvent::Dismiss => {
+            OctomusifyFooterViewEvent::Dismiss => {
                 ctx.emit(UseAgentToolbarEvent::Dismiss);
             }
         }
@@ -1232,7 +1232,8 @@ impl UseAgentToolbar {
     pub(in crate::terminal) fn notify_and_notify_children(&mut self, ctx: &mut ViewContext<Self>) {
         ctx.notify();
         self.agent_input_footer.update(ctx, |_, ctx| ctx.notify());
-        self.warpify_footer_view.update(ctx, |_, ctx| ctx.notify());
+        self.octomusify_footer_view
+            .update(ctx, |_, ctx| ctx.notify());
         self.button.update(ctx, |_, ctx| ctx.notify());
         self.give_control_back_button
             .update(ctx, |_, ctx| ctx.notify());
@@ -1252,30 +1253,33 @@ impl UseAgentToolbar {
             .map(|session| session.agent)
     }
 
-    /// Sets the current warpification mode. When set, the footer shows the
-    /// warpify view instead of the CLI agent or regular "Use agent" views.
-    pub(in crate::terminal) fn set_warpify_mode(
+    /// Sets the current octomusification mode. When set, the footer shows the
+    /// octomusify view instead of the CLI agent or regular "Use agent" views.
+    pub(in crate::terminal) fn set_octomusify_mode(
         &mut self,
-        mode: WarpificationMode,
+        mode: OctomusificationMode,
         ctx: &mut ViewContext<Self>,
     ) {
-        self.warpify_footer_view.update(ctx, |view, ctx| {
+        self.octomusify_footer_view.update(ctx, |view, ctx| {
             view.set_mode(mode, ctx);
         });
         ctx.notify();
     }
 
-    /// Clears the warpification mode so the footer reverts to its default behavior.
-    pub(in crate::terminal) fn clear_warpify_mode(&mut self, ctx: &mut ViewContext<Self>) {
-        self.warpify_footer_view.update(ctx, |view, ctx| {
+    /// Clears the octomusification mode so the footer reverts to its default behavior.
+    pub(in crate::terminal) fn clear_octomusify_mode(&mut self, ctx: &mut ViewContext<Self>) {
+        self.octomusify_footer_view.update(ctx, |view, ctx| {
             view.clear_mode(ctx);
         });
         ctx.notify();
     }
 
-    /// Returns the current warpification mode, if set.
-    pub(in crate::terminal) fn warpify_mode(&self, app: &AppContext) -> Option<WarpificationMode> {
-        self.warpify_footer_view.as_ref(app).mode().cloned()
+    /// Returns the current octomusification mode, if set.
+    pub(in crate::terminal) fn octomusify_mode(
+        &self,
+        app: &AppContext,
+    ) -> Option<OctomusificationMode> {
+        self.octomusify_footer_view.as_ref(app).mode().cloned()
     }
 
     /// Returns whether there's a current CLI agent (like Claude Code).
@@ -1307,8 +1311,8 @@ pub enum UseAgentToolbarEvent {
     OpenRichInput,
     /// Hide the rich input editor (same as Escape).
     HideRichInput,
-    /// User chose to warpify the subshell/SSH session.
-    Warpify { mode: WarpificationMode },
+    /// User chose to octomusify the subshell/SSH session.
+    Octomusify { mode: OctomusificationMode },
     /// User chose to use the agent.
     UseAgent,
 }
@@ -1323,9 +1327,9 @@ impl View for UseAgentToolbar {
     }
 
     fn render(&self, app: &AppContext) -> Box<dyn Element> {
-        // If a warpify mode is set, delegate rendering to the warpify footer view.
-        if self.warpify_footer_view.as_ref(app).mode().is_some() {
-            return ChildView::new(&self.warpify_footer_view).finish();
+        // If a octomusify mode is set, delegate rendering to the octomusify footer view.
+        if self.octomusify_footer_view.as_ref(app).mode().is_some() {
+            return ChildView::new(&self.octomusify_footer_view).finish();
         }
 
         // Hide the toolbar entirely when CLI rich input is open,

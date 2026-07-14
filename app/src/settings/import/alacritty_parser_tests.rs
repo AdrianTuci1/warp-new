@@ -1,7 +1,7 @@
 use async_io::block_on;
+use octomus_core::ui::color::hex_color::coloru_from_hex_string;
+use octomus_core::ui::theme::AnsiColor;
 use virtual_fs::{Stub, VirtualFS};
-use warp_core::ui::color::hex_color::coloru_from_hex_string;
-use warp_core::ui::theme::AnsiColor;
 
 use super::{
     AlacrittyColors, AlacrittyConfig, AlacrittyTheme, PrimaryAlacrittyColors, RecursivelyParseable,

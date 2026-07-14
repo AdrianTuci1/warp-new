@@ -9,13 +9,13 @@ use ai::index::full_source_code_embedding::manager::{
 };
 use futures::channel::oneshot;
 use futures::future::join_all;
+use octomus_cli::agent::Harness;
+use octomus_completer::completer::CommandExitStatus;
+use octomus_core::command::ExitCode;
+use octomus_core::{safe_info, safe_warn};
+use octomusui::r#async::FutureExt;
+use octomusui::{ModelContext, ModelSpawner, SingletonEntity};
 use repo_metadata::repositories::{DetectedRepositories, RepoDetectionSource};
-use warp_cli::agent::Harness;
-use warp_completer::completer::CommandExitStatus;
-use warp_core::command::ExitCode;
-use warp_core::{safe_info, safe_warn};
-use warpui::r#async::FutureExt;
-use warpui::{ModelContext, ModelSpawner, SingletonEntity};
 
 use super::terminal::TerminalDriver;
 use super::AgentDriverError;

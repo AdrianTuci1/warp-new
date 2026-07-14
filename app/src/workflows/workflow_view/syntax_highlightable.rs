@@ -3,12 +3,12 @@ use std::ops::Range;
 use std::time::Duration;
 
 use async_channel::Sender;
+use octomus_completer::completer::SuggestionTypeName;
+use octomus_completer::signatures::CommandRegistry;
+use octomus_core::ui::theme::AnsiColorIdentifier;
+use octomusui::r#async::SpawnedFutureHandle;
+use octomusui::{Entity, ModelContext, SingletonEntity, ViewHandle};
 use string_offset::ByteOffset;
-use warp_completer::completer::SuggestionTypeName;
-use warp_completer::signatures::CommandRegistry;
-use warp_core::ui::theme::AnsiColorIdentifier;
-use warpui::r#async::SpawnedFutureHandle;
-use warpui::{Entity, ModelContext, SingletonEntity, ViewHandle};
 
 use crate::appearance::Appearance;
 use crate::completer::SessionAgnosticContext;

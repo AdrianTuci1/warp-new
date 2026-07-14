@@ -1,4 +1,4 @@
-Repo: AdrianTuci1/warp-new
+Repo: AdrianTuci1/octomus-new
 
 Ești orchestratorul Octomus — STAGE 2/2. 1 sandbox (16vCPU/32GB, lifetime 14400s).
 
@@ -17,11 +17,11 @@ IMPORTANT: Toți agenții din stage 2 pornesc de pe branch-ul octomus/stage1 (NU
 Clonează repo-ul O SINGURĂ DATĂ, checkout octomus/stage1, apoi creează worktree-uri.
 
 [bash]
-if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q "AdrianTuci1/warp-new"; then
+if [ -d /tmp/repo/.git ] && cd /tmp/repo && git remote get-url origin | grep -q "AdrianTuci1/octomus-new"; then
   cd /tmp/repo && git fetch origin && git checkout octomus/stage1 && git pull origin octomus/stage1
 else
   rm -rf /tmp/repo
-  git clone https://x-access-token:__GH_TOKEN__@github.com/AdrianTuci1/warp-new.git /tmp/repo
+  git clone https://x-access-token:__GH_TOKEN__@github.com/AdrianTuci1/octomus-new.git /tmp/repo
   cd /tmp/repo
   git fetch origin octomus/stage1 && git checkout octomus/stage1
 fi

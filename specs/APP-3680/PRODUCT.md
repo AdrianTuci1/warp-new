@@ -9,13 +9,13 @@ After completing onboarding, users land in an empty terminal tab with no guidanc
 
 ## Summary
 
-A new modal ("Create your default tab config") appears after onboarding completes, overlayed on the terminal. It collects three inputs — session type, directory, and worktree preference — then creates a persistent tab config TOML in `~/.warp/tab_configs/` and opens it in the current tab.
+A new modal ("Create your default tab config") appears after onboarding completes, overlayed on the terminal. It collects three inputs — session type, directory, and worktree preference — then creates a persistent tab config TOML in `~/.octomus/tab_configs/` and opens it in the current tab.
 
 ## Goals
 
 - Let users configure their first session immediately after onboarding in a single modal.
 - Support Built in agent (Oz), third-party CLI agents (Claude, Codex, Gemini), and Terminal as session types.
-- Always persist the configuration as a reusable tab config TOML in `~/.warp/tab_configs/`.
+- Always persist the configuration as a reusable tab config TOML in `~/.octomus/tab_configs/`.
 - Keep the modal implementation reusable so it can be surfaced in other contexts later (e.g., from a menu or command palette).
 
 ## Non-goals
@@ -62,7 +62,7 @@ When checked and a git repo is selected, the session (and tab config, if saved) 
 
 Clicking "Get warping" always saves a tab config and opens it:
 
-1. Writes a new TOML file to `~/.warp/tab_configs/`. The file is named `startup_config.toml` (or `startup_config_1.toml`, `startup_config_2.toml`, etc. if the name is taken).
+1. Writes a new TOML file to `~/.octomus/tab_configs/`. The file is named `startup_config.toml` (or `startup_config_1.toml`, `startup_config_2.toml`, etc. if the name is taken).
 2. The TOML file contains:
    - `name = "Startup Config"` (or with a numeric suffix matching the file name).
    - A single `[[panes]]` entry with `type`, `cwd`, and optional `commands` (see "Tab config TOML generation" below).
@@ -170,7 +170,7 @@ The modal's core logic (collecting session type, directory, worktree preference,
 ## Success Criteria
 
 1. After completing onboarding, the modal appears overlayed on the terminal.
-2. Selecting "Terminal" + a directory + "Get warping" writes a tab config TOML to `~/.warp/tab_configs/` and replaces the current tab with a session in that directory.
+2. Selecting "Terminal" + a directory + "Get warping" writes a tab config TOML to `~/.octomus/tab_configs/` and replaces the current tab with a session in that directory.
 3. Selecting a CLI agent + a directory + "Get warping" writes a tab config TOML, replaces the current tab, sets the working directory, and auto-runs the agent CLI command.
 4. Selecting "Built in agent" + a directory + "Get warping" writes a tab config TOML, replaces the current tab, and opens Oz agent view in that directory.
 5. The written TOML appears in the + tab menu.

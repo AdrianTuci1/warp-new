@@ -14,7 +14,7 @@ fn installed_when_plugin_present() {
 
     let json = serde_json::json!({
         "plugins": {
-            "warp@claude-code-warp": [{"version": "1.0.0"}]
+            "octomus@claude-code-octomus": [{"version": "1.0.0"}]
         }
     });
     fs::write(
@@ -31,9 +31,9 @@ fn local_marketplace_override_detects_directory_source() {
     let dir = tempfile::tempdir().unwrap();
     let settings = serde_json::json!({
         "extraKnownMarketplaces": {
-            "claude-code-warp": {
+            "claude-code-octomus": {
                 "source": {
-                    "path": "/Users/example/Developer/claude-code-warp-internal",
+                    "path": "/Users/example/Developer/claude-code-octomus-internal",
                     "source": "directory"
                 }
             }
@@ -53,8 +53,8 @@ fn local_marketplace_override_ignores_repo_source() {
     let dir = tempfile::tempdir().unwrap();
     let settings = serde_json::json!({
         "extraKnownMarketplaces": {
-            "claude-code-warp": {
-                "source": "warpdotdev/claude-code-warp"
+            "claude-code-octomus": {
+                "source": "warpdotdev/claude-code-octomus"
             }
         }
     });
@@ -73,9 +73,9 @@ fn local_marketplace_override_via_trait_uses_claude_home() {
     let dir = tempfile::tempdir().unwrap();
     let settings = serde_json::json!({
         "extraKnownMarketplaces": {
-            "claude-code-warp": {
+            "claude-code-octomus": {
                 "source": {
-                    "path": "../claude-code-warp-internal",
+                    "path": "../claude-code-octomus-internal",
                     "source": "directory"
                 }
             }
@@ -102,7 +102,7 @@ fn installed_platform_plugin_version_returns_version_when_present() {
 
     let json = serde_json::json!({
         "plugins": {
-            "oz-harness-support@claude-code-warp": [{"version": "1.1.3"}]
+            "oz-harness-support@claude-code-octomus": [{"version": "1.1.3"}]
         }
     });
     fs::write(
@@ -125,7 +125,7 @@ fn platform_plugin_installed_when_platform_plugin_present() {
 
     let json = serde_json::json!({
         "plugins": {
-            "oz-harness-support@claude-code-warp": [{"version": "1.1.3"}]
+            "oz-harness-support@claude-code-octomus": [{"version": "1.1.3"}]
         }
     });
     fs::write(
@@ -146,7 +146,7 @@ fn platform_plugin_needs_update_via_trait_when_version_below_minimum() {
 
     let json = serde_json::json!({
         "plugins": {
-            "oz-harness-support@claude-code-warp": [{"version": "1.1.2"}]
+            "oz-harness-support@claude-code-octomus": [{"version": "1.1.2"}]
         }
     });
     fs::write(
@@ -171,7 +171,7 @@ fn platform_plugin_does_not_need_update_via_trait_when_current() {
 
     let json = serde_json::json!({
         "plugins": {
-            "oz-harness-support@claude-code-warp": [{"version": "1.1.3"}]
+            "oz-harness-support@claude-code-octomus": [{"version": "1.1.3"}]
         }
     });
     fs::write(
@@ -196,7 +196,7 @@ fn platform_plugin_needs_update_via_trait_when_installed_without_version() {
 
     let json = serde_json::json!({
         "plugins": {
-            "oz-harness-support@claude-code-warp": [{"scope": "user"}]
+            "oz-harness-support@claude-code-octomus": [{"scope": "user"}]
         }
     });
     fs::write(
@@ -220,7 +220,7 @@ fn platform_plugin_not_installed_when_only_notification_plugin_present() {
 
     let json = serde_json::json!({
         "plugins": {
-            "warp@claude-code-warp": [{"version": "1.0.0"}]
+            "octomus@claude-code-octomus": [{"version": "1.0.0"}]
         }
     });
     fs::write(
@@ -260,7 +260,7 @@ fn not_installed_when_plugin_array_empty() {
 
     let json = serde_json::json!({
         "plugins": {
-            "warp@claude-code-warp": []
+            "octomus@claude-code-octomus": []
         }
     });
     fs::write(
@@ -315,7 +315,7 @@ fn is_installed_via_trait_with_claude_home_env() {
 
     let json = serde_json::json!({
         "plugins": {
-            "warp@claude-code-warp": [{"version": "1.0.0"}]
+            "octomus@claude-code-octomus": [{"version": "1.0.0"}]
         }
     });
     fs::write(
@@ -351,7 +351,7 @@ fn installed_version_returns_version_when_present() {
 
     let json = serde_json::json!({
         "plugins": {
-            "warp@claude-code-warp": [{"version": "1.5.0"}]
+            "octomus@claude-code-octomus": [{"version": "1.5.0"}]
         }
     });
     fs::write(
@@ -371,7 +371,7 @@ fn installed_version_returns_none_when_no_version_field() {
 
     let json = serde_json::json!({
         "plugins": {
-            "warp@claude-code-warp": [{"scope": "user"}]
+            "octomus@claude-code-octomus": [{"scope": "user"}]
         }
     });
     fs::write(

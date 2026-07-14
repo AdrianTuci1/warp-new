@@ -28,6 +28,13 @@ use chrono::{DateTime, FixedOffset};
 use futures::StreamExt;
 use instant::Instant;
 use object::ObjectClient;
+use octomus_core::context_flag::ContextFlag;
+use octomus_core::errors::{register_error, AnyhowErrorExt, ErrorExt};
+use octomus_core::telemetry::TelemetryEvent;
+use octomus_server_client::auth::{AuthClientImpl, AuthEvent, AuthSession, EXPERIMENT_ID_HEADER};
+use octomus_server_client::base_client::BaseClient as _;
+use octomusui::r#async::BoxFuture;
+use octomusui::{Entity, ModelContext, SingletonEntity};
 use parking_lot::{Mutex, RwLock};
 use prost::Message;
 use referral::ReferralsClient;
@@ -35,14 +42,7 @@ use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use team::TeamClient;
 use url::Url;
-use warp_core::context_flag::ContextFlag;
-use warp_core::errors::{register_error, AnyhowErrorExt, ErrorExt};
-use warp_core::telemetry::TelemetryEvent;
 use warp_managed_secrets::client::ManagedSecretsClient;
-use warp_server_client::auth::{AuthClientImpl, AuthEvent, AuthSession, EXPERIMENT_ID_HEADER};
-use warp_server_client::base_client::BaseClient as _;
-use warpui::r#async::BoxFuture;
-use warpui::{Entity, ModelContext, SingletonEntity};
 use workspace::WorkspaceClient;
 
 use super::experiments::{ServerExperiment, ServerExperiments};
@@ -64,11 +64,11 @@ use crate::{settings_view, ChannelState};
 
 pub const FETCH_CHANNEL_VERSIONS_TIMEOUT: std::time::Duration = Duration::from_secs(60);
 
-/// We use a special error code header `X-Warp-Error-Code` to allow the server to send
+/// We use a special error code header `X-Octomus-Error-Code` to allow the server to send
 /// more specific error code information, so that the client can discern between different
 /// errors with the same error code.
 /// See errors/http_error_codes.go on the server for possible values.
-const WARP_ERROR_CODE_HEADER: &str = "X-Warp-Error-Code";
+const WARP_ERROR_CODE_HEADER: &str = "X-Octomus-Error-Code";
 
 /// An error indicating the user is out of credits. The server sends 429s to communicate this
 /// state, but if Cloud Run is overloaded, it can also send 429s that aren't credit-related.
@@ -89,7 +89,7 @@ pub const EVAL_USER_ID_HEADER: &str = "X-Eval-User-ID";
 /// DO NOT REMOVE OR CHANGE THESE USERS!
 ///
 /// Keep this list in sync with `script/populate_agent_mode_eval_user.sql`
-/// in warp-server. Those rows need to exist in the DB so the authz user loader
+/// in octomus-server. Those rows need to exist in the DB so the authz user loader
 /// can resolve these IDs during task creation; otherwise the server will 500
 /// on every eval request with a nil-deref in `UserIDFromUser`.
 #[cfg(feature = "agent_mode_evals")]
@@ -160,7 +160,7 @@ pub enum AIApiError {
         user_display_message: Option<String>,
     },
 
-    #[error("Warp is currently overloaded. Please try again later.")]
+    #[error("Octomus is currently overloaded. Please try again later.")]
     ServerOverloaded,
 
     #[error("Internal error occurred at transport layer.")]
@@ -217,7 +217,7 @@ impl AIApiError {
         headers: &::http::HeaderMap,
         body: Option<String>,
     ) -> Self {
-        // For HTTP 429 errors, check the X-Warp-Error-Code header to distinguish
+        // For HTTP 429 errors, check the X-Octomus-Error-Code header to distinguish
         // between out-of-credits and server-overload.
         if err.status() == Some(http::StatusCode::TOO_MANY_REQUESTS) {
             return Self::error_for_429(headers, body);
@@ -255,7 +255,7 @@ impl AIApiError {
         AIApiError::Transport(err)
     }
 
-    /// Returns the appropriate error for a 429 response by checking the X-Warp-Error-Code header.
+    /// Returns the appropriate error for a 429 response by checking the X-Octomus-Error-Code header.
     fn error_for_429(headers: &::http::HeaderMap, body: Option<String>) -> Self {
         if headers
             .get(WARP_ERROR_CODE_HEADER)
@@ -348,7 +348,7 @@ pub enum TranscribeError {
     #[error("Request failed due to lack of Voice quota.")]
     QuotaLimit,
 
-    #[error("Warp is currently overloaded. Please try again later.")]
+    #[error("Octomus is currently overloaded. Please try again later.")]
     ServerOverloaded,
 
     #[error("Internal error occurred at transport layer.")]
@@ -373,7 +373,7 @@ cfg_if::cfg_if! {
     }
 }
 
-/// An API wrapper struct with methods to requests to warp-server.
+/// An API wrapper struct with methods to requests to octomus-server.
 ///
 /// Prefer NOT adding new methods directly on this struct; instead, add to one of the existing
 /// client trait objects, or create your own. This helps keep `ServerApi` from being overloaded
@@ -636,7 +636,7 @@ impl ServerApi {
     where
         QF: 'a,
     {
-        warp_server_client::graphql_helpers::send_graphql_request(self, operation, timeout)
+        octomus_server_client::graphql_helpers::send_graphql_request(self, operation, timeout)
     }
 
     /// Sends a GET request to a public API endpoint.
@@ -710,7 +710,7 @@ impl ServerApi {
     /// items until the connection closes or an error occurs. The caller is
     /// responsible for reading the stream and handling reconnection.
     ///
-    /// The stream is served by warp-server-rtc (not the main warp-server pool),
+    /// The stream is served by octomus-server-rtc (not the main octomus-server pool),
     /// so the URL is built from `ChannelState::rtc_http_url()` rather than
     /// `server_root_url()`.
     pub async fn stream_agent_events(
@@ -1436,7 +1436,7 @@ impl ServerApi {
         }
     }
 
-    /// Fetches updated Warp Channel Versions from Warp Server. If it is the first such request of
+    /// Fetches updated Octomus Channel Versions from Octomus Server. If it is the first such request of
     /// the current calendar day, first attempts to call the '/client_version/daily'. If that call
     /// fails or if it not the first request of the calendar day, returns the result of a call to
     /// `/client_version'. The caller can specify whether or not changelog information should be
@@ -1457,9 +1457,9 @@ impl ServerApi {
             .append_pair("include_changelogs", &include_changelogs.to_string());
 
         if include_changelogs {
-            log::info!("Fetching channel versions and changelogs from Warp server");
+            log::info!("Fetching channel versions and changelogs from Octomus server");
         } else {
-            log::info!("Fetching channel versions (without changelogs) from Warp server");
+            log::info!("Fetching channel versions (without changelogs) from Octomus server");
         }
 
         let mut request_builder = self
@@ -1486,7 +1486,7 @@ impl ServerApi {
             self.check_for_iap_challenge(&response);
         }
         let versions: ChannelVersions = response.json().await?;
-        log::info!("Received channel versions from Warp server: {versions}");
+        log::info!("Received channel versions from Octomus server: {versions}");
         Ok(versions)
     }
 }
@@ -1630,7 +1630,7 @@ impl ServerApiProvider {
     }
 
     /// Returns the shared HTTP client. This client is wired into network logging
-    /// and includes standard Warp request headers.
+    /// and includes standard Octomus request headers.
     pub fn get_http_client(&self) -> Arc<http_client::Client> {
         self.server_api.client.clone()
     }

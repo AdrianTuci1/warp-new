@@ -4,15 +4,15 @@ use std::sync::Arc;
 use ai::agent::action::InsertReviewComment;
 use chrono::Local;
 use lsp::LspManagerModel;
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::{Empty, MouseStateHandle};
+use octomusui::platform::WindowStyle;
+use octomusui::{App, ViewHandle};
 use repo_metadata::repositories::DetectedRepositories;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
 use warp_editor::content::buffer::InitialBufferState;
 use warp_editor::render::element::VerticalExpansionBehavior;
 use warp_editor::render::model::LineCount;
-use warpui::elements::{Empty, MouseStateHandle};
-use warpui::platform::WindowStyle;
-use warpui::{App, ViewHandle};
 
 use super::*;
 use crate::ai::persisted_workspace::PersistedWorkspace;
@@ -49,12 +49,12 @@ use crate::NotebookKeybindings;
 #[derive(Default)]
 struct TestView;
 
-impl warpui::Entity for TestView {
+impl octomusui::Entity for TestView {
     type Event = ();
 }
 
-impl warpui::View for TestView {
-    fn render(&self, _: &warpui::AppContext) -> Box<dyn warpui::Element> {
+impl octomusui::View for TestView {
+    fn render(&self, _: &octomusui::AppContext) -> Box<dyn octomusui::Element> {
         Empty::new().finish()
     }
 
@@ -63,7 +63,7 @@ impl warpui::View for TestView {
     }
 }
 
-impl warpui::TypedActionView for TestView {
+impl octomusui::TypedActionView for TestView {
     type Action = ();
 }
 
@@ -250,7 +250,7 @@ struct TestContext {
     repo_path: PathBuf,
     repo_location: LocalOrRemotePath,
     #[allow(dead_code)]
-    window_id: warpui::WindowId,
+    window_id: octomusui::WindowId,
     state: LoadedState,
     code_review_view: ViewHandle<CodeReviewView>,
 }
@@ -300,7 +300,7 @@ impl TestContext {
 /// Must be called within an App context.
 fn create_loaded_state_with_editors(
     app: &mut App,
-    window_id: warpui::WindowId,
+    window_id: octomusui::WindowId,
     file_editors: Vec<(String, ViewHandle<LocalCodeEditorView>)>,
 ) -> LoadedState {
     let file_states = file_editors

@@ -1,6 +1,6 @@
-use warpui::elements::{Container, Flex, Highlight, ParentElement, Text};
-use warpui::fonts::{Properties, Weight};
-use warpui::Element;
+use octomusui::elements::{Container, Flex, Highlight, ParentElement, Text};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::Element;
 
 use super::new_session_option::NewSessionOption;
 use crate::appearance::Appearance;

@@ -20,7 +20,7 @@ pub use crate::util::openable_file_type::EditorLayout;
 )]
 pub enum EditorChoice {
     SystemDefault,
-    Warp,
+    Octomus,
     EnvEditor,
     #[schemars(description = "A specific external code editor.")]
     ExternalEditor(super::Editor),
@@ -45,7 +45,7 @@ impl<'de> Deserialize<'de> for EditorChoice {
         #[derive(Deserialize)]
         enum EditorChoiceInner {
             SystemDefault,
-            Warp,
+            Octomus,
             EnvEditor,
             ExternalEditor(super::Editor),
         }
@@ -53,7 +53,7 @@ impl<'de> Deserialize<'de> for EditorChoice {
         match EditorChoiceCompat::deserialize(deserializer)? {
             EditorChoiceCompat::New(inner) => match inner {
                 EditorChoiceInner::SystemDefault => Ok(EditorChoice::SystemDefault),
-                EditorChoiceInner::Warp => Ok(EditorChoice::Warp),
+                EditorChoiceInner::Octomus => Ok(EditorChoice::Octomus),
                 EditorChoiceInner::EnvEditor => Ok(EditorChoice::EnvEditor),
                 EditorChoiceInner::ExternalEditor(editor) => {
                     Ok(EditorChoice::ExternalEditor(editor))
@@ -80,7 +80,7 @@ define_settings_group!(EditorSettings, settings: [
     },
     open_code_panels_file_editor: OpenCodePanelsFileEditor {
         type: EditorChoice,
-        default: EditorChoice::Warp,
+        default: EditorChoice::Octomus,
         supported_platforms: SupportedPlatforms::ALL,
         sync_to_cloud: SyncToCloud::Never,
         private: false,

@@ -15,11 +15,12 @@ use crate::ai::mcp::{
 
 #[test]
 fn mcp_provider_from_file_path_recognizes_warp_home_path() {
-    if let Some(warp_home_mcp_config_file_path) = warp_core::paths::warp_home_mcp_config_file_path()
+    if let Some(warp_home_mcp_config_file_path) =
+        octomus_core::paths::warp_home_mcp_config_file_path()
     {
         assert_eq!(
             mcp_provider_from_file_path(&warp_home_mcp_config_file_path),
-            Some(MCPProvider::Warp)
+            Some(MCPProvider::Octomus)
         );
     }
 }

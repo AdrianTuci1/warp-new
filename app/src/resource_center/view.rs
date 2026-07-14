@@ -1,20 +1,20 @@
-use vec1::{vec1, Vec1};
-use warp_core::features::FeatureFlag;
-use warp_core::ui::builder::AnimatedButtonOptions;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::builder::AnimatedButtonOptions;
+use octomusui::elements::{
     Align, Border, ConstrainedBox, Container, CrossAxisAlignment, Element, Flex, Icon,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, SavePosition, Shrinkable,
 };
-use warpui::fonts::Weight;
-use warpui::platform::Cursor;
-use warpui::presenter::ChildView;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::windowing::{StateEvent, WindowManager};
-use warpui::{
+use octomusui::fonts::Weight;
+use octomusui::platform::Cursor;
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::windowing::{StateEvent, WindowManager};
+use octomusui::{
     AppContext, Entity, EntityId, FocusContext, ModelHandle, SingletonEntity, TypedActionView,
     View, ViewContext, ViewHandle, WindowId,
 };
+use vec1::{vec1, Vec1};
 
 use super::keybindings_page::KeybindingsEvent;
 use super::section_views::{
@@ -332,7 +332,7 @@ impl ResourceCenterView {
                 if FeatureFlag::AvatarInTabBar.is_enabled() {
                     String::new()
                 } else {
-                    "Warp Essentials".to_string()
+                    "Octomus Essentials".to_string()
                 }
             }
         };

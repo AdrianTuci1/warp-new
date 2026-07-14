@@ -8,8 +8,8 @@ use markdown_parser::{
     parse_image_run_line, parse_markdown_with_gfm_tables, FormattedImage, FormattedTextLine,
 };
 use mermaid_to_svg::is_mermaid_diagram;
+use octomus_util::path::LineAndColumnArg;
 use regex::Regex;
-use warp_util::path::LineAndColumnArg;
 
 use super::{
     AIAgentTextSection, AgentOutputImage, AgentOutputImageLayout, AgentOutputMermaidDiagram,

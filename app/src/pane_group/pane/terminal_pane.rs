@@ -5,15 +5,15 @@ use std::sync::mpsc::SyncSender;
 
 use base64::engine::general_purpose::STANDARD as BASE64_STANDARD;
 use base64::Engine as _;
+use octomus_cli::agent::Harness;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomusui::{
+    AppContext, EntityId, ModelHandle, SingletonEntity, ViewContext, ViewHandle, WindowId,
+};
 #[cfg(not(target_family = "wasm"))]
 use session_sharing_protocol::sharer::SessionSourceType;
 use url::Url;
-use warp_cli::agent::Harness;
-use warp_core::execution_mode::AppExecutionMode;
 use warp_multi_agent_api as multi_agent_api;
-use warpui::{
-    AppContext, EntityId, ModelHandle, SingletonEntity, ViewContext, ViewHandle, WindowId,
-};
 
 #[cfg(not(target_family = "wasm"))]
 use super::local_harness_launch::{prepare_local_harness_child_launch, PreparedLocalHarnessLaunch};
@@ -1258,8 +1258,8 @@ fn handle_terminal_view_event(
             Event::RoleRequestCancelled(role_request_id) => {
                 group.remove_shared_session_role_request(role_request_id.clone(), ctx);
             }
-            Event::OpenWarpDriveObjectInPane(uid) => {
-                ctx.emit(pane_group::Event::OpenWarpDriveObjectInPane(uid.clone()));
+            Event::OpenOctomusDriveObjectInPane(uid) => {
+                ctx.emit(pane_group::Event::OpenOctomusDriveObjectInPane(uid.clone()));
             }
             Event::OpenSuggestedAgentModeWorkflowModal { workflow_and_id } => {
                 ctx.emit(pane_group::Event::OpenSuggestedAgentModeWorkflowModal {
@@ -2111,7 +2111,7 @@ fn launch_remote_child(
     // Map the run-wide auth secret name into the harness-specific
     // config variant. For unsupported harnesses (Oz, OpenCode, Gemini,
     // Unknown), the secret is silently ignored — those harnesses either
-    // use Warp's built-in auth (Oz) or don't currently support managed
+    // use Octomus's built-in auth (Oz) or don't currently support managed
     // secrets via this flow.
     let harness_auth_secrets = auth_secret_name
         .as_ref()

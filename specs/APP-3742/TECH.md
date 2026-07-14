@@ -246,7 +246,7 @@ In `render_settings_popup()`, rename the "Show first" header text to "Pane title
 - **Unit tests for `terminal_primary_line_data()`:** Update existing tests in `vertical_tabs_tests.rs` to verify the simplified 3-step priority (CLI agent → conversation → terminal title) and ensure the old fallbacks (last command, "New session") are removed.
 - **Unit test for `has_unread_for_terminal_view()`:** Add to `item_tests.rs` — create items with different `terminal_view_id` and `is_read` states, verify query correctness.
 - **Visual validation:** Per the validation section in PRODUCT.md — open a mix of pane types, verify circle icons, slot content, indicators, and "Pane title as" setting behavior.
-- **Presubmit:** `cargo clippy` and `cargo fmt` must pass. Run `cargo nextest run -p warp` for the workspace tests.
+- **Presubmit:** `cargo clippy` and `cargo fmt` must pass. Run `cargo nextest run -p octomus` for the workspace tests.
 
 ### 8. "Additional metadata" setting for compact subtitle
 

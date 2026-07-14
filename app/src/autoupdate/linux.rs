@@ -4,9 +4,9 @@ use std::path::PathBuf;
 use anyhow::{bail, Context as _, Result};
 use channel_versions::VersionInfo;
 use instant::Duration;
-use warp_core::channel::{Channel, ChannelState};
-use warp_terminal::shell::ShellType;
-use warpui::ViewContext;
+use octomus_core::channel::{Channel, ChannelState};
+use octomus_terminal::shell::ShellType;
+use octomusui::ViewContext;
 
 use super::{release_assets_directory_url, DownloadReady, ReadyForRelaunch};
 use crate::workspace::Workspace;
@@ -31,7 +31,7 @@ pub(super) async fn download_update_and_cleanup(
             appimage::download_update_and_cleanup(version_info, &appimage_path, client).await
         }
         UpdateMethod::PackageManager(package_manager) => {
-            log::info!("Detected that Warp was installed using {package_manager:?}");
+            log::info!("Detected that Octomus was installed using {package_manager:?}");
             Ok(DownloadReady::Yes)
         }
     }
@@ -121,7 +121,7 @@ mod appimage {
             .as_file_mut()
             .set_permissions(appimage_path.metadata()?.permissions())?;
 
-        // Move new AppImage over the one that launched the current Warp instance.
+        // Move new AppImage over the one that launched the current Octomus instance.
         let new_appimage_path = new_appimage.into_temp_path();
         let mv_status = command::r#async::Command::new("mv")
             .arg(new_appimage_path.as_os_str())
@@ -144,7 +144,7 @@ mod appimage {
         let mut command = command::blocking::Command::new(appimage_path);
         // Pass a flag to the app to let it know it was restarted as part of the
         // autoupdate process.
-        command.arg(warp_cli::finish_update_flag());
+        command.arg(octomus_cli::finish_update_flag());
         // If we're testing with a local copy of channel_versions.json, have the
         // newly-started binary also reference that same file (so we can test
         // displaying an updated changelog after an autoupdate).
@@ -152,7 +152,7 @@ mod appimage {
             command.env("WARP_CHANNEL_VERSIONS_PATH", path);
         }
 
-        log::info!("Relaunching warp for update...");
+        log::info!("Relaunching octomus for update...");
         command.spawn()?;
         Ok(())
     }
@@ -162,8 +162,8 @@ mod package_manager {
     use markdown_parser::{
         FormattedText, FormattedTextFragment, FormattedTextHeader, FormattedTextLine,
     };
-    use warpui::elements::{Container, FormattedTextElement, HighlightedHyperlink};
-    use warpui::{Element, SingletonEntity as _};
+    use octomusui::elements::{Container, FormattedTextElement, HighlightedHyperlink};
+    use octomusui::{Element, SingletonEntity as _};
 
     use super::*;
     use crate::appearance::Appearance;
@@ -182,16 +182,16 @@ mod package_manager {
         }
     }
 
-    impl warpui::Entity for AutoupdateContextBlock {
+    impl octomusui::Entity for AutoupdateContextBlock {
         type Event = ();
     }
 
-    impl warpui::View for AutoupdateContextBlock {
+    impl octomusui::View for AutoupdateContextBlock {
         fn ui_name() -> &'static str {
             "AutoupdateContextBlock"
         }
 
-        fn render(&self, app: &warpui::AppContext) -> Box<dyn warpui::Element> {
+        fn render(&self, app: &octomusui::AppContext) -> Box<dyn octomusui::Element> {
             let appearance = Appearance::as_ref(app);
             let theme = appearance.theme();
             let package_manager_name = self.package_manager.to_string();
@@ -205,10 +205,10 @@ mod package_manager {
                     ))],
                 }),
                 FormattedTextLine::Line(vec![
-                    FormattedTextFragment::plain_text("If you installed Warp using "),
+                    FormattedTextFragment::plain_text("If you installed Octomus using "),
                     FormattedTextFragment::bold(package_manager_name),
                     FormattedTextFragment::plain_text(
-                        " or a compatible tool, the pre-filled command will update Warp for you.",
+                        " or a compatible tool, the pre-filled command will update Octomus for you.",
                     ),
                 ]),
             ];
@@ -216,7 +216,7 @@ mod package_manager {
             if self.package_manager.needs_repository_configuration() {
                 lines.push(FormattedTextLine::Line(vec![
                     FormattedTextFragment::plain_text(
-                        "\nThe command below includes a one-time configuration of the Warp package repository and PGP signing key.",
+                        "\nThe command below includes a one-time configuration of the Octomus package repository and PGP signing key.",
                     ),
                 ]));
             }
@@ -231,7 +231,7 @@ mod package_manager {
                     ),
                     FormattedTextFragment::inline_code("warp_handle_dist_upgrade"),
                     FormattedTextFragment::plain_text(
-                        " function ensures the Warp package repository is enabled, as we've detected you recently upgraded your distribution.",
+                        " function ensures the Octomus package repository is enabled, as we've detected you recently upgraded your distribution.",
                     ),
                 ]));
             }
@@ -239,10 +239,12 @@ mod package_manager {
             lines.push(FormattedTextLine::Line(vec![
                 FormattedTextFragment::plain_text("\nReview the command below, then "),
                 FormattedTextFragment::bold("press enter"),
-                FormattedTextFragment::plain_text(" to install the update and re-launch Warp.  "),
+                FormattedTextFragment::plain_text(
+                    " to install the update and re-launch Octomus.  ",
+                ),
                 FormattedTextFragment::hyperlink(
                     "Please report any issues",
-                    "https://github.com/warpdotdev/Warp/issues/new/choose",
+                    "https://github.com/warpdotdev/Octomus/issues/new/choose",
                 ),
             ]));
 
@@ -281,10 +283,10 @@ mod package_manager {
         };
         log::info!("Relaunching using path: {program:?}");
         let mut command = command::blocking::Command::new(program);
-        // Add any arguments that were passed to warp, skipping the first
+        // Add any arguments that were passed to octomus, skipping the first
         // argument (the name of the executable) and dropping the flag for
         // finishing an update.
-        let finish_update_flag = warp_cli::finish_update_flag();
+        let finish_update_flag = octomus_cli::finish_update_flag();
         command.args(
             std::env::args()
                 .skip(1)
@@ -300,20 +302,20 @@ mod package_manager {
             command.env("WARP_CHANNEL_VERSIONS_PATH", path);
         }
 
-        log::info!("Relaunching warp for update...");
+        log::info!("Relaunching octomus for update...");
         command.spawn()?;
         Ok(())
     }
 }
 
-/// Returns which method should be used to update Warp.
+/// Returns which method should be used to update Octomus.
 #[derive(Debug)]
 pub(crate) enum UpdateMethod {
-    /// We don't know how to update Warp.
+    /// We don't know how to update Octomus.
     Unknown,
-    /// Warp is running as an AppImage and should be updated in-place.
+    /// Octomus is running as an AppImage and should be updated in-place.
     AppImage(PathBuf),
-    /// Warp can be updated using the given package manager.
+    /// Octomus can be updated using the given package manager.
     PackageManager(PackageManager),
 }
 
@@ -360,10 +362,10 @@ impl PackageManager {
                     ShellType::Zsh | ShellType::Bash | ShellType::Fish => {
                         "warp_handle_dist_upgrade"
                     }
-                    ShellType::PowerShell => "Warp-Handle-DistUpgrade",
+                    ShellType::PowerShell => "Octomus-Handle-DistUpgrade",
                 };
                 // If running with apt, attempt to handle a distribution update that may rename the
-                // warp source file to `{repo_name}.distUpgrade`.
+                // octomus source file to `{repo_name}.distUpgrade`.
                 // We explicitly use `or` here instead of `and` to limit the blast radius of this
                 // change, if handling a dist upgrade was unsuccessful we still want to try to
                 // install the new version.
@@ -388,11 +390,11 @@ impl PackageManager {
                 is_signing_key_configured,
             } => {
                 let repo_prefix = if !is_repo_configured {
-                    let cache_dir = warp_core::paths::cache_dir();
+                    let cache_dir = octomus_core::paths::cache_dir();
                     let cache_dir_str = cache_dir.display();
                     // Back up the existing pacman.conf file just in case
                     // anything goes wrong, then add the repository config.
-                    format!("mkdir -p {cache_dir_str}{and}\\\ncp /etc/pacman.conf {cache_dir_str}{and}\\\nsudo sh -c \"echo '\n[{repo_name}]\nServer = https://releases.warp.dev/linux/pacman/\\$repo/\\$arch' >> /etc/pacman.conf\"{and}\\\n")
+                    format!("mkdir -p {cache_dir_str}{and}\\\ncp /etc/pacman.conf {cache_dir_str}{and}\\\nsudo sh -c \"echo '\n[{repo_name}]\nServer = https://releases.octomus.dev/linux/pacman/\\$repo/\\$arch' >> /etc/pacman.conf\"{and}\\\n")
                 } else {
                     String::new()
                 };
@@ -400,7 +402,7 @@ impl PackageManager {
                     // Retrieve our key from keys.openpgp.org and locally sign
                     // it before retrieving the package repository and
                     // installing the updated package.
-                    format!("sudo pacman-key -r \"linux-maintainers@warp.dev\" --keyserver hkp://keys.openpgp.org:80{and}\\\nsudo pacman-key --lsign-key \"linux-maintainers@warp.dev\"{and}\\\n")
+                    format!("sudo pacman-key -r \"linux-maintainers@octomus.dev\" --keyserver hkp://keys.openpgp.org:80{and}\\\nsudo pacman-key --lsign-key \"linux-maintainers@octomus.dev\"{and}\\\n")
                 } else {
                     String::new()
                 };
@@ -410,7 +412,7 @@ impl PackageManager {
 
         let finish_update_fn = match shell_type {
             ShellType::Zsh | ShellType::Bash | ShellType::Fish => "warp_finish_update",
-            ShellType::PowerShell => "Warp-Finish-Update",
+            ShellType::PowerShell => "Octomus-Finish-Update",
         };
         format!("{base_command}{and}{finish_update_fn} {update_id}")
     }
@@ -466,7 +468,7 @@ impl PackageManager {
         match output {
             Ok(output) => {
                 if !output.status.success() {
-                    bail!("Failed to determine which package manager was used to install warp");
+                    bail!("Failed to determine which package manager was used to install octomus");
                 }
                 let Ok(stdout) = std::str::from_utf8(&output.stdout) else {
                     bail!("Could not parse package manager detection script output as UTF-8");
@@ -536,14 +538,14 @@ impl std::fmt::Display for PackageManager {
     }
 }
 
-/// Returns whether the warp apt repository is disabled due to a version update.
+/// Returns whether the octomus apt repository is disabled due to a version update.
 /// This occurs if there's a `warpdotdev.list.distUpgrade` file but no `warpdotdev.sources` or
 /// `warpdotdev.list` file.
 /// In a traditional Ubuntu distro update, Ubuntu renames each source file from `foo.list` to
 /// `foo.list.distUpgrade`. It then creates a new version of `foo.list` (or `foo.sources` if
 /// updating to Ubuntu 24+) with the repo disabled.
 ///
-/// However, Ubuntu incorrectly thinks the Warp source file is invalid (due to the addition of the
+/// However, Ubuntu incorrectly thinks the Octomus source file is invalid (due to the addition of the
 /// `signed-by` key) so it only leaves the `*.distUpgrade` source file. We use the existence of this
 /// file to determine whether we need to run the special `warp_handle_dist_upgrade` function to copy
 /// `warpdotdev.list.distUpgrade` back to `warpdotdev.list` to re-enable the repository.
@@ -604,7 +606,7 @@ fn is_pacman_signing_key_installed() -> bool {
             "/etc/pacman.d/gnupg",
             "--list-keys",
             "--with-colons",
-            "linux-maintainers@warp.dev",
+            "linux-maintainers@octomus.dev",
         ])
         .output()
     {
@@ -665,19 +667,19 @@ fn is_pacman_signing_key_installed() -> bool {
 
 fn package_name(channel: Channel) -> &'static str {
     match channel {
-        Channel::Stable => "warp-terminal",
-        Channel::Preview => "warp-terminal-preview",
-        Channel::Dev => "warp-terminal-dev",
-        Channel::Integration => "warp-terminal-integration",
-        Channel::Local => "warp-terminal-local",
-        Channel::Oss => "warp-oss",
+        Channel::Stable => "octomus-terminal",
+        Channel::Preview => "octomus-terminal-preview",
+        Channel::Dev => "octomus-terminal-dev",
+        Channel::Integration => "octomus-terminal-integration",
+        Channel::Local => "octomus-terminal-local",
+        Channel::Oss => "octomus-oss",
     }
 }
 
 fn repo_name(channel: Channel) -> String {
     let package_name = package_name(channel);
     let channel_suffix = package_name
-        .strip_prefix("warp-terminal")
+        .strip_prefix("octomus-terminal")
         .unwrap_or_default();
     format!("warpdotdev{channel_suffix}")
 }

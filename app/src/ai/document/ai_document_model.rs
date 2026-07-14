@@ -11,11 +11,13 @@ use ai::diff_validation::DiffDelta;
 pub use ai::document::{AIDocumentId, AIDocumentVersion};
 use chrono::{DateTime, Local, Utc};
 use itertools::Itertools;
+use octomusui::color::ColorU;
+use octomusui::{
+    AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity, WindowId,
+};
 use uuid::Uuid;
 use warp_editor::model::RichTextEditorModel;
 use warp_editor::render::model::RichTextStyles;
-use warpui::color::ColorU;
-use warpui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity, WindowId};
 use {anyhow, warp_multi_agent_api as maa_api};
 
 use crate::ai::agent::conversation::AIConversationId;
@@ -55,13 +57,13 @@ struct AIDocumentSaveRequest {
     document_id: AIDocumentId,
 }
 
-/// The status of saving an AI Document to Warp Drive
+/// The status of saving an AI Document to Octomus Drive
 pub enum AIDocumentSaveStatus {
-    /// Not being synced with Warp Drive at all
+    /// Not being synced with Octomus Drive at all
     NotSaved,
-    /// Is being saved to Warp Drive, but has not finished yet
+    /// Is being saved to Octomus Drive, but has not finished yet
     Saving,
-    /// Has been saved to Warp Drive
+    /// Has been saved to Octomus Drive
     Saved,
 }
 
@@ -89,7 +91,7 @@ impl AIDocumentUserEditStatus {
 
 const PLAN_FOLDER_NAME: &str = "Plans";
 
-/// Represents a document queued for creation in Warp Drive.
+/// Represents a document queued for creation in Octomus Drive.
 #[derive(Debug, Clone)]
 struct PendingDocument {
     id: AIDocumentId,
@@ -109,7 +111,7 @@ pub struct AIDocumentEarlierVersion {
 #[derive(Debug, Clone)]
 pub struct AIDocument {
     /// ID to sync with a cloud model with the server.
-    /// Set when a document is saved to Warp Drive.
+    /// Set when a document is saved to Octomus Drive.
     pub sync_id: Option<SyncId>,
     pub title: String,
     pub version: AIDocumentVersion,
@@ -238,7 +240,11 @@ impl AIDocumentModel {
     /// Sends a request to create a new cloud notebook with the document's contents.
     /// Returns true if the create document request was sent successfully (or if there was already a notebook entry).
     /// Actually creating the notebook is done asynchronously in the background.
-    pub fn sync_to_warp_drive(&mut self, id: AIDocumentId, ctx: &mut ModelContext<Self>) -> bool {
+    pub fn sync_to_octomus_drive(
+        &mut self,
+        id: AIDocumentId,
+        ctx: &mut ModelContext<Self>,
+    ) -> bool {
         let Some(document) = self.documents.get(&id) else {
             return false;
         };
@@ -251,7 +257,7 @@ impl AIDocumentModel {
         let content = document.editor.as_ref(ctx).markdown(ctx);
 
         let Some(owner) = Self::get_plan_owner(ctx) else {
-            log::warn!("Failed to get owner while saving AI Document to Warp Drive. Skipping");
+            log::warn!("Failed to get owner while saving AI Document to Octomus Drive. Skipping");
             return false;
         };
 
@@ -306,7 +312,7 @@ impl AIDocumentModel {
         // If we're waiting on a Plans folder to complete creation, ensure the Plans folder exists
         // (creating it if needed) and if it has a ServerId, process the pending document queue.
         //
-        // NOTE: this handler runs for *all* Warp Drive object creations, so we must only create the
+        // NOTE: this handler runs for *all* Octomus Drive object creations, so we must only create the
         // Plans folder when we actually have a plan notebook waiting to be created.
         if !self.pending_document_queue.is_empty() {
             if let Some(owner) = Self::get_plan_owner(ctx) {
@@ -382,7 +388,7 @@ impl AIDocumentModel {
         id
     }
 
-    /// Create a document from an existing Warp Drive notebook.
+    /// Create a document from an existing Octomus Drive notebook.
     pub fn create_document_from_notebook(
         &mut self,
         ai_document_id: AIDocumentId,
@@ -694,7 +700,7 @@ impl AIDocumentModel {
         }
     }
 
-    pub fn get_document_warp_drive_object_link(
+    pub fn get_document_octomus_drive_object_link(
         &self,
         id: &AIDocumentId,
         ctx: &AppContext,
@@ -712,7 +718,7 @@ impl AIDocumentModel {
     pub fn get_document_content(
         &self,
         id: &AIDocumentId,
-        ctx: &warpui::AppContext,
+        ctx: &octomusui::AppContext,
     ) -> Option<String> {
         let doc = self.documents.get(id)?;
         Some(doc.editor.as_ref(ctx).markdown_unescaped(ctx))
@@ -913,7 +919,7 @@ impl AIDocumentModel {
             ctx,
         );
 
-        // Update the sync status of a document by checking if it exists in Warp Drive.
+        // Update the sync status of a document by checking if it exists in Octomus Drive.
         let Some(doc) = self.documents.get(&id) else {
             return;
         };
@@ -1357,7 +1363,7 @@ impl AIDocumentModel {
 }
 
 impl AIDocumentEarlierVersion {
-    pub fn get_content(&self, ctx: &warpui::AppContext) -> String {
+    pub fn get_content(&self, ctx: &octomusui::AppContext) -> String {
         self.editor.as_ref(ctx).markdown_unescaped(ctx)
     }
 }

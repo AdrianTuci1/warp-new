@@ -3,12 +3,12 @@ use std::sync::Arc;
 use anyhow::Result;
 use async_trait::async_trait;
 pub use cloud_object_models::{CloudFolder, CloudFolderModel};
-// Re-exported from warp_server_client.
-pub use warp_server_client::ids::FolderId;
+// Re-exported from octomus_server_client.
+pub use octomus_server_client::ids::FolderId;
 
-// Re-exported from warp_server_client.
-use super::items::folder::WarpDriveFolder;
-use super::items::WarpDriveItem;
+// Re-exported from octomus_server_client.
+use super::items::folder::OctomusDriveFolder;
+use super::items::OctomusDriveItem;
 use super::CloudObjectTypeAndId;
 use crate::appearance::Appearance;
 use crate::cloud_object::{
@@ -120,17 +120,17 @@ impl CloudModelType for CloudFolderModel {
             .await
     }
 
-    fn renders_in_warp_drive(&self) -> bool {
+    fn renders_in_octomus_drive(&self) -> bool {
         true
     }
 
-    fn to_warp_drive_item(
+    fn to_octomus_drive_item(
         &self,
         id: SyncId,
         _appearance: &Appearance,
         folder: &CloudFolder,
-    ) -> Option<Box<dyn WarpDriveItem>> {
-        Some(Box::new(WarpDriveFolder::new(
+    ) -> Option<Box<dyn OctomusDriveItem>> {
+        Some(Box::new(OctomusDriveFolder::new(
             self.cloud_object_type_and_id(id),
             folder.clone(),
         )))

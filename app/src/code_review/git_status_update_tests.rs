@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::{App, ModelHandle};
 use repo_metadata::{DirectoryWatcher, RepositoryUpdate, TargetFile};
-use warp_util::standardized_path::StandardizedPath;
-use warpui::{App, ModelHandle};
 
 use super::*;
 
@@ -17,7 +17,7 @@ fn metadata(branch: &str) -> GitStatusMetadata {
 fn pr(number: u64) -> PrInfo {
     PrInfo {
         number,
-        url: format!("https://github.com/warp/warp/pull/{number}"),
+        url: format!("https://github.com/octomus/octomus/pull/{number}"),
         state: "OPEN".to_string(),
         draft: false,
         base_branch: "main".to_string(),
@@ -100,9 +100,9 @@ fn pr_info_consumers_control_refresh_gate() {
         let repository = test_repository_handle(&mut app, &temp_dir);
         let git_status = app.add_model(move |_| GitRepoStatusModel::new_for_test(repository, None));
 
-        let first_consumer = warpui::EntityId::new();
-        let second_consumer = warpui::EntityId::new();
-        let unknown_consumer = warpui::EntityId::new();
+        let first_consumer = octomusui::EntityId::new();
+        let second_consumer = octomusui::EntityId::new();
+        let unknown_consumer = octomusui::EntityId::new();
 
         git_status.read(&app, |model, _| {
             assert!(!model.should_refresh_pr_info());

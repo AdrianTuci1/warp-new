@@ -12,7 +12,7 @@ IMPORTANT: Do NOT delete any telemetry files. We're keeping the infrastructure, 
 
 === PART 1: Change default telemetry config for Oss channel ===
 
-EDIT crates/warp_core/src/channel/state.rs:
+EDIT crates/octomus_core/src/channel/state.rs:
 
 In the `init()` function (around lines 38-55), currently `telemetry_config: None` for Oss channel.
 Change to provide a basic telemetry config with an Octomus RudderStack endpoint.
@@ -137,9 +137,9 @@ just send everything to the main destination.
 
 Simplify the for loop so there's only one batch sent to `rudderstack_non_ugc_destination()`.
 
-=== PART 5: Update warpui_core telemetry ===
+=== PART 5: Update octomusui_core telemetry ===
 
-The warpui_core telemetry (app_focus_telemetry.rs, event_store) should stay — it's used by the
+The octomusui_core telemetry (app_focus_telemetry.rs, event_store) should stay — it's used by the
 collector. Just make sure the event_store doesn't log user-specific data.
 
 === FINAL CHECK ===

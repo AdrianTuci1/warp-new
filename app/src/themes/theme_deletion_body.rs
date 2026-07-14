@@ -2,16 +2,16 @@ use std::default::Default;
 use std::fs;
 use std::fs::remove_file;
 
-use warpui::assets::asset_cache::AssetSource;
-use warpui::elements::{
+use octomusui::assets::asset_cache::AssetSource;
+use octomusui::elements::{
     Container, CornerRadius, CrossAxisAlignment, Flex, MainAxisSize, MouseStateHandle,
     ParentElement, Radius, SavePosition, Shrinkable, Text,
 };
-use warpui::fonts::Weight;
-use warpui::platform::Cursor;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use octomusui::fonts::Weight;
+use octomusui::platform::Cursor;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
 
 use crate::appearance::Appearance;
 use crate::server::telemetry::TelemetryEvent;
@@ -79,7 +79,7 @@ impl ThemeDeletionBody {
                 if let Ok(theme_from_yaml) = from_yaml::<WarpTheme>(custom_theme.path()) {
                     // If theme has an image
                     if let Some(image) = theme_from_yaml.background_image() {
-                        // Only delete the image if it is in the ./warp/themes directory.
+                        // Only delete the image if it is in the ./octomus/themes directory.
                         // We don't want to delete images from other parts of the user's filesystem.
                         if let AssetSource::LocalFile { path } = image.source() {
                             let image_path_in_themes_dir = dir.join(path.as_str());

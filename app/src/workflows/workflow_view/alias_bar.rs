@@ -2,21 +2,21 @@ use std::cmp::Ordering;
 use std::collections::HashMap;
 
 use anyhow::Error;
-use pathfinder_geometry::vector::vec2f;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::color::internal_colors::neutral_4;
-use warp_core::ui::theme::Fill;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::color::internal_colors::neutral_4;
+use octomus_core::ui::theme::Fill;
+use octomusui::elements::{
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Dismiss, Flex, Hoverable,
     MainAxisAlignment, MainAxisSize, MouseState, MouseStateHandle, ParentElement, Radius,
 };
-use warpui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::ui_components::button::{ButtonVariant, TextAndIcon, TextAndIconAlignment};
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, SingletonEntity as _, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use crate::cloud_object::model::persistence::CloudModel;
 use crate::cloud_object::CloudObject;
@@ -468,7 +468,7 @@ impl View for AliasBar {
                 TextAndIcon::new(
                     TextAndIconAlignment::IconFirst,
                     "Add alias",
-                    Icon::Plus.to_warpui_icon(
+                    Icon::Plus.to_octomusui_icon(
                         appearance
                             .theme()
                             .main_text_color(appearance.theme().background()),

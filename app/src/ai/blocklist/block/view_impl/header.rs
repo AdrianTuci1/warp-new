@@ -1,14 +1,14 @@
 //! Renders the AI block "header", which includes a version of the AI "prompt" as it was rendered
 //! when the query was submitted.
-use warp_core::features::FeatureFlag;
-use warp_util::path::user_friendly_path;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_util::path::user_friendly_path;
+use octomusui::elements::{
     ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Hoverable,
     Icon as ElementIcon, MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Radius,
     SavePosition, Text,
 };
-use warpui::platform::Cursor;
-use warpui::{AppContext, Element, EntityId, SingletonEntity, ViewHandle};
+use octomusui::platform::Cursor;
+use octomusui::{AppContext, Element, EntityId, SingletonEntity, ViewHandle};
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::AIAgentExchangeId;
@@ -158,7 +158,7 @@ fn render_attached_context_chip(
                         Container::new(
                             ConstrainedBox::new(
                                 Icon::Paperclip
-                                    .to_warpui_icon(block_count_color.into())
+                                    .to_octomusui_icon(block_count_color.into())
                                     .finish(),
                             )
                             .with_height(font_size)
@@ -251,7 +251,7 @@ pub(super) fn render_overflow_menu_button(
 
 /// Returns the font size to be used to render text in the AI block "prompt" line.
 ///
-/// This matches the font size used for the warp prompt in completed command blocks.
+/// This matches the font size used for the octomus prompt in completed command blocks.
 fn prompt_font_size(appearance: &Appearance) -> f32 {
     appearance.monospace_font_size() * WARP_PROMPT_HEIGHT_LINES
 }

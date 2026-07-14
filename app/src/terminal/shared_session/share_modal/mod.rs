@@ -1,16 +1,16 @@
 use std::default::Default;
 use std::sync::Arc;
 
-use parking_lot::FairMutex;
-use style::{DENIED_MODAL_WIDTH, MODAL_HEIGHT, MODAL_WIDTH};
-use warp_core::ui::appearance::Appearance;
-use warpui::keymap::FixedBinding;
-use warpui::presenter::ChildView;
-use warpui::ui_components::components::UiComponentStyles;
-use warpui::{
+use octomus_core::ui::appearance::Appearance;
+use octomusui::keymap::FixedBinding;
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::components::UiComponentStyles;
+use octomusui::{
     AppContext, Element, Entity, EntityId, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use parking_lot::FairMutex;
+use style::{DENIED_MODAL_WIDTH, MODAL_HEIGHT, MODAL_WIDTH};
 
 use crate::modal::{Modal, ModalEvent};
 use crate::pane_group::TerminalPaneId;
@@ -55,7 +55,7 @@ pub enum ShareSessionModalEvent {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([FixedBinding::new(
         "escape",

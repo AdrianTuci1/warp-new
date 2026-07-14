@@ -35,9 +35,9 @@ pub use execute::{
 };
 use futures::future::{join_all, BoxFuture};
 use itertools::Itertools;
+use octomusui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 use parking_lot::FairMutex;
 use preprocess::{PendingPreprocessedActions, PreprocessId};
-use warpui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 
 use self::execute::ask_user_question::AskUserQuestionExecutor;
 use self::execute::search_codebase::SearchCodebaseExecutor;
@@ -1317,7 +1317,7 @@ impl BlocklistAIActionModel {
                 let doc_model = AIDocumentModel::handle(ctx);
                 doc_model.update(ctx, |doc_model, doc_ctx| {
                     for (index, doc_context) in created_documents.iter_mut().enumerate() {
-                        // If a user is re-opening a shared session that they previously closed in the current warp session,
+                        // If a user is re-opening a shared session that they previously closed in the current octomus session,
                         // we should delete the previously created document so that the verseion history doesn't get messed up.
                         doc_model.delete_document(&doc_context.document_id);
 

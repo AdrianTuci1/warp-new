@@ -11,7 +11,7 @@ Agent-icon rendering is duplicated across four surfaces and each surface re-deri
 - `app/src/terminal/view/ambient_agent/view_impl.rs::handle_ambient_agent_event` — re-emits `TerminalViewEvent::TerminalViewStateChanged` on icon-affecting state transitions.
 - `app/src/terminal/cli_agent_sessions/mod.rs` — `CLIAgentSessionsModel::session`.
 - `app/src/terminal/cli_agent.rs` — `CLIAgent` enum + `CLIAgent::from_harness`, brand colors, icons.
-- `crates/warp_cli/src/agent.rs` — `Harness` enum, `Harness::config_name` / `Harness::from_config_name`.
+- `crates/octomus_cli/src/agent.rs` — `Harness` enum, `Harness::config_name` / `Harness::from_config_name`.
 - `app/src/workspace/view/conversation_list/item.rs` — `render_item` (inline conversation list row leading-slot icon), `LIST_ITEM_AGENT_SIZE`, `LIST_ITEM_OVERLAY_EXTRA_OVERHANG`.
 - `app/src/ai/agent_conversations_model.rs` — `ConversationOrTask::title`, `status`, `display_status`, `harness`.
 - `app/src/ai/ambient_agents/task.rs` — `AmbientAgentTask`, `AgentConfigSnapshot.harness: Option<HarnessConfig>`, `serialize_harness` / `deserialize_harness` (now route through `Harness::config_name` / `Harness::from_config_name`).
@@ -41,7 +41,7 @@ Introduce `render_with_cloud_status_badge` as a private helper that overlays a w
 Keep `IconWithStatusVariant` as the canonical render-time shape. Introduce one pure helper per data source, each returning `Option<IconWithStatusVariant>` covering only the agent variants (`OzAgent`, `CLIAgent`). Non-agent variants (`Neutral`, `NeutralElement`) stay at the call site.
 The helpers share three primitive mappers — each mapper lives in exactly one place and is invoked by every helper that needs it:
 - `CLIAgent::from_harness(Harness) -> Option<CLIAgent>`, added on `CLIAgent` in `app/src/terminal/cli_agent.rs`. Maps every `Harness` variant exhaustively (Oz → None; Claude/Gemini/OpenCode → their corresponding CLIAgent; Unknown → `Some(CLIAgent::Unknown)`, which the icon waterfall filters out). `AmbientAgentViewModel::selected_third_party_cli_agent` is a thin wrapper that just delegates to `CLIAgent::from_harness(self.harness)` — it does NOT gate on `FeatureFlag::AgentHarness`, so the icon change ships independently of that flag.
-- `Harness::config_name` / `Harness::from_config_name` on `crates/warp_cli/src/agent.rs`. The exhaustive `config_name` match forces every new `Harness` variant to declare a canonical name, and a round-trip test in `warp_cli::agent::tests` locks the inverse pair. `task.rs::serialize_harness` / `deserialize_harness` route through these helpers, so no separate string parser exists.
+- `Harness::config_name` / `Harness::from_config_name` on `crates/octomus_cli/src/agent.rs`. The exhaustive `config_name` match forces every new `Harness` variant to declare a canonical name, and a round-trip test in `octomus_cli::agent::tests` locks the inverse pair. `task.rs::serialize_harness` / `deserialize_harness` route through these helpers, so no separate string parser exists.
 - `ConversationOrTask::status(app) -> ConversationStatus` (already exists in `agent_conversations_model.rs`).
 - `ConversationOrTask::harness() -> Option<Harness>` (already exists in `agent_conversations_model.rs`); the task-card helper consumes this directly without round-tripping through a string.
 - `TerminalView::selected_conversation_status_for_display(ctx) -> Option<ConversationStatus>` (already exists in `pane_impl.rs`; surfaces InProgress whenever the run is busy, including the cloud-setup phase).

@@ -1,11 +1,11 @@
 use std::path::PathBuf;
 
+use octomus_util::host_id::HostId;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomus_util::remote_path::RemotePath;
+use octomus_util::standardized_path::StandardizedPath;
 use thiserror::Error;
 use warp_multi_agent_api as api;
-use warp_util::host_id::HostId;
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warp_util::remote_path::RemotePath;
-use warp_util::standardized_path::StandardizedPath;
 
 use crate::agent::action_result::{AnyFileContent, FileContext};
 use crate::skills::{ParsedSkill, SkillProvider, SkillReference, SkillScope};
@@ -153,7 +153,7 @@ impl From<SkillScope> for api::skill_descriptor::Scope {
 impl From<SkillProvider> for api::skill_descriptor::Provider {
     fn from(scope: SkillProvider) -> Self {
         let provider_type: api::skill_descriptor::provider::Type = match scope {
-            SkillProvider::Warp => api::skill_descriptor::provider::Type::Warp(()),
+            SkillProvider::Octomus => api::skill_descriptor::provider::Type::Warp(()),
             SkillProvider::Agents => api::skill_descriptor::provider::Type::Agents(()),
             SkillProvider::Claude => api::skill_descriptor::provider::Type::Claude(()),
             SkillProvider::Codex => api::skill_descriptor::provider::Type::Codex(()),
@@ -247,7 +247,7 @@ fn convert_provider(
     };
 
     match provider_type {
-        api::skill_descriptor::provider::Type::Warp(_) => Ok(SkillProvider::Warp),
+        api::skill_descriptor::provider::Type::Warp(_) => Ok(SkillProvider::Octomus),
         api::skill_descriptor::provider::Type::Agents(_) => Ok(SkillProvider::Agents),
         api::skill_descriptor::provider::Type::Claude(_) => Ok(SkillProvider::Claude),
         api::skill_descriptor::provider::Type::Codex(_) => Ok(SkillProvider::Codex),

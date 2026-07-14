@@ -1,13 +1,13 @@
-use warp_core::ui::icons::ICON_DIMENSIONS;
-use warp_core::ui::theme::Fill;
-use warpui::elements::{
+use octomus_core::ui::icons::ICON_DIMENSIONS;
+use octomus_core::ui::theme::Fill;
+use octomusui::elements::{
     Align, Clipped, ConstrainedBox, Container, CrossAxisAlignment, Flex, Hoverable,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, SavePosition, Shrinkable,
     Text,
 };
-use warpui::text_layout::ClipConfig;
-use warpui::ui_components::components::UiComponent;
-use warpui::Element;
+use octomusui::text_layout::ClipConfig;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::Element;
 
 use super::super::header_content::HeaderRenderContext;
 use super::{ActionPayload, PaneHeaderAction};

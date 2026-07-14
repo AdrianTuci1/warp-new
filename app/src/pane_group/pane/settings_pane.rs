@@ -1,4 +1,6 @@
-use warpui::{AppContext, ModelHandle, SingletonEntity, View, ViewContext, ViewHandle, WindowId};
+use octomusui::{
+    AppContext, ModelHandle, SingletonEntity, View, ViewContext, ViewHandle, WindowId,
+};
 
 use super::view::PaneView;
 use super::{

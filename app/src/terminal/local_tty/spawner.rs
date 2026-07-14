@@ -1,5 +1,5 @@
 use anyhow::Result;
-use warpui::{AppContext, Entity, SingletonEntity};
+use octomusui::{AppContext, Entity, SingletonEntity};
 #[cfg(unix)]
 use {
     crate::report_error,

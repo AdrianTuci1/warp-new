@@ -1,9 +1,9 @@
-use warpui::elements::{Container, Flex, MouseStateHandle, ParentElement};
-use warpui::fonts::Weight;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element};
+use octomusui::elements::{Container, Flex, MouseStateHandle, ParentElement};
+use octomusui::fonts::Weight;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element};
 
-use super::{WarpDriveItem, WarpDriveItemId};
+use super::{OctomusDriveItem, OctomusDriveItemId};
 use crate::ai::facts::{AIFact, AIMemory, CloudAIFact};
 use crate::appearance::Appearance;
 use crate::cloud_object::CloudObjectMetadata;
@@ -12,18 +12,18 @@ use crate::drive::{CloudObjectTypeAndId, DriveObjectType};
 use crate::themes::theme::Fill;
 
 #[derive(Clone)]
-pub struct WarpDriveAIFact {
+pub struct OctomusDriveAIFact {
     id: CloudObjectTypeAndId,
     ai_fact: CloudAIFact,
 }
 
-impl WarpDriveAIFact {
+impl OctomusDriveAIFact {
     pub fn new(id: CloudObjectTypeAndId, ai_fact: CloudAIFact) -> Self {
         Self { id, ai_fact }
     }
 }
 
-impl WarpDriveItem for WarpDriveAIFact {
+impl OctomusDriveItem for OctomusDriveAIFact {
     fn display_name(&self) -> Option<String> {
         match &self.ai_fact.model().string_model {
             AIFact::Memory(AIMemory { content, name, .. }) => {
@@ -84,8 +84,8 @@ impl WarpDriveItem for WarpDriveAIFact {
         )
     }
 
-    fn warp_drive_id(&self) -> WarpDriveItemId {
-        WarpDriveItemId::Object(self.id)
+    fn octomus_drive_id(&self) -> OctomusDriveItemId {
+        OctomusDriveItemId::Object(self.id)
     }
 
     fn sync_status_icon(
@@ -105,7 +105,7 @@ impl WarpDriveItem for WarpDriveAIFact {
         None
     }
 
-    fn clone_box(&self) -> Box<dyn WarpDriveItem> {
+    fn clone_box(&self) -> Box<dyn OctomusDriveItem> {
         Box::new(self.clone())
     }
 }

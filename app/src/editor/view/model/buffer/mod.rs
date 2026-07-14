@@ -17,6 +17,12 @@ use std::str;
 use anyhow::{anyhow, Result};
 use itertools::Itertools;
 use lazy_static::lazy_static;
+use octomusui::color::ColorU;
+use octomusui::text::point::Point;
+use octomusui::text::words::is_default_word_boundary;
+use octomusui::text::{BufferIndex, TextBuffer};
+use octomusui::text_layout::TextStyle;
+use octomusui::{Entity, ModelContext};
 #[cfg(test)]
 use rand::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -25,12 +31,6 @@ use sum_tree::{self, Cursor, FilterCursor, SeekBias, SumTree};
 use time::{Global, Lamport};
 use undo::{LocalUndoStack, UndoHistory};
 use vec1::{vec1, Vec1};
-use warpui::color::ColorU;
-use warpui::text::point::Point;
-use warpui::text::words::is_default_word_boundary;
-use warpui::text::{BufferIndex, TextBuffer};
-use warpui::text_layout::TextStyle;
-use warpui::{Entity, ModelContext};
 /// The public interfaces that we expose to the model.
 /// This should be a very limited set of APIs and should
 /// not expose the internal details of the buffer.
@@ -363,9 +363,9 @@ impl TextStyleOperation {
     ///
     /// # Example
     /// ```
-    /// use warpui::color::ColorU;
-    /// use warpui::text_layout::TextStyle;
-    /// use warp::editor::TextStyleOperation;
+    /// use octomusui::color::ColorU;
+    /// use octomusui::text_layout::TextStyle;
+    /// use octomus::editor::TextStyleOperation;
     /// TextStyleOperation::apply_text_style_operation(
     ///     TextStyle::default(),
     ///     TextStyleOperation::default().set_error_underline_color(ColorU::black()),
@@ -1645,9 +1645,9 @@ impl Buffer {
     ///
     /// # Example
     /// ```ignore
-    /// use warpui::{color::ColorU, App, ModelHandle};
-    /// use warp::Assets;
-    /// use warp::editor::model::buffer::{Buffer, TextStyleOperation, EditOrigin};
+    /// use octomusui::{color::ColorU, App, ModelHandle};
+    /// use octomus::Assets;
+    /// use octomus::editor::model::buffer::{Buffer, TextStyleOperation, EditOrigin};
     /// use string_offset::CharOffset;
     /// App::test((), |mut app| async move {
     ///     let buffer_model: &mut ModelHandle<Buffer> =

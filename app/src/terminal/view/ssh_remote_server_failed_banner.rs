@@ -1,21 +1,21 @@
 //! Banner shown when the remote-server binary check, installation, or connection fails on the remote host.
-//! We fall back to the existing Warpification behavior and display this banner so the user knows why advanced features are unavailable.
+//! We fall back to the existing Octomusification behavior and display this banner so the user knows why advanced features are unavailable.
 
-use remote_server::transport::UserFacingError;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::AnsiColorIdentifier;
-use warpui::elements::{
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::AnsiColorIdentifier;
+use octomusui::elements::{
     ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Hoverable,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Radius, Shrinkable, Text,
 };
-use warpui::platform::Cursor;
-use warpui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use octomusui::platform::Cursor;
+use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use remote_server::transport::UserFacingError;
 
 use crate::terminal::model::session::SessionId;
 use crate::ui_components::icons::Icon;
 use crate::Appearance;
 
-const BANNER_TITLE: &str = "Couldn't connect to the Warp SSH extension";
+const BANNER_TITLE: &str = "Couldn't connect to the Octomus SSH extension";
 
 const BANNER_BODY: &str =
     "While advanced features like file browsing and code review are currently \
@@ -70,10 +70,14 @@ impl View for SshRemoteServerFailedBanner {
 
         // Alert-circle icon
         let icon = Container::new(
-            ConstrainedBox::new(Icon::AlertCircle.to_warpui_icon(fg_color.into()).finish())
-                .with_width(16.)
-                .with_height(16.)
-                .finish(),
+            ConstrainedBox::new(
+                Icon::AlertCircle
+                    .to_octomusui_icon(fg_color.into())
+                    .finish(),
+            )
+            .with_width(16.)
+            .with_height(16.)
+            .finish(),
         )
         .with_margin_right(8.)
         .finish();
@@ -130,7 +134,7 @@ impl View for SshRemoteServerFailedBanner {
         // Close (X) button
         let close_icon_color = muted_color;
         let close = Hoverable::new(self.close_mouse_state.clone(), move |_| {
-            ConstrainedBox::new(Icon::X.to_warpui_icon(close_icon_color.into()).finish())
+            ConstrainedBox::new(Icon::X.to_octomusui_icon(close_icon_color.into()).finish())
                 .with_width(16.)
                 .with_height(16.)
                 .finish()

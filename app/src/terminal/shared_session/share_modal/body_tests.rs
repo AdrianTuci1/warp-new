@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
+use octomusui::App;
 use parking_lot::FairMutex;
-use warpui::App;
 
 use super::Body;
 use crate::terminal::shared_session::{

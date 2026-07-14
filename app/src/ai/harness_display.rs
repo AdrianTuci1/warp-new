@@ -4,10 +4,10 @@
 //! dropdown, the conversation details sidebar, etc. — should source its label,
 //! icon, and brand color from here so the two surfaces cannot drift.
 
+use octomus_cli::agent::Harness;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::{Fill as WarpThemeFill, WarpTheme};
 use pathfinder_color::ColorU;
-use warp_cli::agent::Harness;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::{Fill as WarpThemeFill, WarpTheme};
 
 use crate::ai::agent::conversation::AIAgentHarness;
 use crate::ai::blocklist::CLAUDE_ORANGE;
@@ -29,7 +29,7 @@ pub fn display_name(harness: Harness) -> &'static str {
 /// Leading icon for a [`Harness`].
 pub fn icon_for(harness: Harness) -> Icon {
     match harness {
-        Harness::Oz => Icon::Warp,
+        Harness::Oz => Icon::Octomus,
         Harness::Claude => Icon::ClaudeLogo,
         Harness::OpenCode => Icon::OpenCodeLogo,
         Harness::Gemini => Icon::GeminiLogo,

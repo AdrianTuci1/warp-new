@@ -1,20 +1,20 @@
 //! Skill provider definitions and utilities.
 //!
-//! This module defines the supported skill providers (i.e. Agents, Claude, Codex, Warp) and their
+//! This module defines the supported skill providers (i.e. Agents, Claude, Codex, Octomus) and their
 //! associated skills directory paths. It provides utilities for looking up providers
 //! from paths and vice versa.
 use std::path::{Path, PathBuf};
 use std::sync::LazyLock;
 
 use dirs::home_dir;
+use octomus_core::ui::color::CLAUDE_ORANGE;
+use octomus_core::ui::icons::Icon;
+use octomus_core::ui::theme::Fill;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
 use serde::{Deserialize, Serialize};
 use strum_macros::{Display, EnumString, VariantNames};
-use warp_core::ui::color::CLAUDE_ORANGE;
-use warp_core::ui::icons::Icon;
-use warp_core::ui::theme::Fill;
-use warp_util::local_or_remote_path::LocalOrRemotePath;
 
-/// Represents a skill provider/origin (Agents, Claude, Codex, or Warp).
+/// Represents a skill provider/origin (Agents, Claude, Codex, or Octomus).
 #[derive(
     Debug,
     Clone,
@@ -29,7 +29,7 @@ use warp_util::local_or_remote_path::LocalOrRemotePath;
     VariantNames,
 )]
 pub enum SkillProvider {
-    Warp,
+    Octomus,
     Agents,
     Claude,
     Codex,
@@ -62,7 +62,7 @@ pub enum SkillScope {
     Home,
     /// Skills from a project directory (e.g., `./repo/.agents/skills`).
     Project,
-    /// Bundled skills distributed with Warp.
+    /// Bundled skills distributed with Octomus.
     Bundled,
 }
 
@@ -82,7 +82,7 @@ impl SkillProvider {
             SkillProvider::Gemini => Icon::GeminiLogo,
             SkillProvider::Droid => Icon::DroidLogo,
             SkillProvider::OpenCode => Icon::OpenCodeLogo,
-            SkillProvider::Warp
+            SkillProvider::Octomus
             | SkillProvider::Agents
             | SkillProvider::Cursor
             | SkillProvider::Copilot
@@ -109,8 +109,8 @@ pub static SKILL_PROVIDER_DEFINITIONS: LazyLock<Vec<SkillProviderDefinition>> =
                 skills_path: PathBuf::from(".agents").join("skills"),
             },
             SkillProviderDefinition {
-                provider: SkillProvider::Warp,
-                skills_path: PathBuf::from(".warp").join("skills"),
+                provider: SkillProvider::Octomus,
+                skills_path: PathBuf::from(".octomus").join("skills"),
             },
             SkillProviderDefinition {
                 provider: SkillProvider::Claude,
@@ -158,8 +158,8 @@ pub fn provider_rank(provider: SkillProvider) -> usize {
 }
 
 pub fn home_skills_path(provider: SkillProvider) -> Option<PathBuf> {
-    if provider == SkillProvider::Warp {
-        return warp_core::paths::warp_home_skills_dir();
+    if provider == SkillProvider::Octomus {
+        return octomus_core::paths::warp_home_skills_dir();
     }
     let definition = SKILL_PROVIDER_DEFINITIONS
         .iter()

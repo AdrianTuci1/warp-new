@@ -1,12 +1,12 @@
 use std::sync::Arc;
 
-use warp_core::ui::appearance::Appearance;
+use octomus_core::ui::appearance::Appearance;
+use octomus_util::user_input::UserInput;
+use octomusui::elements::new_scrollable::ScrollableAppearance;
+use octomusui::elements::ScrollbarWidth;
+use octomusui::platform::WindowStyle;
+use octomusui::{App, TypedActionView, ViewHandle, WindowId};
 use warp_editor::render::element::VerticalExpansionBehavior;
-use warp_util::user_input::UserInput;
-use warpui::elements::new_scrollable::ScrollableAppearance;
-use warpui::elements::ScrollbarWidth;
-use warpui::platform::WindowStyle;
-use warpui::{App, TypedActionView, ViewHandle, WindowId};
 
 use super::{CodeEditorRenderOptions, CodeEditorView, CodeEditorViewAction};
 use crate::cloud_object::model::persistence::CloudModel;

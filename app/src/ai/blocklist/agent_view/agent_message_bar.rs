@@ -1,14 +1,14 @@
 use std::sync::Arc;
 
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::Fill;
+use octomusui::assets::asset_cache::AssetSource;
+use octomusui::elements::{Container, Element, Empty, MouseStateHandle};
+use octomusui::keymap::Keystroke;
+use octomusui::platform::OperatingSystem;
+use octomusui::{AppContext, Entity, ModelHandle, SingletonEntity, View, ViewContext};
 use parking_lot::FairMutex;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::Fill;
-use warpui::assets::asset_cache::AssetSource;
-use warpui::elements::{Container, Element, Empty, MouseStateHandle};
-use warpui::keymap::Keystroke;
-use warpui::platform::OperatingSystem;
-use warpui::{AppContext, Entity, ModelHandle, SingletonEntity, View, ViewContext};
 
 use super::{AgentViewState, EphemeralMessageModel, EphemeralMessageModelEvent};
 use crate::ai::agent::conversation::AIConversation;

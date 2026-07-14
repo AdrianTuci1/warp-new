@@ -1,24 +1,24 @@
-use pathfinder_color::ColorU;
-use settings::Setting as _;
-use warp_editor::editor::NavigationKey;
-use warpui::accessibility::{AccessibilityContent, WarpA11yRole};
-use warpui::elements::{
+use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
+use octomusui::elements::{
     Align, ChildAnchor, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     DispatchEventResult, Element, Empty, EventHandler, Fill, Flex, Hoverable, Icon,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning, ParentAnchor,
     ParentElement, ParentOffsetBounds, Radius, Rect, SavePosition, ScrollStateHandle, Scrollable,
     ScrollableElement, ScrollbarWidth, Shrinkable, Stack, Text, UniformList, UniformListState,
 };
-use warpui::fonts::{FamilyId, Weight};
-use warpui::geometry::vector::vec2f;
-use warpui::keymap::FixedBinding;
-use warpui::platform::{Cursor, SystemTheme};
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::windowing::{StateEvent, WindowManager};
-use warpui::{
+use octomusui::fonts::{FamilyId, Weight};
+use octomusui::geometry::vector::vec2f;
+use octomusui::keymap::FixedBinding;
+use octomusui::platform::{Cursor, SystemTheme};
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::windowing::{StateEvent, WindowManager};
+use octomusui::{
     AppContext, Entity, FocusContext, ModelHandle, SingletonEntity, Tracked, TypedActionView,
     UpdateModel, View, ViewContext, ViewHandle,
 };
+use pathfinder_color::ColorU;
+use settings::Setting as _;
+use warp_editor::editor::NavigationKey;
 
 use super::theme;
 use crate::appearance::{Appearance, AppearanceManager};
@@ -142,7 +142,7 @@ pub struct ThemeChooser {
     search_editor: ViewHandle<EditorView>,
     referral_theme_status: ModelHandle<ReferralThemeStatus>,
     tips_completed: ModelHandle<TipsCompleted>,
-    window_id: warpui::WindowId,
+    window_id: octomusui::WindowId,
 }
 
 #[derive(Debug)]
@@ -157,7 +157,7 @@ pub enum ThemeChooserAction {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings(vec![
         FixedBinding::new("up", ThemeChooserAction::Up, id!("ThemeChooser")),

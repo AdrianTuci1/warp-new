@@ -1,12 +1,12 @@
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use warp_core::ui::icons::Icon as WarpIcon;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::{Fill as WarpThemeFill, WarpTheme};
-use warpui::elements::{
+use octomus_core::ui::icons::Icon as WarpIcon;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::{Fill as WarpThemeFill, WarpTheme};
+use octomusui::elements::{
     ChildAnchor, ConstrainedBox, Container, CornerRadius, Element, OffsetPositioning, ParentAnchor,
     ParentElement, ParentOffsetBounds, Radius, Stack,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::agent::conversation::{ConversationStatus, StatusColorStyle};
 use crate::terminal::CLIAgent;
@@ -191,7 +191,7 @@ pub(crate) fn render_icon_with_status_with_badge_style(
 
     match variant {
         IconWithStatusVariant::Neutral { icon, icon_color } => render_neutral_circle(
-            icon.to_warpui_icon(icon_color).finish(),
+            icon.to_octomusui_icon(icon_color).finish(),
             internal_colors::fg_overlay_2(theme),
             total_size,
         ),
@@ -222,7 +222,7 @@ pub(crate) fn render_icon_with_status_with_badge_style(
                 theme.main_text_color(theme.background())
             };
             let circle = render_circle(
-                oz_glyph.to_warpui_icon(glyph_color).finish(),
+                oz_glyph.to_octomusui_icon(glyph_color).finish(),
                 circle_background,
                 total_size,
             );
@@ -249,10 +249,10 @@ pub(crate) fn render_icon_with_status_with_badge_style(
             let icon_element = agent
                 .icon()
                 .map(|icon| {
-                    icon.to_warpui_icon(WarpThemeFill::Solid(icon_color))
+                    icon.to_octomusui_icon(WarpThemeFill::Solid(icon_color))
                         .finish()
                 })
-                .unwrap_or_else(|| WarpIcon::Terminal.to_warpui_icon(sub_text).finish());
+                .unwrap_or_else(|| WarpIcon::Terminal.to_octomusui_icon(sub_text).finish());
             let circle = render_circle(icon_element, ThemeFill::Solid(brand_color), total_size);
             attach_status_overlay(
                 circle,
@@ -375,7 +375,7 @@ fn render_with_cloud_status_badge(
     let cloud_diameter = cloud_icon_size(total_size);
     let cloud = ConstrainedBox::new(
         WarpIcon::CloudFilled
-            .to_warpui_icon(theme.foreground())
+            .to_octomusui_icon(theme.foreground())
             .finish(),
     )
     .with_width(cloud_diameter)
@@ -387,7 +387,7 @@ fn render_with_cloud_status_badge(
             let (icon, color) = status.status_icon_and_color(theme, StatusColorStyle::Cloud);
             let inner = status_in_cloud_size(total_size);
             let status_icon =
-                ConstrainedBox::new(icon.to_warpui_icon(WarpThemeFill::Solid(color)).finish())
+                ConstrainedBox::new(icon.to_octomusui_icon(WarpThemeFill::Solid(color)).finish())
                     .with_width(inner)
                     .with_height(inner)
                     .finish();
@@ -454,10 +454,11 @@ fn render_with_optional_status_badge(
     let (icon, color) = status.status_icon_and_color(theme, StatusColorStyle::Standard);
     let badge_icon_diameter = badge_icon_size(total_size, badge_style);
     let pad = badge_padding(total_size, badge_style);
-    let badge_icon = ConstrainedBox::new(icon.to_warpui_icon(WarpThemeFill::Solid(color)).finish())
-        .with_width(badge_icon_diameter)
-        .with_height(badge_icon_diameter)
-        .finish();
+    let badge_icon =
+        ConstrainedBox::new(icon.to_octomusui_icon(WarpThemeFill::Solid(color)).finish())
+            .with_width(badge_icon_diameter)
+            .with_height(badge_icon_diameter)
+            .finish();
     let inner_radius = match badge_style.inner_shape {
         BadgeInnerShape::Circle => Radius::Percentage(50.),
         BadgeInnerShape::RoundedSquare { radius_px } => Radius::Pixels(radius_px),

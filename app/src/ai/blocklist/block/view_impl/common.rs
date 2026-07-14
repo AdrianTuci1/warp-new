@@ -14,20 +14,16 @@ use std::sync::Arc;
 
 use itertools::Itertools;
 use markdown_parser::{FormattedText, FormattedTextInline, TableAlignment};
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use warp_core::channel::ChannelState;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::color::blend::Blend;
-use warp_core::ui::theme::color::internal_colors;
-use warp_editor::content::edit::resolve_asset_source_relative_to_directory;
-use warp_editor::content::mermaid_diagram::mermaid_asset_source;
-use warp_util::path::to_relative_path;
-use warpui::assets::asset_cache::{AssetCache, AssetSource, AssetState};
-use warpui::elements::new_scrollable::{ScrollableAppearance, SingleAxisConfig};
-use warpui::elements::shimmering_text::ShimmeringTextStateHandle;
-use warpui::elements::{
+use octomus_core::channel::ChannelState;
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::color::blend::Blend;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_util::path::to_relative_path;
+use octomusui::assets::asset_cache::{AssetCache, AssetSource, AssetState};
+use octomusui::elements::new_scrollable::{ScrollableAppearance, SingleAxisConfig};
+use octomusui::elements::shimmering_text::ShimmeringTextStateHandle;
+use octomusui::elements::{
     Align, Axis, Border, ChildAnchor, ChildView, Clipped, ClippedScrollStateHandle, ConstrainedBox,
     Container, CornerRadius, CrossAxisAlignment, DispatchEventResult, Empty, EventHandler,
     Expanded, Fill, Flex, FormattedTextElement, HeadingFontSizeMultipliers, Highlight,
@@ -37,14 +33,18 @@ use warpui::elements::{
     Shrinkable, Stack, Table, TableColumnWidth, TableConfig, TableHeader, TableVerticalSizing,
     Text, Wrap,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::image_cache::{CacheOption, ImageType};
-use warpui::keymap::Keystroke;
-use warpui::platform::Cursor;
-use warpui::text_layout::{ClipConfig, TextAlignment, TextStyle};
-use warpui::ui_components::button::Button;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{Action, AppContext, Element, EventContext, SingletonEntity, View, ViewHandle};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::image_cache::{CacheOption, ImageType};
+use octomusui::keymap::Keystroke;
+use octomusui::platform::Cursor;
+use octomusui::text_layout::{ClipConfig, TextAlignment, TextStyle};
+use octomusui::ui_components::button::Button;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{Action, AppContext, Element, EventContext, SingletonEntity, View, ViewHandle};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use warp_editor::content::edit::resolve_asset_source_relative_to_directory;
+use warp_editor::content::mermaid_diagram::mermaid_asset_source;
 
 use super::output::LinkActionConstructors;
 use super::{add_highlights_to_rich_text, add_highlights_to_text};
@@ -78,7 +78,7 @@ use crate::ai::blocklist::model::{AIBlockModel, AIBlockModelHelper};
 use crate::ai::blocklist::secret_redaction::{redact_secrets_in_element, SecretRedactionState};
 use crate::ai::blocklist::view_util::error_color;
 use crate::ai::blocklist::{BlocklistAIActionModel, ShellCommandExecutor, TextLocation};
-use crate::ai::loading::shimmering_warp_loading_text;
+use crate::ai::loading::shimmering_octomus_loading_text;
 use crate::ai::AIRequestUsageModel;
 use crate::code::editor::view::CodeEditorView;
 use crate::code::editor_management::CodeSource;
@@ -106,7 +106,7 @@ pub const WAITING_FOR_USER_INPUT_MESSAGE: &str = "Agent waiting for instructions
 const IMAGE_SOURCE_LINK_LINE_INDEX: usize = 1;
 
 const ERROR_APOLOGY_TEXT: &str = "I'm sorry, I couldn't complete that request.";
-const INTERNAL_WARP_ERROR: &str = "Internal Warp error.";
+const INTERNAL_WARP_ERROR: &str = "Internal Octomus error.";
 
 pub const LOAD_OUTPUT_MESSAGE: &str = "Warping...";
 pub const LOAD_OUTPUT_MESSAGE_FOR_ADJUSTING: &str = "Adjusting tasks...";
@@ -542,7 +542,7 @@ pub fn render_warping_indicator_base(
         is_passive_code_diff,
         secondary_element,
     } = props;
-    // Unicode code point for the Warp glyph that is embedded in the version of Roboto we bundle
+    // Unicode code point for the Octomus glyph that is embedded in the version of Roboto we bundle
     // into the app. This code point MUST be rendered using Roboto (the default ui font) or else the
     // glyph may not be rendered.
     const WARP_GLYPH: &str = "\u{E500}";
@@ -577,7 +577,7 @@ pub fn render_warping_indicator_base(
 
     let mut text_col = Flex::column();
     if let Some(sub_element) = secondary_element {
-        // Our warping indicator text prepends the Warp glyph (and a space) to the label.
+        // Our warping indicator text prepends the Octomus glyph (and a space) to the label.
         // If we render the tip directly underneath, it will align to the glyph instead of
         // the start of the actual warping text.
         let sub_element = if should_indent_tip_for_warp_glyph {
@@ -696,7 +696,7 @@ pub fn render_output_status_text(
         MaybeShimmeringText::Shimmering {
             text,
             shimmering_text_handle,
-        } => shimmering_warp_loading_text(
+        } => shimmering_octomus_loading_text(
             text.to_string(),
             appearance.monospace_font_size() - 2.,
             shimmering_text_handle,
@@ -850,7 +850,7 @@ fn render_queue_next_prompt_button(
     };
     let icon_size = get_icon_size(appearance);
     let icon = Container::new(
-        ConstrainedBox::new(Icon::ClockPlus.to_warpui_icon(icon_color).finish())
+        ConstrainedBox::new(Icon::ClockPlus.to_octomusui_icon(icon_color).finish())
             .with_height(icon_size)
             .with_width(icon_size)
             .finish(),
@@ -892,7 +892,7 @@ fn render_auto_approve_button(
     let icon_size = get_icon_size(appearance);
     let icon = Container::new(
         ConstrainedBox::new(
-            icon.to_warpui_icon(appearance.theme().active_ui_text_color())
+            icon.to_octomusui_icon(appearance.theme().active_ui_text_color())
                 .finish(),
         )
         .with_height(icon_size)
@@ -1020,7 +1020,7 @@ where
         .with_child(content)
         .with_spacing(4.0);
 
-    if !warpui::platform::is_mobile_device() {
+    if !octomusui::platform::is_mobile_device() {
         let keybinding_string = keybinding.map(|k| k.displayed()).unwrap_or_default();
         let keybinding_label = Text::new_inline(
             keybinding_string,
@@ -1762,7 +1762,7 @@ struct VisualMarkdownBlockOptions<A: 'static> {
     alignment: VisualMarkdownAlignment,
     lightbox_trigger: Option<VisualMarkdownLightboxTrigger>,
     /// When `Some(non_empty)`, the rendered image is wrapped in the standard
-    /// Warp tooltip primitive so hovering surfaces the CommonMark image title.
+    /// Octomus tooltip primitive so hovering surfaces the CommonMark image title.
     /// Mermaid diagrams pass `None` here because CommonMark titles do not
     /// apply to them.
     tooltip: Option<String>,
@@ -2208,7 +2208,7 @@ fn render_visual_markdown_block<A: Action>(
         VisualMarkdownAlignment::Center => Align::new(content).finish(),
     };
 
-    // Wrap the rendered image in the standard Warp tooltip when the source
+    // Wrap the rendered image in the standard Octomus tooltip when the source
     // carried a CommonMark `title`. Branching on `Some(non_empty)` here means
     // untitled images remain un-wrapped, matching `specs/GH849/product.md`
     // invariant 6 (no tooltip for empty or absent titles). The tooltip's
@@ -2225,8 +2225,8 @@ fn render_visual_markdown_block<A: Action>(
             tooltip,
             mouse_state,
             content,
-            warpui::elements::ParentAnchor::TopMiddle,
-            warpui::elements::ChildAnchor::BottomMiddle,
+            octomusui::elements::ParentAnchor::TopMiddle,
+            octomusui::elements::ChildAnchor::BottomMiddle,
             // Small negative Y offset keeps a hairline gap between the
             // tooltip's bottom edge and the image's top edge without
             // floating noticeably above the image.
@@ -2274,10 +2274,11 @@ fn render_visual_card(
     let theme = appearance.theme();
     let header_background = theme.surface_2();
     let header_text_color = blended_colors::text_main(theme, header_background);
-    let header_icon = ConstrainedBox::new(icon.to_warpui_icon(header_text_color.into()).finish())
-        .with_width(16.)
-        .with_height(16.)
-        .finish();
+    let header_icon =
+        ConstrainedBox::new(icon.to_octomusui_icon(header_text_color.into()).finish())
+            .with_width(16.)
+            .with_height(16.)
+            .finish();
     let header = Container::new(
         Flex::row()
             .with_cross_axis_alignment(CrossAxisAlignment::Center)
@@ -2486,7 +2487,7 @@ fn render_table_section(
             row_dividers: table_appearance.row_dividers,
             cell_padding,
             header_background: table_appearance.header_background,
-            row_background: warpui::elements::RowBackground {
+            row_background: octomusui::elements::RowBackground {
                 primary: table_appearance.cell_background,
                 alternating: table_appearance.alternate_row_background,
             },
@@ -2590,7 +2591,7 @@ fn render_table_cell(props: TableCellProps, app: &AppContext) -> Box<dyn Element
 struct TableCellProps {
     cell: FormattedTextInline,
     alignment: TableAlignment,
-    font_family: warpui::fonts::FamilyId,
+    font_family: octomusui::fonts::FamilyId,
     font_size: f32,
     font_weight: Weight,
     text_color: ColorU,
@@ -2948,7 +2949,7 @@ pub(crate) fn resolve_absolute_file_path(
     shell_launch_data: Option<&ShellLaunchData>,
     home_dir: PathBuf,
 ) -> Option<PathBuf> {
-    use warp_util::path::CleanPathResult;
+    use octomus_util::path::CleanPathResult;
 
     use crate::util::file::{absolute_path_if_valid, ShellPathType};
 
@@ -3005,7 +3006,7 @@ pub fn render_failed_output(props: FailedOutputProps, app: &AppContext) -> Box<d
             }
         }
         RenderableAIError::ServerOverloaded => {
-            "Warp is currently overloaded. Please try again later.".to_string()
+            "Octomus is currently overloaded. Please try again later.".to_string()
         }
         RenderableAIError::InternalWarpError => {
             format!("{ERROR_APOLOGY_TEXT}\n\n{INTERNAL_WARP_ERROR}")
@@ -3062,7 +3063,7 @@ pub fn render_failed_output(props: FailedOutputProps, app: &AppContext) -> Box<d
         .with_child(
             Container::new(
                 ConstrainedBox::new(
-                    warpui::elements::Icon::new(
+                    octomusui::elements::Icon::new(
                         Icon::AlertTriangle.into(),
                         error_color(appearance.theme()),
                     )
@@ -3113,7 +3114,7 @@ fn render_invalid_api_key_error(
 
     let alert_icon = ConstrainedBox::new(
         Icon::AlertTriangle
-            .to_warpui_icon(error_color(appearance.theme()).into())
+            .to_octomusui_icon(error_color(appearance.theme()).into())
             .finish(),
     )
     .with_width(icon_size(app))
@@ -3147,7 +3148,7 @@ fn render_invalid_api_key_error(
     let settings_button = appearance
         .ui_builder()
         .button(
-            warpui::ui_components::button::ButtonVariant::Outlined,
+            octomusui::ui_components::button::ButtonVariant::Outlined,
             state_handle.clone(),
         )
         .with_style(UiComponentStyles {
@@ -3292,7 +3293,7 @@ pub(crate) fn render_debug_footer<V: View>(
             appearance
                 .ui_builder()
                 .button(
-                    warpui::ui_components::button::ButtonVariant::Text,
+                    octomusui::ui_components::button::ButtonVariant::Text,
                     props.submit_issue_button_handle,
                 )
                 .with_centered_text_label("Send Feedback".to_string())
@@ -3358,8 +3359,8 @@ pub(crate) fn render_debug_footer<V: View>(
         "Copy debug ID".to_string(),
         props.debug_copy_button_handle,
         copy_button,
-        warpui::elements::ParentAnchor::TopRight,
-        warpui::elements::ChildAnchor::BottomRight,
+        octomusui::elements::ParentAnchor::TopRight,
+        octomusui::elements::ChildAnchor::BottomRight,
         vec2f(0., -8.),
     );
 

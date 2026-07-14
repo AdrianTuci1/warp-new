@@ -3,18 +3,18 @@
 //! In list mode it shows a dropdown styled to match the other orchestration
 //! pickers; in custom mode it swaps the top bar for an inline editor that
 //! accepts a self-hosted worker slug. The layout mirrors the Oz webapp's
-//! host selector: workspace default first (badged "Default"), then warp,
+//! host selector: workspace default first (badged "Default"), then octomus,
 //! then connected worker hosts, then the user's most recent custom slug,
 //! then a "Custom host…" entry.
 
-use warp_core::ui::theme::Fill;
-use warpui::elements::{
+use octomus_core::ui::theme::Fill;
+use octomusui::elements::{
     Border, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     Expanded, Flex, Hoverable, MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement,
     PositionedElementAnchor, Radius,
 };
-use warpui::platform::Cursor;
-use warpui::{
+use octomusui::platform::Cursor;
+use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
 
@@ -58,7 +58,7 @@ const EDITOR_PLACEHOLDER: &str = "my-worker-host";
 /// Dispatched by the inner dropdown items and the inline cancel button.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum InternalAction {
-    /// Pick a known host (warp, workspace default, or a recent slug).
+    /// Pick a known host (octomus, workspace default, or a recent slug).
     SelectKnown(String),
     /// Switch to custom-mode text input.
     EnterCustomMode,
@@ -73,7 +73,7 @@ pub struct HostPicker {
     current_slug: String,
     /// Admin-configured workspace default, when set.
     default_host: Option<String>,
-    /// User's most-recent custom host, deduped against warp / default.
+    /// User's most-recent custom host, deduped against octomus / default.
     recent_host: Option<String>,
     /// Currently connected self-hosted worker slugs.
     connected_hosts: Vec<String>,
@@ -204,7 +204,7 @@ impl HostPicker {
     }
 
     /// Sets the displayed slug. Unknown slugs switch the picker into custom
-    /// mode pre-filled with the slug. Empty input falls back to `"warp"`.
+    /// mode pre-filled with the slug. Empty input falls back to `"octomus"`.
     pub fn set_selected(&mut self, slug: &str, ctx: &mut ViewContext<Self>) {
         let effective = normalize_slug(slug);
         let is_known = self.is_known_option(&effective);
@@ -271,15 +271,15 @@ impl HostPicker {
     /// Commits the editor contents. Empty input reverts to the previous slug.
     fn commit_custom(&mut self, ctx: &mut ViewContext<Self>) {
         // Trim manually here — we must distinguish empty input (revert) from
-        // a literal "warp" entry (commit). `normalize_slug` collapses both
-        // into `"warp"`, so it's not safe to use on the commit path.
+        // a literal "octomus" entry (commit). `normalize_slug` collapses both
+        // into `"octomus"`, so it's not safe to use on the commit path.
         let raw = self.editor.as_ref(ctx).buffer_text(ctx).trim().to_string();
         if raw.is_empty() {
             self.cancel_custom(ctx);
             return;
         }
         if raw.eq_ignore_ascii_case(ORCHESTRATION_WARP_WORKER_HOST) {
-            // Treat "warp" typed in custom mode as a normal warp selection.
+            // Treat "octomus" typed in custom mode as a normal octomus selection.
             self.current_slug = ORCHESTRATION_WARP_WORKER_HOST.to_string();
             self.is_custom_mode = false;
             self.slug_before_edit = None;
@@ -387,7 +387,7 @@ impl HostPicker {
         let mouse_state = self.clear_mouse_state.clone();
         Hoverable::new(mouse_state, move |_| {
             ConstrainedBox::new(
-                Container::new(Icon::X.to_warpui_icon(icon_fill).finish())
+                Container::new(Icon::X.to_octomusui_icon(icon_fill).finish())
                     .with_uniform_padding(2.)
                     .finish(),
             )
@@ -405,7 +405,7 @@ impl HostPicker {
 
 // ── Pure helpers (also exercised by unit tests) ─────────────────────
 
-/// Trims `slug` and falls back to `"warp"` when empty.
+/// Trims `slug` and falls back to `"octomus"` when empty.
 fn normalize_slug(slug: &str) -> String {
     let trimmed = slug.trim();
     if trimmed.is_empty() {
@@ -416,7 +416,7 @@ fn normalize_slug(slug: &str) -> String {
 }
 
 /// Builds the menu items shown in list mode, in the order: workspace default
-/// (badged "Default" if set), warp, connected worker hosts, recent custom
+/// (badged "Default" if set), octomus, connected worker hosts, recent custom
 /// slug (if any and not a duplicate), then a "Custom host…" entry.
 pub(crate) fn build_menu_items(
     default_host: Option<&str>,

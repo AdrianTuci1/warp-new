@@ -1,28 +1,28 @@
 use std::borrow::Cow;
 use std::sync::Arc;
 
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::{vec2f, Vector2F};
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::color::contrast::MinimumAllowedContrast;
-use warp_core::ui::color::{coloru_with_opacity, ContrastingColor};
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::{AnsiColorIdentifier, Fill};
-use warpui::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::color::contrast::MinimumAllowedContrast;
+use octomus_core::ui::color::{coloru_with_opacity, ContrastingColor};
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::{AnsiColorIdentifier, Fill};
+use octomusui::elements::{
     Border, ChildAnchor, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex,
     Hoverable, MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning, Padding,
     ParentAnchor, ParentElement as _, ParentOffsetBounds, Radius, Stack, Text,
     DEFAULT_UI_LINE_HEIGHT_RATIO,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::keymap::Keystroke;
-use warpui::platform::Cursor;
-use warpui::text_layout::ClipConfig;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::keymap::Keystroke;
+use octomusui::platform::Cursor;
+use octomusui::text_layout::ClipConfig;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, BlurContext, Element, Entity, EventContext, FocusContext, Gradient,
     SingletonEntity as _, TypedActionView, View, ViewContext,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::{vec2f, Vector2F};
 
 use crate::settings_view::keybindings::{KeybindingChangedEvent, KeybindingChangedNotifier};
 use crate::terminal::input::{MenuPositioning, MenuPositioningProvider};
@@ -761,7 +761,7 @@ impl View for ActionButton {
                     })
                     .unwrap_or(Fill::Solid(text_color));
                 row.add_child(
-                    ConstrainedBox::new(icon.to_warpui_icon(icon_fill).finish())
+                    ConstrainedBox::new(icon.to_octomusui_icon(icon_fill).finish())
                         .with_width(icon_size)
                         .with_height(icon_size)
                         .finish(),
@@ -829,7 +829,9 @@ impl View for ActionButton {
                 row.add_child(
                     Container::new(
                         ConstrainedBox::new(
-                            Icon::ChevronDown.to_warpui_icon(text_color.into()).finish(),
+                            Icon::ChevronDown
+                                .to_octomusui_icon(text_color.into())
+                                .finish(),
                         )
                         .with_width(icon_size)
                         .with_height(icon_size)

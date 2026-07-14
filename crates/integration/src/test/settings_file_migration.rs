@@ -3,12 +3,12 @@
 
 use std::collections::HashMap;
 
+use octomus::features::FeatureFlag;
+use octomus::integration_testing::terminal::wait_until_bootstrapped_single_pane_for_tab;
+use octomus::settings::{BlockVisibilitySettings, ScrollSettings};
+use octomusui_core::integration::AssertionOutcome;
+use octomusui_core::{async_assert, async_assert_eq, SingletonEntity};
 use settings::Setting as _;
-use warp::features::FeatureFlag;
-use warp::integration_testing::terminal::wait_until_bootstrapped_single_pane_for_tab;
-use warp::settings::{BlockVisibilitySettings, ScrollSettings};
-use warpui_core::integration::AssertionOutcome;
-use warpui_core::{async_assert, async_assert_eq, SingletonEntity};
 
 use super::{new_builder, Builder};
 
@@ -65,7 +65,7 @@ pub fn test_settings_file_migration_from_native_store() -> Builder {
                 .add_named_assertion(
                     "TOML settings file should contain the migrated settings",
                     move |_app, _window_id| {
-                        let toml_path = warp::settings::user_preferences_toml_file_path();
+                        let toml_path = octomus::settings::user_preferences_toml_file_path();
                         let contents = match std::fs::read_to_string(&toml_path) {
                             Ok(c) => c,
                             Err(err) => {

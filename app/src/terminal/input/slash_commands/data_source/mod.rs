@@ -6,15 +6,15 @@ use std::path::PathBuf;
 
 use ai::skills::SkillProvider;
 use fuzzy_match::FuzzyMatchResult;
+#[cfg(not(target_family = "wasm"))]
+use octomus_cli::agent::Harness;
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::Icon as WarpIcon;
+use octomusui::fonts::FamilyId;
+use octomusui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 use ordered_float::OrderedFloat;
 pub(crate) use saved_prompts::*;
-#[cfg(not(target_family = "wasm"))]
-use warp_cli::agent::Harness;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::Icon as WarpIcon;
-use warpui::fonts::FamilyId;
-use warpui::{AppContext, Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 pub use zero_state::*;
 
 use super::AcceptSlashCommandOrSavedPrompt;
@@ -401,7 +401,7 @@ impl SlashCommandDataSource {
 
     /// Returns true when the active conversation is associated with a cloud Oz
     /// `AmbientAgentTask`. Used to gate `/continue-locally` to runs that can
-    /// actually be forked into a local Warp conversation.
+    /// actually be forked into a local Octomus conversation.
     ///
     /// Permissive when the harness is not yet known: we consider an absent task or
     /// missing `agent_config_snapshot.harness` to be Oz, matching the existing
@@ -453,7 +453,7 @@ impl SyncDataSource for SlashCommandDataSource {
     fn run_query(
         &self,
         query: &Query,
-        app: &warpui::AppContext,
+        app: &octomusui::AppContext,
     ) -> Result<Vec<QueryResult<Self::Action>>, DataSourceRunErrorWrapper> {
         if query.text.is_empty() {
             return Ok(vec![]);
@@ -644,13 +644,13 @@ impl InlineItem {
             override_icon
         } else {
             match skill.provider {
-                SkillProvider::Warp => WarpIcon::Warp,
+                SkillProvider::Octomus => WarpIcon::Octomus,
                 SkillProvider::Claude => WarpIcon::ClaudeLogo,
                 SkillProvider::Codex => WarpIcon::OpenAILogo,
                 SkillProvider::Gemini => WarpIcon::GeminiLogo,
                 SkillProvider::Droid => WarpIcon::DroidLogo,
                 SkillProvider::OpenCode => WarpIcon::OpenCodeLogo,
-                _ => WarpIcon::Warp,
+                _ => WarpIcon::Octomus,
             }
         };
 

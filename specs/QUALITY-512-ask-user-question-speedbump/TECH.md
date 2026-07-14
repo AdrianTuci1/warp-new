@@ -12,8 +12,8 @@ This change adds a one-shot Ask-User-Question autonomy speedbump to the existing
 - `app/src/ai/blocklist/inline_action/ask_user_question_view.rs` — owns the Ask-User-Question card chrome and renders the attached footer in completed/collapsed states.
 - `app/src/server/telemetry/events.rs` — adds `ChangedAgentModeAskUserQuestionPermission`.
 - `app/src/terminal/block_list_element.rs` — forwards covered mouse events to visible rich-content overlays so dropdown menus remain interactive.
-- `crates/warpui_core/src/elements/dismiss.rs` — consumes underlay clicks for dismissable overlays that prevent interaction with other elements.
-- `crates/warpui_core/src/elements/selectable_area.rs` — avoids starting terminal selection for mouse down events covered by higher-z-index overlays.
+- `crates/octomusui_core/src/elements/dismiss.rs` — consumes underlay clicks for dismissable overlays that prevent interaction with other elements.
+- `crates/octomusui_core/src/elements/selectable_area.rs` — avoids starting terminal selection for mouse down events covered by higher-z-index overlays.
 - `app/src/ai/blocklist/block_tests.rs` — covers permission index mapping, first Ask-User-Question action detection, and setting defaults/round-trip.
 ## 3. Setting
 The new setting is intentionally local-only:
@@ -74,9 +74,9 @@ The new telemetry event is `ChangedAgentModeAskUserQuestionPermission` with fiel
 The speedbump path emits the event with `src = Speedbump` whenever the user selects a dropdown option.
 ## 10. Validation
 Local validation:
-- `cargo check -p warp`
-- `cargo check --all-targets -p warp`
-- `cargo nextest run --no-fail-fast -p warp ask_user_question`
+- `cargo check -p octomus`
+- `cargo check --all-targets -p octomus`
+- `cargo nextest run --no-fail-fast -p octomus ask_user_question`
 - `cargo fmt --all`
 - `cargo clippy --workspace --all-targets --all-features --tests -- -D warnings`
 - `git --no-pager diff --check`

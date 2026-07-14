@@ -1,5 +1,5 @@
+use octomusui::Entity;
 use serde::{Deserialize, Serialize};
-use warpui::Entity;
 
 #[derive(
     Debug,

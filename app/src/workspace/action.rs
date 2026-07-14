@@ -2,14 +2,14 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
 
+use octomus_util::path::LineAndColumnArg;
+use octomusui::accessibility::AccessibilityVerbosity;
+use octomusui::geometry::rect::RectF;
+use octomusui::geometry::vector::Vector2F;
+use octomusui::platform::Cursor;
+use octomusui::{EntityId, WeakViewHandle, WindowId};
 use session_sharing_protocol::common::SessionId;
 use ui_components::lightbox;
-use warp_util::path::LineAndColumnArg;
-use warpui::accessibility::AccessibilityVerbosity;
-use warpui::geometry::rect::RectF;
-use warpui::geometry::vector::Vector2F;
-use warpui::platform::Cursor;
-use warpui::{EntityId, WeakViewHandle, WindowId};
 
 use super::global_actions::{ForkFromExchange, ForkedConversationDestination};
 use super::tab_settings::{
@@ -23,7 +23,7 @@ use crate::ai::agent::AIAgentExchangeId;
 use crate::ai::ambient_agents::AmbientAgentTaskId;
 use crate::ai::document::ai_document_model::{AIDocumentId, AIDocumentVersion};
 use crate::auth::auth_manager::LoginGatedFeature;
-use crate::drive::items::WarpDriveItemId;
+use crate::drive::items::OctomusDriveItemId;
 use crate::drive::CloudObjectTypeAndId;
 use crate::palette::PaletteMode;
 use crate::pane_group::PaneGroup;
@@ -266,7 +266,7 @@ pub enum WorkspaceAction {
     ToggleErrorUnderlining,
     ToggleSyntaxHighlighting,
     CheckForUpdate,
-    ExportAllWarpDriveObjects,
+    ExportAllOctomusDriveObjects,
     SetA11yVerbosityLevel(AccessibilityVerbosity),
     ToggleNotifications,
     ToggleTabColor {
@@ -309,15 +309,15 @@ pub enum WorkspaceAction {
         position: RectF,
     },
     DropGroup,
-    /// Toggles the left panel. In Code Mode V1 this toggles Warp Drive.
+    /// Toggles the left panel. In Code Mode V1 this toggles Octomus Drive.
     /// In Code Mode V2 this toggles the left panel which contains both the project explorer and
-    /// Warp Drive. This happens as explicit action from the user.
+    /// Octomus Drive. This happens as explicit action from the user.
     ToggleLeftPanel,
-    /// Toggles directly to the Warp Drive tab of the left panel in Code Mode V2
-    ToggleWarpDrive,
-    /// Unconditionally opens Warp Drive. This is used in the case of user lifecycle
+    /// Toggles directly to the Octomus Drive tab of the left panel in Code Mode V2
+    ToggleOctomusDrive,
+    /// Unconditionally opens Octomus Drive. This is used in the case of user lifecycle
     /// events like new user onboarding or when the user joins a team.
-    OpenWarpDrive,
+    OpenOctomusDrive,
     /// Toggles the right panel. This happens as an explicit action from the user.
     ToggleRightPanel,
     /// Opens the code review panel (right panel) without toggling. If already open,
@@ -378,7 +378,7 @@ pub enum WorkspaceAction {
     SignupAnonymousUser,
     SignInAnonymousWebUser,
     OpenLink(String),
-    /// On WASM, opens a given URL in the desktop Warp app (if installed) or redirects to download page.
+    /// On WASM, opens a given URL in the desktop Octomus app (if installed) or redirects to download page.
     #[cfg(target_family = "wasm")]
     OpenLinkOnDesktop(url::Url),
     ReopenClosedSession,
@@ -404,7 +404,7 @@ pub enum WorkspaceAction {
     /// Moves focus to the panel on the right
     FocusRightPanel,
     /// An action to view a newly created/edited workflow in WD from the toast
-    ViewObjectInWarpDrive(WarpDriveItemId),
+    ViewObjectInOctomusDrive(OctomusDriveItemId),
     /// Open the object's sharing settings in WD.
     OpenObjectSharingSettings {
         object_id: CloudObjectTypeAndId,
@@ -421,7 +421,7 @@ pub enum WorkspaceAction {
     },
     TerminateApp,
     CloseWindow,
-    /// Help the user call the Warp executable with the [`crate::args::DEBUG_DUMP_FLAG`].
+    /// Help the user call the Octomus executable with the [`crate::args::DEBUG_DUMP_FLAG`].
     DumpDebugInfo,
     /// Log review comment send eligibility for panes in the active tab.
     LogReviewCommentSendStatusForActiveTab,
@@ -573,7 +573,7 @@ pub enum WorkspaceAction {
     /// Open the workspace modal for creating a new managed auth secret.
     /// Dispatched by orchestration card pickers' "New API key…" item.
     OpenCreateAuthSecretModal {
-        harness: warp_cli::agent::Harness,
+        harness: octomus_cli::agent::Harness,
     },
     /// Summarize the active AI conversation in the focused pane.
     SummarizeAIConversation {
@@ -581,10 +581,10 @@ pub enum WorkspaceAction {
         /// Optional prompt to send after summarization completes successfully.
         initial_prompt: Option<String>,
     },
-    /// Install the Warp CLI command to /usr/local/bin
+    /// Install the Octomus CLI command to /usr/local/bin
     #[cfg(target_os = "macos")]
     InstallCLI,
-    /// Uninstall the Warp CLI command from /usr/local/bin
+    /// Uninstall the Octomus CLI command from /usr/local/bin
     #[cfg(target_os = "macos")]
     UninstallCLI,
     UndoRevertInCodeReviewPane {
@@ -650,10 +650,10 @@ pub enum WorkspaceAction {
     /// Reset the orchestration launch modal dismissed state (for debugging)
     #[cfg(debug_assertions)]
     ResetOrchestrationLaunchModalState,
-    /// Install the opencode-warp plugin from GitHub into the global opencode config.
+    /// Install the opencode-octomus plugin from GitHub into the global opencode config.
     #[cfg(debug_assertions)]
     InstallOpenCodeWarpPlugin,
-    /// Use a local checkout of the opencode-warp plugin (for testing/development).
+    /// Use a local checkout of the opencode-octomus plugin (for testing/development).
     #[cfg(debug_assertions)]
     UseLocalOpenCodeWarpPlugin,
     /// Take a process sample of the app (equivalent to Activity Monitor > Sample Process).
@@ -861,7 +861,7 @@ impl WorkspaceAction {
             | CopyVersion(_)
             | DownloadNewVersion
             | ConfigureKeybindingSettings { .. }
-            | ExportAllWarpDriveObjects
+            | ExportAllOctomusDriveObjects
             | ShowSettings
             | ShowSettingsPage(_)
             | ShowSettingsPageWithSearch { .. }
@@ -927,8 +927,8 @@ impl WorkspaceAction {
             | DragGroup { .. }
             | StartGroupDrag(_)
             | ToggleLeftPanel
-            | ToggleWarpDrive
-            | OpenWarpDrive
+            | ToggleOctomusDrive
+            | OpenOctomusDrive
             | ClosePanel
             | ToggleRightPanel
             | OpenCodeReviewPanel(..)
@@ -992,7 +992,7 @@ impl WorkspaceAction {
             | AttemptLoginGatedAIUpgrade
             | UndoTrash(_)
             | OpenFilePath { .. }
-            | ViewObjectInWarpDrive(_)
+            | ViewObjectInOctomusDrive(_)
             | OpenObjectSharingSettings { .. }
             | TerminateApp
             | SignInAnonymousWebUser

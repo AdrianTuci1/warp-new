@@ -1,12 +1,12 @@
 use std::sync::Arc;
 
-use ordered_float::OrderedFloat;
-use warpui::elements::{
+use octomusui::elements::{
     ConstrainedBox, Container, Flex, Highlight, Icon, MainAxisAlignment, MainAxisSize,
     ParentElement, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::{AppContext, Element, SingletonEntity};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::{AppContext, Element, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::appearance::Appearance;
 use crate::notebooks::CloudNotebookModel;

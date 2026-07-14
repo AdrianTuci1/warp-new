@@ -1,16 +1,16 @@
 //! The renderer for a single context chip.
 
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use warp_core::ui::theme::Fill;
-use warpui::elements::{
+use octomus_core::ui::theme::Fill;
+use octomusui::elements::{
     ConstrainedBox, Container, CrossAxisAlignment, DraggableState, Flex, Hoverable,
     MouseStateHandle, OffsetPositioning, ParentElement, ParentOffsetBounds, Stack, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::platform::Cursor;
-use warpui::ui_components::components::UiComponent;
-use warpui::{Action, Element};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::platform::Cursor;
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{Action, Element};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use super::context_chip::ContextChip;
 use super::display_chip::{chip_container, udi_font_size};
@@ -128,7 +128,7 @@ impl Renderer {
         let button = Hoverable::new(self.remove_button_state_handle.clone(), |_| {
             ConstrainedBox::new(
                 icons::Icon::X
-                    .to_warpui_icon(appearance.theme().ui_error_color().into())
+                    .to_octomusui_icon(appearance.theme().ui_error_color().into())
                     .finish(),
             )
             .with_height(icon_size)
@@ -158,7 +158,7 @@ impl Renderer {
         if let Some(icon) = self.kind.udi_icon() {
             content.add_child(
                 Container::new(
-                    ConstrainedBox::new(icon.to_warpui_icon(Fill::Solid(color)).finish())
+                    ConstrainedBox::new(icon.to_octomusui_icon(Fill::Solid(color)).finish())
                         .with_height(font_size)
                         .with_width(font_size)
                         .finish(),
@@ -208,8 +208,8 @@ impl Renderer {
                 OffsetPositioning::offset_from_parent(
                     vec2f(0., -2.5 * font_size),
                     ParentOffsetBounds::Unbounded,
-                    warpui::elements::ParentAnchor::Center,
-                    warpui::elements::ChildAnchor::Center,
+                    octomusui::elements::ParentAnchor::Center,
+                    octomusui::elements::ChildAnchor::Center,
                 ),
             );
             stack.finish()

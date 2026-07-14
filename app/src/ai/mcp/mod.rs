@@ -4,10 +4,10 @@ use std::path::{Path, PathBuf};
 
 #[cfg(not(target_family = "wasm"))]
 use diesel::{QueryDsl, RunQueryDsl, SqliteConnection};
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::Icon;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::Icon;
 
 use crate::cloud_object::model::generic_string_model::StringModel;
 use crate::cloud_object::model::json_model::JsonModel;
@@ -15,8 +15,8 @@ use crate::cloud_object::{
     CloudObjectUuid, GenericStringObjectFormat, GenericStringObjectUniqueKey, JsonObjectType,
     Revision,
 };
-use crate::drive::items::mcp_server::WarpDriveMCPServer;
-use crate::drive::items::WarpDriveItem;
+use crate::drive::items::mcp_server::OctomusDriveMCPServer;
+use crate::drive::items::OctomusDriveItem;
 use crate::drive::CloudObjectTypeAndId;
 #[cfg(not(target_family = "wasm"))]
 use crate::persistence::model::MCPEnvironmentVariables;
@@ -120,17 +120,17 @@ impl StringModel for MCPServer {
         None
     }
 
-    fn renders_in_warp_drive(&self) -> bool {
+    fn renders_in_octomus_drive(&self) -> bool {
         false
     }
 
-    fn to_warp_drive_item(
+    fn to_octomus_drive_item(
         &self,
         id: SyncId,
         _appearance: &Appearance,
         mcp_server: &CloudMCPServer,
-    ) -> Option<Box<dyn WarpDriveItem>> {
-        Some(Box::new(WarpDriveMCPServer::new(
+    ) -> Option<Box<dyn OctomusDriveItem>> {
+        Some(Box::new(OctomusDriveMCPServer::new(
             CloudObjectTypeAndId::GenericStringObject {
                 object_type: GenericStringObjectFormat::Json(JsonObjectType::MCPServer),
                 id,
@@ -487,14 +487,14 @@ pub enum MCPServerUpdate {
 
 pub(crate) fn home_config_file_path(provider: MCPProvider) -> Option<PathBuf> {
     match provider {
-        MCPProvider::Warp => warp_core::paths::warp_home_mcp_config_file_path(),
+        MCPProvider::Octomus => octomus_core::paths::warp_home_mcp_config_file_path(),
         _ => dirs::home_dir().map(|home_dir| home_dir.join(provider.home_config_path())),
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
 pub enum MCPProvider {
-    Warp,
+    Octomus,
     Claude,
     Codex,
     Agents,
@@ -503,7 +503,7 @@ pub enum MCPProvider {
 impl MCPProvider {
     pub fn display_name(&self) -> &str {
         match self {
-            MCPProvider::Warp => "Warp",
+            MCPProvider::Octomus => "Octomus",
             MCPProvider::Claude => "Claude",
             MCPProvider::Codex => "Codex",
             MCPProvider::Agents => "Other Agents",
@@ -512,17 +512,17 @@ impl MCPProvider {
 
     pub fn icon(&self) -> Icon {
         match self {
-            MCPProvider::Warp => Icon::Warp,
+            MCPProvider::Octomus => Icon::Octomus,
             MCPProvider::Claude => Icon::ClaudeLogo,
             MCPProvider::Codex => Icon::OpenAILogo,
-            MCPProvider::Agents => Icon::Warp,
+            MCPProvider::Agents => Icon::Octomus,
         }
     }
 
     /// Returns the path of the provider's config file relative to the home directory.
     pub fn home_config_path(&self) -> &'static Path {
         match self {
-            MCPProvider::Warp => Path::new(".warp/.mcp.json"),
+            MCPProvider::Octomus => Path::new(".octomus/.mcp.json"),
             MCPProvider::Claude => Path::new(".claude.json"),
             MCPProvider::Codex => Path::new(".codex/config.toml"),
             MCPProvider::Agents => Path::new(".agents/.mcp.json"),
@@ -532,7 +532,7 @@ impl MCPProvider {
     /// Returns the path of the provider's config file relative to a project root.
     pub fn project_config_path(&self) -> &'static Path {
         match self {
-            MCPProvider::Warp => Path::new(".warp/.mcp.json"),
+            MCPProvider::Octomus => Path::new(".octomus/.mcp.json"),
             MCPProvider::Claude => Path::new(".mcp.json"),
             MCPProvider::Codex => Path::new(".codex/config.toml"),
             MCPProvider::Agents => Path::new(".agents/.mcp.json"),
@@ -556,7 +556,7 @@ pub fn mcp_provider_from_file_path(file_path: &Path) -> Option<MCPProvider> {
     }
     // Fall back to project-config suffix match, preferring the longest
     // (most-specific) suffix.
-    // This avoids `.mcp.json` shadowing `.warp/.mcp.json`, for example.
+    // This avoids `.mcp.json` shadowing `.octomus/.mcp.json`, for example.
     let mut best: Option<(MCPProvider, usize)> = None;
     for provider in MCPProvider::iter() {
         let cfg = provider.project_config_path();

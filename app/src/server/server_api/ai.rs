@@ -13,10 +13,10 @@ use cynic::{MutationBuilder, QueryBuilder};
 use itertools::Itertools;
 #[cfg(test)]
 use mockall::automock;
+use octomus_core::channel::ChannelState;
+use octomus_core::features::FeatureFlag;
+use octomus_core::report_error;
 use prost::Message;
-use warp_core::channel::ChannelState;
-use warp_core::features::FeatureFlag;
-use warp_core::report_error;
 use warp_graphql::ai::{AgentTaskState, PlatformErrorCode};
 use warp_graphql::client::Operation;
 use warp_graphql::mutations::confirm_file_artifact_upload::{
@@ -137,7 +137,7 @@ use crate::ai::request_usage_model::RequestLimitInfo;
 #[cfg(not(feature = "agent_mode_evals"))]
 use crate::ai::BonusGrant;
 use crate::ai::RequestUsageInfo;
-use crate::ai_assistant::execution_context::WarpAiExecutionContext;
+use crate::ai_assistant::execution_context::OctomusAiExecutionContext;
 use crate::ai_assistant::requests::GenerateDialogueResult;
 use crate::ai_assistant::utils::TranscriptPart;
 use crate::ai_assistant::{AIGeneratedCommand, GenerateCommandsFromNaturalLanguageError};
@@ -228,10 +228,10 @@ pub struct SpawnAgentRequest {
     /// Not yet wired through the local start_agent flow.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parent_run_id: Option<String>,
-    /// Base64-encoded `warp.multi_agent.v1.Skill` payloads to restore as runtime skills.
+    /// Base64-encoded `octomus.multi_agent.v1.Skill` payloads to restore as runtime skills.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub runtime_skills: Vec<String>,
-    /// Base64-encoded `warp.multi_agent.v1.Attachment` payloads to restore as referenced attachments.
+    /// Base64-encoded `octomus.multi_agent.v1.Attachment` payloads to restore as referenced attachments.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub referenced_attachments: Vec<String>,
     /// Server-side conversation id to resume against (sets `task.AgentConversationID`).
@@ -999,14 +999,14 @@ pub trait AIClient: 'static + Send + Sync {
     async fn generate_commands_from_natural_language(
         &self,
         prompt: String,
-        ai_execution_context: Option<WarpAiExecutionContext>,
+        ai_execution_context: Option<OctomusAiExecutionContext>,
     ) -> Result<Vec<AIGeneratedCommand>, GenerateCommandsFromNaturalLanguageError>;
 
     async fn generate_dialogue_answer(
         &self,
         transcript: Vec<TranscriptPart>,
         prompt: String,
-        ai_execution_context: Option<WarpAiExecutionContext>,
+        ai_execution_context: Option<OctomusAiExecutionContext>,
     ) -> anyhow::Result<GenerateDialogueResult>;
 
     async fn generate_metadata_for_command(
@@ -1419,7 +1419,7 @@ impl AIClient for ServerApi {
         &self,
         prompt: String,
         // TODO: use relevant context from RequestContext and deprecate usage of ai_execution_context
-        _ai_execution_context: Option<WarpAiExecutionContext>,
+        _ai_execution_context: Option<OctomusAiExecutionContext>,
     ) -> Result<Vec<AIGeneratedCommand>, GenerateCommandsFromNaturalLanguageError> {
         let default_err = GenerateCommandsFromNaturalLanguageError::Other;
 
@@ -1458,7 +1458,7 @@ impl AIClient for ServerApi {
         transcript: Vec<TranscriptPart>,
         prompt: String,
         // TODO: use relevant context from RequestContext and deprecate usage of ai_execution_context
-        _ai_execution_context: Option<WarpAiExecutionContext>,
+        _ai_execution_context: Option<OctomusAiExecutionContext>,
     ) -> anyhow::Result<GenerateDialogueResult> {
         let graphql_transcript: Vec<TranscriptPartGraphql> = transcript
             .into_iter()
@@ -2773,7 +2773,7 @@ impl From<warp_graphql::queries::get_feature_model_choices::LlmModelHost> for LL
                     anyhow!(
                         "Unknown LlmModelHost '{value}'. Make sure to update client GraphQL types!"
                     ),
-                    warp_core::errors::ReportErrorLogMode::OncePerRun
+                    octomus_core::errors::ReportErrorLogMode::OncePerRun
                 );
                 LLMModelHost::Unknown
             }
@@ -2802,7 +2802,7 @@ impl From<warp_graphql::queries::get_feature_model_choices::LlmProvider> for LLM
                     anyhow!(
                         "Invalid LlmProvider '{value}'. Make sure to update client GraphQL types!"
                     ),
-                    warp_core::errors::ReportErrorLogMode::OncePerRun
+                    octomus_core::errors::ReportErrorLogMode::OncePerRun
                 );
                 LLMProvider::Unknown
             }
@@ -2823,7 +2823,7 @@ impl From<warp_graphql::workspace::LlmProvider> for LLMProvider {
                     anyhow!(
                         "Invalid LlmProvider '{value}'. Make sure to update client GraphQL types!"
                     ),
-                    warp_core::errors::ReportErrorLogMode::OncePerRun
+                    octomus_core::errors::ReportErrorLogMode::OncePerRun
                 );
                 LLMProvider::Unknown
             }
@@ -2918,7 +2918,7 @@ fn convert_harness(harness: warp_graphql::ai::AgentHarness) -> AIAgentHarness {
                 anyhow!(
                     "Invalid AgentHarness '{value}'. Make sure to update client GraphQL types!"
                 ),
-                warp_core::errors::ReportErrorLogMode::OncePerRun
+                octomus_core::errors::ReportErrorLogMode::OncePerRun
             );
             AIAgentHarness::Unknown
         }

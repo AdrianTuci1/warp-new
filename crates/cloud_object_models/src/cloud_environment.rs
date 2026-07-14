@@ -12,7 +12,7 @@ use crate::{JsonModel, JsonSerializer};
 pub struct GithubRepo {
     /// Repository owner (e.g. "warpdotdev")
     pub owner: String,
-    /// Repository name (e.g. "warp-internal")
+    /// Repository name (e.g. "octomus-internal")
     pub repo: String,
 }
 
@@ -72,7 +72,7 @@ impl ProvidersConfig {
     }
 }
 
-/// An AmbientAgentEnvironment represents an environment that we would run a Warp agent in.
+/// An AmbientAgentEnvironment represents an environment that we would run a Octomus agent in.
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct AmbientAgentEnvironment {
     /// Environment name

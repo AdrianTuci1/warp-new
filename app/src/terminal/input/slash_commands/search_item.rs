@@ -1,10 +1,10 @@
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::Fill;
+use octomusui::elements::{Expanded, Highlight, Icon, ParentElement, Shrinkable};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::prelude::{ConstrainedBox, Container, CrossAxisAlignment, Empty, Flex, Text};
+use octomusui::{AppContext, Element, SingletonEntity};
 use ordered_float::OrderedFloat;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::Fill;
-use warpui::elements::{Expanded, Highlight, Icon, ParentElement, Shrinkable};
-use warpui::fonts::{Properties, Weight};
-use warpui::prelude::{ConstrainedBox, Container, CrossAxisAlignment, Empty, Flex, Text};
-use warpui::{AppContext, Element, SingletonEntity};
 
 use super::{AcceptSlashCommandOrSavedPrompt, InlineItem};
 use crate::ai::blocklist::agent_view::shortcuts::render_keystroke_with_color_overrides;

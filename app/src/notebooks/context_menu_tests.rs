@@ -1,9 +1,9 @@
+use octomus_core::ui::appearance::Appearance;
+use octomusui::platform::WindowStyle;
+use octomusui::App;
 use pathfinder_geometry::vector::vec2f;
 use string_offset::ByteOffset;
-use warp_core::ui::appearance::Appearance;
 use warp_editor::model::CoreEditorModel;
-use warpui::platform::WindowStyle;
-use warpui::App;
 
 use super::MenuSource;
 use crate::auth::AuthStateProvider;

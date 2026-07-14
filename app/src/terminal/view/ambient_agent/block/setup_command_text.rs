@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::Icon;
-use warpui::elements::ParentElement;
-use warpui::prelude::{
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::Icon;
+use octomusui::elements::ParentElement;
+use octomusui::prelude::{
     ConstrainedBox, Container, CrossAxisAlignment, Cursor, Flex, Hoverable, MouseStateHandle, Text,
 };
-use warpui::{
+use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
 
@@ -198,7 +198,7 @@ impl View for CloudModeSetupTextBlock {
                 .with_child(
                     Container::new(
                         ConstrainedBox::new(
-                            chevron_icon.to_warpui_icon(text_color.into()).finish(),
+                            chevron_icon.to_octomusui_icon(text_color.into()).finish(),
                         )
                         .with_width(icon_size)
                         .with_height(icon_size)

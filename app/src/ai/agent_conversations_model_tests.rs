@@ -4,11 +4,11 @@ use std::sync::Arc;
 
 use chrono::{DateTime, Duration, Utc};
 use instant::Instant;
+use octomus_cli::agent::Harness;
+use octomus_core::features::FeatureFlag;
+use octomusui::{App, EntityId, ModelHandle, SingletonEntity};
 use parking_lot::Mutex;
 use persistence::model::{AgentConversationData, ConversationUsageMetadata};
-use warp_cli::agent::Harness;
-use warp_core::features::FeatureFlag;
-use warpui::{App, EntityId, ModelHandle, SingletonEntity};
 
 use super::entry::{
     AgentConversationEntryId, AgentConversationNavigationSubject, AgentConversationProvenance,
@@ -2087,13 +2087,13 @@ fn test_harness_filter_matches_only_selected_harness() {
             assert_eq!(
                 oz_items.len(),
                 2,
-                "expected 2 Warp Agent matches, got {oz_items:?}"
+                "expected 2 Octomus Agent matches, got {oz_items:?}"
             );
             assert!(oz_items.contains(&format!("task:{}", task_oz_default.task_id)));
             assert!(oz_items.contains(&format!("conversation:{conv_id}")));
             assert!(
                 !oz_items.contains(&format!("task:{}", task_no_snapshot.task_id)),
-                "stub task with no snapshot should not match the Warp Agent filter"
+                "stub task with no snapshot should not match the Octomus Agent filter"
             );
         });
     });

@@ -5,12 +5,12 @@ pub mod common;
 use std::borrow::Cow;
 use std::sync::Arc;
 
+use octomus_core::ui::Icon;
+use octomusui::assets::asset_cache::AssetSource;
+use octomusui::elements::MouseStateHandle;
+use octomusui::keymap::Keystroke;
+use octomusui::EventContext;
 use pathfinder_color::ColorU;
-use warp_core::ui::Icon;
-use warpui::assets::asset_cache::AssetSource;
-use warpui::elements::MouseStateHandle;
-use warpui::keymap::Keystroke;
-use warpui::EventContext;
 /// A trait for types that can produce a message based on some contextual arguments.
 ///
 /// The generic `Args` parameter allows each call site to define its own

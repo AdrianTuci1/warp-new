@@ -1,24 +1,24 @@
-use ui_components::{button, Component as _, Options as _};
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::Fill;
-use warp_core::ui::Icon;
-use warpui_core::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::Fill;
+use octomus_core::ui::Icon;
+use octomusui_core::elements::{
     Border, ClippedScrollStateHandle, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     Flex, FormattedTextElement, Hoverable, MainAxisAlignment, MainAxisSize, MouseStateHandle,
     ParentElement, Radius,
 };
-use warpui_core::fonts::Weight;
-use warpui_core::keymap::Keystroke;
-use warpui_core::platform::Cursor;
-use warpui_core::prelude::Align;
-use warpui_core::text_layout::TextAlignment;
-use warpui_core::ui_components::components::{UiComponent as _, UiComponentStyles};
-use warpui_core::{
+use octomusui_core::fonts::Weight;
+use octomusui_core::keymap::Keystroke;
+use octomusui_core::platform::Cursor;
+use octomusui_core::prelude::Align;
+use octomusui_core::text_layout::TextAlignment;
+use octomusui_core::ui_components::components::{UiComponent as _, UiComponentStyles};
+use octomusui_core::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity as _, TypedActionView, View,
     ViewContext,
 };
+use ui_components::{button, Component as _, Options as _};
 
 use super::OnboardingSlide;
 use crate::model::OnboardingStateModel;
@@ -76,14 +76,14 @@ impl IntentionSlide {
         let theme = appearance.theme();
 
         let logo_fill = internal_colors::fg_overlay_4(theme);
-        let logo = ConstrainedBox::new(Icon::WarpLogoLight.to_warpui_icon(logo_fill).finish())
+        let logo = ConstrainedBox::new(Icon::WarpLogoLight.to_octomusui_icon(logo_fill).finish())
             .with_width(64.)
             .with_height(64.)
             .finish();
 
         let title = appearance
             .ui_builder()
-            .paragraph("Welcome to Warp")
+            .paragraph("Welcome to Octomus")
             .with_style(UiComponentStyles {
                 font_size: Some(36.),
                 font_weight: Some(Weight::Medium),
@@ -219,7 +219,7 @@ impl IntentionSlide {
                 .iter()
                 .enumerate()
             {
-                let el = ConstrainedBox::new(icon.to_warpui_icon(icon_fill).finish())
+                let el = ConstrainedBox::new(icon.to_octomusui_icon(icon_fill).finish())
                     .with_width(16.)
                     .with_height(16.)
                     .finish();
@@ -263,10 +263,11 @@ impl IntentionSlide {
                 .with_main_axis_size(MainAxisSize::Min)
                 .with_cross_axis_alignment(CrossAxisAlignment::Start);
             for &item in items {
-                let icon_el = ConstrainedBox::new(Icon::Check.to_warpui_icon(check_fill).finish())
-                    .with_width(16.)
-                    .with_height(16.)
-                    .finish();
+                let icon_el =
+                    ConstrainedBox::new(Icon::Check.to_octomusui_icon(check_fill).finish())
+                        .with_width(16.)
+                        .with_height(16.)
+                        .finish();
                 let text_el = appearance
                     .ui_builder()
                     .paragraph(item.to_string())

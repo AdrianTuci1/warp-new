@@ -1,14 +1,14 @@
 use std::iter;
 use std::path::Path;
 
-use warp_core::ui::theme::Fill;
-use warpui::elements::{
+use octomus_core::ui::theme::Fill;
+use octomusui::elements::{
     Border, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Empty,
     Expanded, Flex, HighlightedRange, MainAxisAlignment, MainAxisSize, MouseStateHandle,
     ParentElement, Radius, Shrinkable, Text,
 };
-use warpui::ui_components::components::UiComponent;
-use warpui::{AppContext, Element, EventContext, SingletonEntity, ViewHandle};
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{AppContext, Element, EventContext, SingletonEntity, ViewHandle};
 
 use crate::ai::agent::ProgrammingLanguage;
 use crate::ai::blocklist::inline_action::inline_action_header::{
@@ -255,7 +255,7 @@ fn render_linked_code_block_internal(
             let open_button = render_button(
                 appearance,
                 Icon::LinkExternal,
-                "Open in Warp",
+                "Open in Octomus",
                 mouse_handles.open_button,
                 code_clone.clone(),
                 on_open,

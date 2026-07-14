@@ -2,16 +2,16 @@ mod items;
 use std::collections::HashMap;
 
 pub use items::Items;
-use warp_core::context_flag::ContextFlag;
-use warp_core::features::FeatureFlag;
-use warpui::elements::{Container, Flex, MouseStateHandle, ParentElement, Shrinkable, Wrap};
-use warpui::{
+use octomus_core::context_flag::ContextFlag;
+use octomus_core::features::FeatureFlag;
+use octomusui::elements::{Container, Flex, MouseStateHandle, ParentElement, Shrinkable, Wrap};
+use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     WindowId,
 };
 
 use crate::appearance::Appearance;
-use crate::drive::settings::WarpDriveSettings;
+use crate::drive::settings::OctomusDriveSettings;
 use crate::search::command_palette::FilterChipRenderer;
 use crate::search::QueryFilter;
 use crate::settings::AISettings;
@@ -81,10 +81,10 @@ impl ZeroState {
         app: &AppContext,
         window_id: WindowId,
     ) -> impl Iterator<Item = QueryFilter> {
-        let show_warp_drive = WarpDriveSettings::is_warp_drive_enabled(app);
+        let show_octomus_drive = OctomusDriveSettings::is_octomus_drive_enabled(app);
 
         let mut valid_filters = vec![];
-        if show_warp_drive {
+        if show_octomus_drive {
             valid_filters.push(QueryFilter::Workflows);
             if FeatureFlag::AgentModeWorkflows.is_enabled()
                 && AISettings::as_ref(app).is_any_ai_enabled(app)
@@ -109,7 +109,7 @@ impl ZeroState {
             }
         }
 
-        if show_warp_drive {
+        if show_octomus_drive {
             valid_filters.push(QueryFilter::Drive);
         }
         valid_filters.extend([QueryFilter::Actions, QueryFilter::Sessions]);

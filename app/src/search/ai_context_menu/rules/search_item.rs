@@ -1,12 +1,12 @@
 use std::fmt::Debug;
 
 use fuzzy_match::FuzzyMatchResult;
-use ordered_float::OrderedFloat;
-use warpui::elements::{
+use octomusui::elements::{
     ConstrainedBox, Container, CrossAxisAlignment, Flex, Highlight, Icon, ParentElement, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::{AppContext, Element, SingletonEntity};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::{AppContext, Element, SingletonEntity};
+use ordered_float::OrderedFloat;
 
 use crate::appearance::Appearance;
 use crate::cloud_object::{GenericStringObjectFormat, JsonObjectType, ObjectType};

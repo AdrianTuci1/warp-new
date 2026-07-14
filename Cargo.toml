@@ -16,10 +16,10 @@ default-members = [
   "crates/graphql",
   "crates/markdown_parser",
   "crates/sum_tree",
-  "crates/warpui",
-  "crates/warp_completer",
-  "crates/warp_terminal",
-  "crates/warp_util",
+  "crates/octomusui",
+  "crates/octomus_completer",
+  "crates/octomus_terminal",
+  "crates/octomus_util",
 ]
 
 [workspace.package]
@@ -45,6 +45,7 @@ field_mask = { path = "crates/field_mask" }
 firebase = { path = "crates/firebase" }
 fuzzy_match = { path = "crates/fuzzy_match" }
 handlebars = { path = "crates/handlebars" }
+octomus_vps_server = { path = "crates/octomus_vps_server" }
 http_client = { path = "crates/http_client" }
 http_server = { path = "crates/http_server" }
 input_classifier = { path = "crates/input_classifier" }
@@ -73,30 +74,30 @@ ui_components = { path = "crates/ui_components" }
 vim = { path = "crates/vim" }
 virtual-fs = { path = "crates/virtual_fs" }
 voice_input = { path = "crates/voice_input" }
-warp = { path = "app" }
-warp_assets = { path = "crates/warp_assets" }
-warp_cli = { path = "crates/warp_cli" }
-warp_completer = { path = "crates/warp_completer" }
-warp_core = { path = "crates/warp_core" }
+octomus = { path = "app" }
+octomus_assets = { path = "crates/octomus_assets" }
+octomus_cli = { path = "crates/octomus_cli" }
+octomus_completer = { path = "crates/octomus_completer" }
+octomus_core = { path = "crates/octomus_core" }
 warp_editor = { path = "crates/editor" }
-warp_features = { path = "crates/warp_features" }
-warp_files = { path = "crates/warp_files" }
+octomus_features = { path = "crates/octomus_features" }
+octomus_files = { path = "crates/octomus_files" }
 warp_graphql = { path = "crates/graphql" }
-warp_graphql_schema = { path = "crates/warp_graphql_schema" }
+octomus_graphql_schema = { path = "crates/octomus_graphql_schema" }
 warp_isolation_platform = { path = "crates/isolation_platform" }
-warp_js = { path = "crates/warp_js" }
-warp_logging = { path = "crates/warp_logging" }
+octomus_js = { path = "crates/octomus_js" }
+octomus_logging = { path = "crates/octomus_logging" }
 warp_managed_secrets = { path = "crates/managed_secrets" }
-warp_ripgrep = { path = "crates/warp_ripgrep" }
-warp_search_core = { path = "crates/warp_search_core" }
-warp_server_auth = { path = "crates/warp_server_auth" }
-warp_server_client = { path = "crates/warp_server_client" }
-warp_terminal = { path = "crates/warp_terminal" }
-warp_util = { path = "crates/warp_util" }
-warp_web_event_bus = { path = "crates/warp_web_event_bus" }
-warpui = { path = "crates/warpui" }
-warpui_core = { path = "crates/warpui_core" }
-warpui_extras = { path = "crates/warpui_extras", default-features = false }
+octomus_ripgrep = { path = "crates/octomus_ripgrep" }
+octomus_search_core = { path = "crates/octomus_search_core" }
+octomus_server_auth = { path = "crates/octomus_server_auth" }
+octomus_server_client = { path = "crates/octomus_server_client" }
+octomus_terminal = { path = "crates/octomus_terminal" }
+octomus_util = { path = "crates/octomus_util" }
+octomus_web_event_bus = { path = "crates/octomus_web_event_bus" }
+octomusui = { path = "crates/octomusui" }
+octomusui_core = { path = "crates/octomusui_core" }
+octomusui_extras = { path = "crates/octomusui_extras", default-features = false }
 watcher = { path = "crates/watcher" }
 websocket = { path = "crates/websocket" }
 
@@ -126,6 +127,7 @@ blocking = "1.6.2"
 bounded-vec-deque = "0.1"
 bytemuck = { version = "1.13.1" }
 bytes = { version = "1.11.1", features = ["serde"] }
+chacha20poly1305 = { version = "0.10", features = ["std"] }
 command-corrections = { git = "https://github.com/warpdotdev/command-corrections.git", rev = "eae08c8c51d9bc9741fcb17eef2c21f696aebbeb" }
 core-foundation = "0.10.1"
 concat-idents = "1.1.4"
@@ -409,7 +411,7 @@ split-debuginfo = "unpacked"
 
 [profile.dev.package]
 # Improve the performance of core terminal logic.
-warp_terminal.opt-level = 3
+octomus_terminal.opt-level = 3
 # Minimize the runtime overhead of CPU profiling at the cost of a small
 # increase in compile time for this crate.
 backtrace.opt-level = 3

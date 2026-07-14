@@ -210,10 +210,10 @@ fn test_warp_web_link_notebook() {
             ))
             .unwrap()
         ),
-        Some(WarpWebLink::DriveObject(Box::new(OpenWarpDriveObjectArgs {
+        Some(WarpWebLink::DriveObject(Box::new(OpenOctomusDriveObjectArgs {
             object_type: ObjectType::Notebook,
 server_id: ServerId::from_string_lossy("LkDlnAe34vfYD2JXsAkssc"),
-            settings: OpenWarpDriveObjectSettings {
+            settings: OpenOctomusDriveObjectSettings {
                 focused_folder_id: Some(ServerId::from(123)),
                 invitee_email: Some(String::from("test@example.com")),
             },
@@ -246,10 +246,10 @@ fn test_warp_web_link_workflow() {
             ))
             .unwrap()
         ),
-        Some(WarpWebLink::DriveObject(Box::new(OpenWarpDriveObjectArgs {
+        Some(WarpWebLink::DriveObject(Box::new(OpenOctomusDriveObjectArgs {
             object_type: ObjectType::Workflow,
 server_id: ServerId::from_string_lossy("ZCJSkai2gpwTqpBFs5HOfZ"),
-            settings: OpenWarpDriveObjectSettings::default(),
+            settings: OpenOctomusDriveObjectSettings::default(),
         })))
     );
 }
@@ -656,7 +656,7 @@ fn test_linear_issue_work_empty_prompt() {
 //
 // These tests cover the fix for GH #737: the entry log inside
 // `handle_incoming_uri` used to write the full URL (including the Firebase
-// `refresh_token` query parameter) to `warp.log` at `info` level before any
+// `refresh_token` query parameter) to `octomus.log` at `info` level before any
 // redaction ran. They validate the redaction helper and the error messages
 // produced by `validate_custom_uri` to ensure that the fallback `warn`
 // emitted on invalid URIs never embeds the query string either.
@@ -760,7 +760,7 @@ fn safe_url_log_fields_redacts_invitee_email() {
     assert!(logged.contains("host=drive"), "expected host: {logged}");
 }
 
-/// URL fragments are not currently used as secret carriers by Warp today, but
+/// URL fragments are not currently used as secret carriers by Octomus today, but
 /// the entry log's contract is "scheme + host + path only", so fragments must
 /// be dropped as well.
 #[test]
@@ -842,7 +842,7 @@ fn validate_custom_uri_errors_do_not_leak_query_string() {
 
 #[test]
 fn test_parse_tab_path_expands_tilde() {
-    let url = Url::parse("warp://action/new_tab?path=~/Projects").unwrap();
+    let url = Url::parse("octomus://action/new_tab?path=~/Projects").unwrap();
     let home = dirs::home_dir().expect("HOME must be set for this test");
     assert_eq!(parse_tab_path(&url), Some(home.join("Projects")));
 }
@@ -850,32 +850,32 @@ fn test_parse_tab_path_expands_tilde() {
 #[test]
 fn test_parse_tab_path_expands_url_encoded_tilde() {
     // `%7E` and `%2F` are URL-encoded `~` and `/`.
-    let url = Url::parse("warp://action/new_tab?path=%7E%2FProjects").unwrap();
+    let url = Url::parse("octomus://action/new_tab?path=%7E%2FProjects").unwrap();
     let home = dirs::home_dir().expect("HOME must be set for this test");
     assert_eq!(parse_tab_path(&url), Some(home.join("Projects")));
 }
 
 #[test]
 fn test_parse_tab_path_absolute_path_unchanged() {
-    let url = Url::parse("warp://action/new_tab?path=/tmp/foo").unwrap();
+    let url = Url::parse("octomus://action/new_tab?path=/tmp/foo").unwrap();
     assert_eq!(parse_tab_path(&url), Some(PathBuf::from("/tmp/foo")));
 }
 
 #[test]
 fn test_parse_tab_path_relative_path_unchanged() {
-    let url = Url::parse("warp://action/new_tab?path=relative/dir").unwrap();
+    let url = Url::parse("octomus://action/new_tab?path=relative/dir").unwrap();
     assert_eq!(parse_tab_path(&url), Some(PathBuf::from("relative/dir")));
 }
 
 #[test]
 fn test_parse_tab_path_missing_returns_none() {
-    let url = Url::parse("warp://action/new_tab").unwrap();
+    let url = Url::parse("octomus://action/new_tab").unwrap();
     assert_eq!(parse_tab_path(&url), None);
 }
 
 #[test]
 fn test_parse_tab_path_bare_tilde() {
-    let url = Url::parse("warp://action/new_tab?path=~").unwrap();
+    let url = Url::parse("octomus://action/new_tab?path=~").unwrap();
     let home = dirs::home_dir().expect("HOME must be set for this test");
     assert_eq!(parse_tab_path(&url), Some(home));
 }

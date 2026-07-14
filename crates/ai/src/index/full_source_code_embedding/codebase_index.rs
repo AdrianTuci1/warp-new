@@ -10,11 +10,11 @@ use chrono::{DateTime, Utc};
 use futures::stream::AbortHandle;
 use ignore::gitignore::Gitignore;
 use instant::Instant;
+use octomus_core::safe_error;
+use octomusui_core::{Entity, ModelContext, ModelHandle};
 #[cfg(feature = "local_fs")]
 use repo_metadata::entry::{BudgetExceededBehavior, IgnoredPathStrategy};
 use repo_metadata::Repository;
-use warp_core::safe_error;
-use warpui_core::{Entity, ModelContext, ModelHandle};
 
 use super::fragment_metadata::{
     FragmentMetadata, LeafToFragmentMetadata, LeafToFragmentMetadataUpdates,
@@ -49,11 +49,11 @@ cfg_if::cfg_if! {
             matches_gitignores,
             full_source_code_embedding::sync_client::CodebaseIndexSyncOperation,
         };
-        use warp_core::send_telemetry_from_ctx;
-        use warp_core::interval_timer::IntervalTimer;
-        use warpui_core::r#async::Timer;
-        use warpui_core::SingletonEntity;
-        use warp_core::sync_queue::SyncQueue;
+        use octomus_core::send_telemetry_from_ctx;
+        use octomus_core::interval_timer::IntervalTimer;
+        use octomusui_core::r#async::Timer;
+        use octomusui_core::SingletonEntity;
+        use octomus_core::sync_queue::SyncQueue;
         use sha2::Digest;
     }
 }
@@ -596,7 +596,7 @@ impl CodebaseIndex {
         let mut flushed_fragment_result = FlushFragmentResult::default();
 
         if !changed_files.deletions().is_empty() {
-            if warp_core::channel::ChannelState::enable_debug_features() {
+            if octomus_core::channel::ChannelState::enable_debug_features() {
                 log::info!(
                     "Trying to remove changed files: {:?}",
                     changed_files.deletions()
@@ -662,7 +662,7 @@ impl CodebaseIndex {
         }
 
         if !changed_files.upsertions.is_empty() {
-            if warp_core::channel::ChannelState::enable_debug_features() {
+            if octomus_core::channel::ChannelState::enable_debug_features() {
                 log::debug!(
                     "Trying to upsert changed files: {:?}",
                     &changed_files.upsertions

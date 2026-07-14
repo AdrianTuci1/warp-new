@@ -18,16 +18,16 @@ use lsp::LspEvent;
 #[cfg(feature = "local_fs")]
 use lsp::{LspManagerModel, LspServerConfig};
 #[cfg(feature = "local_fs")]
+use octomus_core::channel::ChannelState;
+use octomus_core::features::FeatureFlag;
+#[cfg(feature = "local_fs")]
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+#[cfg(feature = "local_fs")]
+use octomusui::windowing::WindowManager;
+use octomusui::{AppContext, Entity, ModelContext, SingletonEntity};
+#[cfg(feature = "local_fs")]
 use repo_metadata::repositories::{DetectedRepositories, DetectedRepositoriesEvent};
 use serde::{Deserialize, Serialize};
-#[cfg(feature = "local_fs")]
-use warp_core::channel::ChannelState;
-use warp_core::features::FeatureFlag;
-#[cfg(feature = "local_fs")]
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-#[cfg(feature = "local_fs")]
-use warpui::windowing::WindowManager;
-use warpui::{AppContext, Entity, ModelContext, SingletonEntity};
 
 use crate::ai::blocklist::{BlocklistAIHistoryEvent, BlocklistAIHistoryModel};
 #[cfg(feature = "local_fs")]
@@ -794,7 +794,7 @@ impl PersistedWorkspace {
     /// This ensures that the codebase index is up-to-date before the conversation begins.
     fn trigger_incremental_sync_for_conversation(
         &mut self,
-        terminal_view_id: warpui::EntityId,
+        terminal_view_id: octomusui::EntityId,
         ctx: &mut ModelContext<Self>,
     ) {
         if !UserWorkspaces::as_ref(ctx).is_codebase_context_enabled(ctx) {

@@ -1,12 +1,12 @@
 use chrono::Local;
-use warp_core::ui::appearance::Appearance;
+use octomus_core::ui::appearance::Appearance;
 use warp_graphql::queries::get_conversation_usage::ConversationUsage;
-use warpui::elements::{
+use octomusui::elements::{
     Border, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Empty, Flex, Hoverable,
     MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, Radius, Shrinkable, Text,
 };
-use warpui::platform::Cursor;
-use warpui::{AppContext, Element, View};
+use octomusui::platform::Cursor;
+use octomusui::{AppContext, Element, View};
 
 use crate::ai::blocklist::format_credits;
 use crate::ai::blocklist::usage::conversation_usage_view::{
@@ -128,7 +128,7 @@ impl UsageHistoryEntry {
         };
         let chevron = ConstrainedBox::new(
             chevron_icon
-                .to_warpui_icon(appearance.theme().foreground())
+                .to_octomusui_icon(appearance.theme().foreground())
                 .finish(),
         )
         .with_width(16.)

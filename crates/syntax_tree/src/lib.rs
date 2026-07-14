@@ -6,6 +6,9 @@ use std::sync::Arc;
 use arborium::tree_sitter::{InputEdit, Parser, Tree};
 use futures::stream::AbortHandle;
 use languages::Language;
+use octomusui_core::color::ColorU;
+use octomusui_core::text::point::Point;
+use octomusui_core::{AppContext, Entity, ModelContext, WeakModelHandle};
 use parking_lot::Mutex;
 use queries::highlight_query::HighlightQuery;
 pub use queries::highlight_query::{ColorMap, TextSlice};
@@ -17,9 +20,6 @@ use warp_editor::content::edit::PreciseDelta;
 use warp_editor::content::text::IndentUnit;
 use warp_editor::content::version::BufferVersion;
 use warp_editor::decoration::DecorationLayer;
-use warpui_core::color::ColorU;
-use warpui_core::text::point::Point;
-use warpui_core::{AppContext, Entity, ModelContext, WeakModelHandle};
 
 const MAX_SYNTAX_TREES: usize = 3;
 

@@ -7,13 +7,13 @@ use std::str::FromStr;
 use std::sync::Arc;
 
 use chrono::Local;
+use octomus_cli::agent::Harness;
+use octomus_terminal::model::escape_sequences::{BRACKETED_PASTE_END, BRACKETED_PASTE_START, C0};
+use octomusui::notification::UserNotification;
+use octomusui::platform::WindowStyle;
+use octomusui::{App, Presenter, ReadModel, WindowInvalidation};
 use parking_lot::FairMutex;
 use session_sharing_protocol::common::CLIAgentSessionState;
-use warp_cli::agent::Harness;
-use warp_terminal::model::escape_sequences::{BRACKETED_PASTE_END, BRACKETED_PASTE_START, C0};
-use warpui::notification::UserNotification;
-use warpui::platform::WindowStyle;
-use warpui::{App, Presenter, ReadModel, WindowInvalidation};
 
 use super::*;
 use crate::ai::agent::conversation::ConversationStatus;
@@ -1925,7 +1925,7 @@ fn pending_cloud_mode_query_clears_when_streaming_exchange_becomes_renderable() 
 /// Test clearing of session flag state when terminal is cleared
 #[test]
 fn test_clear_session_flag_state() {
-    use warp_terminal::shell::ShellType;
+    use octomus_terminal::shell::ShellType;
 
     use crate::ai::blocklist::SerializedBlockListItem;
     use crate::terminal::model::block::SerializedBlock;
@@ -2376,7 +2376,7 @@ fn test_alt_screen_select_with_sgr_mouse() {
         rerender!(app, presenter, invalidation, size_info);
         app.update(enclose!((presenter) move |ctx| {
             ctx.simulate_window_event(
-                warpui::Event::LeftMouseDown {
+                octomusui::Event::LeftMouseDown {
                     position: start_position,
                     modifiers: Default::default(),
                     click_count: 1,
@@ -2389,7 +2389,7 @@ fn test_alt_screen_select_with_sgr_mouse() {
         rerender!(app, presenter, invalidation, size_info);
         app.update(enclose!((presenter) move |ctx| {
             ctx.simulate_window_event(
-                warpui::Event::LeftMouseDragged {
+                octomusui::Event::LeftMouseDragged {
                     position: end_position,
                     modifiers: Default::default(),
                 },
@@ -2400,7 +2400,7 @@ fn test_alt_screen_select_with_sgr_mouse() {
         rerender!(app, presenter, invalidation, size_info);
         app.update(enclose!((presenter) move |ctx| {
             ctx.simulate_window_event(
-                warpui::Event::LeftMouseUp {
+                octomusui::Event::LeftMouseUp {
                     position: end_position,
                     modifiers: Default::default(),
                 },
@@ -2422,7 +2422,7 @@ fn test_alt_screen_select_with_sgr_mouse() {
         rerender!(app, presenter, invalidation, size_info);
         app.update(enclose!((presenter) move |ctx| {
             ctx.simulate_window_event(
-                warpui::Event::LeftMouseDown {
+                octomusui::Event::LeftMouseDown {
                     position: start_position,
                     modifiers: ModifiersState {
                         shift: true,
@@ -2438,7 +2438,7 @@ fn test_alt_screen_select_with_sgr_mouse() {
         rerender!(app, presenter, invalidation, size_info);
         app.update(enclose!((presenter) move |ctx| {
             ctx.simulate_window_event(
-                warpui::Event::LeftMouseDragged {
+                octomusui::Event::LeftMouseDragged {
                     position: end_position,
                     modifiers: ModifiersState {
                         shift: true,
@@ -2452,7 +2452,7 @@ fn test_alt_screen_select_with_sgr_mouse() {
         rerender!(app, presenter, invalidation, size_info);
         app.update(enclose!((presenter) move |ctx| {
             ctx.simulate_window_event(
-                warpui::Event::LeftMouseUp {
+                octomusui::Event::LeftMouseUp {
                     position: end_position,
                     modifiers: ModifiersState {
                         shift: true,
@@ -3951,7 +3951,7 @@ fn test_bash_vim_banner_already_shown() {
                 .set_value(BannerState::Dismissed, ctx);
         });
 
-        // Ensure Warp's vim keybindings are off.
+        // Ensure Octomus's vim keybindings are off.
         AppEditorSettings::handle(&app).update(&mut app, |editor_settings, ctx| {
             let _ = editor_settings.vim_mode.set_value(false, ctx);
         });
@@ -4008,7 +4008,7 @@ fn test_bash_vim_banner_on() {
                 .set_value(BannerState::NotDismissed, ctx);
         });
 
-        // Ensure Warp's vim keybindings are off.
+        // Ensure Octomus's vim keybindings are off.
         AppEditorSettings::handle(&app).update(&mut app, |editor_settings, ctx| {
             let _ = editor_settings.vim_mode.set_value(false, ctx);
         });
@@ -4064,7 +4064,7 @@ fn test_bash_vim_banner_off() {
                 .set_value(BannerState::NotDismissed, ctx);
         });
 
-        // Ensure Warp's vim keybindings are on.
+        // Ensure Octomus's vim keybindings are on.
         AppEditorSettings::handle(&app).update(&mut app, |editor_settings, ctx| {
             let _ = editor_settings.vim_mode.set_value(true, ctx);
         });
@@ -4121,7 +4121,7 @@ fn test_zsh_vim_banner_on() {
                 .set_value(BannerState::NotDismissed, ctx);
         });
 
-        // Ensure Warp's vim keybindings are off.
+        // Ensure Octomus's vim keybindings are off.
         AppEditorSettings::handle(&app).update(&mut app, |editor_settings, ctx| {
             let _ = editor_settings.vim_mode.set_value(false, ctx);
         });
@@ -4177,7 +4177,7 @@ fn test_zsh_vim_banner_off() {
                 .set_value(BannerState::NotDismissed, ctx);
         });
 
-        // Ensure Warp's vim keybindings are on.
+        // Ensure Octomus's vim keybindings are on.
         AppEditorSettings::handle(&app).update(&mut app, |editor_settings, ctx| {
             let _ = editor_settings.vim_mode.set_value(true, ctx);
         });
@@ -4227,7 +4227,7 @@ fn test_fish_vim_banner_on() {
             view.set_focus_handle(focus_handle, ctx);
         });
 
-        // Ensure Warp's vim keybindings are off.
+        // Ensure Octomus's vim keybindings are off.
         AppEditorSettings::handle(&app).update(&mut app, |editor_settings, ctx| {
             let _ = editor_settings.vim_mode.set_value(false, ctx);
         });
@@ -4276,7 +4276,7 @@ fn test_fish_vim_banner_off() {
             view.set_focus_handle(focus_handle, ctx);
         });
 
-        // Ensure Warp's vim keybindings are on.
+        // Ensure Octomus's vim keybindings are on.
         AppEditorSettings::handle(&app).update(&mut app, |editor_settings, ctx| {
             let _ = editor_settings.vim_mode.set_value(true, ctx);
         });
@@ -4552,14 +4552,14 @@ fn test_link_at_range_trims_zero_width_spaces() {
         let terminal = add_window_with_terminal(&mut app, None);
 
         // NOTE: this has two zero-width spaces, one after the '(', and one before the ')'
-        let input_url = "(\u{200b}https://warp.dev\u{200b})";
+        let input_url = "(\u{200b}https://octomus.dev\u{200b})";
         // NOTE: the final character in this string is a zero-width space
-        let non_escaped_url = "https://warp.dev\u{200b}";
-        let escaped_url = "https://warp.dev";
+        let non_escaped_url = "https://octomus.dev\u{200b}";
+        let escaped_url = "https://octomus.dev";
 
         terminal.update(&mut app, |view, _ctx| {
             view.model.lock().simulate_block(
-                r"printf '(%bhttps://warp.dev%b)\n' '\U200b' '\U200b'",
+                r"printf '(%bhttps://octomus.dev%b)\n' '\U200b' '\U200b'",
                 input_url,
             );
         });
@@ -5211,7 +5211,7 @@ fn ctrl_g_closes_cli_agent_rich_input_when_editor_is_focused() {
             .dispatch_keystroke(
                 window_id,
                 &[terminal.id(), input_id, editor_id],
-                &warpui::keymap::Keystroke::parse("ctrl-g").expect("valid keystroke"),
+                &octomusui::keymap::Keystroke::parse("ctrl-g").expect("valid keystroke"),
                 false,
             )
             .expect("dispatch should succeed");
@@ -5256,7 +5256,7 @@ fn ctrl_g_closes_cli_agent_rich_input_from_terminal_context() {
             .dispatch_keystroke(
                 window_id,
                 &[terminal.id()],
-                &warpui::keymap::Keystroke::parse("ctrl-g").expect("valid keystroke"),
+                &octomusui::keymap::Keystroke::parse("ctrl-g").expect("valid keystroke"),
                 false,
             )
             .expect("dispatch should succeed");
@@ -5294,7 +5294,7 @@ fn ctrl_g_toggles_cli_agent_rich_input_from_terminal_context() {
         let (window_id, terminal) =
             open_cli_agent_rich_input_for_agent_with_window_id(&mut app, CLIAgent::OpenCode);
 
-        let keystroke = warpui::keymap::Keystroke::parse("ctrl-g").expect("valid keystroke");
+        let keystroke = octomusui::keymap::Keystroke::parse("ctrl-g").expect("valid keystroke");
 
         // First close: rich input is open → Ctrl-G should close.
         let handled = app
@@ -5460,7 +5460,7 @@ fn drag_drop_image_in_cli_agent_long_running_command_pastes_via_clipboard() {
         // file. Bytes don't have to be a valid PNG.
         let mut image_path = std::env::temp_dir();
         image_path.push(format!(
-            "warp-test-cli-agent-drop-{}.png",
+            "octomus-test-cli-agent-drop-{}.png",
             std::process::id()
         ));
         std::fs::write(&image_path, b"fake-png-bytes").expect("write tmp image");
@@ -5583,7 +5583,7 @@ fn paste_raw_image_clipboard_in_cli_agent_sends_correct_bytes() {
 
                 // Write image-only data to the clipboard (no text, no paths).
                 ctx.clipboard().write(ClipboardContent {
-                    images: Some(vec![warpui::clipboard::ImageData {
+                    images: Some(vec![octomusui::clipboard::ImageData {
                         data: vec![0x89, 0x50, 0x4E, 0x47], // PNG magic bytes
                         mime_type: "image/png".to_string(),
                         filename: None,
@@ -5958,7 +5958,7 @@ fn status_in_progress_auto_opens_rich_input_after_blocked() {
     })
 }
 
-// Regression test for https://github.com/warpdotdev/warp/issues/9059.
+// Regression test for https://github.com/warpdotdev/octomus/issues/9059.
 // Codex's listener doesn't emit Blocked-state events (it only forwards opaque
 // OSC 9 notifications as Stop), so auto-toggling rich input would trap arrow
 // keys when Codex shows interactive option menus. Auto-toggle must not fire
@@ -6602,7 +6602,7 @@ fn linear_deeplink_does_not_auto_submit_when_already_in_agent_view() {
 
         // First enter fullscreen agent view with no initial prompt. This matches the
         // pre-condition in the issue: the focused terminal is already in fullscreen
-        // agent view when the `warp://linear/work?prompt=...` URI is dispatched.
+        // agent view when the `octomus://linear/work?prompt=...` URI is dispatched.
         let original_conversation_id = terminal.update(&mut app, |view, ctx| {
             view.agent_view_controller().update(ctx, |controller, ctx| {
                 controller
@@ -6721,7 +6721,7 @@ fn linear_deeplink_via_default_entrypoint_does_not_auto_submit_in_fullscreen() {
     })
 }
 
-/// Regression test for https://github.com/warpdotdev/warp/issues/11212.
+/// Regression test for https://github.com/warpdotdev/octomus/issues/11212.
 ///
 /// Closing the find bar must immediately clear find highlights on AI blocks.
 /// AI blocks are separate child views, so unless `close_find_bar` clears find

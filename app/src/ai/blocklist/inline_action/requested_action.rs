@@ -1,6 +1,6 @@
 //! This module contains rendering functions for various requested inline actions that have not yet
 //! been transformed into a [`View`] component. This currently encompasses UI for file retrieval,
-//! environmental variable collection, and SSH Warpification, to name a few.
+//! environmental variable collection, and SSH Octomusification, to name a few.
 //!
 //! There's quite a bit of duplication between function-based inline actions and view-based inline
 //! actions. Moreover, the header rendering functions here don't make use of the HeaderConfig.
@@ -14,19 +14,19 @@ use std::rc::Rc;
 
 use lazy_static::lazy_static;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_color::ColorU;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::color::internal_colors::neutral_2;
-use warpui::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::color::internal_colors::neutral_2;
+use octomusui::elements::{
     Align, Border, Clipped, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Empty,
     Flex, FormattedTextElement, Hoverable, MainAxisAlignment, MouseStateHandle, ParentElement,
     Radius, Shrinkable, SizeConstraintCondition, SizeConstraintSwitch, Text, Wrap, WrapFill,
 };
-use warpui::fonts::FamilyId;
-use warpui::keymap::Keystroke;
-use warpui::platform::Cursor;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{AppContext, Element, EventContext, SingletonEntity};
+use octomusui::fonts::FamilyId;
+use octomusui::keymap::Keystroke;
+use octomusui::platform::Cursor;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{AppContext, Element, EventContext, SingletonEntity};
+use pathfinder_color::ColorU;
 
 use super::inline_action_header::HeaderConfig;
 use crate::ai::blocklist::block::view_impl::WithContentItemSpacing;

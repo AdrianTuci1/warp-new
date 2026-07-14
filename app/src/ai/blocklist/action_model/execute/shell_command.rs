@@ -9,12 +9,12 @@ use futures::future::BoxFuture;
 use futures::{select, FutureExt};
 use futures_lite::pin;
 use itertools::Itertools;
+use octomus_core::command::ExitCode;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomus_util::path::ShellFamily;
+use octomusui::r#async::{Spawnable, Timer};
+use octomusui::{Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 use parking_lot::FairMutex;
-use warp_core::command::ExitCode;
-use warp_core::execution_mode::AppExecutionMode;
-use warp_util::path::ShellFamily;
-use warpui::r#async::{Spawnable, Timer};
-use warpui::{Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 
 use super::{ActionExecution, AnyActionExecution, ExecuteActionInput, PreprocessActionInput};
 use crate::ai::agent::{
@@ -77,7 +77,7 @@ impl ShellCommandExecutor {
     fn handle_terminal_model_event(&mut self, event: &ModelEvent, _ctx: &mut ModelContext<Self>) {
         // We wait for precmd for the block _after_ the requested command's block so that
         // downstream checks for current working directory are fresh. The precmd hook is when
-        // the shell relays current working directory to warp.
+        // the shell relays current working directory to octomus.
         if let ModelEvent::BlockMetadataReceived(BlockMetadataReceivedEvent { .. }) = event {
             let model = self.terminal_model.lock();
             let block_finished_senders = self.block_finished_senders.drain().collect_vec();

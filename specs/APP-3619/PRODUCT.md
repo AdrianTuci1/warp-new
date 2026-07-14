@@ -2,11 +2,11 @@
 
 ## Problem
 
-When the Warp notification plugin can't be auto-installed (SSH session, or a previous install attempt failed), the user currently has no way to learn how to install it manually. We need a modal that shows step-by-step manual installation instructions.
+When the Octomus notification plugin can't be auto-installed (SSH session, or a previous install attempt failed), the user currently has no way to learn how to install it manually. We need a modal that shows step-by-step manual installation instructions.
 
 ## Current Behavior
 
-- A green "Install Warp plugin" chip appears in the CLI agent footer when the plugin isn't installed (`agent_input_footer/mod.rs:611-633`)
+- A green "Install Octomus plugin" chip appears in the CLI agent footer when the plugin isn't installed (`agent_input_footer/mod.rs:611-633`)
 - Clicking it runs auto-install via `claude plugin` CLI commands (`plugin_manager/claude.rs:29-37`)
 - On failure: an error toast appears with a link to logs
 - On SSH: the chip visibility has a bug (see below)
@@ -27,8 +27,8 @@ The chip has two modes depending on context:
 
 **When:** local session, no prior install failure for this session.
 
-- Chip label: "Install Warp plugin"
-- Chip tooltip: "Install the Warp plugin to enable rich agent notifications within Warp"
+- Chip label: "Install Octomus plugin"
+- Chip tooltip: "Install the Octomus plugin to enable rich agent notifications within Octomus"
 - On click: runs auto-install (existing `handle_install_plugin` flow)
 - On success: chip disappears (listener registers)
 - On failure: transitions to Mode 2 for the rest of the session
@@ -38,7 +38,7 @@ The chip has two modes depending on context:
 **When:** SSH session, OR auto-install previously failed in this session.
 
 - Chip label: "Plugin install instructions"
-- Chip tooltip: "View instructions to install the Warp plugin"
+- Chip tooltip: "View instructions to install the Octomus plugin"
 - Chip icon: `Icon::Info` (instead of `Icon::Download`)
 - On click: opens a modal with manual installation steps
 
@@ -48,7 +48,7 @@ The chip has two modes depending on context:
 
 Custom modal view following the `CodexModal` pattern (centered overlay, semi-transparent backdrop, Escape to close, click-outside to dismiss via `Dismiss` element).
 
-- Title from `PluginInstallInstructions.title` (e.g. "Install Warp Plugin for Claude Code")
+- Title from `PluginInstallInstructions.title` (e.g. "Install Octomus Plugin for Claude Code")
 - Subtitle from `PluginInstallInstructions.subtitle`
 - Numbered steps, each with:
   - A short description of what the step does
@@ -60,14 +60,14 @@ Custom modal view following the `CodexModal` pattern (centered overlay, semi-tra
 
 These are in-session slash commands (the user is already running Claude Code).
 
-Step 1: "Add the Warp plugin marketplace repository"
+Step 1: "Add the Octomus plugin marketplace repository"
 ```
-/plugins marketplace add warpdotdev/claude-code-warp
+/plugins marketplace add warpdotdev/claude-code-octomus
 ```
 
-Step 2: "Install the Warp plugin"
+Step 2: "Install the Octomus plugin"
 ```
-/plugins install warp@claude-code-warp
+/plugins install octomus@claude-code-octomus
 ```
 
 Step 3: "Reload plugins to activate"
@@ -77,7 +77,7 @@ Step 3: "Reload plugins to activate"
 
 Subtitle: "Ensure that jq is installed on your machine. Then, run these commands inside your Claude Code session."
 
-Auto-install success toast: "Warp plugin installed. Please run /reload-plugins to activate."
+Auto-install success toast: "Octomus plugin installed. Please run /reload-plugins to activate."
 
 ### Extensibility
 

@@ -5,24 +5,24 @@ use std::sync::Arc;
 
 use itertools::Itertools as _;
 use markdown_parser::{parse_markdown, FormattedText, FormattedTextFragment, FormattedTextLine};
-use parking_lot::FairMutex;
-use settings::Setting;
-use warp_core::features::FeatureFlag;
-use warp_core::report_if_error;
-use warp_core::ui::Icon;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::report_if_error;
+use octomus_core::ui::Icon;
+use octomusui::elements::{
     Clipped, Container, CornerRadius, CrossAxisAlignment, Flex, FormattedTextElement,
     HighlightedHyperlink, MainAxisSize, MouseStateHandle, ParentElement, Radius, Shrinkable, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::keymap::Keystroke;
-use warpui::prelude::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::keymap::Keystroke;
+use octomusui::prelude::{
     Align, ConstrainedBox, Cursor, Empty, Hoverable, MainAxisAlignment, SavePosition,
 };
-use warpui::scene::Border;
-use warpui::{
+use octomusui::scene::Border;
+use octomusui::{
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
 };
+use parking_lot::FairMutex;
+use settings::Setting;
 
 use crate::ai::active_agent_views_model::{ActiveAgentViewsModel, ConversationOrTaskId};
 use crate::ai::agent::conversation::AIConversationId;
@@ -46,7 +46,7 @@ use crate::terminal::view::TerminalAction;
 use crate::terminal::{self, prompt, TerminalModel};
 use crate::util::time_format::format_approx_duration_from_now_utc;
 
-const CLOUD_AGENT_DOCS_URL: &str = "https://docs.warp.dev/agent-platform/cloud-agents/overview";
+const CLOUD_AGENT_DOCS_URL: &str = "https://docs.octomus.dev/agent-platform/cloud-agents/overview";
 const OZ_UPDATES_SECTION_HEADER: &str = "What's new in Oz";
 
 // The maximum number of Oz updates from the changelog rendered in-line in the 'What's new in Oz section'.
@@ -583,7 +583,7 @@ fn render_title_and_description(props: HeaderProps, app: &AppContext) -> Vec<Box
         .with_child(
             Container::new(
                 ConstrainedBox::new(
-                    icon.to_warpui_icon(
+                    icon.to_octomusui_icon(
                         theme
                             .main_text_color(theme.background())
                             .into_solid()
@@ -1034,7 +1034,7 @@ fn render_oz_updates(props: OzUpdatesProps<'_>, app: &AppContext) -> Option<Box<
                                     } else {
                                         Icon::ChevronRight
                                     }
-                                    .to_warpui_icon(theme.sub_text_color(theme.background()))
+                                    .to_octomusui_icon(theme.sub_text_color(theme.background()))
                                     .finish(),
                                 )
                                 .with_height(appearance.monospace_font_size())
@@ -1120,7 +1120,7 @@ fn render_oz_updates(props: OzUpdatesProps<'_>, app: &AppContext) -> Option<Box<
                                 .with_child(
                                     ConstrainedBox::new(
                                         Icon::Share3
-                                            .to_warpui_icon(
+                                            .to_octomusui_icon(
                                                 theme.sub_text_color(theme.background()),
                                             )
                                             .finish(),
@@ -1133,7 +1133,7 @@ fn render_oz_updates(props: OzUpdatesProps<'_>, app: &AppContext) -> Option<Box<
                         })
                         .with_reset_cursor_after_click()
                         .on_click(|_, app, _| {
-                            const CHANGELOG_URL: &str = "https://docs.warp.dev/changelog";
+                            const CHANGELOG_URL: &str = "https://docs.octomus.dev/changelog";
                             app.open_url(CHANGELOG_URL);
                         })
                         .with_cursor(Cursor::PointingHand)
@@ -1239,7 +1239,7 @@ pub fn render_ambient_credits_banner(credits: i32, app: &AppContext) -> Box<dyn 
 }
 
 mod styles {
-    use warp_core::ui::appearance::Appearance;
+    use octomus_core::ui::appearance::Appearance;
 
     pub const CONTAINER_VERTICAL_PADDING: f32 = 16.;
     pub const TITLE_MARGIN_BOTTOM: f32 = 8.;

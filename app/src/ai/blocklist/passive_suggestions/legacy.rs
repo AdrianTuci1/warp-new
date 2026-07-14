@@ -7,11 +7,11 @@ use std::time::Duration;
 use chrono::Utc;
 #[cfg(not(target_family = "wasm"))]
 use command::r#async::Command;
+use octomus_core::features::FeatureFlag;
+use octomusui::r#async::{FutureExt as AsyncFutureExt, SpawnedFutureHandle, Timer};
+use octomusui::{Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 use parking_lot::FairMutex;
 use serde_json::json;
-use warp_core::features::FeatureFlag;
-use warpui::r#async::{FutureExt as AsyncFutureExt, SpawnedFutureHandle, Timer};
-use warpui::{Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 
 use super::static_prompt_suggestions::static_suggested_query;
 #[cfg(not(target_family = "wasm"))]
@@ -26,7 +26,7 @@ use crate::ai::paths::host_native_absolute_path;
 use crate::ai::predict::generate_am_query_suggestions::{
     GenerateAMQuerySuggestionsRequest, GenerateAMQuerySuggestionsResponse, Suggestion,
 };
-use crate::ai_assistant::execution_context::WarpAiExecutionContext;
+use crate::ai_assistant::execution_context::OctomusAiExecutionContext;
 use crate::network::NetworkStatus;
 use crate::report_error;
 use crate::server::server_api::ServerApiProvider;
@@ -609,7 +609,7 @@ fn fetch_static_prompt_suggestion(block: &UserBlockCompleted) -> Option<AgentMod
 
 fn build_prompt_suggestions_request(
     block: &UserBlockCompleted,
-    execution_context: WarpAiExecutionContext,
+    execution_context: OctomusAiExecutionContext,
     terminal_model: &Arc<FairMutex<TerminalModel>>,
 ) -> Option<GenerateAMQuerySuggestionsRequest> {
     let exit_code = block.serialized_block.exit_code;

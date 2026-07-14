@@ -3,9 +3,9 @@ use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Weak};
 
+use octomusui_core::r#async::executor::Background;
+use octomusui_core::{Entity, SingletonEntity};
 use thiserror::Error;
-use warpui_core::r#async::executor::Background;
-use warpui_core::{Entity, SingletonEntity};
 
 use crate::{LogFileWriter, SimpleLogger};
 
@@ -38,10 +38,11 @@ pub fn resolve_log_path(namespace: &str, relative_path: impl AsRef<Path>) -> Pat
 
 /// Returns the base log directory for a given namespace name.
 fn log_directory_path(namespace: &str) -> PathBuf {
-    let base_dir = warp_core::paths::secure_state_dir().unwrap_or_else(warp_core::paths::state_dir);
+    let base_dir =
+        octomus_core::paths::secure_state_dir().unwrap_or_else(octomus_core::paths::state_dir);
     if cfg!(windows) {
         base_dir
-            .join(warp_core::paths::WARP_LOGS_DIR)
+            .join(octomus_core::paths::WARP_LOGS_DIR)
             .join(namespace)
     } else {
         base_dir.join(namespace)
@@ -128,7 +129,7 @@ impl LogManager {
     /// This is the entry point used by callers that produce high-volume logs
     /// over long-lived sessions — primarily MCP server stderr/stdout capture,
     /// where a single chatty server could otherwise grow its log file
-    /// unboundedly across a multi-day session (warpdotdev/warp#7723).
+    /// unboundedly across a multi-day session (warpdotdev/octomus#7723).
     pub fn register_with_rotation(
         &mut self,
         namespace: &str,

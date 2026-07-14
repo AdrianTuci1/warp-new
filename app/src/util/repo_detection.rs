@@ -10,14 +10,14 @@ use std::future::Future;
 use futures::future::ready;
 #[cfg(not(target_family = "wasm"))]
 use futures::future::Either;
+use octomus_core::SessionId;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+#[cfg(not(target_family = "wasm"))]
+use octomusui::SingletonEntity;
+use octomusui::{View, ViewContext};
 #[cfg(not(target_family = "wasm"))]
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::repositories::RepoDetectionSource;
-use warp_core::SessionId;
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-#[cfg(not(target_family = "wasm"))]
-use warpui::SingletonEntity;
-use warpui::{View, ViewContext};
 
 #[cfg(not(target_family = "wasm"))]
 use crate::remote_server::manager::RemoteServerManager;

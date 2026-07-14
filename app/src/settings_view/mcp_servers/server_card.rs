@@ -1,23 +1,23 @@
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_color::ColorU;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::external_product_icon::ExternalProductIcon;
-use warp_core::ui::icons::{Icon, ICON_DIMENSIONS};
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::AnsiColorIdentifier;
-use warpui::accessibility::ActionAccessibilityContent;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::external_product_icon::ExternalProductIcon;
+use octomus_core::ui::icons::{Icon, ICON_DIMENSIONS};
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::AnsiColorIdentifier;
+use octomusui::accessibility::ActionAccessibilityContent;
+use octomusui::elements::{
     Border, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Expanded, Fill, Flex,
     FormattedTextElement, HighlightedHyperlink, Hoverable, MainAxisAlignment, MainAxisSize,
     MouseState, MouseStateHandle, Padding, ParentElement, Radius, Text, Wrap,
 };
-use warpui::fonts::Weight;
-use warpui::platform::Cursor;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::chip::Chip;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::ui_components::switch::SwitchStateHandle;
-use warpui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use octomusui::fonts::Weight;
+use octomusui::platform::Cursor;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::chip::Chip;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::ui_components::switch::SwitchStateHandle;
+use octomusui::{AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use pathfinder_color::ColorU;
 
 use crate::ai::mcp::templatable::CloudTemplatableMCPServer;
 use crate::ai::mcp::{MCPServerState, TemplatableMCPServerManager};
@@ -512,7 +512,7 @@ impl ServerCardView {
                 .with_child(
                     Container::new(
                         ConstrainedBox::new(
-                            chevron_icon.to_warpui_icon(text_color.into()).finish(),
+                            chevron_icon.to_octomusui_icon(text_color.into()).finish(),
                         )
                         .with_width(chevron_dimensions)
                         .with_height(chevron_dimensions)
@@ -549,7 +549,7 @@ impl ServerCardView {
                 .with_cross_axis_alignment(CrossAxisAlignment::Center)
                 .with_spacing(2.)
                 .with_child(
-                    ConstrainedBox::new(icon.to_warpui_icon(chip_color.into()).finish())
+                    ConstrainedBox::new(icon.to_octomusui_icon(chip_color.into()).finish())
                         .with_width(style::TITLE_CHIP_FONT_SIZE)
                         .with_height(style::TITLE_CHIP_FONT_SIZE)
                         .finish(),
@@ -859,7 +859,7 @@ impl ServerCardView {
         }
 
         if self.render_options.show_add_icon {
-            let add_icon = warpui::elements::Icon::new(
+            let add_icon = octomusui::elements::Icon::new(
                 Icon::Plus.into(),
                 blended_colors::text_main(appearance.theme(), appearance.theme().background()),
             );

@@ -1,11 +1,11 @@
 use std::ops::Range;
 
-use warpui_core::elements::Point;
-use warpui_core::event::DispatchedEvent;
-use warpui_core::geometry::rect::RectF;
-use warpui_core::geometry::vector::Vector2F;
-use warpui_core::units::IntoPixels;
-use warpui_core::{
+use octomusui_core::elements::Point;
+use octomusui_core::event::DispatchedEvent;
+use octomusui_core::geometry::rect::RectF;
+use octomusui_core::geometry::vector::Vector2F;
+use octomusui_core::units::IntoPixels;
+use octomusui_core::{
     AfterLayoutContext, AppContext, Element, EventContext, LayoutContext, ModelHandle,
     PaintContext, SizeConstraint, WeakViewHandle,
 };

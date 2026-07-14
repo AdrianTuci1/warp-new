@@ -3,9 +3,13 @@
 use std::sync::Arc;
 
 use markdown_parser::markdown_parser::CODE_BLOCK_DEFAULT_MARKDOWN_LANG;
+use octomus_core::ui::builder::CHECK_SVG_PATH;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_util::user_input::UserInput;
+use octomusui::elements::{Border, ListIndentLevel};
+use octomusui::fonts::FamilyId;
+use octomusui::ui_components::checkbox::HOVER_BACKGROUND_COLOR;
 use pathfinder_color::ColorU;
-use warp_core::ui::builder::CHECK_SVG_PATH;
-use warp_core::ui::theme::color::internal_colors;
 use warp_editor::content::text::{
     BlockHeaderSize, BlockType as ContentBlockType, BufferBlockStyle, CodeBlockType,
 };
@@ -13,10 +17,6 @@ use warp_editor::render::model::{
     BrokenLinkStyle, CheckBoxStyle, EmbeddedItem, HorizontalRuleStyle, InlineCodeStyle,
     ParagraphStyles, RichTextStyles, TableStyle,
 };
-use warp_util::user_input::UserInput;
-use warpui::elements::{Border, ListIndentLevel};
-use warpui::fonts::FamilyId;
-use warpui::ui_components::checkbox::HOVER_BACKGROUND_COLOR;
 
 use crate::appearance::Appearance;
 use crate::notebooks::editor::embedded_item::EmbeddedWorkflow;
@@ -332,7 +332,7 @@ impl<'a> From<&'a BufferBlockStyle> for BlockType {
 /// Wrapper around the shared [`Workflow`] type with additional context for workflows contained
 /// within a notebook.
 ///
-/// This may be a command block that's part of the notebook text, or an embedded Warp Drive workflow.
+/// This may be a command block that's part of the notebook text, or an embedded Octomus Drive workflow.
 #[derive(Debug, Clone, PartialEq)]
 pub struct NotebookWorkflow {
     /// Definition of the workflow itself.

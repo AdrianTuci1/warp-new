@@ -1,13 +1,13 @@
 use std::path::PathBuf;
 
-use warp_core::ui::appearance::Appearance;
-use warpui::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::{
     Align, ChildView, ClippedScrollStateHandle, ClippedScrollable, ConstrainedBox, Container,
     CrossAxisAlignment, Expanded, Flex, MainAxisAlignment, MainAxisSize, ParentElement,
     ScrollbarWidth,
 };
-use warpui::ui_components::components::UiComponent;
-use warpui::{
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{
     AppContext, Element, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
@@ -192,7 +192,7 @@ impl AIFactView {
                 .with_child(
                     ConstrainedBox::new(
                         Icon::CloudOffline
-                            .to_warpui_icon(
+                            .to_octomusui_icon(
                                 appearance
                                     .theme()
                                     .sub_text_color(appearance.theme().surface_2()),
@@ -277,7 +277,7 @@ impl View for AIFactView {
             ScrollbarWidth::Auto,
             appearance.theme().nonactive_ui_detail().into(),
             appearance.theme().active_ui_detail().into(),
-            warpui::elements::Fill::None,
+            octomusui::elements::Fill::None,
         )
         .finish()
     }
@@ -307,16 +307,16 @@ impl BackingView for AIFactView {
     fn handle_pane_header_overflow_menu_action(
         &mut self,
         _action: &Self::PaneHeaderOverflowMenuAction,
-        _ctx: &mut warpui::ViewContext<Self>,
+        _ctx: &mut octomusui::ViewContext<Self>,
     ) {
         self.handle_action(_action, _ctx)
     }
 
-    fn close(&mut self, ctx: &mut warpui::ViewContext<Self>) {
+    fn close(&mut self, ctx: &mut octomusui::ViewContext<Self>) {
         ctx.emit(AIFactViewEvent::Pane(PaneEvent::Close));
     }
 
-    fn focus_contents(&mut self, ctx: &mut warpui::ViewContext<Self>) {
+    fn focus_contents(&mut self, ctx: &mut octomusui::ViewContext<Self>) {
         self.focus(ctx);
     }
 

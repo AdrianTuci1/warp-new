@@ -3,11 +3,11 @@ use std::future::Future;
 use std::sync::Arc;
 use std::time::Duration;
 
+use octomus_core::features::FeatureFlag;
+use octomusui_core::{Entity, SingletonEntity};
 use vec1::vec1;
-use warp_core::features::FeatureFlag;
 use warp_graphql::managed_secrets::ManagedSecret;
 use warp_graphql::queries::task_secrets::ManagedSecretValue as GqlManagedSecretValue;
-use warpui_core::{Entity, SingletonEntity};
 
 use crate::ManagedSecretValue;
 use crate::client::{
@@ -17,7 +17,7 @@ use crate::client::{
 use crate::envelope::UploadKey;
 use crate::gcp::{self, GcpWorkloadIdentityFederationError, GcpWorkloadIdentityFederationToken};
 
-/// Singleton model for working with Warp-managed secrets.
+/// Singleton model for working with Octomus-managed secrets.
 pub struct ManagedSecretManager {
     client: Arc<dyn ManagedSecretsClient>,
     actor_provider: Arc<dyn ActorProvider>,
@@ -154,7 +154,7 @@ impl ManagedSecretManager {
         }
     }
 
-    /// Get Warp-managed secrets scoped to the currently-executing task.
+    /// Get Octomus-managed secrets scoped to the currently-executing task.
     ///
     /// This will fail if not in an ambient agent.
     pub fn get_task_secrets(

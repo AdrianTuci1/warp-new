@@ -2,11 +2,11 @@ use std::collections::HashMap;
 use std::str::FromStr;
 
 use ai::index::full_source_code_embedding::NodeHash;
+use octomus_core::{HostId, SessionId};
+use octomus_util::remote_path::RemotePath;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::{Entity, ModelContext, SingletonEntity};
 use remote_server::codebase_index_proto::{RemoteCodebaseIndexState, RemoteCodebaseIndexStatus};
-use warp_core::{HostId, SessionId};
-use warp_util::remote_path::RemotePath;
-use warp_util::standardized_path::StandardizedPath;
-use warpui::{Entity, ModelContext, SingletonEntity};
 
 use super::manager::{
     RemoteCodebaseIndexStatusWithPath, RemoteCodebaseIndexUpdateOperation, RemoteServerManager,

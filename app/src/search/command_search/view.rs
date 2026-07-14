@@ -6,32 +6,32 @@ use std::time::Duration;
 use async_channel::Sender;
 use itertools::Itertools;
 use lazy_static::lazy_static;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::Vector2F;
-use warp_core::features::FeatureFlag;
-use warpui::accessibility::{AccessibilityContent, WarpA11yRole};
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
+use octomusui::elements::{
     resizable_state_handle, Align, AnchorPair, Border, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, Dismiss, Fill, Flex, MouseStateHandle, OffsetPositioning, OffsetType,
     ParentElement, ParentOffsetBounds, PositionedElementOffsetBounds, PositioningAxis, Radius,
     Resizable, ResizableStateHandle, SavePosition, ScrollStateHandle, Scrollable,
     ScrollableElement, Shrinkable, Stack, UniformList, UniformListState, XAxisAnchor, YAxisAnchor,
 };
-use warpui::presenter::ChildView;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle, WeakViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::Vector2F;
 
 use super::ai_queries::AIQueriesDataSource;
 use super::env_var_collections::EnvVarCollectionDataSource;
 use super::history::history_data_source_for_session;
 use super::notebooks::notebooks_data_source;
-use super::warp_ai::WarpAIDataSource;
+use super::octomus_ai::WarpAIDataSource;
 use super::workflows::{cloud_workflows_data_source, WorkflowsDataSource};
 use super::zero_state::{CommandSearchZeroStateEvent, CommandSearchZeroStateView};
-use crate::ai_assistant::execution_context::WarpAiExecutionContext;
+use crate::ai_assistant::execution_context::OctomusAiExecutionContext;
 use crate::ai_assistant::GenerateCommandsFromNaturalLanguageError;
 use crate::appearance::Appearance;
 use crate::auth::auth_manager::AuthManager;
@@ -39,7 +39,7 @@ use crate::auth::auth_state::AuthState;
 use crate::auth::auth_view_modal::AuthViewVariant;
 use crate::auth::{AuthStateProvider, UserUid};
 use crate::completer::SessionContext;
-use crate::drive::settings::WarpDriveSettings;
+use crate::drive::settings::OctomusDriveSettings;
 use crate::search::command_search::searcher::{CommandSearchItemAction, CommandSearchMixer};
 use crate::search::mixer::AddAsyncSourceOptions;
 use crate::search::result_renderer::{QueryResultRenderer, QueryResultRendererStyles};
@@ -218,7 +218,7 @@ impl CommandSearchView {
         &mut self,
         session_id: SessionId,
         session_context: Option<SessionContext>,
-        ai_execution_context: Option<WarpAiExecutionContext>,
+        ai_execution_context: Option<OctomusAiExecutionContext>,
         ctx: &mut ViewContext<Self>,
     ) {
         self.mixer.update(ctx, |mixer, ctx| {
@@ -244,7 +244,7 @@ impl CommandSearchView {
                 );
             }
 
-            if WarpDriveSettings::is_warp_drive_enabled(ctx) {
+            if OctomusDriveSettings::is_octomus_drive_enabled(ctx) {
                 mixer.add_sync_source(
                     WorkflowsDataSource::new(session_context.as_ref(), ctx),
                     HashSet::from([QueryFilter::Workflows]),
@@ -350,7 +350,7 @@ impl CommandSearchView {
         initial_query: String,
         query_filter: Option<QueryFilter>,
         menu_positioning: MenuPositioning,
-        ai_execution_context: Option<WarpAiExecutionContext>,
+        ai_execution_context: Option<OctomusAiExecutionContext>,
         ctx: &mut ViewContext<Self>,
     ) {
         self.reset_command_search_mixer(session_id, session_context, ai_execution_context, ctx);
@@ -577,7 +577,7 @@ impl CommandSearchView {
             .build()
             .finish();
         let row = Flex::row()
-            .with_main_axis_size(warpui::elements::MainAxisSize::Max)
+            .with_main_axis_size(octomusui::elements::MainAxisSize::Max)
             .with_cross_axis_alignment(CrossAxisAlignment::Center)
             .with_child(Shrinkable::new(1., text).finish());
 
@@ -640,7 +640,7 @@ impl CommandSearchView {
 
         Container::new(
             Flex::row()
-                .with_main_axis_size(warpui::elements::MainAxisSize::Max)
+                .with_main_axis_size(octomusui::elements::MainAxisSize::Max)
                 .with_cross_axis_alignment(CrossAxisAlignment::Center)
                 .with_child(Shrinkable::new(1., text).finish())
                 .finish(),
@@ -659,7 +659,7 @@ impl CommandSearchView {
         user_id: UserUid,
     ) -> Box<dyn Element> {
         let mut row = Flex::row()
-            .with_main_axis_size(warpui::elements::MainAxisSize::Max)
+            .with_main_axis_size(octomusui::elements::MainAxisSize::Max)
             .with_cross_axis_alignment(CrossAxisAlignment::Center);
 
         let upgrade_link = team_uid
@@ -998,7 +998,7 @@ impl View for CommandSearchView {
         ))
     }
 
-    fn render(&self, app: &AppContext) -> Box<dyn warpui::Element> {
+    fn render(&self, app: &AppContext) -> Box<dyn octomusui::Element> {
         let appearance = Appearance::as_ref(app);
         let mixer = self.mixer.as_ref(app);
 
@@ -1116,8 +1116,8 @@ impl CommandSearchView {
 
 pub mod styles {
     use lazy_static::lazy_static;
+    use octomusui::elements::{Border, DropShadow, ScrollbarWidth};
     use pathfinder_color::ColorU;
-    use warpui::elements::{Border, DropShadow, ScrollbarWidth};
 
     use crate::appearance::Appearance;
     use crate::themes::theme::Fill;

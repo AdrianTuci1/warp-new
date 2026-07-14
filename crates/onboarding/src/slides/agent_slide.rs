@@ -1,30 +1,30 @@
 use ai::LLMId;
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use ui_components::button::State as ButtonState;
-use ui_components::{button, Component as _, Options as _};
-use warp_core::features::FeatureFlag;
-use warp_core::send_telemetry_from_ctx;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::icons::Icon;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::Fill;
-use warpui_core::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_core::send_telemetry_from_ctx;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::icons::Icon;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::Fill;
+use octomusui_core::elements::{
     AnchorPair, Border, ClippedScrollStateHandle, ClippedScrollable, ConstrainedBox, Container,
     CornerRadius, CrossAxisAlignment, Dismiss, Empty, Flex, FormattedTextElement, Hoverable,
     Icon as WarpUiIcon, MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning,
     OffsetType, ParentElement, ParentOffsetBounds, PositioningAxis, Radius, SavePosition,
     ScrollTarget, ScrollToPositionMode, ScrollbarWidth, Stack, Text, XAxisAnchor, YAxisAnchor,
 };
-use warpui_core::fonts::{Properties, Weight};
-use warpui_core::keymap::Keystroke;
-use warpui_core::platform::Cursor;
-use warpui_core::scene::DropShadow;
-use warpui_core::text_layout::TextAlignment;
-use warpui_core::ui_components::components::{UiComponent as _, UiComponentStyles};
-use warpui_core::{
+use octomusui_core::fonts::{Properties, Weight};
+use octomusui_core::keymap::Keystroke;
+use octomusui_core::platform::Cursor;
+use octomusui_core::scene::DropShadow;
+use octomusui_core::text_layout::TextAlignment;
+use octomusui_core::ui_components::components::{UiComponent as _, UiComponentStyles};
+use octomusui_core::{
     AppContext, Element, Entity, Gradient, SingletonEntity as _, TypedActionView, View, ViewContext,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
+use ui_components::button::State as ButtonState;
+use ui_components::{button, Component as _, Options as _};
 
 use super::two_line_button::{render_two_line_button, TwoLineButtonSpec};
 use super::OnboardingSlide;
@@ -41,8 +41,8 @@ impl button::Theme for UpgradeButtonTheme {
         &self,
         button_state: ButtonState,
         appearance: &Appearance,
-    ) -> Option<warp_core::ui::theme::Fill> {
-        use warp_core::ui::color::blend::Blend;
+    ) -> Option<octomus_core::ui::theme::Fill> {
+        use octomus_core::ui::color::blend::Blend;
         let theme = appearance.theme();
         let base = theme.foreground();
         match button_state {
@@ -56,7 +56,7 @@ impl button::Theme for UpgradeButtonTheme {
 
     fn text_color(
         &self,
-        background: Option<warp_core::ui::theme::Fill>,
+        background: Option<octomus_core::ui::theme::Fill>,
         appearance: &Appearance,
     ) -> ColorU {
         let bg = background
@@ -148,7 +148,7 @@ pub enum AgentSlideEvent {
 }
 
 pub struct AgentSlide {
-    onboarding_state: warpui_core::ModelHandle<OnboardingStateModel>,
+    onboarding_state: octomusui_core::ModelHandle<OnboardingStateModel>,
 
     /// Mouse state handles for each model row.
     model_mouse_states: Vec<MouseStateHandle>,
@@ -197,7 +197,7 @@ fn sorted_models(models: &[OnboardingModelInfo]) -> Vec<OnboardingModelInfo> {
 
 impl AgentSlide {
     pub(crate) fn new(
-        onboarding_state: warpui_core::ModelHandle<OnboardingStateModel>,
+        onboarding_state: octomusui_core::ModelHandle<OnboardingStateModel>,
         ctx: &mut ViewContext<Self>,
     ) -> Self {
         let model_count = onboarding_state.as_ref(ctx).models().len();
@@ -230,7 +230,7 @@ impl AgentSlide {
                         me.show_plan_activated_toast = true;
                         // Auto-dismiss after the configured duration.
                         let _ = ctx.spawn(
-                            warpui_core::r#async::Timer::after(PLAN_ACTIVATED_TOAST_DURATION),
+                            octomusui_core::r#async::Timer::after(PLAN_ACTIVATED_TOAST_DURATION),
                             |me: &mut Self, _, ctx| {
                                 if me.show_plan_activated_toast {
                                     me.show_plan_activated_toast = false;
@@ -319,7 +319,7 @@ impl AgentSlide {
     fn render_header(&self, appearance: &Appearance) -> Box<dyn Element> {
         let title = appearance
             .ui_builder()
-            .paragraph("Customize your Warp Agent")
+            .paragraph("Customize your Octomus Agent")
             .with_style(UiComponentStyles {
                 font_size: Some(36.),
                 font_weight: Some(Weight::Medium),
@@ -537,7 +537,7 @@ impl AgentSlide {
             let title_row: Box<dyn Element> = if let Some(icon) = icon {
                 const ICON_SIZE: f32 = 14.;
                 let icon_el =
-                    ConstrainedBox::new(Box::new(icon.to_warpui_icon(title_color.into())))
+                    ConstrainedBox::new(Box::new(icon.to_octomusui_icon(title_color.into())))
                         .with_width(ICON_SIZE)
                         .with_height(ICON_SIZE)
                         .finish();
@@ -716,7 +716,7 @@ impl AgentSlide {
                 .finish();
 
             const ICON_SIZE: f32 = 14.;
-            let icon_el = ConstrainedBox::new(Box::new(icon.to_warpui_icon(title_color.into())))
+            let icon_el = ConstrainedBox::new(Box::new(icon.to_octomusui_icon(title_color.into())))
                 .with_width(ICON_SIZE)
                 .with_height(ICON_SIZE)
                 .finish();
@@ -951,7 +951,7 @@ impl AgentSlide {
             .on_click(|ctx, _, _| ctx.dispatch_typed_action(AgentSlideAction::ToggleDisableOz))
             .finish();
 
-        let label = Text::new("Disable Warp Agent", appearance.ui_font_family(), 14.0)
+        let label = Text::new("Disable Octomus Agent", appearance.ui_font_family(), 14.0)
             .with_color(internal_colors::text_sub(theme, background_for_text))
             .with_style(Properties {
                 weight: Weight::Normal,
@@ -999,12 +999,12 @@ impl AgentSlide {
         );
 
         let step_index = 2;
-        let step_count = if warp_core::features::FeatureFlag::OpenWarpNewSettingsModes.is_enabled()
-        {
-            5
-        } else {
-            4
-        };
+        let step_count =
+            if octomus_core::features::FeatureFlag::OpenWarpNewSettingsModes.is_enabled() {
+                5
+            } else {
+                4
+            };
         bottom_nav::onboarding_bottom_nav(
             appearance,
             step_index,
@@ -1161,7 +1161,7 @@ impl AgentSlide {
         };
 
         let icon = ConstrainedBox::new(Box::new(
-            Icon::AlertCircle.to_warpui_icon(Fill::Solid(text_color)),
+            Icon::AlertCircle.to_octomusui_icon(Fill::Solid(text_color)),
         ))
         .with_width(ICON_SIZE)
         .with_height(ICON_SIZE)
@@ -1259,7 +1259,7 @@ impl AgentSlide {
         let ui_builder = appearance.ui_builder();
 
         let check_icon = ConstrainedBox::new(Box::new(
-            Icon::CheckSkinny.to_warpui_icon(Fill::Solid(text_color)),
+            Icon::CheckSkinny.to_octomusui_icon(Fill::Solid(text_color)),
         ))
         .with_width(ICON_SIZE)
         .with_height(ICON_SIZE)
@@ -1358,7 +1358,7 @@ impl View for AgentSlide {
         let mut stack = Stack::new();
         stack.add_child(slide);
         stack.add_child(
-            warpui_core::elements::Align::new(bottom_overlay)
+            octomusui_core::elements::Align::new(bottom_overlay)
                 .bottom_center()
                 .finish(),
         );

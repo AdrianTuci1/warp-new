@@ -55,6 +55,7 @@ pub use input_mode::*;
 #[cfg(any(target_os = "linux", target_os = "freebsd"))]
 pub use linux::*;
 pub use native_preference::*;
+use octomus_core::user_preferences::GetUserPreferences as _;
 pub use onboarding::*;
 pub use pane::*;
 pub use privacy::*;
@@ -64,7 +65,6 @@ pub use select::*;
 pub use ssh::*;
 pub use theme::*;
 pub use vim_banner::*;
-use warp_core::user_preferences::GetUserPreferences as _;
 
 /// Describes errors encountered when loading settings from `settings.toml`.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -120,15 +120,15 @@ use std::ops::Mul;
 use std::path::PathBuf;
 
 use lazy_static::lazy_static;
+use octomus_core::features::FeatureFlag;
+use octomusui::elements::DEFAULT_UI_LINE_HEIGHT_RATIO;
+use octomusui::keymap::Keystroke;
+use octomusui::{AppContext, DisplayIdx, SingletonEntity};
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::Vector2F;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use settings::Setting as _;
-use warp_core::features::FeatureFlag;
-use warpui::elements::DEFAULT_UI_LINE_HEIGHT_RATIO;
-use warpui::keymap::Keystroke;
-use warpui::{AppContext, DisplayIdx, SingletonEntity};
 
 use crate::root_view::QuakeModePinPosition;
 use crate::terminal::{BlockListSettings, BlockPadding};
@@ -341,7 +341,7 @@ pub struct QuakeModeSettings {
     #[schemars(description = "Display to pin the hotkey window to.")]
     pub pin_screen: Option<DisplayIdx>,
     /// Whether we should hide quake mode window when it loses focus, this could happen either when
-    /// user focuses on another warp window or another app.
+    /// user focuses on another octomus window or another app.
     #[schemars(description = "Whether to hide the hotkey window when it loses focus.")]
     pub hide_window_when_unfocused: bool,
 }
@@ -587,10 +587,10 @@ pub struct ExtraMetaKeysChangedArg {
 
 /// Returns the path to the user preferences file.
 pub fn user_preferences_file_path() -> PathBuf {
-    warp_core::paths::config_local_dir().join("user_preferences.json")
+    octomus_core::paths::config_local_dir().join("user_preferences.json")
 }
 
 /// Returns the path to the TOML settings file.
 pub fn user_preferences_toml_file_path() -> PathBuf {
-    warp_core::paths::config_local_dir().join("settings.toml")
+    octomus_core::paths::config_local_dir().join("settings.toml")
 }

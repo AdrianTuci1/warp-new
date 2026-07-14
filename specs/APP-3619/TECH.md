@@ -99,7 +99,7 @@ This avoids relying on `terminal_model.is_ssh_block()` (which only tracks the pr
 
 `ActionButton` doesn't support changing label/icon after construction, so we create two `ActionButton` views and conditionally render the right one:
 
-- **Auto-install** (existing `install_plugin_button`): "Install Warp plugin" / `Icon::Download` → triggers `handle_install_plugin`
+- **Auto-install** (existing `install_plugin_button`): "Install Octomus plugin" / `Icon::Download` → triggers `handle_install_plugin`
 - **Manual** (new `plugin_instructions_button`): "Plugin install instructions" / `Icon::Info` → emits `ShowPluginInstallModal`
 
 In `render_cli_mode_footer`, branch on `should_use_manual_install_mode()` to pick which button to render.

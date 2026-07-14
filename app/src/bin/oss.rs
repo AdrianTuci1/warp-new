@@ -3,16 +3,16 @@
 #![cfg_attr(feature = "release_bundle", windows_subsystem = "windows")]
 
 use anyhow::Result;
-use warp_core::channel::{Channel, ChannelConfig, ChannelState, OzConfig, WarpServerConfig};
-use warp_core::AppId;
+use octomus_core::channel::{Channel, ChannelConfig, ChannelState, OzConfig, WarpServerConfig};
+use octomus_core::AppId;
 
-// Simple wrapper around warp::run() for Warp OSS builds.
+// Simple wrapper around octomus::run() for Octomus OSS builds.
 fn main() -> Result<()> {
     let mut state = ChannelState::new(
         Channel::Oss,
         ChannelConfig {
-            app_id: AppId::new("dev", "warp", "WarpOss"),
-            logfile_name: "warp-oss.log".into(),
+            app_id: AppId::new("dev", "octomus", "WarpOss"),
+            logfile_name: "octomus-oss.log".into(),
             server_config: WarpServerConfig::production(),
             oz_config: OzConfig::production(),
             telemetry_config: None,
@@ -22,11 +22,11 @@ fn main() -> Result<()> {
         },
     );
     if cfg!(debug_assertions) {
-        state = state.with_additional_features(warp_core::features::DEBUG_FLAGS);
+        state = state.with_additional_features(octomus_core::features::DEBUG_FLAGS);
     }
     ChannelState::set(state);
 
-    warp::run()
+    octomus::run()
 }
 
 // If we're not using an external plist, embed the following as the Info.plist.
@@ -41,9 +41,9 @@ embed_plist::embed_info_plist_bytes!(r#"
     <key>CFBundleDisplayName</key>
     <string>WarpOss</string>
     <key>CFBundleExecutable</key>
-    <string>warp-oss</string>
+    <string>octomus-oss</string>
     <key>CFBundleIdentifier</key>
-    <string>dev.warp.WarpOss</string>
+    <string>dev.octomus.WarpOss</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>

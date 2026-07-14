@@ -1,5 +1,5 @@
 // The code in this file is adapted from the alacritty_terminal crate under the
-// Apache license; see: crates/warp_terminal/src/model/LICENSE-ALACRITTY.
+// Apache license; see: crates/octomus_terminal/src/model/LICENSE-ALACRITTY.
 
 // path attribute needed due to current non-fs-based nesting of ansi_handler
 // under grid_handler.
@@ -14,16 +14,16 @@ use std::sync::Arc;
 
 use base64::Engine as _;
 use bounded_vec_deque::BoundedVecDeque;
+use octomus_core::channel::ChannelState;
+use octomus_core::features::FeatureFlag;
+use octomus_terminal::model::ansi::CharsetIndex;
+use octomus_terminal::model::grid::cell;
+use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
+use octomusui::image_cache::{resize_dimensions, FitType};
 use pathfinder_geometry::vector::Vector2F;
 use rand::Rng;
 use tab_stops::TabStops;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
-use warp_core::channel::ChannelState;
-use warp_core::features::FeatureFlag;
-use warp_terminal::model::ansi::CharsetIndex;
-use warp_terminal::model::grid::cell;
-use warp_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
-use warpui::image_cache::{resize_dimensions, FitType};
 
 use super::{AbsolutePoint, FullGridClearBehavior, GridHandler, PerformResetGridChecks, TermMode};
 use crate::server::telemetry::ImageProtocol;
@@ -82,7 +82,7 @@ pub(super) struct State {
     pub obfuscate_secrets: ObfuscateSecrets,
 
     /// Whether this Grid is in a shell context which supports handling the emoji presentation selector
-    /// correctly. Notably, Zsh does NOT support this well in bracketed paste mode (which we use for all Warp
+    /// correctly. Notably, Zsh does NOT support this well in bracketed paste mode (which we use for all Octomus
     /// commands), which can lead to cursor misalignment issues.
     pub supports_emoji_presentation_selector: bool,
 
@@ -409,7 +409,7 @@ impl ansi::Handler for GridHandler {
                 // was introduced[2] - version 277.
                 //
                 // Since we didn't want to claim xterm functionalities that we haven't yet implemented in
-                // Warp, rather than passing the higher `Pv` value, we decided to use one of the
+                // Octomus, rather than passing the higher `Pv` value, we decided to use one of the
                 // hardcoded ones. `0;95;0` is set what iTerm2 sends.
 
                 // [1] https://github.com/vim/vim/blob/20c370d9f2ee89cb854054edf71f5004f6efff77/src/term.c#L4630
@@ -429,7 +429,7 @@ impl ansi::Handler for GridHandler {
     fn report_xtversion<W: std::io::Write>(&mut self, writer: &mut W) {
         log::trace!("Reporting xtversion");
         let version = ChannelState::app_version().unwrap_or("");
-        let _ = writer.write_all(format!("\x1bP>|Warp({version})\x1b\\").as_bytes());
+        let _ = writer.write_all(format!("\x1bP>|Octomus({version})\x1b\\").as_bytes());
     }
 
     fn device_status<W: std::io::Write>(&mut self, writer: &mut W, arg: usize) {
@@ -1136,7 +1136,7 @@ impl ansi::Handler for GridHandler {
         self.grid.cursor.charsets[index] = charset;
     }
 
-    fn set_color(&mut self, _: usize, _: warpui::color::ColorU) {
+    fn set_color(&mut self, _: usize, _: octomusui::color::ColorU) {
         log::error!("Handler method GridHandler::set_color should never be called. This should be handled by TerminalModel.");
     }
 

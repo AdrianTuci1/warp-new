@@ -1,20 +1,20 @@
 //! This module contains the implementation of `BackingView` for `TerminalView`, as well as
 //! business logic for integrating the terminal view with the pane infra (`crate::pane_group`).
-use settings::Setting as _;
-use warp_core::context_flag::ContextFlag;
-use warpui::elements::{
+use octomus_core::context_flag::ContextFlag;
+use octomusui::elements::{
     ConstrainedBox, CrossAxisAlignment, Empty, Flex, MainAxisAlignment, MainAxisSize,
     ParentElement, Shrinkable,
 };
-use warpui::prelude::{ChildView, Container};
-use warpui::text_layout::ClipConfig;
-use warpui::ui_components::components::UiComponent;
+use octomusui::prelude::{ChildView, Container};
+use octomusui::text_layout::ClipConfig;
+use octomusui::ui_components::components::UiComponent;
 #[cfg(not(target_arch = "wasm32"))]
-use warpui::ui_components::components::UiComponentStyles;
-use warpui::{
+use octomusui::ui_components::components::UiComponentStyles;
+use octomusui::{
     AppContext, Element, ModelHandle, SingletonEntity, TypedActionView, ViewContext,
     WeakModelHandle,
 };
+use settings::Setting as _;
 
 use super::ambient_agent::is_cloud_agent_pre_first_exchange;
 use super::shared_session::adapter::Kind as SharedSessionKind;
@@ -240,7 +240,7 @@ impl TerminalView {
     /// Renders the back button for the pane header, or an empty element if the
     /// back button should not be shown.
     fn maybe_render_header_back_button(&self, app: &AppContext) -> Box<dyn Element> {
-        if !FeatureFlag::AgentView.is_enabled() || warpui::platform::is_mobile_device() {
+        if !FeatureFlag::AgentView.is_enabled() || octomusui::platform::is_mobile_device() {
             return Flex::row().finish();
         }
 
@@ -331,7 +331,7 @@ impl TerminalView {
                 Some(
                     ConstrainedBox::new(
                         icons::Icon::Sharing
-                            .to_warpui_icon(shared_session_indicator_color(appearance).into())
+                            .to_octomusui_icon(shared_session_indicator_color(appearance).into())
                             .finish(),
                     )
                     .with_height(appearance.ui_font_size())
@@ -860,7 +860,7 @@ impl TerminalView {
             return Some(
                 ConstrainedBox::new(
                     icons::Icon::AlertTriangle
-                        .to_warpui_icon(appearance.theme().ui_error_color().into())
+                        .to_octomusui_icon(appearance.theme().ui_error_color().into())
                         .finish(),
                 )
                 .with_height(font_size)
@@ -873,7 +873,7 @@ impl TerminalView {
         if let Some(shell_indicator_type) = self.shell_indicator_type {
             let shell_indicator_icon = shell_indicator_type
                 .to_icon()
-                .to_warpui_icon(
+                .to_octomusui_icon(
                     blended_colors::text_sub(appearance.theme(), appearance.theme().background())
                         .into(),
                 )

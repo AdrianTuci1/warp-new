@@ -1,22 +1,22 @@
 use chrono::Utc;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
-use pathfinder_geometry::vector::vec2f;
-use warp_core::features::FeatureFlag;
-use warp_server_client::auth::AgentIdentity;
-use warpui::elements::{
+use octomus_core::features::FeatureFlag;
+use octomus_server_client::auth::AgentIdentity;
+use octomusui::elements::{
     Border, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     Empty, Expanded, Fill, Flex, FormattedTextElement, HighlightedHyperlink, MainAxisAlignment,
     MainAxisSize, MouseStateHandle, OffsetPositioning, Padding, ParentElement,
     PositionedElementAnchor, PositionedElementOffsetBounds, Radius, SavePosition, Stack, Text,
 };
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::ui_components::segmented_control::{
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::ui_components::segmented_control::{
     LabelConfig, RenderableOptionConfig, SegmentedControl,
 };
-use warpui::{
+use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
 
 use crate::appearance::Appearance;
 use crate::editor::{
@@ -29,9 +29,9 @@ use crate::view_components::dropdown::{DROPDOWN_PADDING, TOP_MENU_BAR_HEIGHT};
 use crate::view_components::{Dropdown as DropdownView, DropdownItem};
 use crate::workspaces::user_workspaces::UserWorkspaces;
 
-const OZ_AGENTS_URL: &str = "https://oz.warp.dev/agents?new=true";
+const OZ_AGENTS_URL: &str = "https://oz.octomus.dev/agents?new=true";
 const API_KEY_DOCS_URL: &str =
-    "https://docs.warp.dev/reference/cli/api-keys/#personal-vs-agent-keys";
+    "https://docs.octomus.dev/reference/cli/api-keys/#personal-vs-agent-keys";
 
 const LABEL_FONT_SIZE: f32 = 14.;
 const INPUT_WIDTH: f32 = 428.; // 460px - (2 * 16px) padding
@@ -48,7 +48,7 @@ impl ApiKeyType {
     fn description(&self) -> &'static str {
         match self {
             ApiKeyType::Personal => {
-                "This API key is tied to your user and can make requests against your Warp account."
+                "This API key is tied to your user and can make requests against your Octomus account."
             }
             ApiKeyType::Team => {
                 "This API key is tied to your team and can make requests on behalf of your team."
@@ -162,7 +162,7 @@ impl CreateApiKeyModal {
                 ..Default::default()
             };
             let mut editor = EditorView::single_line(options, ctx);
-            editor.set_placeholder_text("Warp API Key", ctx);
+            editor.set_placeholder_text("Octomus API Key", ctx);
             editor
         });
 
@@ -328,7 +328,7 @@ impl CreateApiKeyModal {
         let name = self.name_editor.as_ref(ctx).buffer_text(ctx);
 
         let final_name = if name.trim().is_empty() {
-            "Warp API Key".to_string()
+            "Octomus API Key".to_string()
         } else {
             name.trim().to_string()
         };
@@ -505,10 +505,10 @@ impl CreateApiKeyModal {
             "Copy"
         };
         let copy_icon = if self.raw_key_copied {
-            warp_core::ui::icons::Icon::Check.to_warpui_icon(appearance.theme().background())
+            octomus_core::ui::icons::Icon::Check.to_octomusui_icon(appearance.theme().background())
         } else {
-            warp_core::ui::icons::Icon::Copy
-                .to_warpui_icon(appearance.theme().active_ui_text_color())
+            octomus_core::ui::icons::Icon::Copy
+                .to_octomusui_icon(appearance.theme().active_ui_text_color())
         };
         let mut copy_button_builder = appearance
             .ui_builder()
@@ -521,8 +521,8 @@ impl CreateApiKeyModal {
                 self.create_button_mouse_state.clone(),
             )
             .with_text_and_icon_label(
-                warpui::ui_components::button::TextAndIcon::new(
-                    warpui::ui_components::button::TextAndIconAlignment::IconFirst,
+                octomusui::ui_components::button::TextAndIcon::new(
+                    octomusui::ui_components::button::TextAndIconAlignment::IconFirst,
                     copy_label,
                     copy_icon,
                     MainAxisSize::Min,
@@ -854,7 +854,7 @@ impl TypedActionView for CreateApiKeyModal {
             CreateApiKeyModalAction::CopyRawKey => {
                 let content = self.raw_key.clone().unwrap_or_default();
                 ctx.clipboard()
-                    .write(warpui::clipboard::ClipboardContent::plain_text(content));
+                    .write(octomusui::clipboard::ClipboardContent::plain_text(content));
                 self.raw_key_copied = true;
                 // Success toast
                 let window_id = ctx.window_id();

@@ -2,7 +2,7 @@ use std::fs;
 use std::path::Path;
 
 use anyhow::{Context as _, Result};
-use warp_cli::skill::SkillSpec;
+use octomus_cli::skill::SkillSpec;
 
 use super::*;
 
@@ -22,14 +22,14 @@ fn write_skill_file(path: &Path, name: &str, description: &str, body: &str) -> R
 #[test]
 fn resolve_from_skill_dirs_by_directory_scan_resolves_home_skill_dir() -> Result<()> {
     let temp_dir = tempfile::TempDir::new().context("Failed to create temp dir")?;
-    let skill_dir = temp_dir.path().join(".warp").join("skills");
+    let skill_dir = temp_dir.path().join(".octomus").join("skills");
     let skill_path = skill_dir.join("my-skill").join("SKILL.md");
 
     write_skill_file(
         &skill_path,
         "my-skill",
         "desc",
-        "# Global Warp skill\n\nUse this one.",
+        "# Global Octomus skill\n\nUse this one.",
     )?;
 
     let spec = SkillSpec::without_repo("my-skill".to_string());
@@ -37,7 +37,7 @@ fn resolve_from_skill_dirs_by_directory_scan_resolves_home_skill_dir() -> Result
         .context("Expected to resolve skill from explicit home skill dir")?;
 
     assert_eq!(resolved.skill_path, skill_path);
-    assert!(resolved.instructions.contains("Global Warp skill"));
+    assert!(resolved.instructions.contains("Global Octomus skill"));
 
     Ok(())
 }
@@ -49,7 +49,7 @@ fn resolve_from_root_path_by_directory_scan_respects_directory_precedence() -> R
 
     let spec = SkillSpec::without_repo("my-skill".to_string());
     let agents_skill = root.join(".agents/skills/my-skill/SKILL.md");
-    let warp_skill = root.join(".warp/skills/my-skill/SKILL.md");
+    let warp_skill = root.join(".octomus/skills/my-skill/SKILL.md");
 
     let claude_skill = root.join(".claude/skills/my-skill/SKILL.md");
     let codex_skill = root.join(".codex/skills/my-skill/SKILL.md");
@@ -64,13 +64,13 @@ fn resolve_from_root_path_by_directory_scan_respects_directory_precedence() -> R
         &warp_skill,
         "my-skill",
         "desc",
-        "# Warp version\n\nDo not pick this when .agents exists.",
+        "# Octomus version\n\nDo not pick this when .agents exists.",
     )?;
     write_skill_file(
         &claude_skill,
         "my-skill",
         "desc",
-        "# Claude version\n\nDo not pick this when .warp exists.",
+        "# Claude version\n\nDo not pick this when .octomus exists.",
     )?;
     write_skill_file(
         &codex_skill,
@@ -84,7 +84,7 @@ fn resolve_from_root_path_by_directory_scan_respects_directory_precedence() -> R
 
     assert_eq!(resolved.skill_path, agents_skill);
     assert!(resolved.instructions.contains("Agents version"));
-    assert!(!resolved.instructions.contains("Warp version"));
+    assert!(!resolved.instructions.contains("Octomus version"));
     assert!(!resolved.instructions.contains("Claude version"));
     assert!(!resolved.instructions.contains("Codex version"));
     assert!(!resolved.instructions.contains("name:"));
@@ -122,12 +122,12 @@ fn instructions_body_strips_front_matter_using_line_range() -> Result<()> {
 #[test]
 fn parse_org_from_git_url_supports_ssh_and_https() {
     assert_eq!(
-        parse_org_from_git_url("git@github.com:warpdotdev/warp-internal.git"),
+        parse_org_from_git_url("git@github.com:warpdotdev/octomus-internal.git"),
         Some("warpdotdev".to_string())
     );
 
     assert_eq!(
-        parse_org_from_git_url("https://github.com/warpdotdev/warp-internal.git"),
+        parse_org_from_git_url("https://github.com/warpdotdev/octomus-internal.git"),
         Some("warpdotdev".to_string())
     );
 }
@@ -188,7 +188,7 @@ fn resolve_simple_name_uses_directory_precedence() -> Result<()> {
     let root = temp_dir.path();
 
     // Create skills with same name in different directories
-    // Note: .agents/skills has highest precedence, followed by .warp, then .claude.
+    // Note: .agents/skills has highest precedence, followed by .octomus, then .claude.
     let agents_skill = root.join(".agents/skills/my-skill/SKILL.md");
     write_skill_file(
         &agents_skill,
@@ -197,12 +197,12 @@ fn resolve_simple_name_uses_directory_precedence() -> Result<()> {
         "# Agents version\n\nThis should be picked by precedence.",
     )?;
 
-    let warp_skill = root.join(".warp/skills/my-skill/SKILL.md");
+    let warp_skill = root.join(".octomus/skills/my-skill/SKILL.md");
     write_skill_file(
         &warp_skill,
         "my-skill",
         "desc",
-        "# Warp version\n\nThis should lose to .agents but beat .claude.",
+        "# Octomus version\n\nThis should lose to .agents but beat .claude.",
     )?;
 
     let claude_skill = root.join(".claude/skills/my-skill/SKILL.md");
@@ -219,7 +219,7 @@ fn resolve_simple_name_uses_directory_precedence() -> Result<()> {
         .context("Expected to resolve skill by name")?;
     assert_eq!(resolved.skill_path, agents_skill);
     assert!(resolved.instructions.contains("Agents version"));
-    assert!(!resolved.instructions.contains("Warp version"));
+    assert!(!resolved.instructions.contains("Octomus version"));
     assert!(!resolved.instructions.contains("Claude version"));
 
     Ok(())

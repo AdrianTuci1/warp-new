@@ -1,6 +1,6 @@
 //! Skill resolution for agent runs.
 //!
-//! This module exists primarily for `warp agent run --skill ...` (and related flows) where we need to
+//! This module exists primarily for `octomus agent run --skill ...` (and related flows) where we need to
 //! resolve a CLI-provided `--skill` specifier (`SkillSpec`) into a concrete `SKILL.md` file and its
 //! parsed instruction body.
 //!
@@ -18,12 +18,12 @@ use ai::skills::{
 };
 use command::blocking::Command;
 use command::r#async::Command as AsyncCommand;
-use warp_cli::skill::SkillSpec;
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warpui::{AppContext, SingletonEntity as _};
+use octomus_cli::skill::SkillSpec;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomusui::{AppContext, SingletonEntity as _};
 
 use super::SkillManager;
-use crate::warp_managed_paths_watcher::warp_managed_skill_dirs;
+use crate::octomus_managed_paths_watcher::warp_managed_skill_dirs;
 
 const SKILL_FILE_NAME: &str = "SKILL.md";
 
@@ -63,7 +63,7 @@ fn resolve_from_skill_dirs_by_directory_scan(
 fn home_skill_dirs_for_resolution() -> Vec<PathBuf> {
     let mut skill_dirs = Vec::new();
     for provider in SKILL_PROVIDER_DEFINITIONS.iter() {
-        if provider.provider == SkillProvider::Warp {
+        if provider.provider == SkillProvider::Octomus {
             for dir in warp_managed_skill_dirs() {
                 push_unique_path(&mut skill_dirs, dir);
             }

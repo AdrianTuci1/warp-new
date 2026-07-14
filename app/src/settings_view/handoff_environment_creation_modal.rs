@@ -1,13 +1,13 @@
-use pathfinder_color::ColorU;
-use warpui::elements::{
+use octomusui::elements::{
     Align, ChildView, ClippedScrollStateHandle, ClippedScrollable, CrossAxisAlignment, Dismiss,
     Element, Flex, MouseStateHandle, ParentElement, ScrollbarWidth,
 };
-use warpui::ui_components::components::UiComponent;
-use warpui::{
+use octomusui::ui_components::components::UiComponent;
+use octomusui::{
     AppContext, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_color::ColorU;
 
 use crate::ai::ambient_agents::github_auth_url::{AuthSource, GithubAuthRedirectTarget};
 use crate::ai::cloud_environments;
@@ -185,11 +185,11 @@ impl HandoffEnvironmentCreationModal {
             ScrollbarWidth::Auto,
             theme.nonactive_ui_text_color().into(),
             theme.active_ui_text_color().into(),
-            warpui::elements::Fill::None,
+            octomusui::elements::Fill::None,
         )
         .finish();
 
-        let padded_form = warpui::elements::Container::new(scrollable_form)
+        let padded_form = octomusui::elements::Container::new(scrollable_form)
             .with_uniform_padding(8.)
             .finish();
 
@@ -210,7 +210,7 @@ impl HandoffEnvironmentCreationModal {
             })
             .finish();
 
-        warpui::elements::Container::new(Align::new(dialog).finish())
+        octomusui::elements::Container::new(Align::new(dialog).finish())
             .with_background_color(ColorU::new(0, 0, 0, MODAL_BACKDROP_OPACITY))
             .with_corner_radius(app.windows().window_corner_radius())
             .finish()

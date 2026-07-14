@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
-use warp_core::report_error;
+use octomus_core::report_error;
 use warp_graphql::scalars::Time;
-use warpui::{Entity, ModelContext, SingletonEntity};
+use octomusui::{Entity, ModelContext, SingletonEntity};
 
 use crate::auth::AuthStateProvider;
 use crate::server::server_api::ai::AIClient;

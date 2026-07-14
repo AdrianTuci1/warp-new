@@ -2,7 +2,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use base64::Engine;
 use instant::Instant;
-use warp_core::channel::IapConfig;
+use octomus_core::channel::IapConfig;
 
 use super::*;
 

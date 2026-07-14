@@ -1,7 +1,7 @@
 use anyhow::Result;
 use futures::executor::block_on;
-use warp_completer::meta::SpannedItem;
-use warp_completer::{ParsedTokenData, ParsedTokensSnapshot};
+use octomus_completer::meta::SpannedItem;
+use octomus_completer::{ParsedTokenData, ParsedTokensSnapshot};
 
 use super::*;
 

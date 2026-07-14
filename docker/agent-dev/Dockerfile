@@ -4,8 +4,8 @@ ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:/usr/local/go/bin:$PATH
 
-# This set of packages is adapted from ./script/bootstrap in warp-internal and warp-server.
-# It doesn't include *everything* (ex. no wgslfmt or gcloud), but is enough to build and test Warp.
+# This set of packages is adapted from ./script/bootstrap in octomus-internal and octomus-server.
+# It doesn't include *everything* (ex. no wgslfmt or gcloud), but is enough to build and test Octomus.
 # Note: currently, only x86_64 builds are supported.
 
 # Install system-level packages. These are needed to build on Linux, and/or to run integration tests.
@@ -75,7 +75,7 @@ RUN set -eux; \
   rustup toolchain install; \
   rustup default "$(rustup show active-toolchain | cut -d' ' -f1)"
 
-# Install all dependencies needed to build, run, and test Warp
+# Install all dependencies needed to build, run, and test Octomus
 COPY ./script ./setup/script
 RUN cd ./setup && ./script/linux/install_test_deps
 

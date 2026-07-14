@@ -1,18 +1,18 @@
 use std::default::Default;
 
-use warp_core::ui::appearance::Appearance;
-use warpui::fonts::Weight;
-use warpui::keymap::FixedBinding;
-use warpui::presenter::ChildView;
-use warpui::ui_components::components::{Coords, UiComponentStyles};
-use warpui::{
+use octomus_core::ui::appearance::Appearance;
+use octomusui::fonts::Weight;
+use octomusui::keymap::FixedBinding;
+use octomusui::presenter::ChildView;
+use octomusui::ui_components::components::{Coords, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
 };
 
 use super::shared_objects_creation_denied_body::{
     SharedObjectsCreationDeniedBody, SharedObjectsCreationDeniedBodyEvent,
 };
-use crate::drive::cloud_object_styling::warp_drive_icon_color;
+use crate::drive::cloud_object_styling::octomus_drive_icon_color;
 use crate::drive::DriveObjectType;
 use crate::modal::{Modal, ModalEvent};
 use crate::server::ids::ServerId;
@@ -39,7 +39,7 @@ pub enum SharedObjectsCreationDeniedModalEvent {
 }
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([FixedBinding::new(
         "escape",
@@ -132,14 +132,14 @@ impl SharedObjectsCreationDeniedModal {
         let (icon, icon_color) = match object_type {
             DriveObjectType::Notebook { is_ai_document } => (
                 Some(Icon::Notebook),
-                Some(Fill::Solid(warp_drive_icon_color(
+                Some(Fill::Solid(octomus_drive_icon_color(
                     appearance,
                     DriveObjectType::Notebook { is_ai_document },
                 ))),
             ),
             DriveObjectType::Workflow => (
                 Some(Icon::Workflow),
-                Some(Fill::Solid(warp_drive_icon_color(
+                Some(Fill::Solid(octomus_drive_icon_color(
                     appearance,
                     DriveObjectType::Workflow,
                 ))),

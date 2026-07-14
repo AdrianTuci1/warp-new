@@ -19,7 +19,7 @@ Branch-urile de agent (în ordinea asta):
 1. octomus/agent-1-delete  — șterge directoare cloud + billing
 2. octomus/agent-2-lib     — curăță lib.rs (elimină module cloud)
 3. octomus/agent-3-ai      — curăță ai/ (elimină credite, cloud agent code)
-4. octomus/agent-4-branding — Warp→Octomus în UI strings
+4. octomus/agent-4-branding — Octomus→Octomus în UI strings
 5. octomus/agent-5-cargo   — Cargo.toml, notebooks, workflows
 6. octomus/agent-6-simplify — simplify restul fișierelor
 7. octomus/agent-7-crates  — șterge crates cloud

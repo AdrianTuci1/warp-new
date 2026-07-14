@@ -3,9 +3,9 @@ use std::collections::HashMap;
 use anyhow::{Context as _, Result, ensure};
 use candle_core::{IndexOp as _, Tensor};
 use candle_onnx::onnx::ModelProto;
+use octomus_completer::ParsedTokensSnapshot;
 use prost::Message as _;
 use tokenizers::Tokenizer;
-use warp_completer::ParsedTokensSnapshot;
 
 use super::{ClassificationResult, Model};
 use crate::InputClassifierDecisionSource;

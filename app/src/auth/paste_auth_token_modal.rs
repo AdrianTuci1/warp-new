@@ -6,23 +6,23 @@
 //! This lives in the app crate (not the onboarding crate) because it reuses
 //! `EditorView` for the text input, which the onboarding crate doesn't
 //! depend on.
-use pathfinder_color::ColorU;
-use ui_components::{button, Component as _, Options as _};
-use warp_core::ui::theme::color::internal_colors;
-use warpui::actions::StandardAction;
-use warpui::elements::{
+use octomus_core::ui::theme::color::internal_colors;
+use octomusui::actions::StandardAction;
+use octomusui::elements::{
     Align, Border, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Dismiss, Fill,
     Flex, FormattedTextElement, HighlightedHyperlink, MainAxisAlignment, MainAxisSize,
     MouseStateHandle, ParentElement, Radius, Shrinkable, Stack,
 };
-use warpui::fonts::Weight;
-use warpui::keymap::{FixedBinding, Keystroke};
-use warpui::text_layout::TextAlignment;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::Weight;
+use octomusui::keymap::{FixedBinding, Keystroke};
+use octomusui::text_layout::TextAlignment;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_color::ColorU;
+use ui_components::{button, Component as _, Options as _};
 
 use crate::appearance::Appearance;
 use crate::auth::auth_manager::{AuthManager, AuthManagerEvent};
@@ -39,7 +39,7 @@ const MODAL_WIDTH: f32 = 460.;
 const AUTH_TOKEN_INPUT_BORDER_RADIUS: Radius = Radius::Pixels(4.);
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
     app.register_fixed_bindings([
         FixedBinding::new(
             "enter",
@@ -251,7 +251,7 @@ impl View for PasteAuthTokenModalView {
         let close_button = ui_builder
             .close_button(24., self.close_mouse_state.clone())
             .build()
-            .on_click(|ctx: &mut warpui::EventContext, _, _| {
+            .on_click(|ctx: &mut octomusui::EventContext, _, _| {
                 ctx.dispatch_typed_action(PasteAuthTokenModalAction::Cancel);
             })
             .finish();
@@ -402,7 +402,7 @@ impl View for PasteAuthTokenModalView {
         // Dim backdrop with click-to-dismiss behavior (matches the mockup).
         let mut stack = Stack::new();
         stack.add_child(
-            Container::new(warpui::elements::Empty::new().finish())
+            Container::new(octomusui::elements::Empty::new().finish())
                 .with_background_color(ColorU::new(0, 0, 0, 179))
                 .finish(),
         );

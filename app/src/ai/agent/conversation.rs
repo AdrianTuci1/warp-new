@@ -6,22 +6,22 @@ use ai::document::AIDocumentId;
 use ai::skills::SkillPathOrigin;
 use chrono::{DateTime, Local, TimeZone};
 use itertools::Itertools as _;
+use octomus_cli::agent::Harness;
+use octomus_core::command::ExitCode;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomus_core::features::FeatureFlag;
+use octomus_core::send_telemetry_from_ctx;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::WarpTheme;
+use octomusui::color::ColorU;
+use octomusui::{AppContext, EntityId, ModelContext, SingletonEntity};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use vec1::{Size0Error, Vec1};
-use warp_cli::agent::Harness;
-use warp_core::command::ExitCode;
-use warp_core::execution_mode::AppExecutionMode;
-use warp_core::features::FeatureFlag;
-use warp_core::send_telemetry_from_ctx;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::WarpTheme;
 use warp_multi_agent_api::response_event::stream_finished;
 use warp_multi_agent_api::response_event::stream_finished::TokenUsage;
 use warp_multi_agent_api::{self as api};
-use warpui::color::ColorU;
-use warpui::{AppContext, EntityId, ModelContext, SingletonEntity};
 
 use super::api::ServerConversationToken;
 use super::task::helper::*;
@@ -94,9 +94,9 @@ fn footer_model_token_usage(
     usage_metadata: &stream_finished::ConversationUsageMetadata,
     llm_preferences: &LLMPreferences,
 ) -> Vec<ModelTokenUsage> {
-    // warp + byok rows merge on their server-known model id. Custom endpoint
+    // octomus + byok rows merge on their server-known model id. Custom endpoint
     // rows live in a separate bucket keyed by their upstream `config_key` so
-    // they never collide with a warp/byok row that happens to share the same
+    // they never collide with a octomus/byok row that happens to share the same
     // resolved alias. The `config_key` itself is not retained on
     // `ModelTokenUsage`; it is translated to an alias up front and only the
     // alias flows downstream (display + shared-session replay).
@@ -198,7 +198,7 @@ pub struct AIConversation {
     /// Unique ID for this conversation.
     id: AIConversationId,
 
-    /// Whether this conversation is being shared from a different warp instance
+    /// Whether this conversation is being shared from a different octomus instance
     /// (i.e. is not a local conversation).
     is_viewing_shared_session: bool,
     task_store: TaskStore,
@@ -1512,7 +1512,7 @@ impl AIConversation {
         });
     }
 
-    /// Updates the notebook_uid for a plan artifact when it's synced to Warp Drive.
+    /// Updates the notebook_uid for a plan artifact when it's synced to Octomus Drive.
     pub fn update_plan_notebook_uid(
         &mut self,
         document_uid: AIDocumentId,
@@ -3658,7 +3658,7 @@ impl AIConversation {
     /// Converts the conversation into a vector of serialized command blocks.
     /// When we open a new tab to restore a conversation in, we need to precompute this serialized list of blocks
     /// to pass into the TerminalModel constructor since command blocks must be created
-    /// before the warp input block to not break bootstrapping.
+    /// before the octomus input block to not break bootstrapping.
     /// Only the command blocks are actually created in the terminal model. During restoration in the TerminalView,
     /// AI blocks are inserted relative to the command blocks based on timestamp.
     pub fn to_serialized_blocklist_items(&self) -> Vec<SerializedBlockListItem> {
@@ -4047,7 +4047,7 @@ pub enum AIAgentSerializedBlockFormat {
 /// Describes the format capabilities of a conversation.
 #[derive(Debug, Clone)]
 pub struct AIAgentConversationFormat {
-    /// Whether there is a Warp MAA task list available for this conversation.
+    /// Whether there is a Octomus MAA task list available for this conversation.
     pub has_task_list: bool,
     /// The format of the TUI serialized block, if available.
     pub block_snapshot: Option<AIAgentSerializedBlockFormat>,
@@ -4212,7 +4212,7 @@ impl std::fmt::Display for ConversationStatus {
 }
 
 impl ConversationStatus {
-    pub fn render_icon(&self, appearance: &Appearance) -> warpui::elements::Icon {
+    pub fn render_icon(&self, appearance: &Appearance) -> octomusui::elements::Icon {
         match self {
             ConversationStatus::InProgress => in_progress_icon(appearance),
             ConversationStatus::Success => succeeded_icon(appearance),

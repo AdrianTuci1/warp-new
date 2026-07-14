@@ -184,7 +184,7 @@ integration_tests! {
     // For some reason, disabling the `AgentMode` flag does not actually disable Agent Mode in the test
     // run. Ignore for now.
     #[ignore]
-    test_ask_warp_ai_keybinding_for_selected_block,
+    test_ask_octomus_ai_keybinding_for_selected_block,
 
     test_create_folder_from_command_palette,
 
@@ -229,7 +229,7 @@ integration_tests! {
 
     test_notebook_pane_tracking,
     test_close_notebook_tab,
-    test_open_in_warp_banner,
+    test_open_in_octomus_banner,
     test_close_notebook_window,
     test_backspace_inside_raw_mermaid_block_edits_text_without_removing_block,
 

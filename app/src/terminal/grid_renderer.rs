@@ -8,19 +8,19 @@ use std::ops::{Range, RangeInclusive};
 
 use lazy_static::lazy_static;
 use num_traits::Float as _;
+use octomus_core::features::FeatureFlag;
+use octomusui::assets::asset_cache::{AssetCache, AssetSource, AssetState};
+use octomusui::color::ColorU;
+use octomusui::elements::{Border, CornerRadius, Fill, Radius, DEFAULT_UI_LINE_HEIGHT_RATIO};
+use octomusui::fonts::{FamilyId, FontId, Properties, Style, Weight};
+use octomusui::geometry::rect::RectF;
+use octomusui::geometry::vector::{vec2f, Vector2F};
+use octomusui::image_cache::{AnimatedImageBehavior, CacheOption, FitType, Image, ImageCache};
+use octomusui::platform::LineStyle;
+use octomusui::text_layout::{Line, StyleAndFont, TextStyle, DEFAULT_TOP_BOTTOM_RATIO};
+use octomusui::units::{IntoLines as _, Lines, Pixels};
+use octomusui::{AppContext, Element, EntityId, PaintContext, Scene, SingletonEntity};
 use unicode_width::UnicodeWidthChar;
-use warp_core::features::FeatureFlag;
-use warpui::assets::asset_cache::{AssetCache, AssetSource, AssetState};
-use warpui::color::ColorU;
-use warpui::elements::{Border, CornerRadius, Fill, Radius, DEFAULT_UI_LINE_HEIGHT_RATIO};
-use warpui::fonts::{FamilyId, FontId, Properties, Style, Weight};
-use warpui::geometry::rect::RectF;
-use warpui::geometry::vector::{vec2f, Vector2F};
-use warpui::image_cache::{AnimatedImageBehavior, CacheOption, FitType, Image, ImageCache};
-use warpui::platform::LineStyle;
-use warpui::text_layout::{Line, StyleAndFont, TextStyle, DEFAULT_TOP_BOTTOM_RATIO};
-use warpui::units::{IntoLines as _, Lines, Pixels};
-use warpui::{AppContext, Element, EntityId, PaintContext, Scene, SingletonEntity};
 
 pub use self::cell_glyph_cache::CellGlyphCache;
 use self::cell_type::{CellType, IsFocused, Secret};
@@ -580,7 +580,7 @@ fn render_grid_without_ligatures<'a>(
         }
 
         if !foreground_image_ids.is_empty() {
-            ctx.scene.start_layer(warpui::ClipBounds::ActiveLayer);
+            ctx.scene.start_layer(octomusui::ClipBounds::ActiveLayer);
             for image_placement in foreground_image_ids {
                 if let Some((image_metadata, image_placement_data)) = image_metadata
                     .get(&image_placement.image_id)
@@ -624,7 +624,7 @@ fn render_grid_without_ligatures<'a>(
 
             // Skip the cursor cell when CLI agent rich input is open
             // AND the agent draws its own cursor (SHOW_CURSOR is off).
-            // When Warp draws the cursor (SHOW_CURSOR on), we keep the cell
+            // When Octomus draws the cursor (SHOW_CURSOR on), we keep the cell
             // and only suppress the draw_cursor call.
             if hide_cursor_cell
                 && visible_cursor_shape.is_none()
@@ -1079,7 +1079,7 @@ fn render_grid_with_ligatures<'a>(
         }
 
         if !foreground_image_ids.is_empty() {
-            ctx.scene.start_layer(warpui::ClipBounds::ActiveLayer);
+            ctx.scene.start_layer(octomusui::ClipBounds::ActiveLayer);
             for image_placement in foreground_image_ids {
                 if let Some((image_metadata, image_placement_data)) = image_metadata
                     .get(&image_placement.image_id)
@@ -1156,7 +1156,7 @@ fn render_grid_with_ligatures<'a>(
 
             // Skip the cursor cell when CLI agent rich input is open
             // AND the agent draws its own cursor (SHOW_CURSOR is off).
-            // When Warp draws the cursor (SHOW_CURSOR on), we keep the cell
+            // When Octomus draws the cursor (SHOW_CURSOR on), we keep the cell
             // and only suppress the draw_cursor call.
             if hide_cursor_cell
                 && visible_cursor_shape.is_none()

@@ -1,7 +1,7 @@
-//! Context chips built into Warp
+//! Context chips built into Octomus
 
 use chrono::Local;
-use warp_util::path::user_friendly_path;
+use octomus_util::path::user_friendly_path;
 
 use super::context_chip::{GeneratorContext, ShellCommand, ShellCommandGenerator};
 use super::ChipValue;

@@ -1,5 +1,5 @@
+use octomusui::{AppContext, SingletonEntity};
 use serde::Serialize;
-use warpui::{AppContext, SingletonEntity};
 
 use super::conversation::AIConversationId;
 use super::{
@@ -22,9 +22,9 @@ impl ForTelemetry for AIAgentCitation {
 
     fn for_telemetry(&self, ctx: &AppContext) -> Option<Self::Output> {
         match self {
-            Self::WarpDriveObject { uid } => {
+            Self::OctomusDriveObject { uid } => {
                 CloudModel::as_ref(ctx).get_by_uid(uid).map(|object| {
-                    CitationForTelemetry::WarpDriveObject {
+                    CitationForTelemetry::OctomusDriveObject {
                         object_type: object.object_type(),
                         uid: object.uid(),
                     }

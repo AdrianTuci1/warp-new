@@ -9,12 +9,12 @@ use cloud_objects::cloud_object::{
 use cloud_objects::ids::{ClientId, FolderId, HashableId, SyncId, ToServerId};
 use diesel::result::Error;
 use diesel::{Connection, ExpressionMethods, QueryDsl, RunQueryDsl, SqliteConnection};
+use octomus_core::features::FeatureFlag;
 use persistence::model::{
     GenericStringObject as PersistedGenericStringObject, NewGenericStringObject, NewObjectMetadata,
     NewObjectPermissions, ObjectMetadata, ObjectPermissions,
 };
 use persistence::schema;
-use warp_core::features::FeatureFlag;
 use warp_graphql::scalars::time::ServerTimestamp;
 
 use crate::{decode_guests, decode_link_sharing, encode_guests, encode_link_sharing};

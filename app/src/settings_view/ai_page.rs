@@ -1,34 +1,34 @@
 use ::ai::api_keys::{ApiKeyManager, ApiKeys};
 use enum_iterator::all;
 use itertools::Itertools;
-use pathfinder_geometry::vector::vec2f;
-use regex::Regex;
-use settings::{Setting, ToggleableSetting};
-use strum::IntoEnumIterator;
-use warp_core::channel::ChannelState;
-use warp_core::context_flag::ContextFlag;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::color::contrast::MinimumAllowedContrast;
-use warp_core::ui::color::ContrastingColor;
-use warp_core::ui::theme::color::internal_colors;
-use warp_core::ui::theme::Fill as ThemeFill;
-use warpui::elements::{
+use octomus_core::channel::ChannelState;
+use octomus_core::context_flag::ContextFlag;
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::color::contrast::MinimumAllowedContrast;
+use octomus_core::ui::color::ContrastingColor;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_core::ui::theme::Fill as ThemeFill;
+use octomusui::elements::{
     Border, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
     Dismiss, Empty, Expanded, Fill, Flex, FormattedTextElement, HighlightedHyperlink, Hoverable,
     HyperlinkLens, HyperlinkUrl, MainAxisAlignment, MainAxisSize, MouseStateHandle,
     OffsetPositioning, ParentAnchor, ParentElement, ParentOffsetBounds, Radius, Shrinkable, Stack,
     Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::keymap::{ContextPredicate, Keystroke};
-use warpui::platform::Cursor;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::ui_components::slider::SliderStateHandle;
-use warpui::ui_components::switch::{SwitchStateHandle, TooltipConfig};
-use warpui::{
+use octomusui::fonts::{Properties, Weight};
+use octomusui::keymap::{ContextPredicate, Keystroke};
+use octomusui::platform::Cursor;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::ui_components::slider::SliderStateHandle;
+use octomusui::ui_components::switch::{SwitchStateHandle, TooltipConfig};
+use octomusui::{
     id, Action, AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use regex::Regex;
+use settings::{Setting, ToggleableSetting};
+use strum::IntoEnumIterator;
 
 use super::custom_inference_modal::{
     CustomEndpointModal, CustomEndpointModalEvent, CustomEndpointModalViewState,
@@ -81,11 +81,10 @@ use crate::settings::{
     AwsBedrockCredentialsEnabled, CodeSettings, CodebaseContextEnabled, FileBasedMcpEnabled,
     GitOperationsAutogenEnabled, IncludeAgentCommandsInHistory, InputSettings,
     IntelligentAutosuggestionsEnabled, MemoryEnabled, NLDInTerminalEnabled,
-    NaturalLanguageAutosuggestionsEnabled, PromptSubmissionMode, RuleSuggestionsEnabled,
-    SharedBlockTitleGenerationEnabled, ShouldRenderCLIAgentToolbar,
+    NaturalLanguageAutosuggestionsEnabled, OctomusDriveContextEnabled, PromptSubmissionMode,
+    RuleSuggestionsEnabled, SharedBlockTitleGenerationEnabled, ShouldRenderCLIAgentToolbar,
     ShouldRenderUseAgentToolbarForUserCommands, ShouldShowOzUpdatesInZeroState, ShowAgentTips,
     ShowConversationHistory, ShowHintText, ThinkingDisplayMode, VoiceInputEnabled,
-    WarpDriveContextEnabled,
 };
 use crate::terminal::session_settings::{SessionSettings, SessionSettingsChangedEvent};
 use crate::terminal::CLIAgent;
@@ -169,8 +168,8 @@ const GIT_OPERATIONS_AUTOGEN_DESCRIPTION: &str =
     "Let AI generate commit messages and pull request titles and descriptions.";
 const WISPR_FLOW_URL: &str = "https://wisprflow.ai/";
 const CUSTOM_INFERENCE_LEARN_MORE_URL: &str =
-    "https://docs.warp.dev/support-and-community/plans-and-billing/bring-your-own-api-key/";
-const CUSTOM_INFERENCE_TERMS_URL: &str = "https://www.warp.dev/legal/terms-of-service";
+    "https://docs.octomus.dev/support-and-community/plans-and-billing/bring-your-own-api-key/";
+const CUSTOM_INFERENCE_TERMS_URL: &str = "https://www.octomus.dev/legal/terms-of-service";
 const CUSTOM_INFERENCE_INFO_TOOLTIP_MAX_WIDTH: f32 = 320.;
 
 pub fn init_actions_from_parent_view<T: Action + Clone>(
@@ -185,7 +184,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             context,
             flags::IS_ANY_AI_ENABLED,
         )
-        .with_group(bindings::BindingGroup::WarpAi)],
+        .with_group(bindings::BindingGroup::OctomusAi)],
         app,
     );
 
@@ -196,7 +195,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
             flags::IS_ACTIVE_AI_ENABLED,
         )
-        .with_group(bindings::BindingGroup::WarpAi)],
+        .with_group(bindings::BindingGroup::OctomusAi)],
         app,
     );
 
@@ -213,7 +212,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
             flags::AI_INPUT_AUTODETECTION_FLAG,
         )
-        .with_group(bindings::BindingGroup::WarpAi)
+        .with_group(bindings::BindingGroup::OctomusAi)
         .with_enabled(|| FeatureFlag::AgentMode.is_enabled())],
         app,
     );
@@ -226,7 +225,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
             flags::NLD_IN_TERMINAL_FLAG,
         )
-        .with_group(bindings::BindingGroup::WarpAi)
+        .with_group(bindings::BindingGroup::OctomusAi)
         .with_enabled(|| FeatureFlag::AgentView.is_enabled())],
         app,
     );
@@ -239,7 +238,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             &(context.clone() & id!(flags::IS_ACTIVE_AI_ENABLED)),
             flags::INTELLIGENT_AUTOSUGGESTIONS_FLAG,
         )
-        .with_group(bindings::BindingGroup::WarpAi)],
+        .with_group(bindings::BindingGroup::OctomusAi)],
         app,
     );
     ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
@@ -251,7 +250,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             &(context.clone() & id!(flags::IS_ACTIVE_AI_ENABLED)),
             flags::PROMPT_SUGGESTIONS_FLAG,
         )
-        .with_group(bindings::BindingGroup::WarpAi)],
+        .with_group(bindings::BindingGroup::OctomusAi)],
         app,
     );
     ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
@@ -265,7 +264,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                 & id!(flags::PROMPT_SUGGESTIONS_FLAG)),
             flags::CODE_SUGGESTIONS_FLAG,
         )
-        .with_group(bindings::BindingGroup::WarpAi)],
+        .with_group(bindings::BindingGroup::OctomusAi)],
         app,
     );
     ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
@@ -280,7 +279,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             ),
             None,
         )
-        .with_group(bindings::BindingGroup::WarpAi)
+        .with_group(bindings::BindingGroup::OctomusAi)
         .with_enabled(|| FeatureFlag::AgentTips.is_enabled())],
         app,
     );
@@ -303,12 +302,12 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             ),
             None,
         )
-        .with_group(bindings::BindingGroup::WarpAi)
+        .with_group(bindings::BindingGroup::OctomusAi)
         .with_enabled(|| FeatureFlag::AgentView.is_enabled())],
         app,
     );
     {
-        use warpui::keymap::FixedBinding;
+        use octomusui::keymap::FixedBinding;
 
         use crate::settings::ThinkingDisplayMode;
 
@@ -329,13 +328,13 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                     )),
                     ai_context.clone() & !id!(context_flag),
                 )
-                .with_group(bindings::BindingGroup::WarpAi.as_str())
+                .with_group(bindings::BindingGroup::OctomusAi.as_str())
             })
             .collect();
         app.register_fixed_bindings(mode_bindings);
     }
     if FeatureFlag::QueueSlashCommand.is_enabled() {
-        use warpui::keymap::FixedBinding;
+        use octomusui::keymap::FixedBinding;
 
         let ai_context = context.clone() & id!(flags::IS_ANY_AI_ENABLED);
         let mode_bindings: Vec<FixedBinding> = PromptSubmissionMode::iter()
@@ -351,7 +350,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                     )),
                     ai_context.clone() & !id!(context_flag),
                 )
-                .with_group(bindings::BindingGroup::WarpAi.as_str())
+                .with_group(bindings::BindingGroup::OctomusAi.as_str())
             })
             .collect();
         app.register_fixed_bindings(mode_bindings);
@@ -365,7 +364,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             &(context.clone() & id!(flags::IS_ACTIVE_AI_ENABLED)),
             flags::NATURAL_LANGUAGE_AUTOSUGGESTIONS_FLAG,
         )
-        .with_group(bindings::BindingGroup::WarpAi)
+        .with_group(bindings::BindingGroup::OctomusAi)
         .with_enabled(|| FeatureFlag::PredictAMQueries.is_enabled())],
         app,
     );
@@ -378,7 +377,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             &(context.clone() & id!(flags::IS_ACTIVE_AI_ENABLED)),
             flags::SHARED_BLOCK_TITLE_GENERATION_FLAG,
         )
-        .with_group(bindings::BindingGroup::WarpAi)
+        .with_group(bindings::BindingGroup::OctomusAi)
         .with_enabled(|| FeatureFlag::SharedBlockTitleGeneration.is_enabled())],
         app,
     );
@@ -407,7 +406,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
             flags::IS_VOICE_INPUT_ENABLED,
         )
-        .with_group(bindings::BindingGroup::WarpAi)
+        .with_group(bindings::BindingGroup::OctomusAi)
         .with_enabled(|| cfg!(feature = "voice_input"))],
         app,
     );
@@ -428,7 +427,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
             ),
             None,
         )
-        .with_group(bindings::BindingGroup::WarpAi)],
+        .with_group(bindings::BindingGroup::OctomusAi)],
         app,
     );
     ToggleSettingActionPair::add_toggle_setting_action_pairs_as_bindings(
@@ -441,7 +440,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                 &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
                 flags::INCLUDE_AGENT_COMMANDS_IN_HISTORY_FLAG,
             )
-            .with_group(bindings::BindingGroup::WarpAi),
+            .with_group(bindings::BindingGroup::OctomusAi),
             ToggleSettingActionPair::new(
                 "conversation history in tools panel",
                 builder(SettingsAction::AI(
@@ -450,7 +449,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                 &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
                 flags::SHOW_CONVERSATION_HISTORY,
             )
-            .with_group(bindings::BindingGroup::WarpAi),
+            .with_group(bindings::BindingGroup::OctomusAi),
             ToggleSettingActionPair::new(
                 "model picker in prompt",
                 builder(SettingsAction::AI(
@@ -459,7 +458,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                 &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
                 flags::SHOW_BASE_MODEL_PICKER_IN_PROMPT_FLAG,
             )
-            .with_group(bindings::BindingGroup::WarpAi),
+            .with_group(bindings::BindingGroup::OctomusAi),
             ToggleSettingActionPair::new(
                 "coding agent toolbar",
                 builder(SettingsAction::AI(
@@ -468,7 +467,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                 context,
                 flags::CLI_AGENT_FOOTER_ENABLED,
             )
-            .with_group(bindings::BindingGroup::WarpAi),
+            .with_group(bindings::BindingGroup::OctomusAi),
         ],
         app,
     );
@@ -480,7 +479,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                 &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
                 flags::AI_RULES_FLAG,
             )
-            .with_group(bindings::BindingGroup::WarpAi)
+            .with_group(bindings::BindingGroup::OctomusAi)
             .with_enabled(|| FeatureFlag::AIRules.is_enabled()),
             ToggleSettingActionPair::new(
                 "Suggested Rules",
@@ -490,19 +489,19 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                 &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
                 flags::SUGGESTED_RULES_FLAG,
             )
-            .with_group(bindings::BindingGroup::WarpAi)
+            .with_group(bindings::BindingGroup::OctomusAi)
             .with_enabled(|| {
                 FeatureFlag::AIRules.is_enabled() && FeatureFlag::SuggestedRules.is_enabled()
             }),
             ToggleSettingActionPair::new(
-                "Warp Drive as agent context",
+                "Octomus Drive as agent context",
                 builder(SettingsAction::AI(
-                    AISettingsPageAction::ToggleWarpDriveContext,
+                    AISettingsPageAction::ToggleOctomusDriveContext,
                 )),
                 &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
                 flags::WARP_DRIVE_CONTEXT_FLAG,
             )
-            .with_group(bindings::BindingGroup::WarpAi)
+            .with_group(bindings::BindingGroup::OctomusAi)
             .with_enabled(|| FeatureFlag::AIRules.is_enabled()),
             ToggleSettingActionPair::new(
                 "Auto-spawn servers from third-party agents",
@@ -510,7 +509,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                 &(context.clone() & id!(flags::IS_ANY_AI_ENABLED)),
                 flags::FILE_BASED_MCP_FLAG,
             )
-            .with_group(bindings::BindingGroup::WarpAi)
+            .with_group(bindings::BindingGroup::OctomusAi)
             .with_enabled(|| {
                 FeatureFlag::McpServer.is_enabled()
                     && FeatureFlag::FileBasedMcp.is_enabled()
@@ -529,7 +528,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                 &(context.clone() & id!(flags::CLI_AGENT_FOOTER_ENABLED)),
                 flags::AUTO_TOGGLE_RICH_INPUT_FLAG,
             )
-            .with_group(bindings::BindingGroup::WarpAi)
+            .with_group(bindings::BindingGroup::OctomusAi)
             .with_enabled(|| FeatureFlag::CLIAgentRichInput.is_enabled()),
             ToggleSettingActionPair::new(
                 "auto open Rich Input when a coding agent session starts",
@@ -539,7 +538,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                 &(context.clone() & id!(flags::CLI_AGENT_FOOTER_ENABLED)),
                 flags::AUTO_OPEN_RICH_INPUT_ON_CLI_AGENT_START_FLAG,
             )
-            .with_group(bindings::BindingGroup::WarpAi)
+            .with_group(bindings::BindingGroup::OctomusAi)
             .with_enabled(|| FeatureFlag::CLIAgentRichInput.is_enabled()),
             ToggleSettingActionPair::new(
                 "auto dismiss Rich Input after prompt submission",
@@ -549,7 +548,7 @@ pub fn init_actions_from_parent_view<T: Action + Clone>(
                 &(context.clone() & id!(flags::CLI_AGENT_FOOTER_ENABLED)),
                 flags::AUTO_DISMISS_RICH_INPUT_AFTER_SUBMIT_FLAG,
             )
-            .with_group(bindings::BindingGroup::WarpAi)
+            .with_group(bindings::BindingGroup::OctomusAi)
             .with_enabled(|| FeatureFlag::CLIAgentRichInput.is_enabled()),
         ],
         app,
@@ -937,7 +936,7 @@ impl AISettingsPageView {
         });
         // The coding agent footer command editor is always enabled,
         // independent of the global AI toggle, because it controls
-        // third-party coding agents rather than Warp's own AI.
+        // third-party coding agents rather than Octomus's own AI.
         Self::update_editor_interaction_state(
             cli_agent_footer_command_editor.as_ref(ctx).editor().clone(),
             true,
@@ -2777,7 +2776,7 @@ impl View for AISettingsPageView {
         "AISettingsPage"
     }
 
-    fn render(&self, app: &warpui::AppContext) -> Box<dyn warpui::Element> {
+    fn render(&self, app: &octomusui::AppContext) -> Box<dyn octomusui::Element> {
         self.page.render(self, app)
     }
 }
@@ -2841,7 +2840,7 @@ pub enum AISettingsPageAction {
     RemoveDirectoryFromCodeReadAllowlist(PathBuf),
     ToggleRules,
     ToggleRuleSuggestions,
-    ToggleWarpDriveContext,
+    ToggleOctomusDriveContext,
     SetApplyCodeDiffs(ActionPermission),
     SetReadFiles(ActionPermission),
     SetExecuteCommands(ActionPermission),
@@ -3458,10 +3457,10 @@ impl TypedActionView for AISettingsPageView {
                 });
                 ctx.notify();
             }
-            AISettingsPageAction::ToggleWarpDriveContext => {
+            AISettingsPageAction::ToggleOctomusDriveContext => {
                 AISettings::handle(ctx).update(ctx, |settings, ctx| {
                     let _ = settings
-                        .warp_drive_context_enabled
+                        .octomus_drive_context_enabled
                         .toggle_and_save_value(ctx);
                 });
                 ctx.notify();
@@ -3655,7 +3654,7 @@ impl TypedActionView for AISettingsPageView {
                 ctx.notify();
             }
             AISettingsPageAction::ToggleAgentAttribution => {
-                // The updated value syncs to warp-server automatically via
+                // The updated value syncs to octomus-server automatically via
                 // `CloudPreferencesSyncer` as a `JsonPreference` GSO keyed
                 // `Global_AgentAttributionEnabled`; no bespoke server call needed.
                 AISettings::handle(ctx).update(ctx, |settings, ctx| {
@@ -3891,7 +3890,7 @@ impl SettingsWidget for GlobalAIWidget {
     type View = AISettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "oz warp agent global ai a.i. active next command prompt code diffs suggestion suggested suggestions \
+        "oz octomus agent global ai a.i. active next command prompt code diffs suggestion suggested suggestions \
                 agent mode natural language detection input hint api keys bring your own byo google anthropic openai"
     }
 
@@ -3971,13 +3970,13 @@ impl UsageWidget {
         is_unlimited: bool,
         workspace_is_delinquent_due_to_payment_issue: bool,
         appearance: &Appearance,
-    ) -> Box<dyn warpui::Element> {
+    ) -> Box<dyn octomusui::Element> {
         let mut row = Flex::row();
         if used >= limit || workspace_is_delinquent_due_to_payment_issue {
             row.add_child(
                 ConstrainedBox::new(
                     Icon::AlertTriangle
-                        .to_warpui_icon(appearance.theme().ui_error_color().into())
+                        .to_octomusui_icon(appearance.theme().ui_error_color().into())
                         .finish(),
                 )
                 .with_height(16.)
@@ -4036,7 +4035,7 @@ impl UsageWidget {
         is_unlimited: bool,
         workspace_is_delinquent_due_to_payment_issue: bool,
         appearance: &Appearance,
-    ) -> Box<dyn warpui::Element> {
+    ) -> Box<dyn octomusui::Element> {
         let request_usage_details = Flex::column()
             .with_cross_axis_alignment(CrossAxisAlignment::End)
             .with_child(self.render_request_usage_count(
@@ -4176,39 +4175,41 @@ impl SettingsWidget for UsageWidget {
         );
 
         let auth_state = AuthStateProvider::as_ref(app).get();
-        let upgrade_cta_text_fragments = if let Some(team) =
-            UserWorkspaces::as_ref(app).current_team()
-        {
-            let current_user_email = auth_state.user_email().unwrap_or_default();
-            let has_admin_permissions = team.has_admin_permissions(&current_user_email);
-            if team.billing_metadata.can_upgrade_to_higher_tier_plan() {
-                let upgrade_url = UserWorkspaces::upgrade_link_for_team(team.uid);
-                if has_admin_permissions {
-                    vec![
-                        FormattedTextFragment::hyperlink("Upgrade", upgrade_url),
-                        FormattedTextFragment::plain_text(" to get more AI usage."),
-                    ]
+        let upgrade_cta_text_fragments =
+            if let Some(team) = UserWorkspaces::as_ref(app).current_team() {
+                let current_user_email = auth_state.user_email().unwrap_or_default();
+                let has_admin_permissions = team.has_admin_permissions(&current_user_email);
+                if team.billing_metadata.can_upgrade_to_higher_tier_plan() {
+                    let upgrade_url = UserWorkspaces::upgrade_link_for_team(team.uid);
+                    if has_admin_permissions {
+                        vec![
+                            FormattedTextFragment::hyperlink("Upgrade", upgrade_url),
+                            FormattedTextFragment::plain_text(" to get more AI usage."),
+                        ]
+                    } else {
+                        // The /upgrade page says to contact their administrator.
+                        vec![
+                            FormattedTextFragment::hyperlink("Compare plans", upgrade_url),
+                            FormattedTextFragment::plain_text(" for more AI usage."),
+                        ]
+                    }
                 } else {
-                    // The /upgrade page says to contact their administrator.
                     vec![
-                        FormattedTextFragment::hyperlink("Compare plans", upgrade_url),
+                        FormattedTextFragment::hyperlink(
+                            "Contact support",
+                            "mailto:support@octomus.dev",
+                        ),
                         FormattedTextFragment::plain_text(" for more AI usage."),
                     ]
                 }
             } else {
+                let user_id = auth_state.user_id().unwrap_or_default();
+                let upgrade_url = UserWorkspaces::upgrade_link(user_id);
                 vec![
-                    FormattedTextFragment::hyperlink("Contact support", "mailto:support@warp.dev"),
-                    FormattedTextFragment::plain_text(" for more AI usage."),
+                    FormattedTextFragment::hyperlink("Upgrade", upgrade_url),
+                    FormattedTextFragment::plain_text(" to get more AI usage."),
                 ]
-            }
-        } else {
-            let user_id = auth_state.user_id().unwrap_or_default();
-            let upgrade_url = UserWorkspaces::upgrade_link(user_id);
-            vec![
-                FormattedTextFragment::hyperlink("Upgrade", upgrade_url),
-                FormattedTextFragment::plain_text(" to get more AI usage."),
-            ]
-        };
+            };
 
         let mut upgrade_cta = FormattedTextElement::new(
             FormattedText::new([FormattedTextLine::Line(upgrade_cta_text_fragments)]),
@@ -4314,8 +4315,8 @@ impl ActiveAIWidget {
     fn render_next_command_section(
         &self,
         view: &AISettingsPageView,
-        app: &warpui::AppContext,
-    ) -> Box<dyn warpui::Element> {
+        app: &octomusui::AppContext,
+    ) -> Box<dyn octomusui::Element> {
         let ai_settings = AISettings::as_ref(app);
         let is_toggleable = ai_settings.is_active_ai_enabled(app);
 
@@ -4342,8 +4343,8 @@ impl ActiveAIWidget {
     fn render_prompt_suggestions_section(
         &self,
         view: &AISettingsPageView,
-        app: &warpui::AppContext,
-    ) -> Box<dyn warpui::Element> {
+        app: &octomusui::AppContext,
+    ) -> Box<dyn octomusui::Element> {
         let ai_settings = AISettings::as_ref(app);
         let is_toggleable = ai_settings.is_active_ai_enabled(app);
         Flex::column()
@@ -4369,8 +4370,8 @@ impl ActiveAIWidget {
     fn render_suggested_code_banners_section(
         &self,
         view: &AISettingsPageView,
-        app: &warpui::AppContext,
-    ) -> Box<dyn warpui::Element> {
+        app: &octomusui::AppContext,
+    ) -> Box<dyn octomusui::Element> {
         let ai_settings = AISettings::as_ref(app);
         let is_toggleable = ai_settings.is_active_ai_enabled(app);
         Flex::column()
@@ -4396,8 +4397,8 @@ impl ActiveAIWidget {
     fn render_natural_language_autosuggestions_section(
         &self,
         view: &AISettingsPageView,
-        app: &warpui::AppContext,
-    ) -> Box<dyn warpui::Element> {
+        app: &octomusui::AppContext,
+    ) -> Box<dyn octomusui::Element> {
         let ai_settings = AISettings::as_ref(app);
         let is_toggleable = ai_settings.is_active_ai_enabled(app);
         Flex::column()
@@ -4423,8 +4424,8 @@ impl ActiveAIWidget {
     fn render_shared_block_title_generation_section(
         &self,
         view: &AISettingsPageView,
-        app: &warpui::AppContext,
-    ) -> Box<dyn warpui::Element> {
+        app: &octomusui::AppContext,
+    ) -> Box<dyn octomusui::Element> {
         let ai_settings = AISettings::as_ref(app);
         let is_toggleable = ai_settings.is_active_ai_enabled(app);
         Flex::column()
@@ -4450,8 +4451,8 @@ impl ActiveAIWidget {
     fn render_git_operations_autogen_section(
         &self,
         view: &AISettingsPageView,
-        app: &warpui::AppContext,
-    ) -> Box<dyn warpui::Element> {
+        app: &octomusui::AppContext,
+    ) -> Box<dyn octomusui::Element> {
         let ai_settings = AISettings::as_ref(app);
         let is_toggleable = ai_settings.is_active_ai_enabled(app);
         Flex::column()
@@ -5020,7 +5021,7 @@ impl AgentsWidget {
         dropdown_menu: &ViewHandle<Dropdown<AISettingsPageAction>>,
         ai_settings: &AISettings,
         appearance: &Appearance,
-        app: &warpui::AppContext,
+        app: &octomusui::AppContext,
     ) -> Box<dyn Element> {
         let header = Container::new(render_body_item_label_with_icon::<AISettingsPageAction>(
             header_text.into(),
@@ -5040,7 +5041,7 @@ impl AgentsWidget {
         let alert_icon = Container::new(
             ConstrainedBox::new(
                 Icon::AlertCircle
-                    .to_warpui_icon(
+                    .to_octomusui_icon(
                         appearance
                             .theme()
                             .sub_text_color(appearance.theme().surface_2()),
@@ -5118,7 +5119,7 @@ impl AgentsWidget {
         );
         render_ai_list(
             "Command denylist",
-            "Regular expressions to match commands that the Warp Agent should always ask permission to execute.",
+            "Regular expressions to match commands that the Octomus Agent should always ask permission to execute.",
             list,
             view,
             ai_settings,
@@ -5153,7 +5154,7 @@ impl AgentsWidget {
 
         render_ai_list(
             "Command allowlist",
-            "Regular expressions to match commands that can be automatically executed by the Warp Agent.",
+            "Regular expressions to match commands that can be automatically executed by the Octomus Agent.",
             list,
             view,
             ai_settings,
@@ -5255,7 +5256,7 @@ impl AgentsWidget {
             appearance,
             "Base model",
             Some(
-                "This model serves as the primary engine behind the Warp Agent. It powers most interactions and invokes other models for tasks like planning or code generation when necessary. Warp may automatically switch to alternate models based on model availability or for auxiliary tasks such as conversation summarization.",
+                "This model serves as the primary engine behind the Octomus Agent. It powers most interactions and invokes other models for tasks like planning or code generation when necessary. Octomus may automatically switch to alternate models based on model availability or for auxiliary tasks such as conversation summarization.",
             ),
             Some(show_in_prompt_checkbox),
             LocalOnlyIconState::Hidden,
@@ -5271,7 +5272,7 @@ impl AgentsWidget {
         view: &AISettingsPageView,
         ai_settings: &AISettings,
         appearance: &Appearance,
-        app: &warpui::AppContext,
+        app: &octomusui::AppContext,
     ) -> Box<dyn Element> {
         let code_settings = CodeSettings::as_ref(app);
         let toggle = render_ai_setting_toggle::<CodebaseContextEnabled>(
@@ -5286,11 +5287,11 @@ impl AgentsWidget {
 
         let codebase_context_description = vec![
             FormattedTextFragment::plain_text(
-                "Allow the Warp Agent to generate an outline of your codebase that can be used for context. No code is ever stored on our servers. ",
+                "Allow the Octomus Agent to generate an outline of your codebase that can be used for context. No code is ever stored on our servers. ",
             ),
             FormattedTextFragment::hyperlink(
                 "Learn more",
-                "https://docs.warp.dev/agent-platform/capabilities/codebase-context",
+                "https://docs.octomus.dev/agent-platform/capabilities/codebase-context",
             ),
         ];
         let description = Container::new(
@@ -5359,7 +5360,7 @@ impl AgentsWidget {
         let subtext = {
             let subtext_fragments = vec![
                 FormattedTextFragment::plain_text(
-                    "You haven't added any MCP servers yet. Once you do, you'll be able to control how much autonomy the Warp Agent has when interacting with them. ",
+                    "You haven't added any MCP servers yet. Once you do, you'll be able to control how much autonomy the Octomus Agent has when interacting with them. ",
                 ),
                 FormattedTextFragment::hyperlink_action(
                     "Add a server",
@@ -5368,7 +5369,7 @@ impl AgentsWidget {
                 FormattedTextFragment::plain_text(" or "),
                 FormattedTextFragment::hyperlink(
                     "learn more about MCPs.",
-                    "https://docs.warp.dev/agent-platform/capabilities/mcp",
+                    "https://docs.octomus.dev/agent-platform/capabilities/mcp",
                 ),
             ];
 
@@ -5440,7 +5441,7 @@ impl AgentsWidget {
         {
             let allowlist = self.render_mcp_list(
                 "MCP allowlist",
-                "Allow the Warp Agent to call these MCP servers.",
+                "Allow the Octomus Agent to call these MCP servers.",
                 &view.mcp_allowlist_dropdown,
                 BlocklistAIPermissions::as_ref(app).get_mcp_allowlist(app, None),
                 view.mcp_allowlist_mouse_state_handles.clone(),
@@ -5457,7 +5458,7 @@ impl AgentsWidget {
         {
             let denylist = self.render_mcp_list(
                 "MCP denylist",
-                "The Warp Agent will always ask for permission before calling any MCP servers on this list.",
+                "The Octomus Agent will always ask for permission before calling any MCP servers on this list.",
                 &view.mcp_denylist_dropdown,
                 BlocklistAIPermissions::as_ref(app).get_mcp_denylist(app, None),
                 view.mcp_denylist_mouse_state_handles.clone(),
@@ -5656,8 +5657,8 @@ impl AIInputWidget {
         view: &AISettingsPageView,
         ai_settings: &AISettings,
         appearance: &Appearance,
-        app: &warpui::AppContext,
-    ) -> Box<dyn warpui::Element> {
+        app: &octomusui::AppContext,
+    ) -> Box<dyn octomusui::Element> {
         let is_toggleable = ai_settings.is_any_ai_enabled(app);
         let is_nld_enabled = *ai_settings.ai_autodetection_enabled_internal.value();
 
@@ -5850,12 +5851,12 @@ impl SettingsWidget for MCPServersWidget {
 
         let mcp_description = vec![
             FormattedTextFragment::plain_text(
-                "Add MCP servers to extend the Warp Agent's capabilities. \
+                "Add MCP servers to extend the Octomus Agent's capabilities. \
             MCP servers expose data sources or tools to agents through a standardized interface, essentially acting like plugins. ",
             ),
             FormattedTextFragment::hyperlink(
                 "Learn more",
-                "https://docs.warp.dev/agent-platform/capabilities/mcp",
+                "https://docs.octomus.dev/agent-platform/capabilities/mcp",
             ),
         ];
 
@@ -5901,7 +5902,7 @@ impl SettingsWidget for MCPServersWidget {
                                 ),
                                 FormattedTextFragment::hyperlink(
                                     "See supported providers.",
-                                    "https://docs.warp.dev/agent-platform/capabilities/mcp#file-based-mcp-servers",
+                                    "https://docs.octomus.dev/agent-platform/capabilities/mcp#file-based-mcp-servers",
                                 ),
                             ]
                         });
@@ -5959,7 +5960,7 @@ struct AIFactWidget {
     rules_link_index: HighlightedHyperlink,
     manage_rules_button: MouseStateHandle,
     rule_suggestions_toggle: SwitchStateHandle,
-    warp_drive_context_toggle: SwitchStateHandle,
+    octomus_drive_context_toggle: SwitchStateHandle,
 }
 
 impl AIFactWidget {
@@ -5968,7 +5969,7 @@ impl AIFactWidget {
         view: &AISettingsPageView,
         ai_settings: &AISettings,
         appearance: &Appearance,
-        app: &warpui::AppContext,
+        app: &octomusui::AppContext,
     ) -> Box<dyn Element> {
         let toggle = render_ai_setting_toggle::<MemoryEnabled>(
             "Rules",
@@ -5982,11 +5983,11 @@ impl AIFactWidget {
 
         let rules_description = vec![
             FormattedTextFragment::plain_text(
-                "Rules help the Warp Agent follow your conventions, whether for codebases or specific workflows. ",
+                "Rules help the Octomus Agent follow your conventions, whether for codebases or specific workflows. ",
             ),
             FormattedTextFragment::hyperlink(
                 "Learn more",
-                "https://docs.warp.dev/agent-platform/capabilities/rules",
+                "https://docs.octomus.dev/agent-platform/capabilities/rules",
             ),
         ];
         let description = Container::new(
@@ -6019,7 +6020,7 @@ impl AIFactWidget {
         &self,
         view: &AISettingsPageView,
         ai_settings: &AISettings,
-        app: &warpui::AppContext,
+        app: &octomusui::AppContext,
     ) -> Box<dyn Element> {
         let toggle = render_ai_setting_toggle::<RuleSuggestionsEnabled>(
             "Suggested Rules",
@@ -6043,24 +6044,24 @@ impl AIFactWidget {
             .finish()
     }
 
-    fn render_warp_drive_context_toggle(
+    fn render_octomus_drive_context_toggle(
         &self,
         view: &AISettingsPageView,
         ai_settings: &AISettings,
-        app: &warpui::AppContext,
+        app: &octomusui::AppContext,
     ) -> Box<dyn Element> {
-        let toggle = render_ai_setting_toggle::<WarpDriveContextEnabled>(
-            "Warp Drive as agent context",
-            AISettingsPageAction::ToggleWarpDriveContext,
-            *ai_settings.warp_drive_context_enabled,
+        let toggle = render_ai_setting_toggle::<OctomusDriveContextEnabled>(
+            "Octomus Drive as agent context",
+            AISettingsPageAction::ToggleOctomusDriveContext,
+            *ai_settings.octomus_drive_context_enabled,
             ai_settings.is_any_ai_enabled(app),
-            self.warp_drive_context_toggle.clone(),
+            self.octomus_drive_context_toggle.clone(),
             &view.local_only_icon_tooltip_states,
             app,
         );
 
         let description = render_ai_setting_description(
-            "The Warp Agent can leverage your Warp Drive Contents to tailor responses to your personal and team developer workflows and environments. This includes any Workflows, Notebooks, and Environment Variables.",
+            "The Octomus Agent can leverage your Octomus Drive Contents to tailor responses to your personal and team developer workflows and environments. This includes any Workflows, Notebooks, and Environment Variables.",
             ai_settings.is_any_ai_enabled(app),
             app,
         );
@@ -6076,7 +6077,7 @@ impl SettingsWidget for AIFactWidget {
     type View = AISettingsPageView;
 
     fn search_terms(&self) -> &str {
-        "agent oz ai a.i. knowledge fact memory memories rules warp drive context workflows notebooks environment variables"
+        "agent oz ai a.i. knowledge fact memory memories rules octomus drive context workflows notebooks environment variables"
     }
 
     fn should_render(&self, _app: &AppContext) -> bool {
@@ -6118,7 +6119,7 @@ impl SettingsWidget for AIFactWidget {
 
         column
             .with_child(button)
-            .with_child(self.render_warp_drive_context_toggle(view, ai_settings, app))
+            .with_child(self.render_octomus_drive_context_toggle(view, ai_settings, app))
             .finish()
     }
 }
@@ -6134,8 +6135,8 @@ impl VoiceWidget {
         &self,
         view: &AISettingsPageView,
         appearance: &Appearance,
-        app: &warpui::AppContext,
-    ) -> Box<dyn warpui::Element> {
+        app: &octomusui::AppContext,
+    ) -> Box<dyn octomusui::Element> {
         let ai_settings = AISettings::as_ref(app);
         let is_toggleable = ai_settings.is_any_ai_enabled(app);
         let mut column = Flex::column().with_child(render_ai_setting_toggle::<VoiceInputEnabled>(
@@ -6150,7 +6151,7 @@ impl VoiceWidget {
 
         let voice_input_description_text_fragments = vec![
             FormattedTextFragment::plain_text(
-                "Voice input allows you to control Warp by speaking directly to your terminal (powered by ",
+                "Voice input allows you to control Octomus by speaking directly to your terminal (powered by ",
             ),
             FormattedTextFragment::hyperlink("Wispr Flow", WISPR_FLOW_URL),
             FormattedTextFragment::plain_text(")."),
@@ -6434,7 +6435,7 @@ impl SettingsWidget for CLIAgentWidget {
 
         // The Coding Agents section is always enabled, independent of the
         // global AI toggle, because these settings control third-party coding
-        // agents (Claude Code, Codex, Gemini CLI) rather than Warp's own AI.
+        // agents (Claude Code, Codex, Gemini CLI) rather than Octomus's own AI.
         let cli_agent_footer_toggle = render_ai_setting_toggle::<ShouldRenderCLIAgentToolbar>(
             "Show coding agent toolbar",
             AISettingsPageAction::ToggleCLIAgentToolbar,
@@ -6504,7 +6505,7 @@ impl SettingsWidget for CLIAgentWidget {
                         on_click_action: None,
                         secondary_text: None,
                         tooltip_override_text: Some(
-                            "Requires the Warp plugin for your coding agent".to_owned(),
+                            "Requires the Octomus plugin for your coding agent".to_owned(),
                         ),
                     }),
                     LocalOnlyIconState::for_setting(
@@ -7041,7 +7042,7 @@ impl SettingsWidget for CloudHandoffWidget {
                 );
                 column.add_child(auto_handoff_on_sleep_row);
                 column.add_child(render_ai_setting_description(
-                    "When macOS is about to sleep, automatically moves the most recently focused running local Warp Agent conversation to Cloud Mode so it can keep working.",
+                    "When macOS is about to sleep, automatically moves the most recently focused running local Octomus Agent conversation to Cloud Mode so it can keep working.",
                     true,
                     app,
                 ));
@@ -7276,7 +7277,7 @@ impl ApiKeysWidget {
         let appearance = Appearance::as_ref(app);
         let text_fragments = vec![
             FormattedTextFragment::plain_text(
-                "Use your own API keys from model providers for Warp Agent. You can also add custom endpoints to use third-party models. Custom endpoints must support the OpenAI-compatible Chat Completions API. API keys are stored only on your device, never on Warp's servers. They're used to make requests to your chosen model provider. Using auto models or models from providers you have not provided API keys for will consume Warp credits. ",
+                "Use your own API keys from model providers for Octomus Agent. You can also add custom endpoints to use third-party models. Custom endpoints must support the OpenAI-compatible Chat Completions API. API keys are stored only on your device, never on Octomus's servers. They're used to make requests to your chosen model provider. Using auto models or models from providers you have not provided API keys for will consume Octomus credits. ",
             ),
             FormattedTextFragment::hyperlink("Learn more", CUSTOM_INFERENCE_LEARN_MORE_URL),
         ];
@@ -7303,7 +7304,7 @@ impl ApiKeysWidget {
         let icon = Container::new(
             ConstrainedBox::new(
                 Icon::Info
-                    .to_warpui_icon(appearance.theme().active_ui_text_color())
+                    .to_octomusui_icon(appearance.theme().active_ui_text_color())
                     .finish(),
             )
             .with_width(13.)
@@ -7316,9 +7317,9 @@ impl ApiKeysWidget {
             FormattedTextFragment::plain_text(
                 "By using BYOK or custom endpoints, you agree to use them only as permitted by ",
             ),
-            FormattedTextFragment::hyperlink("Warp's Terms of Service", CUSTOM_INFERENCE_TERMS_URL),
+            FormattedTextFragment::hyperlink("Octomus's Terms of Service", CUSTOM_INFERENCE_TERMS_URL),
             FormattedTextFragment::plain_text(
-                ". BYOK and custom endpoints are intended for individual use and small teams. Companies or organizations with more than 10 employees should use Warp Business or Enterprise.",
+                ". BYOK and custom endpoints are intended for individual use and small teams. Companies or organizations with more than 10 employees should use Octomus Business or Enterprise.",
             ),
         ])]);
         let tooltip_background = appearance.theme().tooltip_background();
@@ -7560,7 +7561,10 @@ impl SettingsWidget for ApiKeysWidget {
             {
                 if team.billing_metadata.customer_type == CustomerType::Enterprise {
                     vec![
-                        FormattedTextFragment::hyperlink("Contact sales", "mailto:sales@warp.dev"),
+                        FormattedTextFragment::hyperlink(
+                            "Contact sales",
+                            "mailto:sales@octomus.dev",
+                        ),
                         FormattedTextFragment::plain_text(
                             " to enable bringing your own API keys on your Enterprise plan.",
                         ),
@@ -7839,9 +7843,9 @@ impl AwsBedrockWidget {
         let are_credentials_enabled = user_workspaces.is_aws_bedrock_credentials_enabled(app);
         let is_usage_enabled = is_section_enabled && are_credentials_enabled;
         let toggle_description = if is_admin_enforced {
-            "Warp loads and sends local AWS CLI credentials for Bedrock-supported models. This setting is managed by your organization.".to_string()
+            "Octomus loads and sends local AWS CLI credentials for Bedrock-supported models. This setting is managed by your organization.".to_string()
         } else {
-            "Warp loads and sends local AWS CLI credentials for Bedrock-supported models."
+            "Octomus loads and sends local AWS CLI credentials for Bedrock-supported models."
                 .to_string()
         };
 
@@ -7917,7 +7921,7 @@ impl AwsBedrockWidget {
                 .user_facing_components();
 
             let icon = Container::new(
-                ConstrainedBox::new(icon.to_warpui_icon(title_color).finish())
+                ConstrainedBox::new(icon.to_octomusui_icon(title_color).finish())
                     .with_width(16.)
                     .with_height(16.)
                     .finish(),
@@ -8063,9 +8067,9 @@ impl SettingsWidget for AwsBedrockWidget {
 }
 
 mod styles {
-    use warp_core::ui::appearance::Appearance;
-    use warp_core::ui::theme::Fill;
-    use warpui::{AppContext, SingletonEntity};
+    use octomus_core::ui::appearance::Appearance;
+    use octomus_core::ui::theme::Fill;
+    use octomusui::{AppContext, SingletonEntity};
 
     // Apply a negative margin to the description text so it appears closer to the main
     // settings option text.

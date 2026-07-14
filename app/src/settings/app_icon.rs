@@ -1,8 +1,8 @@
 use enum_iterator::Sequence;
+use octomus_core::channel::{Channel, ChannelState};
+use octomus_core::settings::macros::define_settings_group;
+use octomus_core::settings::{SupportedPlatforms, SyncToCloud};
 use serde::{Deserialize, Serialize};
-use warp_core::channel::{Channel, ChannelState};
-use warp_core::settings::macros::define_settings_group;
-use warp_core::settings::{SupportedPlatforms, SyncToCloud};
 
 /// The app icon to use (mac-only).
 ///
@@ -39,7 +39,7 @@ pub enum AppIcon {
     Classic3,
     #[schemars(description = "Comets")]
     Comets,
-    /// Cow icon, for Code on Warp launch.
+    /// Cow icon, for Code on Octomus launch.
     #[schemars(description = "Cow")]
     Cow,
     #[schemars(description = "Glass Sky")]
@@ -63,7 +63,7 @@ pub enum AppIcon {
     #[schemars(description = "Sticker")]
     Sticker,
     /// Previous default icon with solid blue background.
-    #[schemars(description = "Warp 1")]
+    #[schemars(description = "Octomus 1")]
     WarpOne,
 }
 
@@ -86,7 +86,7 @@ impl std::fmt::Display for AppIcon {
             AppIcon::Original => "Original",
             AppIcon::Starburst => "Starburst",
             AppIcon::Sticker => "Sticker",
-            AppIcon::WarpOne => "Warp 1",
+            AppIcon::WarpOne => "Octomus 1",
         };
         write!(f, "{value}")
     }

@@ -13,6 +13,9 @@ use byte_unit::{Byte, UnitType};
 use futures_util::stream::AbortHandle;
 use futures_util::{SinkExt, StreamExt};
 use instant::Instant;
+use octomus_core::features::FeatureFlag;
+use octomusui::r#async::Timer;
+use octomusui::{Entity, ModelContext, ModelHandle, RequestState, RetryOption, SingletonEntity};
 use parking_lot::FairMutex;
 use session_sharing_protocol::common::{
     ActivePrompt, ActivePromptUpdate, AgentPromptFailureReason, AgentPromptRequest,
@@ -31,9 +34,6 @@ use session_sharing_protocol::sharer::{
     SessionTerminatedReason, TeamAccessLevelUpdateResponse, UpdatePendingUserRoleResponse,
     UpstreamMessage,
 };
-use warp_core::features::FeatureFlag;
-use warpui::r#async::Timer;
-use warpui::{Entity, ModelContext, ModelHandle, RequestState, RetryOption, SingletonEntity};
 use websocket::{Message, Sink, Stream, WebSocket, WebsocketMessage as _};
 #[cfg(not(any(test, feature = "integration_tests")))]
 use {
@@ -224,7 +224,7 @@ impl Network {
         active_prompt: ActivePrompt,
         selection: Selection,
         input_replica_id: ReplicaId,
-        terminal_view_id: warpui::EntityId,
+        terminal_view_id: octomusui::EntityId,
         universal_developer_input_context: UniversalDeveloperInputContext,
         lifetime: Lifetime,
         source: SharedSessionSource,
@@ -620,7 +620,7 @@ impl Network {
         window_size: WindowSize,
         init_block_id: BlockId,
         input_replica_id: ReplicaId,
-        terminal_view_id: warpui::EntityId,
+        terminal_view_id: octomusui::EntityId,
         universal_developer_input_context: UniversalDeveloperInputContext,
         lifetime: Lifetime,
         source: SharedSessionSource,
@@ -1271,7 +1271,7 @@ impl Network {
 
     /// Stores the event if it's an OrderedTerminalEvent, and sends the message to the server if we're connected.
     /// If we're not connected, the event will be flushed to the server once we've connected.
-    /// TODO(roland): non OrderedTerminalEvents (like warp prompt) can be dropped if we're not connected. For non OrderedTerminalEvents,
+    /// TODO(roland): non OrderedTerminalEvents (like octomus prompt) can be dropped if we're not connected. For non OrderedTerminalEvents,
     /// we only need the latest value and can drop old values. We can send the latest value of needed events as part of reconnection.
     fn send_message_to_server(&mut self, message: UpstreamMessage) {
         if let UpstreamMessage::OrderedTerminalEvent(event) = &message {
@@ -1389,7 +1389,7 @@ pub fn failed_to_add_guests_user_error(reason: &FailedToAddGuestsReason) -> Stri
     match reason {
         FailedToAddGuestsReason::Invalid => "Something went wrong. Please try again.",
         FailedToAddGuestsReason::NotWarpUsers => {
-            "One or more emails were not associated with Warp accounts."
+            "One or more emails were not associated with Octomus accounts."
         }
         FailedToAddGuestsReason::GuestAlreadyAdded => {
             "One or more emails have already been added to the session."

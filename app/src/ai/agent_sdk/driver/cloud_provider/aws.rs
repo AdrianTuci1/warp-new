@@ -5,11 +5,11 @@ use std::pin::Pin;
 use std::time::Duration;
 
 use anyhow::Context;
+use octomus_core::safe_info;
+use octomusui::{ModelSpawner, SingletonEntity};
 use tempfile::{Builder, NamedTempFile};
 use vec1::Vec1;
-use warp_core::safe_info;
 use warp_managed_secrets::ManagedSecretManager;
-use warpui::{ModelSpawner, SingletonEntity};
 
 use super::super::terminal::TerminalDriver;
 use super::{CloudProvider, CloudProviderSetupError, Result};
@@ -21,7 +21,7 @@ use crate::ai::cloud_environments::AwsProviderConfig;
 /// set this to the current maximum task duration.
 const IDENTITY_TOKEN_DURATION: Duration = Duration::from_hours(3);
 
-/// AWS STS audience for Warp Oz OIDC federation.
+/// AWS STS audience for Octomus Oz OIDC federation.
 const AWS_AUDIENCE: &str = "sts.amazonaws.com";
 
 /// Provides AWS Web Identity credentials for the agent session.

@@ -1,19 +1,19 @@
 //! This module contains common utilities for rendering Blocklist AI UI.
 use std::sync::LazyLock;
 
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::vec2f;
-use warp_core::ui::appearance::Appearance;
-use warpui::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomusui::elements::{
     ChildAnchor, ConstrainedBox, Container, CrossAxisAlignment, Flex, Hoverable, MainAxisAlignment,
     MainAxisSize, MouseStateHandle, OffsetPositioning, ParentAnchor, ParentElement,
     ParentOffsetBounds, Stack,
 };
-use warpui::fonts::Weight;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::ui_components::text::Span;
-use warpui::{AppContext, Element, EntityId, EventContext, SingletonEntity};
+use octomusui::fonts::Weight;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::ui_components::text::Span;
+use octomusui::{AppContext, Element, EntityId, EventContext, SingletonEntity};
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::vec2f;
 
 use crate::themes::theme::{AnsiColorIdentifier, Fill, WarpTheme};
 use crate::ui_components::icons::Icon;
@@ -81,7 +81,7 @@ pub fn render_ai_follow_up_icon(
                 .tool_tip("Follow up with existing conversation".to_owned())
                 .with_style(UiComponentStyles {
                     font_size: Some(12.),
-                    background: Some(warpui::elements::Fill::Solid(tooltip_background)),
+                    background: Some(octomusui::elements::Fill::Solid(tooltip_background)),
                     font_color: Some(appearance.theme().background().into_solid()),
                     ..Default::default()
                 });
@@ -106,7 +106,7 @@ fn render_input_icon(icon: Icon, color: Fill, app: &AppContext) -> Box<dyn Eleme
     // height.
     let icon_size = ai_indicator_height(app);
     ConstrainedBox::new(
-        Container::new(icon.to_warpui_icon(color).finish())
+        Container::new(icon.to_octomusui_icon(color).finish())
             .with_uniform_padding(icon_size / 8.)
             .finish(),
     )
@@ -170,7 +170,7 @@ where
 {
     let theme = appearance.theme();
     let font_color = theme.foreground().into_solid();
-    let mut label_children = vec![ConstrainedBox::new(icon.to_warpui_icon(color).finish())
+    let mut label_children = vec![ConstrainedBox::new(icon.to_octomusui_icon(color).finish())
         .with_width(PROVIDER_BUTTON_ICON_SIZE)
         .with_height(PROVIDER_BUTTON_ICON_SIZE)
         .finish()];

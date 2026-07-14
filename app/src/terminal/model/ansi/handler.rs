@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use std::io;
 
-use warp_terminal::model::ansi::control_sequence_parameters::*;
-use warp_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
-use warpui::color::ColorU;
+use octomus_terminal::model::ansi::control_sequence_parameters::*;
+use octomus_terminal::model::{KeyboardModes, KeyboardModesApplyBehavior};
+use octomusui::color::ColorU;
 
 use super::dcs_hooks::*;
 use super::ProcessorInput;
@@ -237,13 +237,13 @@ pub trait Handler {
     /// Report text area size in characters.
     fn text_area_size_chars<W: io::Write>(&mut self, _: &mut W);
 
-    /// Callback for the Warp CommandFinished hook.
+    /// Callback for the Octomus CommandFinished hook.
     fn command_finished(&mut self, _data: CommandFinishedValue) {}
 
     /// Process a prompt marker control sequence.
     fn prompt_marker(&mut self, _marker: PromptMarker) {}
 
-    /// Callback for the Warp precmd hook.
+    /// Callback for the Octomus precmd hook.
     fn precmd(&mut self, _data: PrecmdValue) {}
 
     /// Update the active block's current working directory, independent of the
@@ -252,19 +252,19 @@ pub trait Handler {
     /// waiting for the shell to redraw its prompt.
     fn set_current_working_directory(&mut self, _path: String) {}
 
-    /// Callback for the Warp preexec hook.
+    /// Callback for the Octomus preexec hook.
     fn preexec(&mut self, _data: PreexecValue) {}
 
-    /// Callback for the Warp bootstrapped hook - called once when the shell is
+    /// Callback for the Octomus bootstrapped hook - called once when the shell is
     /// bootstrapped
     fn bootstrapped(&mut self, _data: BootstrappedValue) {}
 
-    /// Callback for the Warp pre-interactive SSH session hook - called once
+    /// Callback for the Octomus pre-interactive SSH session hook - called once
     /// before initiating an interactive SSH session (either with or without the
     /// SSH wrapper).
     fn pre_interactive_ssh_session(&mut self, _data: PreInteractiveSSHSessionValue) {}
 
-    /// Callback for the Warp ssh hook - called once after successfully connecting to
+    /// Callback for the Octomus ssh hook - called once after successfully connecting to
     /// an SSH server
     fn ssh(&mut self, _data: SSHValue) {}
 
@@ -272,8 +272,8 @@ pub trait Handler {
     /// logic into the PTY
     fn init_shell(&mut self, _data: InitShellValue) {}
 
-    /// Callback for the Warp exit-shell hook — emitted by the remote shell right
-    /// before it exits. Gives the Warp client a chance to drop per-session
+    /// Callback for the Octomus exit-shell hook — emitted by the remote shell right
+    /// before it exits. Gives the Octomus client a chance to drop per-session
     /// resources (e.g. the `ssh … remote-server-proxy` child) before the outer
     /// ssh tunnel starts tearing down, so its ControlMaster can exit cleanly
     /// rather than hanging on orphaned multiplexed channels.
@@ -283,7 +283,7 @@ pub trait Handler {
     fn clear(&mut self, _data: ClearValue) {}
 
     /// Callback for the terminal when the shell reports the current line editor
-    /// input buffer (the reporting is itself triggered by Warp).
+    /// input buffer (the reporting is itself triggered by Octomus).
     fn input_buffer(&mut self, _data: InputBufferValue) {}
 
     /// Callback emitted during the initialization process for subshells with where the shell type
@@ -291,7 +291,7 @@ pub trait Handler {
     fn init_subshell(&mut self, _data: InitSubshellValue) {}
 
     /// Callback emitted when executing the user's RC file, which signals a new session is being
-    /// created. If the session is for a subshell, this should triggers Warp's bootstrap process.
+    /// created. If the session is for a subshell, this should triggers Octomus's bootstrap process.
     /// Otherwise, it's ignored.
     fn sourced_rc_file(&mut self, _data: SourcedRcFileForWarpValue) {}
 
@@ -302,9 +302,10 @@ pub trait Handler {
     /// assisted auto-update.
     fn finish_update(&mut self, _data: FinishUpdateValue) {}
 
-    /// Callback emitted from the warpify_ssh_session script if it's discovered
-    /// that we can't warpify the remote session.
-    fn remote_warpification_is_unavailable(&mut self, _data: WarpificationUnavailableReason) {}
+    /// Callback emitted from the octomusify_ssh_session script if it's discovered
+    /// that we can't octomusify the remote session.
+    fn remote_octomusification_is_unavailable(&mut self, _data: OctomusificationUnavailableReason) {
+    }
 
     /// How tmux was installed.
     fn notify_ssh_tmux_is_installed(&mut self, _tmux_installation: TmuxInstallationState) {}
@@ -402,7 +403,7 @@ pub trait Handler {
     }
 
     /// Callback for pluggable notifications triggered via OSC 9 or OSC 777 escape sequences.
-    /// These allow external programs to trigger notifications in Warp.
+    /// These allow external programs to trigger notifications in Octomus.
     /// - OSC 9: Simple notification with just a body (iTerm2/Windows Terminal style)
     /// - OSC 777: Notification with title and body (urxvt style)
     fn pluggable_notification(&mut self, _title: Option<String>, _body: String) {}

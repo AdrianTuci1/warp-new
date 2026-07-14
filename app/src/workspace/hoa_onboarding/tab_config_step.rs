@@ -1,11 +1,11 @@
 use std::path::Path;
 
-use warpui::elements::{
+use octomusui::elements::{
     Container, CrossAxisAlignment, Flex, MouseStateHandle, ParentElement, Text,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::geometry::vector::Vector2F;
-use warpui::{Element, EventContext};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::geometry::vector::Vector2F;
+use octomusui::{Element, EventContext};
 
 use crate::appearance::Appearance;
 use crate::tab_configs::session_config::SessionType;

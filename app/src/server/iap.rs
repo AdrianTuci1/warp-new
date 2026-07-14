@@ -5,9 +5,9 @@ use anyhow::Result;
 use base64::Engine;
 use blocking::unblock;
 use instant::Instant;
-use warp_core::channel::IapConfig;
-use warpui::r#async::{FutureExt as _, Timer};
-use warpui::{Entity, ModelContext, SingletonEntity};
+use octomus_core::channel::IapConfig;
+use octomusui::r#async::{FutureExt as _, Timer};
+use octomusui::{Entity, ModelContext, SingletonEntity};
 #[cfg(not(target_family = "wasm"))]
 use websocket::connect_error_http_response;
 
@@ -231,7 +231,7 @@ impl IapManager {
         let audiences = state.audiences().to_string();
         let service_account_email = state.service_account_email().to_string();
 
-        // Make `gcloud` findable even when Warp is launched from the macOS GUI
+        // Make `gcloud` findable even when Octomus is launched from the macOS GUI
         // (i.e. in environments without something like `~/.zshrc && WarpDev` happening to init cli path)
         #[cfg(feature = "local_tty")]
         let path_future = LocalShellState::handle(ctx).update(ctx, |shell_state, ctx| {
@@ -408,7 +408,7 @@ fn fetch_iap_token(
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())
         .args(args);
-    // allows warp to resolve `gcloud` cli path
+    // allows octomus to resolve `gcloud` cli path
     if let Some(path_env) = path_env {
         cmd.env("PATH", path_env);
     }

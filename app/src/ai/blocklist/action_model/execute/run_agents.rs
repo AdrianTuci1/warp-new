@@ -14,10 +14,10 @@ use ai::agent::orchestration_config::OrchestrationConfig;
 use ai::skills::SkillReference;
 use futures::future::BoxFuture;
 use futures::FutureExt;
+use octomus_cli::agent::Harness;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomusui::{Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 use settings::Setting;
-use warp_cli::agent::Harness;
-use warp_core::execution_mode::AppExecutionMode;
-use warpui::{Entity, EntityId, ModelContext, ModelHandle, SingletonEntity};
 
 use super::start_agent::{StartAgentExecutor, StartAgentOutcome};
 use super::{ActionExecution, AnyActionExecution, ExecuteActionInput, PreprocessActionInput};
@@ -231,7 +231,7 @@ impl RunAgentsExecutor {
                     let kind = match slot {
                         ChildSlot::Failed(error) => RunAgentsAgentOutcomeKind::Failed { error },
                         ChildSlot::Pending(recv) => {
-                            let timeout = warpui::r#async::Timer::after(SPAWN_TIMEOUT);
+                            let timeout = octomusui::r#async::Timer::after(SPAWN_TIMEOUT);
                             match futures::future::select(Box::pin(recv.recv()), Box::pin(timeout))
                                 .await
                             {

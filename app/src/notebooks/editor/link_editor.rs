@@ -1,17 +1,17 @@
-use warp_editor::editor::NavigationKey;
-use warp_editor::model::RichTextEditorModel;
-use warp_editor::render::model::RenderState;
-use warpui::elements::{
+use octomusui::elements::{
     AnchorPair, Container, Flex, MouseStateHandle, OffsetPositioning, OffsetType, ParentElement,
     PositionedElementOffsetBounds, PositioningAxis, XAxisAnchor, YAxisAnchor,
 };
-use warpui::fonts::Weight;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::Weight;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, BlurContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use warp_editor::editor::NavigationKey;
+use warp_editor::model::RichTextEditorModel;
+use warp_editor::render::model::RenderState;
 
 use super::model::NotebooksEditorModel;
 use crate::appearance::Appearance;
@@ -198,7 +198,7 @@ impl View for LinkEditor {
         }
     }
 
-    fn render(&self, app: &warpui::AppContext) -> Box<dyn Element> {
+    fn render(&self, app: &octomusui::AppContext) -> Box<dyn Element> {
         let appearance = Appearance::as_ref(app);
         let mut editors = Flex::column();
 

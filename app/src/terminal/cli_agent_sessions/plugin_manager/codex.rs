@@ -14,16 +14,16 @@ use crate::features::FeatureFlag;
 use crate::terminal::model::session::LocalCommandExecutor;
 use crate::terminal::shell::ShellType;
 
-const PLUGIN_KEY: &str = "warp@codex-warp";
-const MARKETPLACE_REPO: &str = "warpdotdev/codex-warp";
-const MARKETPLACE_NAME: &str = "codex-warp";
+const PLUGIN_KEY: &str = "octomus@codex-octomus";
+const MARKETPLACE_REPO: &str = "warpdotdev/codex-octomus";
+const MARKETPLACE_NAME: &str = "codex-octomus";
 
-const PLATFORM_PLUGIN_KEY: &str = "orchestration@codex-warp";
+const PLATFORM_PLUGIN_KEY: &str = "orchestration@codex-octomus";
 
 const CODEX_CONFIG_DIR: &str = ".codex";
 const CODEX_HOME_ENV: &str = "CODEX_HOME";
 
-// Keep in sync with the plugin version in warpdotdev/codex-warp.
+// Keep in sync with the plugin version in warpdotdev/codex-octomus.
 const MINIMUM_PLUGIN_VERSION: &str = "0.4.0";
 
 pub(super) struct CodexPluginManager {
@@ -134,11 +134,11 @@ impl CliAgentPluginManager for CodexPluginManager {
     }
 
     fn install_success_message(&self) -> &'static str {
-        "Warp plugin installed. Please restart Codex to activate."
+        "Octomus plugin installed. Please restart Codex to activate."
     }
 
     fn update_success_message(&self) -> &'static str {
-        "Warp plugin updated. Please restart Codex to activate."
+        "Octomus plugin updated. Please restart Codex to activate."
     }
 
     fn install_instructions(&self) -> &'static PluginInstructions {
@@ -179,18 +179,18 @@ impl CliAgentPluginManager for CodexPluginManager {
 
 static PLUGIN_INSTALL_INSTRUCTIONS: LazyLock<PluginInstructions> =
     LazyLock::new(|| PluginInstructions {
-        title: "Install Warp Plugin for Codex",
+        title: "Install Octomus Plugin for Codex",
         subtitle: "Run the following commands, then restart Codex.",
         steps: &[
             PluginInstructionStep {
-                description: "Add the Warp plugin marketplace repository",
-                command: "codex plugin marketplace add warpdotdev/codex-warp",
+                description: "Add the Octomus plugin marketplace repository",
+                command: "codex plugin marketplace add warpdotdev/codex-octomus",
                 executable: true,
                 link: None,
             },
             PluginInstructionStep {
-                description: "Install the Warp plugin",
-                command: "codex plugin add warp@codex-warp",
+                description: "Install the Octomus plugin",
+                command: "codex plugin add octomus@codex-octomus",
                 executable: true,
                 link: None,
             },
@@ -200,8 +200,8 @@ static PLUGIN_INSTALL_INSTRUCTIONS: LazyLock<PluginInstructions> =
 
 static NATIVE_INSTALL_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| {
     PluginInstructions {
-        title: "Enable Warp Notifications for Codex",
-        subtitle: "Update Codex to the latest version, then enable in-focus notifications so Warp can display them while you work.",
+        title: "Enable Octomus Notifications for Codex",
+        subtitle: "Update Codex to the latest version, then enable in-focus notifications so Octomus can display them while you work.",
         steps: &[
             PluginInstructionStep {
                 description: "Update Codex to the latest version.",
@@ -229,18 +229,18 @@ static EMPTY_INSTRUCTIONS: LazyLock<PluginInstructions> = LazyLock::new(|| Plugi
 
 static PLUGIN_UPDATE_INSTRUCTIONS: LazyLock<PluginInstructions> =
     LazyLock::new(|| PluginInstructions {
-        title: "Update Warp Plugin for Codex",
+        title: "Update Octomus Plugin for Codex",
         subtitle: "Run the following commands, then restart Codex.",
         steps: &[
             PluginInstructionStep {
                 description: "Upgrade the marketplace",
-                command: "codex plugin marketplace upgrade codex-warp",
+                command: "codex plugin marketplace upgrade codex-octomus",
                 executable: true,
                 link: None,
             },
             PluginInstructionStep {
-                description: "Reinstall the Warp plugin",
-                command: "codex plugin add warp@codex-warp",
+                description: "Reinstall the Octomus plugin",
+                command: "codex plugin add octomus@codex-octomus",
                 executable: true,
                 link: None,
             },
@@ -264,13 +264,13 @@ fn check_installed(codex_dir: &Path) -> bool {
         .unwrap_or(false)
 }
 
-/// Reads the latest cached Warp plugin version, if present.
+/// Reads the latest cached Octomus plugin version, if present.
 fn installed_version(codex_dir: &Path) -> Option<String> {
     let cache_dir = codex_dir
         .join("plugins")
         .join("cache")
         .join(MARKETPLACE_NAME)
-        .join("warp");
+        .join("octomus");
     let entries = fs::read_dir(cache_dir).ok()?;
     let mut latest: Option<String> = None;
     for entry in entries.flatten() {

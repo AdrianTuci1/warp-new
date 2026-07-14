@@ -1,5 +1,5 @@
 use anyhow::Error;
-use warpui::App;
+use octomusui::App;
 
 use super::*;
 use crate::editor::tests::sample_text;

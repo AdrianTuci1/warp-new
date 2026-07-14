@@ -2,6 +2,9 @@ use std::any::Any;
 use std::sync::Arc;
 
 use async_broadcast::InactiveReceiver;
+use octomusui::{
+    AppContext, ModelContext, ModelHandle, SingletonEntity, ViewHandle, WeakViewHandle, WindowId,
+};
 use parking_lot::FairMutex;
 use pathfinder_geometry::vector::Vector2F;
 use session_sharing_protocol::common::{
@@ -13,9 +16,6 @@ use session_sharing_protocol::common::{
 use session_sharing_protocol::sharer::SessionSourceType;
 use session_sharing_protocol::viewer::SessionEndedReason;
 use settings::Setting as _;
-use warpui::{
-    AppContext, ModelContext, ModelHandle, SingletonEntity, ViewHandle, WeakViewHandle, WindowId,
-};
 
 use super::event_loop::SharedSessionInitialLoadMode;
 use super::network::{
@@ -1297,7 +1297,7 @@ impl TerminalManager {
                     view.update(ctx, |terminal_view, ctx| {
                         let reason_string = match reason {
                             session_sharing_protocol::common::FailedToAddGuestsReason::NotWarpUsers => {
-                                "One or more of the emails are not Warp users.".to_owned()
+                                "One or more of the emails are not Octomus users.".to_owned()
                             }
                             session_sharing_protocol::common::FailedToAddGuestsReason::GuestAlreadyAdded => {
                                 "One or more of the guests has already been added.".to_owned()

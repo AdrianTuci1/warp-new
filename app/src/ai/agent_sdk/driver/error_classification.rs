@@ -9,7 +9,7 @@ use crate::server::server_api::ai::TaskStatusUpdate;
 /// suitable for reporting via `update_agent_task`.
 pub fn classify_driver_error(error: &AgentDriverError) -> (AgentTaskState, TaskStatusUpdate) {
     match error {
-        // --- Warp-side errors (task → ERROR) ---
+        // --- Octomus-side errors (task → ERROR) ---
         AgentDriverError::TerminalUnavailable | AgentDriverError::InvalidRuntimeState => (
             AgentTaskState::Error,
             TaskStatusUpdate::with_error_code(
@@ -63,15 +63,15 @@ pub fn classify_driver_error(error: &AgentDriverError) -> (AgentTaskState, TaskS
                 ),
             )
         }
-        AgentDriverError::WarpDriveSyncFailed => (
+        AgentDriverError::OctomusDriveSyncFailed => (
             AgentTaskState::Error,
             TaskStatusUpdate::with_error_code(
-                "Warp Drive failed to sync. Please check your network connection and try again.",
+                "Octomus Drive failed to sync. Please check your network connection and try again.",
                 PlatformErrorCode::InternalError,
             ),
         ),
         AgentDriverError::NotLoggedIn => {
-            let bin = warp_cli::binary_name().unwrap_or_else(|| "warp".to_string());
+            let bin = octomus_cli::binary_name().unwrap_or_else(|| "octomus".to_string());
             (
                 AgentTaskState::Error,
                 TaskStatusUpdate::with_error_code(
@@ -95,7 +95,7 @@ pub fn classify_driver_error(error: &AgentDriverError) -> (AgentTaskState, TaskS
             AgentTaskState::Failed,
             TaskStatusUpdate::with_error_code(
                 format!(
-                    "MCP server {uuid} was not found. Verify the server exists in your Warp Drive and the UUID is correct."
+                    "MCP server {uuid} was not found. Verify the server exists in your Octomus Drive and the UUID is correct."
                 ),
                 PlatformErrorCode::EnvironmentSetupFailed,
             ),
@@ -125,7 +125,7 @@ pub fn classify_driver_error(error: &AgentDriverError) -> (AgentTaskState, TaskS
             AgentTaskState::Failed,
             TaskStatusUpdate::with_error_code(
                 format!(
-                    "Agent profile \"{name}\" not found. Check the profile ID and ensure it exists in your team's Warp Drive."
+                    "Agent profile \"{name}\" not found. Check the profile ID and ensure it exists in your team's Octomus Drive."
                 ),
                 PlatformErrorCode::ResourceNotFound,
             ),
@@ -134,7 +134,7 @@ pub fn classify_driver_error(error: &AgentDriverError) -> (AgentTaskState, TaskS
             AgentTaskState::Failed,
             TaskStatusUpdate::with_error_code(
                 format!(
-                    "Saved prompt not found for ID {id}. Verify the prompt exists in your Warp Drive."
+                    "Saved prompt not found for ID {id}. Verify the prompt exists in your Octomus Drive."
                 ),
                 PlatformErrorCode::ResourceNotFound,
             ),

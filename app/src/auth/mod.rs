@@ -10,7 +10,7 @@ pub mod login_slide;
 pub mod needs_sso_link_view;
 pub mod paste_auth_token_modal;
 mod user_properties;
-pub use warp_server_auth::{auth_state, credentials, user, user_uid};
+pub use octomus_server_auth::{auth_state, credentials, user, user_uid};
 #[cfg(target_family = "wasm")]
 pub mod web_handoff;
 
@@ -20,10 +20,10 @@ pub use auth_manager::AuthManager;
 pub use auth_state::AuthStateProvider;
 use itertools::Itertools;
 pub use login_failure_notification::LoginFailureReason;
+use octomus_core::user_preferences::GetUserPreferences as _;
+use octomusui::modals::{AlertDialogWithCallbacks, ModalButton};
+use octomusui::{AppContext, SingletonEntity};
 pub use user_uid::UserUid;
-use warp_core::user_preferences::GetUserPreferences as _;
-use warpui::modals::{AlertDialogWithCallbacks, ModalButton};
-use warpui::{AppContext, SingletonEntity};
 
 use crate::ai::agent_conversations_model::AgentConversationsModel;
 use crate::ai::blocklist::agent_view::orchestration_pill_bar_model::OrchestrationPillBarModel;
@@ -152,7 +152,7 @@ pub fn maybe_log_out(app: &mut AppContext) {
                 "object"
             };
             info_text_vec.push(format!(
-                "You have {num_unsaved_objects} unsynced Warp Drive {plural}. \
+                "You have {num_unsaved_objects} unsynced Octomus Drive {plural}. \
             Logging out will cause you to lose the {plural}."
             ));
         }
@@ -190,7 +190,7 @@ pub fn maybe_log_out(app: &mut AppContext) {
         );
 
         // On mac, we show the native platform modal. On platforms that don't support a native modal,
-        // we show the custom warp modal.
+        // we show the custom octomus modal.
         if cfg!(all(not(target_family = "wasm"), target_os = "macos")) {
             app.show_native_platform_modal(alert_data);
         } else {

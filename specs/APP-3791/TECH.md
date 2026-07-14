@@ -4,7 +4,7 @@ Linear: [APP-3791](https://linear.app/warpdotdev/issue/APP-3791/code-feature-sup
 
 ## 1. Problem
 
-When a user SSHes into a remote host, Warp's completions pipeline (autosuggestions, syntax highlighting, tab completions) needs to run generator commands on the remote machine. Today this is done by opening a new SSH session per command, which is constrained by the host's `MaxSessions` limit and cannot run commands in parallel.
+When a user SSHes into a remote host, Octomus's completions pipeline (autosuggestions, syntax highlighting, tab completions) needs to run generator commands on the remote machine. Today this is done by opening a new SSH session per command, which is constrained by the host's `MaxSessions` limit and cannot run commands in parallel.
 
 This spec covers building the completions path through the persistent `remote_server` process:
 

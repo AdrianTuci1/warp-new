@@ -2,7 +2,7 @@ use std::future::Future;
 use std::sync::Arc;
 
 use chrono::{DateTime, Utc};
-use warpui::r#async::executor::Background;
+use octomusui::r#async::executor::Background;
 
 use crate::ai::ambient_agents::AmbientAgentTaskId;
 use crate::server::server_api::ai::{AIClient, AgentRunClientEventRequest};
@@ -10,7 +10,7 @@ use crate::server::server_api::ai::{AIClient, AgentRunClientEventRequest};
 #[derive(Clone)]
 pub(crate) struct SetupClientEventReporter {
     run_id: Option<AmbientAgentTaskId>,
-    ai_client: Arc<dyn AIClient>,
+    ai_client: Option<Arc<dyn AIClient>>,
     background: Arc<Background>,
 }
 
@@ -23,7 +23,7 @@ impl SetupClientEventReporter {
     ) -> Self {
         Self {
             run_id: Some(run_id),
-            ai_client,
+            ai_client: Some(ai_client),
             background,
         }
     }
@@ -32,7 +32,16 @@ impl SetupClientEventReporter {
     pub(crate) fn noop(ai_client: Arc<dyn AIClient>, background: Arc<Background>) -> Self {
         Self {
             run_id: None,
-            ai_client,
+            ai_client: Some(ai_client),
+            background,
+        }
+    }
+
+    /// Constructs a reporter for standalone runs without a server connection.
+    pub(crate) fn noop_no_server(background: Arc<Background>) -> Self {
+        Self {
+            run_id: None,
+            ai_client: None,
             background,
         }
     }
@@ -89,13 +98,13 @@ impl SetupClientEventReporter {
     }
 
     pub(crate) async fn post_timeline_event(&self, event: SetupTimelineEvent) {
-        let Some(run_id) = self.run_id else {
+        let (Some(run_id), Some(ai_client)) = (self.run_id, self.ai_client.as_ref()) else {
             return;
         };
         let timestamp = Utc::now();
         let event_name = event.as_event_name();
         let request = AgentRunClientEventRequest::timeline_event(event_name, timestamp);
-        Self::post_client_event(run_id, self.ai_client.clone(), event_name, request).await;
+        Self::post_client_event(run_id, ai_client.clone(), event_name, request).await;
     }
 
     fn post_setup_metric_event_best_effort(
@@ -105,11 +114,11 @@ impl SetupClientEventReporter {
         finish_timestamp: DateTime<Utc>,
         is_error: bool,
     ) {
-        let Some(run_id) = self.run_id else {
+        let (Some(run_id), Some(ai_client)) = (self.run_id, self.ai_client.as_ref()) else {
             return;
         };
 
-        let ai_client = self.ai_client.clone();
+        let ai_client = ai_client.clone();
         self.background
             .spawn(async move {
                 let event_name = step.as_event_name();
@@ -155,7 +164,7 @@ impl SetupTimelineEvent {
 #[derive(Clone, Copy)]
 pub(crate) enum SetupStep {
     TeamMetadataRefresh,
-    WarpDriveSync,
+    OctomusDriveSync,
     TaskDataFetch,
     EnvironmentResolution,
     SkillRepoClone,
@@ -183,7 +192,7 @@ impl SetupStep {
     fn as_event_name(self) -> &'static str {
         match self {
             Self::TeamMetadataRefresh => "setup_team_metadata_refresh",
-            Self::WarpDriveSync => "setup_warp_drive_sync",
+            Self::OctomusDriveSync => "setup_octomus_drive_sync",
             Self::TaskDataFetch => "setup_task_metadata_secrets_attachments_git_credentials_fetch",
             Self::EnvironmentResolution => "setup_environment_resolution",
             Self::SkillRepoClone => "setup_skill_repo_clone",

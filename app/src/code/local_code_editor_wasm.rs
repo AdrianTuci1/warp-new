@@ -3,14 +3,14 @@ use std::path::PathBuf;
 use std::rc::Rc;
 
 use ai::diff_validation::DiffType;
-use warp_core::ui::appearance::Appearance;
-use warp_editor::content::buffer::InitialBufferState;
-use warp_editor::render::model::LineCount;
-use warp_util::file::{FileLoadError, FileSaveError};
-use warpui::elements::MouseStateHandle;
-use warpui::{
+use octomus_core::ui::appearance::Appearance;
+use octomus_util::file::{FileLoadError, FileSaveError};
+use octomusui::elements::MouseStateHandle;
+use octomusui::{
     AppContext, Element, Entity, TypedActionView, View, ViewContext, ViewHandle, WindowId,
 };
+use warp_editor::content::buffer::InitialBufferState;
+use warp_editor::render::model::LineCount;
 
 pub use super::diff_viewer::DisplayMode;
 use super::editor::view::CodeEditorView;
@@ -111,7 +111,7 @@ impl View for LocalCodeEditorView {
         "LocalCodeEditorView"
     }
     fn render(&self, _app: &AppContext) -> Box<dyn Element> {
-        warpui::elements::Empty::new().finish()
+        octomusui::elements::Empty::new().finish()
     }
 }
 
@@ -128,5 +128,5 @@ pub fn render_unsaved_circle_with_tooltip(
     _right_margin: f32,
     _appearance: &Appearance,
 ) -> Box<dyn Element> {
-    warpui::elements::Empty::new().finish()
+    octomusui::elements::Empty::new().finish()
 }

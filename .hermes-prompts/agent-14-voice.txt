@@ -3,11 +3,11 @@ Repo-ul e deja clonat și worktree-ul e gata — nu mai clona nimic.
 
 cd /tmp/worktree-agent-14-voice
 
-TASK: Replace cloud-dependent voice transcription (Wispr via Warp server) with direct OpenAI Whisper API. Voice input is disabled by default — user must provide their own API key.
+TASK: Replace cloud-dependent voice transcription (Wispr via Octomus server) with direct OpenAI Whisper API. Voice input is disabled by default — user must provide their own API key.
 
 === BACKGROUND ===
 
-Current flow: Editor → VoiceInput crate → VoiceTranscriber.transcribe(wav_base64) → ServerVoiceTranscriber → ServerApi::transcribe(Provider::Wispr) → Warp cloud → Wispr.
+Current flow: Editor → VoiceInput crate → VoiceTranscriber.transcribe(wav_base64) → ServerVoiceTranscriber → ServerApi::transcribe(Provider::Wispr) → Octomus cloud → Wispr.
 
 After Agent 1, app/src/server/ is DELETED. ServerVoiceTranscriber and TranscribeError from server::server_api are gone. The Transcriber trait (app/src/voice/transcriber.rs) survives. We create a direct OpenAI Whisper implementation.
 
@@ -185,7 +185,7 @@ B) Find the `explicitly_interacted_with_voice` field and add AFTER it:
 
 C) Find `is_voice_input_enabled` (around line 1549) and UPDATE:
 ```rust
-    pub fn is_voice_input_enabled(&self, app: &warpui::AppContext) -> bool {
+    pub fn is_voice_input_enabled(&self, app: &octomusui::AppContext) -> bool {
         cfg!(feature = "voice_input")
             && self.is_any_ai_enabled(app)
             && *self.voice_input_enabled_internal
@@ -318,7 +318,7 @@ Find the voice section (search for `voice_input_enabled` toggle). Add a password
 - Reads from `AISettings::whisper_api_key()`, updates on change
 - Helper text: "Your OpenAI API key. Leave empty to disable voice input."
 
-Follow the same warpui TextField pattern used for other API key fields on this page (see how OpenAI/Bedrock keys are rendered).
+Follow the same octomusui TextField pattern used for other API key fields on this page (see how OpenAI/Bedrock keys are rendered).
 
 === PART 9: Add base64 dependency if missing ===
 

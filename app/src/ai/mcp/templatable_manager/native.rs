@@ -6,6 +6,12 @@ use std::sync::Arc;
 use async_compat::CompatExt as _;
 use cfg_if::cfg_if;
 use futures::FutureExt as _;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomus_core::features::FeatureFlag;
+use octomus_core::safe_error;
+use octomus_core::settings::Setting as _;
+use octomusui::windowing::WindowManager;
+use octomusui::{AppContext, ModelContext, SingletonEntity};
 use parking_lot::Mutex;
 use rmcp::transport::ConfigureCommandExt as _;
 use rmcp::ServiceExt as _;
@@ -13,12 +19,6 @@ use simple_logger::manager::LogManager;
 use simple_logger::SimpleLogger;
 use tokio::io::AsyncBufReadExt as _;
 use uuid::Uuid;
-use warp_core::execution_mode::AppExecutionMode;
-use warp_core::features::FeatureFlag;
-use warp_core::safe_error;
-use warp_core::settings::Setting as _;
-use warpui::windowing::WindowManager;
-use warpui::{AppContext, ModelContext, SingletonEntity};
 
 use super::oauth::{self, AuthContext, FileBasedPersistedCredentialsMap, PersistedCredentialsMap};
 use super::utils::{query_resources_for, query_tools_for};
@@ -160,7 +160,7 @@ fn error_to_user_message(error: &rmcp::RmcpError) -> String {
     }
 }
 
-/// An MCP server integration that Warp ships with bundled skills for.
+/// An MCP server integration that Octomus ships with bundled skills for.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum McpIntegration {
     Figma,
@@ -784,10 +784,10 @@ impl TemplatableMCPServerManager {
 
             // For file-based MCP installations without an explicit `working_directory`,
             // default the spawn cwd to the directory the config was discovered in
-            // (repo root for project-scoped configs, ~/.warp/ or ~ for globals). This
+            // (repo root for project-scoped configs, ~/.octomus/ or ~ for globals). This
             // matches user expectations for repo-relative commands in `.mcp.json`.
             // Cloud-templated installations (lookup returns None) are unaffected and
-            // continue to inherit Warp's process cwd.
+            // continue to inherit Octomus's process cwd.
             if cli_server.cwd_parameter.is_none() {
                 if let Some(spawn_root) =
                     FileBasedMCPManager::as_ref(ctx).spawn_root_for_installation(installation_uuid)
@@ -1798,7 +1798,7 @@ async fn spawn_server(
                 if err.kind() == std::io::ErrorKind::NotFound {
                     let cwd_display = cwd_for_log
                         .as_deref()
-                        .unwrap_or("<inherited from Warp's process cwd>");
+                        .unwrap_or("<inherited from Octomus's process cwd>");
                     logger.log(format!(
                         "[error] MCP: Failed to spawn '{server_name}': command '{command_for_log}' \
                          not found (cwd: {cwd_display}). If your MCP server depends on a specific \
@@ -2087,8 +2087,8 @@ fn make_client_info() -> rmcp::model::ClientInfo {
     rmcp::model::ClientInfo::new(
         Default::default(),
         rmcp::model::Implementation::new(
-            warp_core::channel::ChannelState::app_id().to_string(),
-            warp_core::channel::ChannelState::app_version()
+            octomus_core::channel::ChannelState::app_id().to_string(),
+            octomus_core::channel::ChannelState::app_version()
                 .map(|v| v.to_string())
                 .unwrap_or_default(),
         ),

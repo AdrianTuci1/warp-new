@@ -1,8 +1,8 @@
 //! Data source for the user query menu.
 
 use itertools::Itertools;
+use octomusui::{AppContext, Entity, SingletonEntity};
 use ordered_float::OrderedFloat;
-use warpui::{AppContext, Entity, SingletonEntity};
 
 use crate::ai::agent::conversation::AIConversationId;
 use crate::ai::agent::AIAgentExchangeId;

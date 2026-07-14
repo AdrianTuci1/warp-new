@@ -1,17 +1,19 @@
-use pathfinder_color::ColorU;
-use pathfinder_geometry::vector::Vector2F;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::Icon;
-use warpui::elements::{
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::Icon;
+use octomusui::elements::{
     Align, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, DropShadow, Flex,
     MainAxisAlignment, ParentElement as _, Radius, Shrinkable,
 };
-use warpui::fonts::Weight;
-use warpui::ui_components::components::{BorderStyle, Coords, UiComponent as _, UiComponentStyles};
-use warpui::{
+use octomusui::fonts::Weight;
+use octomusui::ui_components::components::{
+    BorderStyle, Coords, UiComponent as _, UiComponentStyles,
+};
+use octomusui::{
     AppContext, Element, Entity, FocusContext, SingletonEntity as _, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_color::ColorU;
+use pathfinder_geometry::vector::Vector2F;
 
 use crate::editor::{EditorOptions, EditorView, Event as EditorEvent, TextOptions};
 
@@ -158,7 +160,7 @@ impl View for GlowingEditor {
         let agent_icon = Container::new(
             ConstrainedBox::new(
                 Icon::AgentMode
-                    .to_warpui_icon(theme.sub_text_color(theme.background()))
+                    .to_octomusui_icon(theme.sub_text_color(theme.background()))
                     .finish(),
             )
             .with_height(font_size)

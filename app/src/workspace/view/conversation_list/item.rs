@@ -1,19 +1,19 @@
-use pathfinder_geometry::vector::vec2f;
-use warp_core::ui::color::coloru_with_opacity;
-use warp_core::ui::theme::color::internal_colors;
-use warp_util::path::user_friendly_path;
-use warpui::elements::{
+use octomus_core::ui::color::coloru_with_opacity;
+use octomus_core::ui::theme::color::internal_colors;
+use octomus_util::path::user_friendly_path;
+use octomusui::elements::{
     AnchorPair, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius,
     CrossAxisAlignment, DispatchEventResult, Element, EventHandler, Flex, Highlight, Hoverable,
     MainAxisAlignment, MainAxisSize, MouseInBehavior, MouseStateHandle, OffsetPositioning,
     OffsetType, ParentAnchor, ParentElement, ParentOffsetBounds, PositionedElementOffsetBounds,
     PositioningAxis, Radius, SavePosition, Shrinkable, Stack, Text, XAxisAnchor, YAxisAnchor,
 };
-use warpui::fonts::{Properties, Weight};
-use warpui::platform::Cursor;
-use warpui::text_layout::TextStyle;
-use warpui::ui_components::components::{UiComponent, UiComponentStyles};
-use warpui::{AppContext, SingletonEntity, ViewHandle};
+use octomusui::fonts::{Properties, Weight};
+use octomusui::platform::Cursor;
+use octomusui::text_layout::TextStyle;
+use octomusui::ui_components::components::{UiComponent, UiComponentStyles};
+use octomusui::{AppContext, SingletonEntity, ViewHandle};
+use pathfinder_geometry::vector::vec2f;
 
 use crate::ai::active_agent_views_model::ActiveAgentViewsModel;
 use crate::ai::agent_conversations_model::{
@@ -113,7 +113,7 @@ pub fn render_static_item(props: StaticItemProps<'_>, app: &AppContext) -> Box<d
 
     let icon_color = theme.main_text_color(theme.background());
     let icon = Container::new(
-        ConstrainedBox::new(Icon::Plus.to_warpui_icon(icon_color).finish())
+        ConstrainedBox::new(Icon::Plus.to_octomusui_icon(icon_color).finish())
             .with_width(appearance.ui_font_size())
             .with_height(appearance.ui_font_size())
             .finish(),

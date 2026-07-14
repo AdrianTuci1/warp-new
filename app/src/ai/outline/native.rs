@@ -6,13 +6,13 @@ use ai::index::build_outline;
 use async_channel::Sender;
 use futures::stream::AbortHandle;
 use instant::Instant;
+use octomusui::{Entity, ModelContext, ModelHandle, SingletonEntity};
 use repo_metadata::repositories::{DetectedRepositories, DetectedRepositoriesEvent};
 use repo_metadata::repository::{
     BufferingRepositorySubscriber, RepositorySubscriber, SubscriberId,
 };
 use repo_metadata::{CanonicalizedPath, DirectoryWatcher, Repository, RepositoryUpdate};
 use settings::Setting as _;
-use warpui::{Entity, ModelContext, ModelHandle, SingletonEntity};
 
 use super::OutlineStatus;
 use crate::ai::persisted_workspace::all_working_directories;

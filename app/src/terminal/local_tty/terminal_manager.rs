@@ -10,6 +10,10 @@ use std::thread::JoinHandle;
 
 use anyhow::Context as _;
 use async_broadcast::InactiveReceiver;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomus_core::send_telemetry_from_ctx;
+use octomusui::r#async::executor::Background;
+use octomusui::{AppContext, ModelContext, ModelHandle, SingletonEntity, ViewHandle, WindowId};
 use parking_lot::{FairMutex, Mutex};
 use pathfinder_geometry::vector::Vector2F;
 use session_sharing_protocol::common::{
@@ -27,10 +31,6 @@ use session_sharing_protocol::sharer::{
     TeamAccessLevelUpdateResponse, UpdatePendingUserRoleResponse,
 };
 use settings::Setting as _;
-use warp_core::execution_mode::AppExecutionMode;
-use warp_core::send_telemetry_from_ctx;
-use warpui::r#async::executor::Background;
-use warpui::{AppContext, ModelContext, ModelHandle, SingletonEntity, ViewHandle, WindowId};
 #[cfg(unix)]
 use {
     super::terminal_attributes::TerminalAttributesPoller,
@@ -73,6 +73,7 @@ use crate::terminal::local_tty::{Pty, PtyOptions};
 use crate::terminal::model::session::Sessions;
 use crate::terminal::model::terminal_model::ExitReason;
 use crate::terminal::model_events::ModelEventDispatcher;
+use crate::terminal::octomusify::settings::OctomusifySettings;
 use crate::terminal::safe_mode_settings::get_secret_obfuscation_mode;
 use crate::terminal::session_settings::{SessionSettings, SessionSettingsChangedEvent};
 use crate::terminal::shared_session::manager::Manager;
@@ -95,7 +96,6 @@ use crate::terminal::shared_session::{
 };
 use crate::terminal::shell::ShellName;
 use crate::terminal::view::{ConversationRestorationInNewPaneType, Event as TerminalViewEvent};
-use crate::terminal::warpify::settings::WarpifySettings;
 use crate::terminal::writeable_pty::pty_controller::{EventLoopSendError, EventLoopSender};
 use crate::terminal::writeable_pty::terminal_manager_util::{
     init_pty_controller_model, init_remote_server_controller, wire_up_pty_controller_with_view,
@@ -358,9 +358,9 @@ impl TerminalManager {
         let prompt_type = ctx.add_model(|ctx| PromptType::new_dynamic(current_prompt.clone(), ctx));
         let session_sharer_clone = session_sharer.clone();
 
-        // Send warp prompt updates.
+        // Send octomus prompt updates.
         ctx.observe_model(&current_prompt, move |current_prompt, ctx| {
-            // If for some reason ctx.notify() was called on the warp prompt but we're using ps1, do nothing.
+            // If for some reason ctx.notify() was called on the octomus prompt but we're using ps1, do nothing.
             if *SessionSettings::as_ref(ctx).honor_ps1 {
                 return
             }
@@ -467,7 +467,7 @@ impl TerminalManager {
             if let SessionSettingsChangedEvent::HonorPS1 { .. } = event {
                 if !*SessionSettings::as_ref(ctx).honor_ps1 {
                     // We don't need to send a WarpPrompt message here when turning off PS1 because this will be sent
-                    // as part of observing the warp prompt and sending messages on updates.
+                    // as part of observing the octomus prompt and sending messages on updates.
                     return;
                 }
                 if let Some(network) = session_sharer_clone.borrow().as_ref() {
@@ -1025,7 +1025,7 @@ impl TerminalManager {
         });
     }
 
-    /// Sends bindkey to notify shell process to switch to Warp prompt logic for prompt
+    /// Sends bindkey to notify shell process to switch to Octomus prompt logic for prompt
     /// with the combined prompt/command grid (we unset the PS1, but save the value for potential
     /// future restoration).
     pub fn send_switch_to_warp_prompt_bindkey(&self, app_ctx: &mut AppContext) {
@@ -1084,10 +1084,10 @@ impl TerminalManager {
 
         // The TMUX SSH wrapper supercedes the original ControlMaster wrapper.
         let enable_ssh_wrapper = if FeatureFlag::SSHTmuxWrapper.is_enabled() {
-            *WarpifySettings::as_ref(ctx)
-                .enable_ssh_warpification
+            *OctomusifySettings::as_ref(ctx)
+                .enable_ssh_octomusification
                 .value()
-                && !*WarpifySettings::as_ref(ctx).use_ssh_tmux_wrapper.value()
+                && !*OctomusifySettings::as_ref(ctx).use_ssh_tmux_wrapper.value()
         } else {
             *SshSettings::as_ref(ctx).enable_legacy_ssh_wrapper.value()
         };
@@ -2605,7 +2605,7 @@ pub fn get_shell_starter(
     // TODO(alokedesai): Further refactor this function to make it clear that it's expensive.
     shell_starter_or_wsl_name
         .and_then(|starter| {
-            warpui::r#async::block_on(async { starter.to_shell_starter_source().await })
+            octomusui::r#async::block_on(async { starter.to_shell_starter_source().await })
         })
         .map(|starter_source| {
             get_shell_starter_internal(

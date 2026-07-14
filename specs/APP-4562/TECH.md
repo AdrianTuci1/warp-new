@@ -11,7 +11,7 @@ For Cloud Mode today:
 ### 1. Feature flag `QueuedPromptsV2`
 Add a compile-time + runtime feature flag.
 - `app/Cargo.toml`: add `queued_prompts_v2 = ["queue_slash_command"]` under `[features]`. The cargo dependency means enabling V2 transitively enables the existing queue feature, so every existing `FeatureFlag::QueueSlashCommand.is_enabled()` site still works without modification. Do not add to `default`.
-- `crates/warp_features/src/lib.rs`: add `QueuedPromptsV2` to the `FeatureFlag` enum, alongside the existing `QueueSlashCommand` entry. Add the variant to `DOGFOOD_FLAGS`.
+- `crates/octomus_features/src/lib.rs`: add `QueuedPromptsV2` to the `FeatureFlag` enum, alongside the existing `QueueSlashCommand` entry. Add the variant to `DOGFOOD_FLAGS`.
 - `app/src/features.rs:432-433`: register the runtime flag under `#[cfg(feature = "queued_prompts_v2")]`.
 All cloud-mode-aware sites described below gate on `FeatureFlag::QueuedPromptsV2.is_enabled()` directly.
 ### 2. `QueuedQueryOrigin::InitialCloudMode` is now load-bearing
@@ -86,7 +86,7 @@ flowchart LR
 ```
 ## Testing and validation
 Map tests directly to the product invariants in `specs/APP-4562/PRODUCT.md`:
-- **§1, §2 (feature gating)**: compile both with and without the cargo feature (`cargo check -p warp` and `cargo check -p warp --features queued_prompts_v2`); unit-test that all new helpers no-op when V2 is off.
+- **§1, §2 (feature gating)**: compile both with and without the cargo feature (`cargo check -p octomus` and `cargo check -p octomus --features queued_prompts_v2`); unit-test that all new helpers no-op when V2 is off.
 - **§3, §4 (initial cloud-mode prompt as locked row)**: `app/src/terminal/view/queued_prompts_test.rs` covers (a) `DispatchedAgent` appends an `InitialCloudMode` row when V2 is on (`dispatched_cloud_prompt_uses_locked_queue_row_when_v2_is_enabled`), (b) `FollowupDispatched` does the same (`dispatched_cloud_followup_uses_locked_queue_row_when_v2_is_enabled`), and (c) the legacy block is not inserted when V2 is on.
 - **§4 (lock semantics at the model level)**: `app/src/ai/blocklist/queued_query_tests.rs` includes `initial_cloud_mode_head_rejects_user_mutations_and_autofire` proving `enter_edit_mode`, `remove_by_id`, `reorder` (both `source_id` and `target_index == 0`), and `pop_for_autofire` no-op for `InitialCloudMode` rows; `pop_front_no_ops_when_head_is_locked` covers the non-clean drain path; `remove_initial_cloud_mode_row_only_removes_the_locked_head` covers the lifecycle removal path.
 - **§6, §7 (removal sites)**: `cloud_setup_cleanup_events_remove_the_locked_queue_row` covers `HarnessCommandStarted`, `Cancelled`, `NeedsGithubAuth`, and `HandoffSnapshotUploadFailed`; `failed_event_keeps_locked_queue_row_under_cloud_mode_setup_v2` and `failed_event_removes_locked_queue_row_without_cloud_mode_setup_v2` cover the `Failed` event under both `CloudModeSetupV2` configurations, mirroring the legacy block's gating. `AppendedExchange` with renderable user query, and the oz local-to-cloud handoff first exchange, are exercised by existing terminal-view test coverage of the legacy removal sites — both paths now share the same `remove_cloud_mode_queue_row` helper.

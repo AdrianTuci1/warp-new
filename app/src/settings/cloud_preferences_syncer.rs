@@ -5,14 +5,14 @@ use std::time::Duration;
 
 use cloud_object_models::JsonSerializer;
 use lazy_static::lazy_static;
+use octomus_core::execution_mode::AppExecutionMode;
+use octomus_core::r#async::debounce;
+use octomus_core::settings::ChangeEventReason;
+use octomus_core::user_preferences::GetUserPreferences;
+use octomusui::r#async::Timer;
+use octomusui::{Entity, ModelContext, SingletonEntity};
+use octomusui_extras::user_preferences::toml_backed::TomlBackedUserPreferences;
 use settings::{Setting as _, SyncToCloud};
-use warp_core::execution_mode::AppExecutionMode;
-use warp_core::r#async::debounce;
-use warp_core::settings::ChangeEventReason;
-use warp_core::user_preferences::GetUserPreferences;
-use warpui::r#async::Timer;
-use warpui::{Entity, ModelContext, SingletonEntity};
-use warpui_extras::user_preferences::toml_backed::TomlBackedUserPreferences;
 
 use super::cloud_preferences::{CloudPreferencesSettings, CloudPreferencesSettingsChangedEvent};
 use super::manager::SettingsEvent;
@@ -99,7 +99,7 @@ pub fn initialize_cloud_preferences_syncer(
     CloudPreferencesSyncer::new(force_local_wins_on_startup, toml_file_path, ctx)
 }
 
-/// Handles syncing CloudPreferences (the Warp Drive objects) and local Settings models that
+/// Handles syncing CloudPreferences (the Octomus Drive objects) and local Settings models that
 /// have been created using the define_settings_group macro.
 pub struct CloudPreferencesSyncer {
     // A channel used for debouncing local settings updates so that we don't spam the
@@ -166,7 +166,7 @@ const PREFERENCES_DEBOUNCE_PERIOD: Duration = Duration::from_millis(500);
 
 impl CloudPreferencesSyncer {
     // Retry preferences every five minutes until they are successfully synced.
-    // Only enabled for users in the warp drive preferences experiment.
+    // Only enabled for users in the octomus drive preferences experiment.
     const RETRY_POLL: Duration = Duration::from_secs(60 * 5);
 
     #[cfg(test)]
@@ -450,7 +450,7 @@ impl CloudPreferencesSyncer {
 
         PrivacySettings::handle(ctx).update(ctx, |privacy_settings, ctx| {
             // Note that this also blocks on update_manager.initial_load_complete()
-            privacy_settings.maybe_sync_with_warp_drive_prefs(ctx);
+            privacy_settings.maybe_sync_with_octomus_drive_prefs(ctx);
         });
     }
 
@@ -599,13 +599,13 @@ impl CloudPreferencesSyncer {
                 // Update local pref to match cloud pref unless we are doing a forced preferences sync.
                 self.maybe_sync_cloud_pref_to_local(&storage_key, ctx)
             } else if !LEGACY_CLOUD_SETTINGS_STORAGE_KEYS.contains(&storage_key.as_str()) {
-                // For all settings except legacy cloud-synced settings, we sync them immediately to warp drive on
+                // For all settings except legacy cloud-synced settings, we sync them immediately to octomus drive on
                 // initial load.
                 keys_to_sync_to_cloud.push(storage_key);
             } else {
                 // This is one of the two legacy settings stored in the user_settings table and
-                // it has not yet been saved to warp drive. In this case we want to wait for
-                // these settings to load from the server, and then sync them to warp drive.
+                // it has not yet been saved to octomus drive. In this case we want to wait for
+                // these settings to load from the server, and then sync them to octomus drive.
                 // The logic for this is in privacy.rs.
                 log::info!(
                     "Waiting to sync legacy cloud preference with storage key {storage_key} until it is explicitly set"

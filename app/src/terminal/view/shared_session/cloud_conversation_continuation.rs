@@ -1,5 +1,5 @@
-use warp_cli::agent::Harness;
-use warpui::{AppContext, EntityId, SingletonEntity};
+use octomus_cli::agent::Harness;
+use octomusui::{AppContext, EntityId, SingletonEntity};
 
 use crate::ai::agent::api::ServerConversationToken;
 use crate::ai::agent::conversation::{

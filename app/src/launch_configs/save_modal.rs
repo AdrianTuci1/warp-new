@@ -1,23 +1,23 @@
 use markdown_parser::{
     FormattedText, FormattedTextFragment, FormattedTextInline, FormattedTextLine,
 };
-use pathfinder_geometry::vector::vec2f;
-use serde::{Deserialize, Serialize};
-use warp_core::paths::home_relative_path;
-use warp_core::ui::theme::Fill;
-use warpui::accessibility::{AccessibilityContent, WarpA11yRole};
-use warpui::elements::{
+use octomus_core::paths::home_relative_path;
+use octomus_core::ui::theme::Fill;
+use octomusui::accessibility::{AccessibilityContent, WarpA11yRole};
+use octomusui::elements::{
     Align, Border, ChildAnchor, ChildView, Clipped, ConstrainedBox, Container, CornerRadius,
     Element, Empty, Flex, FormattedTextElement, MouseStateHandle, OffsetPositioning, ParentAnchor,
     ParentElement, ParentOffsetBounds, Radius, SavePosition, Shrinkable, Stack, Text,
 };
-use warpui::keymap::FixedBinding;
-use warpui::ui_components::button::{Button, ButtonVariant};
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
+use octomusui::keymap::FixedBinding;
+use octomusui::ui_components::button::{Button, ButtonVariant};
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
     AppContext, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
+use pathfinder_geometry::vector::vec2f;
+use serde::{Deserialize, Serialize};
 
 use crate::app_state::{get_app_state, AppState};
 use crate::appearance::Appearance;
@@ -42,7 +42,7 @@ const SAVE_CONFIG_BUTTON_LABEL: &str = "Save Configuration";
 const OPEN_FILE_BUTTON_LABEL: &str = "Open YAML File";
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     app.register_fixed_bindings([FixedBinding::new(
         "escape",
@@ -161,7 +161,7 @@ pub enum LaunchConfigModalEvent {
     OpenFileWithTarget {
         path: std::path::PathBuf,
         target: FileTarget,
-        line_col: Option<warp_util::path::LineAndColumnArg>,
+        line_col: Option<octomus_util::path::LineAndColumnArg>,
     },
     Close,
 }
@@ -531,7 +531,7 @@ impl LaunchConfigSaveModal {
                     .link(
                         "Link to Documentation".to_string(),
                         Some(
-                            "https://docs.warp.dev/terminal/sessions/launch-configurations"
+                            "https://docs.octomus.dev/terminal/sessions/launch-configurations"
                                 .to_string(),
                         ),
                         None,
@@ -674,7 +674,7 @@ impl TypedActionView for LaunchConfigSaveModal {
         // TODO(vorporeal): We should figure out a better way to handle the
         // interactions with the filesystem here, whether it's compiling out
         // the save modal more completely or doing something else.  Perhaps
-        // this will become moot when we put launch configs in Warp Drive.
+        // this will become moot when we put launch configs in Octomus Drive.
         let action = match action {
             ActionRequest::Action(action) => action.clone(),
             ActionRequest::Enter => LaunchConfigSaveAction::from_state(&self.save_state),

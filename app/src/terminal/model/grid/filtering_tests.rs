@@ -1,4 +1,4 @@
-use warp_terminal::model::grid::cell::Flags;
+use octomus_terminal::model::grid::cell::Flags;
 
 use super::*;
 use crate::terminal::model::ansi::Handler as _;

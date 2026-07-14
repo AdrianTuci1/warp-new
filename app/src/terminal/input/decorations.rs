@@ -1,16 +1,16 @@
-//! Warp input editor logic related to decorating the input's text, such as
+//! Octomus input editor logic related to decorating the input's text, such as
 //! applying syntax highlighting and error underlining.
 
 use std::collections::HashMap;
 use std::ops::Range;
 
+pub use octomus_completer::completer::SuggestionTypeName;
+pub use octomus_completer::util::parse_current_commands_and_tokens;
+pub use octomus_completer::{ParsedTokenData, ParsedTokensSnapshot};
+use octomus_core::features::FeatureFlag;
+use octomusui::{AppContext, SingletonEntity, ViewContext};
 use settings::Setting as _;
 use string_offset::{ByteOffset, CharOffset};
-pub use warp_completer::completer::SuggestionTypeName;
-pub use warp_completer::util::parse_current_commands_and_tokens;
-pub use warp_completer::{ParsedTokenData, ParsedTokensSnapshot};
-use warp_core::features::FeatureFlag;
-use warpui::{AppContext, SingletonEntity, ViewContext};
 
 use super::Input;
 use crate::appearance::Appearance;

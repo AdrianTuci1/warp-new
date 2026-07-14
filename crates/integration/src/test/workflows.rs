@@ -1,24 +1,24 @@
 use std::time::Duration;
 
-use warp::integration_testing::assertions::{go_offline, go_online, join_a_workspace};
-use warp::integration_testing::command_palette::{
+use octomus::integration_testing::assertions::{go_offline, go_online, join_a_workspace};
+use octomus::integration_testing::command_palette::{
     open_command_palette_and_run_action, TestStepsExt,
 };
-use warp::integration_testing::step::new_step_with_default_assertions;
-use warp::integration_testing::terminal::util::ExpectedExitStatus;
-use warp::integration_testing::terminal::{
+use octomus::integration_testing::step::new_step_with_default_assertions;
+use octomus::integration_testing::terminal::util::ExpectedExitStatus;
+use octomus::integration_testing::terminal::{
     execute_command_for_single_terminal_in_tab, wait_until_bootstrapped_single_pane_for_tab,
 };
-use warp::integration_testing::window::save_active_window_id;
-use warp::integration_testing::workflow::{
+use octomus::integration_testing::window::save_active_window_id;
+use octomus::integration_testing::workflow::{
     assert_no_team_workflow_pane_open, assert_no_workflow_pane_open,
     assert_open_team_workflow_pane_count_equals, assert_open_workflow_pane_count_equals,
     assert_workflow_id, create_a_personal_workflow, open_workflow,
 };
-use warp::integration_testing::{self, view_of_type};
-use warp::workflows::CategoriesView;
-use warpui_core::integration::TestStep;
-use warpui_core::{async_assert_eq, ViewHandle};
+use octomus::integration_testing::{self, view_of_type};
+use octomus::workflows::CategoriesView;
+use octomusui_core::integration::TestStep;
+use octomusui_core::{async_assert_eq, ViewHandle};
 
 use super::{new_builder, TEST_ONLY_ASSETS};
 use crate::Builder;
@@ -83,7 +83,7 @@ pub fn test_create_team_workflow_pane_from_command_palette() -> Builder {
         )
 }
 
-/// Adds a workflow file, containing two workflows, to a `.warp/workflows`
+/// Adds a workflow file, containing two workflows, to a `.octomus/workflows`
 /// directory under a git repository and verifies that the workflows appear
 /// in the workflow menu.
 pub fn test_loading_project_workflows() -> Builder {
@@ -124,7 +124,7 @@ pub fn test_loading_project_workflows() -> Builder {
                     "test_workflow.yaml",
                     &utils
                         .test_dir()
-                        .join("repo/.warp/workflows/test_workflow.yaml"),
+                        .join("repo/.octomus/workflows/test_workflow.yaml"),
                 );
             }),
         )

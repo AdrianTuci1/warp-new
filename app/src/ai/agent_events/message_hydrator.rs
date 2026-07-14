@@ -7,9 +7,9 @@ use futures::future::Either;
 #[cfg(not(target_family = "wasm"))]
 use instant::Instant;
 #[cfg(not(target_family = "wasm"))]
-use reqwest::Error as ReqwestError;
+use octomusui::r#async::Timer;
 #[cfg(not(target_family = "wasm"))]
-use warpui::r#async::Timer;
+use reqwest::Error as ReqwestError;
 
 use crate::ai::agent::ReceivedMessageInput;
 use crate::ai::ambient_agents::AmbientAgentTaskId;

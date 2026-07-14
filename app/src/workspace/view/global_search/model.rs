@@ -4,11 +4,11 @@ use anyhow::Result;
 use futures::StreamExt as _;
 use instant::Instant;
 use num_traits::SaturatingSub;
+use octomus_ripgrep::search::{Match as RipgrepMatch, Submatch};
+use octomusui::r#async::SpawnedFutureHandle;
+use octomusui::{Entity, ModelContext, ModelSpawner};
 use regex::escape;
 use string_offset::ByteOffset;
-use warp_ripgrep::search::{Match as RipgrepMatch, Submatch};
-use warpui::r#async::SpawnedFutureHandle;
-use warpui::{Entity, ModelContext, ModelSpawner};
 
 use crate::workspace::view::global_search::view::GlobalSearchEvent;
 use crate::workspace::view::global_search::SearchConfig;
@@ -87,7 +87,7 @@ impl GlobalSearch {
 
         let handle = ctx.spawn(
             async move {
-                Self::run_warp_ripgrep_cli(
+                Self::run_octomus_ripgrep_cli(
                     search_id,
                     effective_pattern,
                     roots,
@@ -105,7 +105,9 @@ impl GlobalSearch {
                     });
                 }
                 Err(err) => {
-                    log::error!("GlobalSearch: warp_ripgrep CLI search failed or aborted: {err}");
+                    log::error!(
+                        "GlobalSearch: octomus_ripgrep CLI search failed or aborted: {err}"
+                    );
                     ctx.emit(GlobalSearchEvent::Failed {
                         search_id,
                         error: "Global search failed.".to_string(),
@@ -117,7 +119,7 @@ impl GlobalSearch {
         self.search_handle = Some(handle);
     }
 
-    async fn run_warp_ripgrep_cli(
+    async fn run_octomus_ripgrep_cli(
         search_id: u32,
         pattern: String,
         roots: Vec<PathBuf>,
@@ -127,12 +129,12 @@ impl GlobalSearch {
     ) -> Result<usize> {
         let roots_display: Vec<_> = roots.iter().map(|r| r.display().to_string()).collect();
         log::info!(
-            "GlobalSearch: starting warp_ripgrep CLI search with pattern={pattern}, roots={:?}",
+            "GlobalSearch: starting octomus_ripgrep CLI search with pattern={pattern}, roots={:?}",
             roots_display
         );
 
         let stream =
-            warp_ripgrep::search::search_streaming(&[pattern], &roots, ignore_case, multiline)?;
+            octomus_ripgrep::search::search_streaming(&[pattern], &roots, ignore_case, multiline)?;
         futures::pin_mut!(stream);
 
         let mut total_match_count: usize = 0;

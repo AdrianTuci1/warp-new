@@ -7,12 +7,12 @@ use arborium::tree_sitter::{Parser, Query, QueryCursor, Tree};
 use futures::channel::oneshot;
 use ignore::gitignore::Gitignore;
 use itertools::Itertools;
+use octomus_util::standardized_path::StandardizedPath;
 use rayon::prelude::*;
 use repo_metadata::entry::{is_file_parsable, BudgetExceededBehavior, IgnoredPathStrategy};
 use repo_metadata::RepositoryUpdate;
 use streaming_iterator::StreamingIterator;
 use syntax_tree::TextSlice;
-use warp_util::standardized_path::StandardizedPath;
 
 use crate::index::file_outline::{FileOutline, Outline, Symbol};
 use crate::index::{Entry, FileId, FileMetadata, THREADPOOL};

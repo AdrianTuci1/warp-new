@@ -9,25 +9,25 @@ use markdown_parser::markdown_parser::RUNNABLE_BLOCK_MARKDOWN_LANG;
 use markdown_parser::{
     parse_markdown, CodeBlockText, FormattedText, FormattedTextFragment, FormattedTextLine,
 };
+use octomus_core::features::FeatureFlag;
+use octomusui::elements::ListIndentLevel;
+use octomusui::platform::WindowStyle;
+use octomusui::presenter::ChildView;
+use octomusui::r#async::{block_on, FutureId, Timer};
+use octomusui::text::word_boundaries::WordBoundariesPolicy;
+use octomusui::{
+    AddSingletonModel, App, AppContext, Element, Entity, ModelHandle, SingletonEntity,
+    TypedActionView, View, ViewHandle,
+};
 use pathfinder_geometry::vector::Vector2F;
 use string_offset::CharOffset;
 use vec1::vec1;
-use warp_core::features::FeatureFlag;
 use warp_editor::content::buffer::{AutoScrollBehavior, BufferSelectAction, SelectionOffsets};
 use warp_editor::content::text::{BlockType, BufferBlockStyle, CodeBlockType, TextStyles};
 use warp_editor::model::{CoreEditorModel, RichTextEditorModel};
 use warp_editor::render::model::viewport::SizeInfo;
 use warp_editor::render::model::{BlockItem, RenderEvent};
 use warp_editor::selection::{TextDirection, TextUnit};
-use warpui::elements::ListIndentLevel;
-use warpui::platform::WindowStyle;
-use warpui::presenter::ChildView;
-use warpui::r#async::{block_on, FutureId, Timer};
-use warpui::text::word_boundaries::WordBoundariesPolicy;
-use warpui::{
-    AddSingletonModel, App, AppContext, Element, Entity, ModelHandle, SingletonEntity,
-    TypedActionView, View, ViewHandle,
-};
 
 use super::super::rich_text_styles;
 use super::NotebooksEditorModel;
@@ -69,7 +69,7 @@ impl View for TestView {
         "TestView"
     }
 
-    fn render(&self, _app: &warpui::AppContext) -> Box<dyn warpui::Element> {
+    fn render(&self, _app: &octomusui::AppContext) -> Box<dyn octomusui::Element> {
         ChildView::new(&self.editor).finish()
     }
 }
@@ -399,13 +399,13 @@ fn test_inline_markdown() {
         editor.update(&mut app, |editor, ctx| {
             editor.cursor_at(CharOffset::from(6), ctx);
             editor.active_text_style = TextStyles::default();
-            editor.user_insert("[abc](https://warp.dev", ctx);
+            editor.user_insert("[abc](https://octomus.dev", ctx);
         });
 
         editor.read(&app, |editor, ctx| {
             assert_eq!(
                 editor.content.as_ref(ctx).debug(),
-                "<text>First[abc](https://warp.dev <b_s>bold<b_e>"
+                "<text>First[abc](https://octomus.dev <b_s>bold<b_e>"
             );
         });
 
@@ -417,7 +417,7 @@ fn test_inline_markdown() {
             assert_eq!(editor.active_text_style, TextStyles::default());
             assert_eq!(
                 editor.content.as_ref(ctx).debug(),
-                "<text>First<a_https://warp.dev>abc<a> <b_s>bold<b_e>"
+                "<text>First<a_https://octomus.dev>abc<a> <b_s>bold<b_e>"
             );
         });
 
@@ -431,7 +431,7 @@ fn test_inline_markdown() {
 
             assert_eq!(
                 editor.content.as_ref(ctx).debug(),
-                "<text>First<a_https://warp.dev>abc<a> <b_s>bold`abc<b_e>"
+                "<text>First<a_https://octomus.dev>abc<a> <b_s>bold`abc<b_e>"
             );
 
             editor.user_insert("`", ctx);
@@ -441,7 +441,7 @@ fn test_inline_markdown() {
             assert_eq!(editor.active_text_style, TextStyles::default().bold());
             assert_eq!(
                 editor.content.as_ref(ctx).debug(),
-                "<text>First<a_https://warp.dev>abc<a> <b_s>bold<b_e><c_s>abc<c_e>"
+                "<text>First<a_https://octomus.dev>abc<a> <b_s>bold<b_e><c_s>abc<c_e>"
             );
         });
     })
@@ -788,7 +788,7 @@ fn test_pasting_link_on_selected_text() {
     App::test((), |mut app| async move {
         initialize_deps(&mut app);
         let editor = model_from_markdown("First text\nSecond line", &mut app, true);
-        let clipboard_content = "https://warp.dev";
+        let clipboard_content = "https://octomus.dev";
 
         layout_model(&mut app, &editor).await;
 
@@ -803,7 +803,7 @@ fn test_pasting_link_on_selected_text() {
 
             assert_eq!(
                 editor.debug_buffer(ctx),
-                "<text><a_https://warp.dev>First text<a>\\nSecond line"
+                "<text><a_https://octomus.dev>First text<a>\\nSecond line"
             );
         });
     });
@@ -1879,11 +1879,11 @@ fn test_interleaving_command_and_embedding() {
 
         let model_handle = model_from_markdown(
             r#"Text
-```warp-embedded-object
+```octomus-embedded-object
 id: Workflow-test_uid00000000000123
 ```
 More text
-```warp-embedded-object
+```octomus-embedded-object
 id: Workflow-test_uid00000000000245
 ```
 ```Python
@@ -2603,7 +2603,7 @@ fn test_cut_code_block() {
             assert_eq!(clipboard.plain_text, "command");
             assert_eq!(
                 clipboard.html.unwrap(),
-                r#"<pre><code class="language-warp-runnable-command">command</code></pre>"#
+                r#"<pre><code class="language-octomus-runnable-command">command</code></pre>"#
             );
         })
     });
@@ -3000,7 +3000,7 @@ fn test_multiselect_pasting() {
         });
 
         // Pasting a URL for multiple selections should paste as text.
-        let url_clipboard_content = "https://warp.dev";
+        let url_clipboard_content = "https://octomus.dev";
 
         editor.update(&mut app, |editor, ctx| {
             editor.cursor_at(CharOffset::from(1), ctx);
@@ -3014,7 +3014,7 @@ fn test_multiselect_pasting() {
             editor.insert_formatted_from_paste(markdown, url_clipboard_content, ctx);
             assert_eq!(
                 editor.debug_buffer(ctx),
-                "<text><a_https://warp.dev>https://warp.dev<a>\\nSecond line\\n<a_https://warp.dev>https://warp.dev<a><code:Shell><c_#b4fa72>code<c><text>"
+                "<text><a_https://octomus.dev>https://octomus.dev<a>\\nSecond line\\n<a_https://octomus.dev>https://octomus.dev<a><code:Shell><c_#b4fa72>code<c><text>"
             );
         });
 
@@ -3031,7 +3031,7 @@ fn test_multiselect_pasting() {
             editor.insert_formatted_from_paste(markdown, "echo test", ctx);
             assert_eq!(
                 editor.debug_buffer(ctx),
-                "<text>echo test<a_https://warp.dev>https://warp.dev<a>\\nSecond line\\n<a_https://warp.dev>https://warp.dev<a><code:Shell><c_#b4fa72>coecho testde<c><text>"
+                "<text>echo test<a_https://octomus.dev>https://octomus.dev<a>\\nSecond line\\n<a_https://octomus.dev>https://octomus.dev<a><code:Shell><c_#b4fa72>coecho testde<c><text>"
             );
         });
     });

@@ -1,13 +1,13 @@
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 
-use warpui::{Entity, EntityId, ModelContext, SingletonEntity};
+use octomusui::{Entity, EntityId, ModelContext, SingletonEntity};
 
 use super::workflow::Workflow;
 use super::CloudWorkflowModel;
 use crate::cloud_object::model::persistence::CloudModel;
 use crate::cloud_object::{GenericCloudObject, Owner};
-use crate::drive::OpenWarpDriveObjectSettings;
+use crate::drive::OpenOctomusDriveObjectSettings;
 use crate::pane_group::{PaneContent, WorkflowPane};
 use crate::server::cloud_objects::update_manager::{
     ObjectOperation, OperationSuccessType, UpdateManager, UpdateManagerEvent,
@@ -68,7 +68,7 @@ impl WorkflowManager {
     pub fn create_pane(
         &mut self,
         source: &WorkflowOpenSource,
-        settings: &OpenWarpDriveObjectSettings,
+        settings: &OpenOctomusDriveObjectSettings,
         mode: WorkflowViewMode,
         window_id: WindowId,
         ctx: &mut ModelContext<Self>,
@@ -123,7 +123,7 @@ impl WorkflowManager {
                             *initial_folder_id,
                             ClientId::default(),
                         ),
-                        &OpenWarpDriveObjectSettings::default(),
+                        &OpenOctomusDriveObjectSettings::default(),
                         mode,
                         ctx,
                     );

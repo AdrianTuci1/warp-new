@@ -4,6 +4,36 @@ use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use markdown_parser::{parse_html, parse_markdown, FormattedText};
+use octomus_util::path::LineAndColumnArg;
+use octomus_util::user_input::UserInput;
+use octomusui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
+use octomusui::actions::StandardAction;
+use octomusui::assets::asset_cache::{AssetCache, AssetHandle, AssetState};
+use octomusui::clipboard::ClipboardContent;
+use octomusui::elements::{
+    AnchorPair, Axis, Border, ChildAnchor, Clipped, ConstrainedBox, Container, CornerRadius,
+    Dismiss, Fill, Flex, Hoverable, Icon, MouseStateHandle, OffsetPositioning, OffsetType,
+    ParentAnchor, ParentElement, PositionedElementOffsetBounds, PositioningAxis, Radius,
+    ScrollStateHandle, Scrollable, ScrollableElement, ScrollbarWidth, Stack, XAxisAnchor,
+    YAxisAnchor,
+};
+use octomusui::event::ModifiersState;
+use octomusui::fonts::{FallbackFontEvent, FallbackFontModel};
+use octomusui::image_cache::ImageType;
+use octomusui::keymap::{EditableBinding, FixedBinding, PerPlatformKeystroke};
+use octomusui::platform::{Cursor, OperatingSystem};
+use octomusui::presenter::ChildView;
+use octomusui::r#async::SpawnedFutureHandle;
+#[cfg(feature = "local_fs")]
+use octomusui::text::word_boundaries::WordBoundariesPolicy;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::units::Pixels;
+use octomusui::windowing::WindowManager;
+use octomusui::{
+    windowing, AppContext, BlurContext, CursorInfo, Element, Entity, FocusContext, ModelHandle,
+    SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, WeakViewHandle,
+};
 use pathfinder_geometry::vector::vec2f;
 use string_offset::CharOffset;
 use warp_editor::content::anchor::Anchor;
@@ -16,36 +46,6 @@ use warp_editor::render::element::{
 };
 use warp_editor::render::model::{BlockItem, HitTestBlockType, Location, RenderState};
 use warp_editor::selection::{TextDirection, TextUnit};
-use warp_util::path::LineAndColumnArg;
-use warp_util::user_input::UserInput;
-use warpui::accessibility::{AccessibilityContent, ActionAccessibilityContent, WarpA11yRole};
-use warpui::actions::StandardAction;
-use warpui::assets::asset_cache::{AssetCache, AssetHandle, AssetState};
-use warpui::clipboard::ClipboardContent;
-use warpui::elements::{
-    AnchorPair, Axis, Border, ChildAnchor, Clipped, ConstrainedBox, Container, CornerRadius,
-    Dismiss, Fill, Flex, Hoverable, Icon, MouseStateHandle, OffsetPositioning, OffsetType,
-    ParentAnchor, ParentElement, PositionedElementOffsetBounds, PositioningAxis, Radius,
-    ScrollStateHandle, Scrollable, ScrollableElement, ScrollbarWidth, Stack, XAxisAnchor,
-    YAxisAnchor,
-};
-use warpui::event::ModifiersState;
-use warpui::fonts::{FallbackFontEvent, FallbackFontModel};
-use warpui::image_cache::ImageType;
-use warpui::keymap::{EditableBinding, FixedBinding, PerPlatformKeystroke};
-use warpui::platform::{Cursor, OperatingSystem};
-use warpui::presenter::ChildView;
-use warpui::r#async::SpawnedFutureHandle;
-#[cfg(feature = "local_fs")]
-use warpui::text::word_boundaries::WordBoundariesPolicy;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::units::Pixels;
-use warpui::windowing::WindowManager;
-use warpui::{
-    windowing, AppContext, BlurContext, CursorInfo, Element, Entity, FocusContext, ModelHandle,
-    SingletonEntity, TypedActionView, View, ViewContext, ViewHandle, WeakViewHandle,
-};
 
 use super::block_insertion_menu::{BlockInsertionMenuState, BlockInsertionSource};
 use super::find_bar::{FindBar, FindBarEvent, FindBarState};
@@ -72,7 +72,7 @@ use crate::util::bindings::CustomAction;
 #[cfg(feature = "local_fs")]
 use crate::util::link_detection::{detect_file_paths, get_word_range_at_offset, DetectedLinkType};
 use crate::util::tooltips::{
-    render_tooltip, should_show_open_in_warp_link, TooltipLink, TooltipRedaction,
+    render_tooltip, should_show_open_in_octomus_link, TooltipLink, TooltipRedaction,
 };
 use crate::view_components::DismissibleToast;
 use crate::workspace::WorkspaceAction;
@@ -88,7 +88,7 @@ const MAX_EDITOR_TIP_WIDTH: f32 = 300.;
 const GUTTER_WIDTH: f32 = ICON_DIMENSIONS + 4.;
 
 pub fn init(app: &mut AppContext) {
-    use warpui::keymap::macros::*;
+    use octomusui::keymap::macros::*;
 
     // Context for text entry/navigation/selection:
     // - The editor is focused
@@ -863,11 +863,11 @@ pub enum EditorViewAction {
     OpenEmbeddedObjectSearch,
     RemoveEmbeddingAt(CharOffset),
     MiddleClickPaste,
-    /// Open a file. If open_in_warp is true, open in Warp's code editor; otherwise use external editor.
+    /// Open a file. If open_in_octomus is true, open in Octomus's code editor; otherwise use external editor.
     OpenFile {
         path: PathBuf,
         line_and_column_num: Option<LineAndColumnArg>,
-        force_open_in_warp: bool,
+        force_open_in_octomus: bool,
     },
     /// Signal from a Mermaid toggle view that the user changed the display mode for a block.
     MermaidDisplayModeSelected {
@@ -942,7 +942,7 @@ pub enum EditorViewEvent {
     OpenFile {
         path: PathBuf,
         line_and_column_num: Option<LineAndColumnArg>,
-        force_open_in_warp: bool,
+        force_open_in_octomus: bool,
     },
     /// Emitted when the user runs a notebook workflow. The parent `NotebookView` is responsible
     /// for sending it to the active terminal.
@@ -1023,7 +1023,7 @@ struct SelectedFilePath {
 #[derive(Default)]
 struct FilePathMouseStateHandles {
     open_file_handle: MouseStateHandle,
-    open_in_warp_handle: MouseStateHandle,
+    open_in_octomus_handle: MouseStateHandle,
 }
 
 pub struct RichTextEditorView {
@@ -1933,7 +1933,7 @@ impl RichTextEditorView {
                     ctx.emit(EditorViewEvent::OpenFile {
                         path: hovered_file_path.path.clone(),
                         line_and_column_num: hovered_file_path.line_and_column_num,
-                        force_open_in_warp: false,
+                        force_open_in_octomus: false,
                     });
                 } else {
                     self.open_file_path = Some(hovered_file_path.clone());
@@ -2504,7 +2504,7 @@ impl RichTextEditorView {
         appearance: &Appearance,
         ctx: &AppContext,
     ) -> Box<dyn Element> {
-        use warpui::EventContext;
+        use octomusui::EventContext;
         type FilePathTooltipLinks = Vec<TooltipLink<Box<dyn Fn(&mut EventContext)>>>;
 
         let path = selected_file_path.path.clone();
@@ -2515,7 +2515,7 @@ impl RichTextEditorView {
             "Open file"
         }
         .to_string();
-        let show_open_in_warp = should_show_open_in_warp_link(&path, ctx);
+        let show_open_in_octomus = should_show_open_in_octomus_link(&path, ctx);
         let path_for_primary = path.clone();
         let modifier = directly_open_link_keybinding_string();
 
@@ -2525,26 +2525,26 @@ impl RichTextEditorView {
                 ctx.dispatch_typed_action(EditorViewAction::OpenFile {
                     path: path_for_primary.clone(),
                     line_and_column_num,
-                    force_open_in_warp: false,
+                    force_open_in_octomus: false,
                 });
             }),
             detail: Some(format!("[{modifier} Click]")),
             mouse_state: self.file_path_mouse_states.open_file_handle.clone(),
         }];
 
-        if show_open_in_warp {
+        if show_open_in_octomus {
             let path_for_warp = path.clone();
             links.push(TooltipLink {
-                text: "Open in Warp".to_string(),
+                text: "Open in Octomus".to_string(),
                 on_click: Box::new(move |ctx: &mut EventContext| {
                     ctx.dispatch_typed_action(EditorViewAction::OpenFile {
                         path: path_for_warp.clone(),
                         line_and_column_num,
-                        force_open_in_warp: true,
+                        force_open_in_octomus: true,
                     });
                 }),
                 detail: None,
-                mouse_state: self.file_path_mouse_states.open_in_warp_handle.clone(),
+                mouse_state: self.file_path_mouse_states.open_in_octomus_handle.clone(),
             });
         }
 
@@ -2742,7 +2742,7 @@ impl View for RichTextEditorView {
         stack.finish()
     }
 
-    fn active_cursor_position(&self, ctx: &ViewContext<Self>) -> Option<warpui::CursorInfo> {
+    fn active_cursor_position(&self, ctx: &ViewContext<Self>) -> Option<octomusui::CursorInfo> {
         let model = self.model.as_ref(ctx);
         let render_state = model.render_state().as_ref(ctx);
         let font_size = model.cursor_font_size(ctx);
@@ -2753,7 +2753,7 @@ impl View for RichTextEditorView {
             })
     }
 
-    fn keymap_context(&self, ctx: &AppContext) -> warpui::keymap::Context {
+    fn keymap_context(&self, ctx: &AppContext) -> octomusui::keymap::Context {
         let mut context = Self::default_keymap_context();
 
         if self.is_editable(ctx) {
@@ -3095,12 +3095,12 @@ impl TypedActionView for RichTextEditorView {
             OpenFile {
                 path,
                 line_and_column_num,
-                force_open_in_warp,
+                force_open_in_octomus,
             } => {
                 ctx.emit(EditorViewEvent::OpenFile {
                     path: path.clone(),
                     line_and_column_num: *line_and_column_num,
-                    force_open_in_warp: *force_open_in_warp,
+                    force_open_in_octomus: *force_open_in_octomus,
                 });
             }
         }
@@ -3440,7 +3440,7 @@ impl RichTextAction<RichTextEditorView> for EditorViewAction {
         );
         let multiselect = modifiers.alt && FeatureFlag::RichTextMultiselect.is_enabled();
 
-        // The first mouse down to bring focus to a Warp window will not have a corresponding mouse up.
+        // The first mouse down to bring focus to a Octomus window will not have a corresponding mouse up.
         // We ignore it, and they can click again.
         if is_first_mouse {
             return None;

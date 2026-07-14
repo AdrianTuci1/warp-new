@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# Cross-platform entrypoint for running a local Warp build.
+# Cross-platform entrypoint for running a local Octomus build.
 #
-# On macOS this delegates to `./script/macos/run`, which builds and runs Warp
+# On macOS this delegates to `./script/macos/run`, which builds and runs Octomus
 # as a real `.app` bundle (with code signing, plist updates, etc.). On Linux
 # and Windows it invokes `cargo run` directly for the appropriate binary.
 #
@@ -27,11 +27,11 @@ COMMON_SKILLS_TARGET="${WARP_COMMON_SKILLS_INSTALL_TARGET:-}"
 
 
 # If warp_channel_config is on PATH, build the Local channel binary; otherwise build the OSS channel.
-if command -v warp-channel-config &>/dev/null; then
-    WARP_BIN_NAME="warp"
+if command -v octomus-channel-config &>/dev/null; then
+    WARP_BIN_NAME="octomus"
     WARP_CHANNEL="local"
 else
-    WARP_BIN_NAME="warp-oss"
+    WARP_BIN_NAME="octomus-oss"
     WARP_CHANNEL="oss"
 fi
 
@@ -123,7 +123,7 @@ if [[ "$INSTALL_COMMON_SKILLS" -eq 1 ]]; then
 fi
 
 # These cargo features were removed and replaced by environment variables read
-# by warp-channel-config. Intercept them here so that existing --features
+# by octomus-channel-config. Intercept them here so that existing --features
 # invocations keep working.
 for mapping in \
     "with_local_server:WITH_LOCAL_SERVER" \

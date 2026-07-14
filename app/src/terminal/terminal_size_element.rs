@@ -1,11 +1,11 @@
 use std::any::Any;
 
 use async_channel::Sender;
-use warpui::elements::Point;
-use warpui::event::DispatchedEvent;
-use warpui::geometry::rect::RectF;
-use warpui::geometry::vector::Vector2F;
-use warpui::{
+use octomusui::elements::Point;
+use octomusui::event::DispatchedEvent;
+use octomusui::geometry::rect::RectF;
+use octomusui::geometry::vector::Vector2F;
+use octomusui::{
     AfterLayoutContext, AppContext, Element, Event, EventContext, LayoutContext, PaintContext,
     SizeConstraint,
 };

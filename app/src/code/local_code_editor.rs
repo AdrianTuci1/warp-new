@@ -19,6 +19,32 @@ use lsp::{
 use lsp_types::FormattingOptions;
 use markdown_parser::FormattedText;
 use num_traits::SaturatingSub;
+use octomus_core::features::FeatureFlag;
+use octomus_core::r#async::debounce;
+use octomus_core::ui::appearance::Appearance;
+use octomus_core::ui::icons::Icon;
+use octomus_util::content_version::ContentVersion;
+use octomus_util::file::{FileId, FileLoadError, FileSaveError};
+#[cfg(feature = "local_fs")]
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomus_util::path::to_relative_path;
+use octomus_util::sync::Condition;
+use octomusui::elements::{
+    Border, ChildAnchor, ChildView, ClippedScrollStateHandle, ConstrainedBox, Container,
+    CornerRadius, CrossAxisAlignment, DropShadow, Flex, Hoverable, MainAxisAlignment, MainAxisSize,
+    MouseStateHandle, OffsetPositioning, ParentAnchor, ParentElement, ParentOffsetBounds, Radius,
+    Rect, Shrinkable, Stack, Text,
+};
+use octomusui::keymap::macros::*;
+use octomusui::keymap::FixedBinding;
+use octomusui::platform::SaveFilePickerConfiguration;
+use octomusui::text::point::Point;
+use octomusui::ui_components::button::ButtonVariant;
+use octomusui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use octomusui::{
+    AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
+    ViewHandle, WindowId,
+};
 use pathfinder_color::ColorU;
 use pathfinder_geometry::rect::RectF;
 use pathfinder_geometry::vector::Vector2F;
@@ -28,35 +54,9 @@ use repo_metadata::repositories::DetectedRepositories;
 use string_offset::CharOffset;
 use vec1::Vec1;
 use vim::vim::{MotionType, VimMode};
-use warp_core::features::FeatureFlag;
-use warp_core::r#async::debounce;
-use warp_core::ui::appearance::Appearance;
-use warp_core::ui::icons::Icon;
 use warp_editor::content::buffer::InitialBufferState;
 use warp_editor::content::text::IndentUnit;
 use warp_editor::render::model::{Decoration, LineCount};
-use warp_util::content_version::ContentVersion;
-use warp_util::file::{FileId, FileLoadError, FileSaveError};
-#[cfg(feature = "local_fs")]
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warp_util::path::to_relative_path;
-use warp_util::sync::Condition;
-use warpui::elements::{
-    Border, ChildAnchor, ChildView, ClippedScrollStateHandle, ConstrainedBox, Container,
-    CornerRadius, CrossAxisAlignment, DropShadow, Flex, Hoverable, MainAxisAlignment, MainAxisSize,
-    MouseStateHandle, OffsetPositioning, ParentAnchor, ParentElement, ParentOffsetBounds, Radius,
-    Rect, Shrinkable, Stack, Text,
-};
-use warpui::keymap::macros::*;
-use warpui::keymap::FixedBinding;
-use warpui::platform::SaveFilePickerConfiguration;
-use warpui::text::point::Point;
-use warpui::ui_components::button::ButtonVariant;
-use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
-use warpui::{
-    AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
-    ViewHandle, WindowId,
-};
 
 use crate::ai::persisted_workspace::{PersistedWorkspace, PersistedWorkspaceEvent};
 use crate::code::buffer_location::LocalOrRemotePath as BufferFileLocation;
@@ -80,7 +80,7 @@ const DROP_SHADOW_COLOR: ColorU = ColorU {
 
 const HOVER_DEBOUNCE_PERIOD: Duration = Duration::from_millis(500);
 
-use warp_core::send_telemetry_from_ctx;
+use octomus_core::send_telemetry_from_ctx;
 
 use super::diff_viewer::DiffViewer;
 use super::editor::scroll::{ScrollPosition, ScrollTrigger};
@@ -649,7 +649,8 @@ impl LocalCodeEditorView {
                 let window_id = ctx.window_id();
 
                 // Create the on-click action based on whether we have a definition
-                let on_click: Box<dyn Fn(&mut warpui::AppContext)> = if has_different_definition {
+                let on_click: Box<dyn Fn(&mut octomusui::AppContext)> = if has_different_definition
+                {
                     let target_location = definition_locations.first().unwrap().target.clone();
                     Box::new(move |app| {
                         app.dispatch_typed_action_for_view(
@@ -2140,13 +2141,13 @@ impl View for LocalCodeEditorView {
         "LocalCodeEditorView"
     }
 
-    fn on_focus(&mut self, focus_ctx: &warpui::FocusContext, ctx: &mut ViewContext<Self>) {
+    fn on_focus(&mut self, focus_ctx: &octomusui::FocusContext, ctx: &mut ViewContext<Self>) {
         if focus_ctx.is_self_focused() {
             self.editor.update(ctx, |editor, ctx| editor.focus(ctx));
         }
     }
 
-    fn render(&self, app: &AppContext) -> Box<dyn warpui::Element> {
+    fn render(&self, app: &AppContext) -> Box<dyn octomusui::Element> {
         // Rendering the remote disconnection banner or version conflict banner.
         // Only show the disconnection banner if the file was successfully loaded;
         // if it never loaded, the error/loading state handles that.
@@ -2369,7 +2370,7 @@ pub fn render_unsaved_changes_banner(
             Container::new(
                 ConstrainedBox::new(
                     Icon::Warning
-                        .to_warpui_icon(appearance.theme().active_ui_text_color())
+                        .to_octomusui_icon(appearance.theme().active_ui_text_color())
                         .finish(),
                 )
                 .with_height(16.)
@@ -2466,7 +2467,7 @@ pub fn render_remote_disconnected_banner(appearance: &Appearance) -> Box<dyn Ele
             Container::new(
                 ConstrainedBox::new(
                     Icon::Warning
-                        .to_warpui_icon(appearance.theme().active_ui_text_color())
+                        .to_octomusui_icon(appearance.theme().active_ui_text_color())
                         .finish(),
                 )
                 .with_height(16.)

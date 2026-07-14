@@ -1,10 +1,10 @@
 use std::fmt::{Display, Formatter};
 
 use enum_iterator::{all, Sequence};
+use octomusui::ModelContext;
 use serde::{Deserialize, Serialize};
 use settings::macros::define_settings_group;
 use settings::{RespectUserSyncSetting, Setting as _, SupportedPlatforms, SyncToCloud};
-use warpui::ModelContext;
 
 #[derive(
     Clone,
@@ -128,8 +128,8 @@ impl TabBehavior {
     }
 }
 
-/// This enum is used to enforce options in the dropdown for selecting a separator with the Warp prompt.
-/// Note that these separators are added at the END of the Warp prompt (used in the case of same line prompt).
+/// This enum is used to enforce options in the dropdown for selecting a separator with the Octomus prompt.
+/// Note that these separators are added at the END of the Octomus prompt (used in the case of same line prompt).
 #[derive(
     Clone,
     Copy,

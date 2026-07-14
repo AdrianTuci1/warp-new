@@ -3,11 +3,11 @@
 
 use std::sync::Arc;
 
+use octomusui_core::geometry::vector::Vector2F;
+use octomusui_core::text_layout::Line;
+use octomusui_core::units::{IntoPixels, Pixels};
 use string_offset::CharOffset;
 use sum_tree::{Cursor, Dimension};
-use warpui_core::geometry::vector::Vector2F;
-use warpui_core::text_layout::Line;
-use warpui_core::units::{IntoPixels, Pixels};
 
 use super::{
     BlockItem, BlockSpacing, HorizontalRuleConfig, ImageBlockConfig, LaidOutEmbeddedItem,

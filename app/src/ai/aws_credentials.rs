@@ -7,11 +7,11 @@ use aws_credential_types::provider::error::CredentialsError;
 use aws_credential_types::provider::ProvideCredentials;
 use futures::channel::oneshot::channel;
 use futures::future::BoxFuture;
+use octomusui::{ModelContext, ModelHandle, SingletonEntity};
 use tokio::sync::Mutex;
 use vec1::vec1;
 use warp_managed_secrets::client::IdentityTokenOptions;
 use warp_managed_secrets::ManagedSecretManager;
-use warpui::{ModelContext, ModelHandle, SingletonEntity};
 
 use crate::settings::{AISettings, AISettingsChangedEvent};
 use crate::terminal::event::{AfterBlockCompletedEvent, BlockType, UserBlockCompleted};
@@ -92,7 +92,7 @@ pub(crate) fn aws_role_session_name(run_id: &str) -> String {
 }
 
 /// Cached STS client for OIDC credential refreshes -- cached on the last region used.
-/// (in practice, there should only ever be 1 region used per warp app lifetime)
+/// (in practice, there should only ever be 1 region used per octomus app lifetime)
 ///
 /// `AssumeRoleWithWebIdentity` is unauthenticated (the web identity token is the
 /// credential), so we skip the default credentials chain via `no_credentials()`

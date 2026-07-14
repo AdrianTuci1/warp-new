@@ -4,9 +4,9 @@ use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
 use anyhow::Result;
+use octomusui_core::{Entity, ModelContext, SingletonEntity};
 #[cfg(feature = "local_fs")]
 use repo_metadata::repositories::RepoDetectionSource;
-use warpui_core::{Entity, ModelContext, SingletonEntity};
 
 use super::GlobalRules;
 
@@ -18,7 +18,7 @@ cfg_if::cfg_if! {
         use repo_metadata::repository::RepositorySubscriber;
         use repo_metadata::{DirectoryWatcher, Repository, RepositoryUpdate};
 
-        const RULES_FILE_PATTERN: [&str; 2] = ["WARP.md", "AGENTS.md"];
+        const RULES_FILE_PATTERN: [&str; 2] = ["OCTOMUS.md", "AGENTS.md"];
         const MAX_SCAN_DEPTH: usize = 3;
         const MAX_FILES_TO_SCAN: usize = 5000;
     }
@@ -114,7 +114,7 @@ impl ProjectRules {
             .iter_mut()
             .find(|rule| rule.parent_path == parent)?;
 
-        if file_name.to_lowercase() == "warp.md" {
+        if file_name.to_lowercase() == "octomus.md" {
             rule.warp_md.take()
         } else if file_name.to_lowercase() == "agents.md" {
             rule.agents_md.take()
@@ -146,7 +146,7 @@ impl ProjectRules {
 
         match existing_rule {
             Some(rule) => {
-                if file_name.to_lowercase() == "warp.md" {
+                if file_name.to_lowercase() == "octomus.md" {
                     rule.warp_md = rule_file;
                 } else if file_name.to_lowercase() == "agents.md" {
                     rule.agents_md = rule_file;
@@ -157,7 +157,7 @@ impl ProjectRules {
                     parent_path: parent.to_path_buf(),
                     ..Default::default()
                 };
-                if file_name.to_lowercase() == "warp.md" {
+                if file_name.to_lowercase() == "octomus.md" {
                     rule.warp_md = rule_file;
                 } else if file_name.to_lowercase() == "agents.md" {
                     rule.agents_md = rule_file;
@@ -169,7 +169,7 @@ impl ProjectRules {
 }
 
 /// Singleton model that keeps track of mapping between paths and rule files
-/// Currently supports WARP.md files, but designed to be extensible
+/// Currently supports OCTOMUS.md files, but designed to be extensible
 #[cfg_attr(not(feature = "local_fs"), allow(dead_code))]
 #[derive(Debug, Default)]
 pub struct ProjectContextModel {
@@ -532,9 +532,9 @@ impl ProjectContextModel {
     /// Returns the rules applicable to `path`, layering global rules on top of
     /// any project rules discovered up the directory tree.
     ///
-    /// Precedence is `global > project WARP.md > project AGENTS.md`. Globals
+    /// Precedence is `global > project OCTOMUS.md > project AGENTS.md`. Globals
     /// are always included (when present) regardless of project state; the
-    /// existing in-directory `WARP.md > AGENTS.md` shadow inside
+    /// existing in-directory `OCTOMUS.md > AGENTS.md` shadow inside
     /// [`RuleAtPath::respected_rule`] still applies to project rules.
     ///
     /// This is the entry point used by `BlocklistAIContextModel` when packing
@@ -662,7 +662,7 @@ impl ProjectContextModel {
         (existing_rules, rules_delta)
     }
 
-    /// Scan a directory for rule files (currently WARP.md, extensible for future file types)
+    /// Scan a directory for rule files (currently OCTOMUS.md, extensible for future file types)
     /// Uses repo_metadata::entry::build_tree for efficient directory traversal
     #[cfg(feature = "local_fs")]
     async fn scan_directory_for_rules(dir_path: &Path) -> Result<ProjectRules> {

@@ -13,8 +13,8 @@ pub(crate) use imp::load_tab_configs;
 pub use imp::load_workflows;
 pub use imp::{load_launch_configs, load_theme_configs};
 use lazy_static::lazy_static;
-use warp_core::ui::theme::WarpTheme;
-use warpui::{Entity, ModelContext, SingletonEntity};
+use octomus_core::ui::theme::WarpTheme;
+use octomusui::{Entity, ModelContext, SingletonEntity};
 
 use crate::launch_configs::launch_config::LaunchConfig;
 use crate::tab_configs::{TabConfig, TabConfigError};
@@ -23,7 +23,7 @@ use crate::workflows::workflow::Workflow;
 
 lazy_static! {
     pub static ref LAUNCH_CONFIG_COMMENT: String = format!(
-        "# Warp Launch Configuration
+        "# Octomus Launch Configuration
 #
 #
 # Use this to start a certain configuration of windows, tabs, and panes.
@@ -31,7 +31,7 @@ lazy_static! {
 #
 # This file defines your launch configuration.
 # More on how to do so here:
-# https://docs.warp.dev/terminal/sessions/launch-configurations
+# https://docs.octomus.dev/terminal/sessions/launch-configurations
 #
 # All launch configurations are stored under {}.
 # Edit them anytime!
@@ -42,11 +42,11 @@ lazy_static! {
 # windows:
 #  - tabs:
 #      - layout:
-#          cwd: /Users/warp-user/project
+#          cwd: /Users/octomus-user/project
 #          commands:
 #            - exec: code .
 ",
-        warp_core::paths::home_relative_path(&crate::user_config::launch_configs_dir())
+        octomus_core::paths::home_relative_path(&crate::user_config::launch_configs_dir())
     );
 }
 
@@ -166,12 +166,12 @@ impl WarpConfig {
 
 /// Returns the base directory in which all of the user's data is stored.
 fn base_dir() -> PathBuf {
-    warp_core::paths::data_dir()
+    octomus_core::paths::data_dir()
 }
 
 /// Returns the path to the directory containing the user's custom themes.
 pub fn themes_dir() -> PathBuf {
-    warp_core::paths::themes_dir()
+    octomus_core::paths::themes_dir()
 }
 
 /// Returns the path to the directory containing the user's custom workflows.
@@ -192,13 +192,13 @@ pub fn tab_configs_dir() -> PathBuf {
 }
 
 /// Returns the path to the directory containing the built-in default tab configs.
-/// These are shipped with Warp and user-editable (Warp does not overwrite modifications).
+/// These are shipped with Octomus and user-editable (Octomus does not overwrite modifications).
 #[cfg_attr(target_family = "wasm", expect(dead_code))]
 pub fn default_tab_configs_dir() -> PathBuf {
     base_dir().join("default_tab_configs")
 }
 
-/// Returns whether the path points to a tab config TOML file under one of Warp's
+/// Returns whether the path points to a tab config TOML file under one of Octomus's
 /// tab config directories.
 #[cfg(feature = "local_fs")]
 pub fn is_tab_config_toml(path: &Path) -> bool {
@@ -215,7 +215,7 @@ pub fn is_tab_config_toml(path: &Path) -> bool {
         .any(|dir| path.starts_with(dir))
 }
 
-/// Ensures `~/.warp/default_tab_configs/worktree.toml` exists, creating it
+/// Ensures `~/.octomus/default_tab_configs/worktree.toml` exists, creating it
 /// from the embedded template if missing. Returns the path to the file.
 #[cfg(feature = "local_fs")]
 pub(crate) fn ensure_default_worktree_config() -> PathBuf {

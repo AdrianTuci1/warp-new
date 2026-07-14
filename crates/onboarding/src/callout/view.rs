@@ -1,12 +1,12 @@
-use ui_components::Component;
-use warp_core::ui::appearance::Appearance;
-use warpui_core::elements::Empty;
-use warpui_core::keymap::macros::*;
-use warpui_core::keymap::{FixedBinding, Keystroke};
-use warpui_core::{
+use octomus_core::ui::appearance::Appearance;
+use octomusui_core::elements::Empty;
+use octomusui_core::keymap::macros::*;
+use octomusui_core::keymap::{FixedBinding, Keystroke};
+use octomusui_core::{
     AppContext, Element, Entity, EventContext, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext,
 };
+use ui_components::Component;
 
 /// Display strings for keybindings shown in the onboarding callout.
 #[derive(Clone, Debug)]
@@ -59,7 +59,7 @@ fn get_universal_input_callout_options(
 ) -> Option<CalloutOptions> {
     match state {
         UniversalInputCalloutState::MeetInput => Some(CalloutOptions {
-            title: "Meet the Warp input",
+            title: "Meet the Octomus input",
             text: format!(
                 "Your terminal input accepts both terminal commands and agent prompts and automatically detects which you're using. Use {} to lock the input to Agent mode (natural language) or Terminal mode (commands).",
                 keybindings.toggle_input_mode
@@ -119,7 +119,7 @@ fn get_agent_modality_callout_options(
                 Some(CalloutOptions {
                     title: "Welcome to terminal mode",
                     text: format!(
-                        "Run commands here, just like a regular terminal. If you type a question or task using natural language, Warp can suggest opening it in agent mode. You can always override using {}.",
+                        "Run commands here, just like a regular terminal. If you type a question or task using natural language, Octomus can suggest opening it in agent mode. You can always override using {}.",
                         keybindings.toggle_input_mode
                     ),
                     step: StepStatus::new(0, total_steps),
@@ -136,7 +136,7 @@ fn get_agent_modality_callout_options(
                 Some(CalloutOptions {
                     title: "You’re in terminal mode",
                     text: format!(
-                        "Run commands here, just like a regular terminal. If you type a question or task using natural language, Warp can suggest opening it in agent mode. You can always override using {}.",
+                        "Run commands here, just like a regular terminal. If you type a question or task using natural language, Octomus can suggest opening it in agent mode. You can always override using {}.",
                         keybindings.toggle_input_mode
                     ),
                     step: StepStatus::new(0, total_steps),

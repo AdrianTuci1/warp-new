@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
+use octomusui_core::{AppContext, Entity, ModelContext, SingletonEntity};
 use parking_lot::RwLock;
-use warpui_core::{AppContext, Entity, ModelContext, SingletonEntity};
 
 const DEFAULT_NAMES: &[&str] = &[
     "Alex", "Morgan", "Jordan", "Casey", "Riley", "Quinn", "Avery", "Skyler", "Dakota", "Reese",

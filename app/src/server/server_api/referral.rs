@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use cynic::{MutationBuilder, QueryBuilder};
 #[cfg(test)]
 use mockall::{automock, predicate::*};
-use warp_core::channel::ChannelState;
+use octomus_core::channel::ChannelState;
 use warp_graphql::mutations::send_referral_invite_emails::{
     SendReferralInviteEmails, SendReferralInviteEmailsResult, SendReferralInviteEmailsVariables,
 };

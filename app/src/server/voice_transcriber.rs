@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use warpui::{Entity, SingletonEntity};
+use octomusui::{Entity, SingletonEntity};
 
 use super::server_api::ServerApi;
 use crate::ai::voice::transcribe::{Provider, TranscribeRequest};

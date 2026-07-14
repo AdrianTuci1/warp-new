@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
-use warp_core::settings::Setting as _;
-use warpui::{App, AppContext, SingletonEntity, ViewContext};
+use octomus_core::settings::Setting as _;
+use octomusui::{App, AppContext, SingletonEntity, ViewContext};
 
 use super::super::{AIBlockMetadata, RichContentMetadata, RichContentType};
 use super::*;

@@ -9,12 +9,32 @@ use std::rc::Rc;
 use ai::diff_validation::DiffDelta;
 use lazy_static::lazy_static;
 use num_traits::SaturatingSub;
+use octomus_core::platform::SessionPlatform;
+use octomus_util::content_version::ContentVersion;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::elements::new_scrollable::{
+    AxisConfiguration, DualAxisConfig, NewScrollableElement, ScrollableAppearance,
+};
+use octomusui::elements::{
+    ChildAnchor, ChildView, Dismiss, Fill, Flex, Margin, MouseStateHandle, NewScrollable,
+    OffsetPositioning, Padding, ParentAnchor, ParentElement, ParentOffsetBounds, ScrollStateHandle,
+    Shrinkable, Stack,
+};
+use octomusui::event::ModifiersState;
+use octomusui::keymap::Keystroke;
+use octomusui::platform::Cursor;
+use octomusui::prelude::RectF;
+use octomusui::text::point::Point;
+use octomusui::units::Pixels;
+use octomusui::{
+    AppContext, BlurContext, CursorInfo, Element, Entity, FocusContext, ModelHandle,
+    SingletonEntity, View, ViewContext, ViewHandle, WeakViewHandle, WindowId,
+};
 use pathfinder_geometry::vector::vec2f;
 use settings::Setting as _;
 use string_offset::CharOffset;
 use vec1::{vec1, Vec1};
 use vim::vim::{Direction, InsertPosition, VimMode, VimModel, VimState, VimSubscriber};
-use warp_core::platform::SessionPlatform;
 use warp_editor::content::buffer::{
     Buffer, BufferEditAction, EditOrigin, InitialBufferState, ToBufferCharOffset as _,
     ToBufferPoint,
@@ -32,26 +52,6 @@ use warp_editor::render::model::{
     RichTextStyles, CODE_EDITOR_HIDDEN_SECTION_EXPANSION_LINES,
 };
 use warp_editor::search::{SearchEvent, Searcher, MATCH_FILL, SELECTED_MATCH_FILL};
-use warp_util::content_version::ContentVersion;
-use warp_util::standardized_path::StandardizedPath;
-use warpui::elements::new_scrollable::{
-    AxisConfiguration, DualAxisConfig, NewScrollableElement, ScrollableAppearance,
-};
-use warpui::elements::{
-    ChildAnchor, ChildView, Dismiss, Fill, Flex, Margin, MouseStateHandle, NewScrollable,
-    OffsetPositioning, Padding, ParentAnchor, ParentElement, ParentOffsetBounds, ScrollStateHandle,
-    Shrinkable, Stack,
-};
-use warpui::event::ModifiersState;
-use warpui::keymap::Keystroke;
-use warpui::platform::Cursor;
-use warpui::prelude::RectF;
-use warpui::text::point::Point;
-use warpui::units::Pixels;
-use warpui::{
-    AppContext, BlurContext, CursorInfo, Element, Entity, FocusContext, ModelHandle,
-    SingletonEntity, View, ViewContext, ViewHandle, WeakViewHandle, WindowId,
-};
 
 use crate::appearance::Appearance;
 use crate::code::editor::comment_editor::{CommentEditor, CommentEditorEvent};
@@ -406,11 +406,11 @@ impl CodeEditorView {
                 // from truncating space for the code editor. We should not render it as an overlay
                 // for small code editors.
                 horizontal_scrollbar_appearance: ScrollableAppearance::new(
-                    warpui::elements::ScrollbarWidth::Auto,
+                    octomusui::elements::ScrollbarWidth::Auto,
                     false,
                 ),
                 vertical_scrollbar_appearance: ScrollableAppearance::new(
-                    warpui::elements::ScrollbarWidth::Auto,
+                    octomusui::elements::ScrollbarWidth::Auto,
                     false,
                 ),
                 gutter_hover_target: GutterHoverTarget::GutterElement,
@@ -2385,7 +2385,7 @@ impl View for CodeEditorView {
         }
     }
 
-    fn keymap_context(&self, app: &AppContext) -> warpui::keymap::Context {
+    fn keymap_context(&self, app: &AppContext) -> octomusui::keymap::Context {
         let mut context = Self::default_keymap_context();
 
         if self.interaction_state(app) != InteractionState::Editable {

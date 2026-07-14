@@ -7,18 +7,18 @@
 
 use std::time::Duration;
 
-use warp::features::FeatureFlag;
-use warp::integration_testing::step::new_step_with_default_assertions;
-use warp::integration_testing::terminal::wait_until_bootstrapped_single_pane_for_tab;
-use warp::integration_testing::view_getters::workspace_view;
-use warpui_core::async_assert;
-use warpui_core::integration::TestStep;
+use octomus::features::FeatureFlag;
+use octomus::integration_testing::step::new_step_with_default_assertions;
+use octomus::integration_testing::terminal::wait_until_bootstrapped_single_pane_for_tab;
+use octomus::integration_testing::view_getters::workspace_view;
+use octomusui_core::async_assert;
+use octomusui_core::integration::TestStep;
 
 use super::{new_builder, Builder};
 
 /// Helper: returns the path to the TOML settings file.
 fn toml_file_path() -> std::path::PathBuf {
-    warp::settings::user_preferences_toml_file_path()
+    octomus::settings::user_preferences_toml_file_path()
 }
 
 // ---------------------------------------------------------------------------

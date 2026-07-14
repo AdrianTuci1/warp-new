@@ -231,7 +231,7 @@ impl From<GqlUgcCollectionEnablementSetting> for UgcCollectionEnablementSetting 
                     anyhow!(
                         "Invalid UgcCollectionEnablementSetting '{value}'. Make sure to update client GraphQL types!"
                     ),
-                    warp_core::errors::ReportErrorLogMode::OncePerRun
+                    octomus_core::errors::ReportErrorLogMode::OncePerRun
                 );
                 UgcCollectionEnablementSetting::RespectUserSetting
             }
@@ -277,7 +277,7 @@ impl From<GqlAdminEnablementSetting> for AdminEnablementSetting {
                     anyhow!(
                         "Invalid AdminEnablementSetting '{value}'. Make sure to update client GraphQL types!"
                     ),
-                    warp_core::errors::ReportErrorLogMode::OncePerRun
+                    octomus_core::errors::ReportErrorLogMode::OncePerRun
                 );
                 AdminEnablementSetting::RespectUserSetting
             }
@@ -297,7 +297,7 @@ impl From<GqlHostEnablementSetting> for HostEnablementSetting {
                     anyhow!(
                         "Invalid HostEnablementSetting '{value}'. Make sure to update client GraphQL types!"
                     ),
-                    warp_core::errors::ReportErrorLogMode::OncePerRun
+                    octomus_core::errors::ReportErrorLogMode::OncePerRun
                 );
                 HostEnablementSetting::RespectUserSetting
             }
@@ -459,7 +459,7 @@ impl From<GqlUsageVisibilityGranularity> for UsageVisibilityGranularity {
                     anyhow!(
                         "Invalid UsageVisibilityGranularity '{value}'. Make sure to update client GraphQL types!"
                     ),
-                    warp_core::errors::ReportErrorLogMode::OncePerRun
+                    octomus_core::errors::ReportErrorLogMode::OncePerRun
                 );
                 // Fail closed to the most restrictive granularity.
                 UsageVisibilityGranularity::OwnOnly
@@ -626,7 +626,7 @@ impl TryFrom<&BillingMetadata> for StripeSubscriptionPlan {
             CustomerType::Prosumer => Ok(StripeSubscriptionPlan::Pro),
             CustomerType::Business => {
                 // Check if this is a legacy Business Plan, or a new Build Business plan based on service agreement type
-                // See: https://github.com/warpdotdev/warp-server/pull/6828#discussion_r2496242091
+                // See: https://github.com/warpdotdev/octomus-server/pull/6828#discussion_r2496242091
                 match billing_metadata
                     .service_agreements
                     .first()
@@ -663,7 +663,7 @@ fn convert_gql_ai_autonomy_value_to_action_permission(
                 anyhow!(
                     "Invalid AiAutonomyValue '{value}'. Make sure to update client GraphQL types!"
                 ),
-                warp_core::errors::ReportErrorLogMode::OncePerRun
+                octomus_core::errors::ReportErrorLogMode::OncePerRun
             );
             None
         }
@@ -683,7 +683,7 @@ fn convert_gql_write_to_pty_autonomy_value_to_write_to_pty_permission(
                 anyhow!(
                     "Invalid WriteToPtyAutonomyValue '{value}'. Make sure to update client GraphQL types!"
                 ),
-                warp_core::errors::ReportErrorLogMode::OncePerRun
+                octomus_core::errors::ReportErrorLogMode::OncePerRun
             );
             None
         }
@@ -703,7 +703,7 @@ fn convert_gql_computer_use_autonomy_value_to_computer_use_permission(
                 anyhow!(
                     "Invalid ComputerUseAutonomyValue '{value}'. Make sure to update client GraphQL types!"
                 ),
-                warp_core::errors::ReportErrorLogMode::OncePerRun
+                octomus_core::errors::ReportErrorLogMode::OncePerRun
             );
             None
         }
@@ -753,7 +753,7 @@ impl From<warp_graphql::workspace::LlmModelHost> for crate::ai::llms::LLMModelHo
                     anyhow!(
                         "Unknown LlmModelHost '{value}'. Make sure to update client GraphQL types!"
                     ),
-                    warp_core::errors::ReportErrorLogMode::OncePerRun
+                    octomus_core::errors::ReportErrorLogMode::OncePerRun
                 );
                 Self::Unknown
             }

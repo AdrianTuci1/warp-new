@@ -2,9 +2,9 @@ use std::iter::Peekable;
 
 use anyhow::Result;
 use itertools::{peek_nth, Either, PeekNth};
+use octomusui_core::text::words::is_default_word_boundary;
+use octomusui_core::text::TextBuffer;
 use string_offset::CharOffset;
-use warpui_core::text::words::is_default_word_boundary;
-use warpui_core::text::TextBuffer;
 
 use crate::vim::{Direction, WordBound, WordType};
 

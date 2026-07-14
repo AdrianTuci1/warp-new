@@ -1,9 +1,9 @@
 use std::collections::HashSet;
 
 use itertools::Itertools;
+use octomusui::platform::WindowStyle;
+use octomusui::{App, ViewHandle};
 use unindent::Unindent;
-use warpui::platform::WindowStyle;
-use warpui::{App, ViewHandle};
 
 use super::*;
 use crate::editor::EditorView;
@@ -296,11 +296,11 @@ fn test_vim_number_repeat_line_motion() {
         // Lay out the window so that up and down motions work.
         // Layout code starts here.
         let window_id = app.read(|ctx| editor.window_id(ctx));
-        let mut presenter = warpui::presenter::Presenter::new(window_id);
+        let mut presenter = octomusui::presenter::Presenter::new(window_id);
 
         let mut updated = HashSet::new();
         updated.insert(app.root_view_id(window_id).unwrap());
-        let invalidation = warpui::WindowInvalidation {
+        let invalidation = octomusui::WindowInvalidation {
             updated,
             ..Default::default()
         };
@@ -376,11 +376,11 @@ fn test_vim_number_repeat_character_motion() {
         // Lay out the window so that up and down motions work.
         // Layout code starts here.
         let window_id = app.read(|ctx| editor.window_id(ctx));
-        let mut presenter = warpui::presenter::Presenter::new(window_id);
+        let mut presenter = octomusui::presenter::Presenter::new(window_id);
 
         let mut updated = HashSet::new();
         updated.insert(app.root_view_id(window_id).unwrap());
-        let invalidation = warpui::WindowInvalidation {
+        let invalidation = octomusui::WindowInvalidation {
             updated,
             ..Default::default()
         };
@@ -2093,7 +2093,7 @@ fn test_vim_delete_word_dge() {
     App::test((), |mut app| async move {
         initialize_app(&mut app);
 
-        let editor = add_editor_vim_normal_mode("echo hello-hi warp-dev", &mut app);
+        let editor = add_editor_vim_normal_mode("echo hello-hi octomus-dev", &mut app);
 
         editor.update(&mut app, |view, view_ctx| {
             view.select_ranges(
@@ -2395,11 +2395,11 @@ fn test_vim_begin_line_above() {
         // Lay out the window so that up and down motions work.
         // Layout code starts here.
         let window_id = app.read(|ctx| editor.window_id(ctx));
-        let mut presenter = warpui::presenter::Presenter::new(window_id);
+        let mut presenter = octomusui::presenter::Presenter::new(window_id);
 
         let mut updated = HashSet::new();
         updated.insert(app.root_view_id(window_id).unwrap());
-        let invalidation = warpui::WindowInvalidation {
+        let invalidation = octomusui::WindowInvalidation {
             updated,
             ..Default::default()
         };
@@ -3084,7 +3084,7 @@ fn test_vim_change_word_cge() {
     App::test((), |mut app| async move {
         initialize_app(&mut app);
 
-        let editor = add_editor_vim_normal_mode("echo hello-hi warp-dev", &mut app);
+        let editor = add_editor_vim_normal_mode("echo hello-hi octomus-dev", &mut app);
 
         editor.update(&mut app, |view, view_ctx| {
             view.select_ranges(
@@ -7626,10 +7626,10 @@ fn test_vim_visual_selection_with_newlines() {
 
         // Ensure layout so vertical motions (j/k) use real geometry for goal columns.
         let window_id = app.read(|ctx| editor.window_id(ctx));
-        let mut presenter = warpui::presenter::Presenter::new(window_id);
+        let mut presenter = octomusui::presenter::Presenter::new(window_id);
         let mut updated = std::collections::HashSet::new();
         updated.insert(app.root_view_id(window_id).unwrap());
-        let invalidation = warpui::WindowInvalidation {
+        let invalidation = octomusui::WindowInvalidation {
             updated,
             ..Default::default()
         };
@@ -7674,10 +7674,10 @@ fn test_vim_visual_selection_with_newlines() {
 
         // Re-layout for new content
         let window_id = app.read(|ctx| editor.window_id(ctx));
-        let mut presenter = warpui::presenter::Presenter::new(window_id);
+        let mut presenter = octomusui::presenter::Presenter::new(window_id);
         let mut updated = std::collections::HashSet::new();
         updated.insert(app.root_view_id(window_id).unwrap());
-        let invalidation = warpui::WindowInvalidation {
+        let invalidation = octomusui::WindowInvalidation {
             updated,
             ..Default::default()
         };

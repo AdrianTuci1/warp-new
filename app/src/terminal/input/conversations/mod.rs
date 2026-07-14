@@ -4,11 +4,11 @@ mod data_source;
 mod search_item;
 mod view;
 
+use octomus_core::ui::appearance::Appearance;
+use octomusui::keymap::Keystroke;
+use octomusui::SingletonEntity;
 use pathfinder_color::ColorU;
 pub use view::{InlineConversationMenuEvent, InlineConversationMenuView};
-use warp_core::ui::appearance::Appearance;
-use warpui::keymap::Keystroke;
-use warpui::SingletonEntity;
 
 use crate::ai::active_agent_views_model::{ActiveAgentViewsModel, ConversationOrTaskId};
 use crate::ai::agent_conversations_model::AgentConversationEntryId;

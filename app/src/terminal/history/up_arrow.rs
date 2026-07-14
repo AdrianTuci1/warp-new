@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
-use warp_core::features::FeatureFlag;
-use warpui::{AppContext, EntityId, SingletonEntity};
+use octomus_core::features::FeatureFlag;
+use octomusui::{AppContext, EntityId, SingletonEntity};
 
 use super::History;
 use crate::ai::blocklist::{BlocklistAIHistoryModel, InputConfig};

@@ -1,12 +1,12 @@
 use ai::index::full_source_code_embedding::manager::CodebaseIndexManager;
+use octomus_core::features::FeatureFlag;
+use octomus_core::ui::appearance::Appearance;
+use octomusui::platform::WindowStyle;
+use octomusui::{App, SingletonEntity, ViewHandle, WindowId};
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::watcher::DirectoryWatcher;
 #[cfg(feature = "local_fs")]
 use repo_metadata::RepoMetadataModel;
-use warp_core::features::FeatureFlag;
-use warp_core::ui::appearance::Appearance;
-use warpui::platform::WindowStyle;
-use warpui::{App, SingletonEntity, ViewHandle, WindowId};
 use watcher::HomeDirectoryWatcher;
 
 use super::settings::initialize_history_persistence_for_tests;
@@ -40,6 +40,7 @@ use crate::cloud_object::model::persistence::CloudModel;
 use crate::code_review::git_status_update::GitStatusUpdateModel;
 use crate::context_chips::prompt::Prompt;
 use crate::network::NetworkStatus;
+use crate::octomus_managed_paths_watcher::WarpManagedPathsWatcher;
 use crate::pricing::PricingInfoModel;
 use crate::search::files::model::FileSearchModel;
 use crate::server::cloud_objects::listener::Listener;
@@ -60,7 +61,6 @@ use crate::terminal::shared_session::permissions_manager::SessionPermissionsMana
 use crate::terminal::view::inline_banner::ByoLlmAuthBannerSessionState;
 use crate::terminal::{History, TerminalView};
 use crate::undo_close::UndoCloseStack;
-use crate::warp_managed_paths_watcher::WarpManagedPathsWatcher;
 use crate::workflows::local_workflows::LocalWorkflows;
 use crate::workspace::sync_inputs::SyncedInputState;
 use crate::workspace::{ActiveSession, OneTimeModalModel, WorkspaceRegistry};

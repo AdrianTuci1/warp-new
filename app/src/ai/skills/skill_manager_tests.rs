@@ -2,20 +2,20 @@ use std::collections::{HashMap, HashSet};
 use std::fs;
 
 use ai::skills::{get_provider_for_path, ParsedSkill, SkillProvider, SkillReference, SkillScope};
+use octomus_core::channel::ChannelState;
+use octomus_util::host_id::HostId;
+use octomus_util::local_or_remote_path::LocalOrRemotePath;
+use octomus_util::remote_path::RemotePath;
+use octomus_util::standardized_path::StandardizedPath;
+use octomusui::App;
 use repo_metadata::repositories::DetectedRepositories;
 use repo_metadata::{DirectoryWatcher, RepoMetadataModel};
 use tempfile::TempDir;
-use warp_core::channel::ChannelState;
-use warp_util::host_id::HostId;
-use warp_util::local_or_remote_path::LocalOrRemotePath;
-use warp_util::remote_path::RemotePath;
-use warp_util::standardized_path::StandardizedPath;
-use warpui::App;
 use watcher::HomeDirectoryWatcher;
 
 use super::*;
+use crate::octomus_managed_paths_watcher::WarpManagedPathsWatcher;
 use crate::settings::AISettings;
-use crate::warp_managed_paths_watcher::WarpManagedPathsWatcher;
 
 // ============================================================================
 // Tests for get_skills_for_working_directory subdirectory scoping
@@ -90,7 +90,7 @@ fn get_skills_for_working_directory_scopes_subdirectory_skills() {
 
         // Register the repo root so get_root_for_path returns Some.
         let canonical_repo =
-            warp_util::standardized_path::StandardizedPath::from_local_canonicalized(&repo)
+            octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(&repo)
                 .unwrap();
         repo_handle.update(&mut app, |repos, _ctx| {
             repos.insert_test_repo_root(canonical_repo);
@@ -223,7 +223,7 @@ fn get_skills_for_working_directory_name_collision_returns_both() {
 
         // Register the repo root so get_root_for_path returns Some.
         let canonical_repo =
-            warp_util::standardized_path::StandardizedPath::from_local_canonicalized(&repo)
+            octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(&repo)
                 .unwrap();
         repo_handle.update(&mut app, |repos, _ctx| {
             repos.insert_test_repo_root(canonical_repo);
@@ -326,7 +326,7 @@ fn cloud_environment_skills_always_included() {
         let skill_manager_handle = app.add_singleton_model(SkillManager::new);
 
         let canonical_repo_a =
-            warp_util::standardized_path::StandardizedPath::from_local_canonicalized(&repo_a)
+            octomus_util::standardized_path::StandardizedPath::from_local_canonicalized(&repo_a)
                 .unwrap();
         repo_handle.update(&mut app, |repos, _ctx| {
             repos.insert_test_repo_root(canonical_repo_a);
@@ -388,7 +388,7 @@ name: test-skill
 description: Test skill with variables
 ---
 
-Run `{{warp_cli_binary_name}}` to connect to {{warp_server_url}}.
+Run `{{octomus_cli_binary_name}}` to connect to {{warp_server_url}}.
 "#,
     )
     .unwrap();
@@ -410,7 +410,7 @@ fn test_read_bundled_skills_preserves_other_content() {
     let temp_dir = TempDir::new().unwrap();
     let skills_dir = temp_dir.path();
 
-    // Create a test skill with both warp and non-warp variables
+    // Create a test skill with both octomus and non-octomus variables
     let skill_dir = skills_dir.join("test-skill");
     fs::create_dir_all(&skill_dir).unwrap();
     let skill_file = skill_dir.join("SKILL.md");
@@ -421,7 +421,7 @@ name: test-skill
 description: Test skill with mixed variables
 ---
 
-Use {{other_var}} and {{warp_cli_binary_name}} together.
+Use {{other_var}} and {{octomus_cli_binary_name}} together.
 "#,
     )
     .unwrap();
@@ -473,7 +473,7 @@ fn test_build_bundled_skill_context() {
     // settings_schema_path is only present when bundled_resources_dir() returns Some.
     assert!(context.len() >= 5);
     assert!(context.contains_key("warp_server_url"));
-    assert!(context.contains_key("warp_cli_binary_name"));
+    assert!(context.contains_key("octomus_cli_binary_name"));
     assert!(context.contains_key("warp_url_scheme"));
     assert!(context.contains_key("settings_file_path"));
     assert!(context.contains_key("keybindings_file_path"));
@@ -483,7 +483,7 @@ fn test_build_bundled_skill_context() {
         &ChannelState::server_root_url().to_string()
     );
     assert_eq!(
-        context.get("warp_cli_binary_name").unwrap(),
+        context.get("octomus_cli_binary_name").unwrap(),
         ChannelState::channel().cli_command_name()
     );
     assert_eq!(
@@ -604,7 +604,7 @@ fn make_skill(name: &str, provider_dir: &str) -> ParsedSkill {
         path: path.clone(),
         content: format!("# {name}"),
         line_range: None,
-        provider: get_provider_for_path(&path).unwrap_or(SkillProvider::Warp),
+        provider: get_provider_for_path(&path).unwrap_or(SkillProvider::Octomus),
         scope: SkillScope::Project,
     }
 }

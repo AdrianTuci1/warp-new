@@ -1,5 +1,5 @@
+use octomusui::{App, SingletonEntity};
 use settings::Setting;
-use warpui::{App, SingletonEntity};
 
 use super::*;
 use crate::test_util::settings::initialize_settings_for_tests;

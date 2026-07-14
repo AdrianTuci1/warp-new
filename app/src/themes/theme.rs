@@ -3,17 +3,17 @@ use std::iter::FromIterator;
 use std::path::{Component, Path, PathBuf};
 
 use anyhow::Result;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
-pub use warp_core::ui::color::blend::Blend;
-use warp_core::ui::color::pick_foreground_color;
-pub use warp_core::ui::theme::*;
-use warpui::assets::asset_cache::AssetSource;
-use warpui::color::ColorU;
-use warpui::elements::{
+pub use octomus_core::ui::color::blend::Blend;
+use octomus_core::ui::color::pick_foreground_color;
+pub use octomus_core::ui::theme::*;
+use octomusui::assets::asset_cache::AssetSource;
+use octomusui::color::ColorU;
+use octomusui::elements::{
     Align, Border, ConstrainedBox, Container, Element, Empty, Flex, ParentElement, Rect,
     Shrinkable, Stack, Text,
 };
-use warpui::fonts::FamilyId;
+use octomusui::fonts::FamilyId;
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use super::default_themes::*;
 use super::theme_creator::{pick_accent_color_from_options, top_colors_for_image};
@@ -627,9 +627,9 @@ pub fn render_preview(
         thumbnail.add_child(
             Shrinkable::new(
                 1.,
-                warpui::elements::Image::new(
+                octomusui::elements::Image::new(
                     background_image.source(),
-                    warpui::elements::CacheOption::BySize,
+                    octomusui::elements::CacheOption::BySize,
                 )
                 .cover()
                 .finish(),
